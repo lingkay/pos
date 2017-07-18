@@ -1,0 +1,46 @@
+menu_items:
+    - id: menu_inventory
+      acl: cat_inv.menu
+      label: Inventory
+      icon: fa-dropbox
+    # - id: cat_inv_wh_index
+    #   acl: cat_inv_wh.menu
+    #   label: Warehouse
+    #   parent: menu_inventory
+    - id: cat_inv_prod_index
+      acl: cat_inv_prod.menu
+      label: Products
+      parent: menu_inventory
+    - id: cat_inv_brand_index
+      acl: cat_inv_brand.menu
+      label: Brand
+      parent: menu_inventory
+    - id: cat_inv_product_category_index
+      acl: cat_inv_product_category.menu
+      label: Category
+      parent: menu_inventory
+    - id: cat_inv_product_type_index
+      acl: cat_inv_product_type.menu
+      label: Type
+      parent: menu_inventory
+    # - id: cat_inv_pg_index
+    #   acl: cat_inv_pg.menu
+    #   label: Product Group
+    #   parent: menu_inventory
+    # - id: cat_inv_trans_index
+    #   acl: cat_inv_trans.menu
+    #   label: Transfer Stock
+    #   parent: menu_inventory
+    - id: menu_supplier
+      acl: gist_supplier.menu
+      label: Suppliers
+      icon: fa-truck
+    - id: gist_supp_index
+      acl: gist_supp.menu
+      label: Supplier
+      parent: menu_supplier
+
+    - id: gist_inv_pos_indexx
+      acl: gist_inv_pos.menu
+      label: Point of Sales (POS)
+      icon: fa-calculator

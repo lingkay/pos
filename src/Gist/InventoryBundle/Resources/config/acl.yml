@@ -1,0 +1,121 @@
+acl:
+    - category: Inventory
+      entries:
+        - id: cat_inv.menu
+          label: "Menu"
+    - category: Warehouse
+      entries:
+        - id: cat_inv_wh.menu
+          label: "Menu"
+        - id: cat_inv_wh.view
+          label: "View"
+        - id: cat_inv_wh.add
+          label: "Add"
+        - id: cat_inv_wh.edit
+          label: "Edit"
+        - id: cat_inv_wh.delete
+          label: "Delete"
+    - category: Brand
+      entries:
+        - id: cat_inv_brand.menu
+          label: "Menu"
+        - id: cat_inv_brand.view
+          label: "View"
+        - id: cat_inv_brand.add
+          label: "Add"
+        - id: cat_inv_brand.edit
+          label: "Edit"
+        - id: cat_inv_brand.delete
+          label: "Delete"
+    - category: Product Category
+      entries:
+        - id: cat_inv_product_category.menu
+          label: "Menu"
+        - id: cat_inv_product_category.view
+          label: "View"
+        - id: cat_inv_product_category.add
+          label: "Add"
+        - id: cat_inv_product_category.edit
+          label: "Edit"
+        - id: cat_inv_product_category.delete
+          label: "Delete"
+    - category: Product Type
+      entries:
+        - id: cat_inv_product_type.menu
+          label: "Menu"
+        - id: cat_inv_product_type.view
+          label: "View"
+        - id: cat_inv_product_type.add
+          label: "Add"
+        - id: cat_inv_product_type.edit
+          label: "Edit"
+        - id: cat_inv_product_type.delete
+          label: "Delete"
+    - category: Product Group
+      entries:
+        - id: cat_inv_pg.menu
+          label: "Menu"
+        - id: cat_inv_pg.view
+          label: "View"
+        - id: cat_inv_pg.add
+          label: "Add"
+        - id: cat_inv_pg.edit
+          label: "Edit"
+        - id: cat_inv_pg.delete
+          label: "Delete"
+    - category: Product
+      entries:
+        - id: cat_inv_prod.menu
+          label: "Menu"
+        - id: cat_inv_prod.view
+          label: "View"
+        - id: cat_inv_prod.add
+          label: "Add"
+        - id: cat_inv_prod.edit
+          label: "Edit"
+        - id: cat_inv_prod.delete
+          label: "Delete"
+        - id: cat_inv_prod.price_change
+          label: "Grid Price Change"
+        - id: cat_inv_prod.view_sell_price
+          label: "View Sell Price"
+        - id: cat_inv_prod.view_cost_price
+          label: "View Cost Price"
+        - id: cat_inv_prod.restricted
+          label: "Restricted Product"
+    - category: Service Task
+      entries:
+        - id: cat_inv_sv_task.menu
+          label: "Menu"
+        - id: cat_inv_sv_task.view
+          label: "View"
+    - category: Transaction
+      entries:
+        - id: cat_inv_trans.menu
+          label: "Menu"
+    - category: Supplier
+      entries:
+        - id: gist_supplier.menu
+          label: "Parent Menu"
+        - id: gist_supp.menu
+          label: "Menu"
+        - id: gist_supp.view
+          label: "View"
+        - id: gist_supp.add
+          label: "Add"
+        - id: gist_supp.edit
+          label: "Edit"
+        - id: gist_supp.delete
+          label: "Delete"
+    - category: Point of Sales (POS)
+      entries:
+        - id: gist_inv_pos.menu
+          label: "Menu"
+        - id: gist_inv_pos.view
+          label: "View"
+        - id: gist_inv_pos.add
+          label: "Add"
+        - id: gist_inv_pos.edit
+          label: "Edit"
+        - id: gist_inv_pos.delete
+          label: "Delete"

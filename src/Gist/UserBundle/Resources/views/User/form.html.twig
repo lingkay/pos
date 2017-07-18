@@ -1,0 +1,307 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form %}
+
+{% set readonly = not app.user.hasAccess('cat_user_user.edit') %}
+
+{% block content %}
+    <form method="post" class="form-horizontal">
+    {#BEGIN TABS#}
+    <!-- start of profile -->
+    <div class="row profile">
+        <div class="col-md-12">
+            <!--BEGIN TABS-->
+            <div class="tabbable tabbable-custom tabbable-full-width">
+                <!-- MAIN TABS -->
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#tab_sys_credentials" data-toggle="tab">
+                            System Credentials </a>
+                    </li>
+                    <li>
+                        <a href="#tab_personal_info" data-toggle="tab">
+                            Personal Information </a>
+                    </li>
+                    <li>
+                        <a href="#tab_emp_record" data-toggle="tab">
+                            Employee Record </a>
+                    </li>
+                    <li>
+                        <a href="#tab_items_given" data-toggle="tab">
+                            Items Given </a>
+                    </li>
+                    <li>
+                        <a href="#tab_documents" data-toggle="tab">
+                            Other Documents </a>
+                    </li>
+                    <li>
+                        <a href="#tab_performance" data-toggle="tab">
+                            Performance </a>
+                    </li>
+                </ul>
+                <!-- END MAIN TABS -->
+                <div class="tab-content">
+                    <!-- SYS CREDENTIALS TAB -->
+                    <div class="tab-pane active" id="tab_sys_credentials">
+                        {% include 'GistUserBundle:User:sys_credentials.html.twig' %}
+                    </div>
+                    <!-- PERSONAL INFO TAB -->
+                    <div class="tab-pane" id="tab_personal_info">
+                        {% include 'GistUserBundle:User:personal_info.html.twig' %}
+                    </div>
+                    <!-- EMPLOYMENT RECORD TAB -->
+                    <div class="tab-pane" id="tab_emp_record">
+                        {% include 'GistUserBundle:User:emp_record.html.twig' %}
+                    </div>
+                    <!-- ITEMS GIVEN TAB -->
+                    <div class="tab-pane" id="tab_items_given">
+                        {% include 'GistUserBundle:User:items_given.html.twig' %}
+                    </div>
+                    <div class="tab-pane" id="tab_performance">
+                        {% include 'GistUserBundle:User:performance.html.twig' %}
+                    </div>
+    </form>
+                    <!-- MORE FILES TAB -->
+                    <div class="tab-pane" id="tab_documents">
+                        {% include 'GistUserBundle:User:more_files.html.twig' %}
+                    </div> 
+                </div>
+            </div>
+            <!--END TABS-->
+        </div>
+    </div>
+    {#END TABS#}
+{% endblock %}
+{% block js %}
+<!-- HERE -->
+<script>
+    function appendFileFields()
+    { 
+        var field = '<tr>';     
+            field += "<td></td>";
+            field += '<td><input type="text" name="uom[]" class="form-control uom" readonly></td>';     
+            field += '<td></td>'; 
+            field += '</tr>';
+
+            $('#more_files_tbody').append(field);
+
+    }
+
+    function updateApproverField()
+    { 
+        var opt = $('#cform-approver').val();
+        if (opt == 'yes') {
+            $("#cform-approver-code").show();
+        } else {
+            $("#cform-approver-code").hide();
+            $("#cform-approver-code").val('');
+        }
+    }
+
+
+    function appendItemsField(item_id, item_name)
+    { 
+        var field = '<tr>';     
+            field += '<input type="hidden" name="item_id[]" value="'+item_id+'">';
+            field += '<td><input type="text" value="'+item_name+'" readonly="true" class="form-control"></td>';
+            field += '<td><input type="number" name="qty[]" class="form-control qty" min="1"></td>';     
+            field += '<td><a href="javascript:void(0)" class="btn btn-xs default red remove_ig_row">Remove</a></td>'; 
+            field += '</tr>';
+
+            $('#items_given_tbody').append(field);
+
+    }
+    function updatePositions()
+    {
+        var path;
+        var department = $('#cform-department').val();
+        path = "{{path('cat_user_group_get_positions', {'parent': 'PARENT'})}}";
+        path = path.replace('PARENT', department);
+
+        var $element = $('#cform-position').select2();
+        var $request = $.ajax({
+            url: path
+        });
+
+        $request.then(function (data)
+        {
+            //clear previous options
+            $('#cform-position option').remove();
+            //loop through all returned data then append
+            $.each(data, function(k, v) {
+                $('#cform-position').append('<option value="'+v.id+'">'+v.text+'</option>');
+            });
+            //refresh element
+            $element.trigger('change');
+        });
+    }
+$(document).ready(function() {
+
+    updateApproverField();
+    FormValidation.init(); 
+
+    Dropzone.options.myDropzone = {
+        maxFilesize: 2,
+        addRemoveLinks: true,
+        enqueueForUpload: true,
+        autoProcessQueue: false,
+        clickable: true,
+        init: function() {
+
+            this.on('queuecomplete', function () {
+                location.reload();
+            });
+
+            this.on("addedfile", function(file) {
+                
+            });
+
+           this.on("error", function(file, message) { 
+                toastr['error'](message, 'File Upload Error');
+                this.removeFile(file); 
+        });
+
+        }
+    };
+
+
+    $(document).on("click","#process_queue", function(e){
+            var myDropzone = Dropzone.forElement("#myDropzone");
+            myDropzone.processQueue();
+            
+        });
+
+
+    //for dynamic files form
+    var add_button = $(".add-ig-field");
+    $(add_button).on('click',function(){      
+        var item_id = $('#cform-item_opt').val();
+        var item_name = $('#cform-item_opt option:selected').text();
+
+        if (!item_id == '') 
+        {
+            appendItemsField(item_id, item_name);
+        }
+        else
+        {
+            toastr['error']('Select an item first.', 'Error');
+        }
+    });   
+
+    $(document).on("click",".remove_ig_row", function(e){
+            e.preventDefault();            
+            var tr = $(this).closest('tr');
+            tr.remove();
+            return false;
+        });
+
+
+    $('#cform-department').on("change", function()
+    {
+        updatePositions();
+    });
+
+    $('#cform-approver').on("change", function()
+    {
+        updateApproverField();
+    });
+    
+    // set default error and success elements
+    jQuery.validator.setDefaults({
+        errorClass: 'help-block',
+        errorElement: 'span',
+        errorPlacement: function(error, element) {
+            $("#help").html('');
+            if(element.parent().parent().hasClass('form-group'))
+            {
+                error.appendTo(element.parent().last());
+                element.parent().parent().addClass('has-error');
+            }
+            else if(element.parent().parent().hasClass('checker'))
+            {   
+                error.appendTo(element.parent().parent().parent().parent().last());
+                element.parent().parent().parent().parent().parent().addClass('has-error');
+            }
+            else
+            {
+                error.appendTo(element.parent().parent().last());
+                element.parent().parent().parent().addClass('has-error');
+            }
+        },
+        success: function(element) {
+            $("#help").html('');
+            if(element.parent().parent().hasClass('form-group'))
+            {  
+                element.parent().parent().removeClass('has-error');
+                element.parent().parent().addClass('has-success');
+            }
+            else if(element.parent().parent().hasClass('checker'))
+            {   
+                element.parent().parent().parent().parent().parent().addClass('has-error');
+                element.parent().parent().parent().parent().parent().addClass('has-success');
+            }
+            else
+            {  
+                element.parent().parent().parent().removeClass('has-error');
+                element.parent().parent().parent().addClass('has-success');
+            }
+
+            element.remove();
+        }
+    });
+
+    // validate form elements
+    $(".form-horizontal").validate({
+        ignore: "#items_given_tbody, .qty",
+        onfocusout: function(element) {
+           this.element(element);
+        },
+        rules: {
+            username: {
+                required: true
+            },
+            name: {
+                required: true
+            },
+            department: {
+                required: true
+            },
+            position: {
+                required: true
+            }
+        },
+        submitHandler: function(form) {
+            var pass1 = $("#cform-pass1");
+            var pass2 = $("#cform-pass2");
+            
+            // validate password if password field is changed
+            if(pass1.val() !== '' || pass2.val() !== '')
+            {
+                if(pass1.val() !== pass2.val())
+                {
+                    pass1.rules('add', {
+                        required: true
+                    });
+                    pass2.rules('add', {
+                        required: true,
+                        equalTo: "#cform-pass1",
+                        messages: {
+                            equalTo: "Password do not match."
+                        }
+                    });
+                    pass1.parents('.form-group').addClass('has-error');
+                    pass2.parents('.form-group').addClass('has-error');
+                    if(!$("#help").hasClass('help-block'))
+                        pass2.parent().parent().append('<span id="help" class="help-block">Password do not match.</span>');
+                }
+            }
+
+            if(pass1.val() === pass2.val())
+            {
+                form.submit();
+            }
+        }
+    });
+
+});
+</script>
+{% endblock %}

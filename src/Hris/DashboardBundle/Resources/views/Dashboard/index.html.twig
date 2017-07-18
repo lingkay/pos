@@ -1,0 +1,18 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% import "GistTemplateBundle::dashboard.html.twig" as dboard %}
+
+{% block content %}
+{% embed 'HrisDashboardBundle:Dashboard:contents.html.twig' %}{% endembed %}
+{% endblock %}
+
+{% block js %}
+<script>
+
+$(document).ready(function(){
+    var total = 0;
+    
+
+    });
+</script>
+{% endblock %}

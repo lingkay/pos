@@ -1,0 +1,28 @@
+<!-- BEGIN TOP NAVIGATION MENU -->
+<div class="top-menu">
+    <ul class="nav navbar-nav pull-right">
+<!-- BEGIN NOTIFICATION DROPDOWN -->
+            
+        <li class="dropdown dropdown-user">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+            {% if app.user.getEmployee != null and app.user.getEmployee.getProfile.getUpload != null %}
+                {% set src = app.user.getEmployee.getProfile.getUpload.getUrl %}
+            {% else %}
+                {% set src = asset('bundles/gisttemplate/assets/admin/layout/img/user_avatar.jpg')  %}
+            {% endif %}
+            <img alt="" class="img-circle" src="{{ src }}" height="29" width="29"/>
+            <span class="username">{{ app.user.getUsername }}</span>
+            <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="dropdown-menu">
+               
+                <li>
+                    <a href="/logout">
+                    <i class="fa fa-key"></i> Logout </a>
+                </li>
+            </ul>
+        </li>
+        <!-- END USER LOGIN DROPDOWN -->
+    </ul>
+</div>
+<!-- END TOP NAVIGATION MENU -->

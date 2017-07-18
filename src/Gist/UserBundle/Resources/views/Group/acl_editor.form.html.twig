@@ -1,0 +1,179 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet box blue-hoki">
+            <div class="portlet-title">
+                <div class="caption">{{object.getName}} - Access Control List</div>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <form method="post" class="form-horizontal">
+                    <div class="form-actions fluid" style="margin-top: 0px !important">
+                        <div class="col-md-9">
+                            {% if not readonly %}
+                            <button type="submit" class="btn blue">Save</button>
+                            {% endif %}
+                            <a href="{{ path(route_list) }}" class="btn default">Cancel</a>
+                            <a href="javascript:void(0)" class="btn default green" onclick="global_select_all()">Select All</a>
+                            <a href="javascript:void(0)" class="btn default red" onclick="global_deselect_all()">Deselect All</a>
+                        </div>
+                    </div>
+                    <div class="form-body">
+
+                        {{ form.hidden('csrf_token',app.session.get('csrf_token')) }}
+
+                        {% for bundle_label,bundle_entries in acl_entries %}
+                            <h4 class="form-section">{{ bundle_label }} <a href="javascript:void(0)" class="btn btn-xs default green" onclick="bundle_select_all('{{bundle_label}}')">Select All</a>&nbsp;<a href="javascript:void(0)" class="btn btn-xs default red" onclick="bundle_deselect_all('{{bundle_label}}')">Deselect All</a></h4>
+
+                            {% for cat_label,cat in bundle_entries %}
+                                <div class="form-group {{bundle_label}}">
+                                    <label class="col-md-3 control-label">{{ cat_label }}</label>
+
+                                    <div class="col-md-5 checkbox-list">
+                                    {% for acl_id,acl_label in cat %}
+                                    {{ form.checkbox('acl[' ~ acl_id ~ ']', 1, acl_label, object.hasAccess(acl_id), readonly) }}
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <div class="form-actions fluid">
+                        <div class="col-md-9">
+                            {% if not readonly %}
+                            <button type="submit" class="btn blue">Save</button>
+                            {% endif %}
+                            <a href="{{ path(route_list) }}" class="btn default">Cancel</a>
+                            <a href="javascript:void(0)" class="btn default green" onclick="global_select_all()">Select All</a>
+                            <a href="javascript:void(0)" class="btn default red" onclick="global_deselect_all()">Deselect All</a>
+                        </div>
+                    </div>
+                </form>
+                <!-- END FORM-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+    function bundle_select_all(var1)
+    {
+        $('.'+var1).find(':checkbox').each(function(){
+            $(this).closest('span').addClass('checked');
+            $(this).attr('checked','checked');
+        });
+    }
+
+    function bundle_deselect_all(var1)
+    {
+        $('.'+var1).find(':checkbox').each(function(){
+            $(this).closest('span').removeClass('checked');
+            $(this).removeAttr('checked');
+        });
+    }
+
+    function global_select_all() {
+        $('input:checkbox').each(function () {
+           // alert(this);
+           $(this).closest('span').addClass('checked');
+           $(this).attr('checked','checked');
+          });
+    }
+
+    function global_deselect_all() {
+        $('input:checkbox').each(function () {
+           // alert(this);
+           $(this).closest('span').removeClass('checked');
+           $(this).removeAttr('checked');
+          });
+    }
+
+    function updateHeads()
+    {
+        var path;
+        var department = $('#cform-department').val();
+        path = "{{path('cat_user_group_get_positions', {'parent': 'PARENT'})}}";
+        path = path.replace('PARENT', department);
+
+        var $element = $('#cform-head').select2();
+        var $request = $.ajax({
+            url: path
+        });
+
+        $request.then(function (data)
+        {
+            //clear previous options
+            $('#cform-head option').remove();
+            //loop through all returned data then append
+            $.each(data, function(k, v) {
+                $('#cform-head').append('<option value="'+v.id+'">'+v.text+'</option>');
+            });
+            //refresh element
+            $element.trigger('change');
+        });
+    }
+    $(document).ready(function() {
+        FormValidation.init(); // init form validation
+
+
+        $('#cform-department').on("change", function()
+        {
+            updateHeads();
+        });
+        
+        // set default error and success elements
+        jQuery.validator.setDefaults({
+            errorClass: 'help-block',
+            errorElement: 'span',
+            errorPlacement: function(error, element) {
+                if(element.parent().parent().hasClass('form-group'))
+                {
+                    error.appendTo(element.parent().last());
+                    element.parent().parent().addClass('has-error');
+                }
+                else
+                {
+                    error.appendTo(element.parent().parent().last());
+                    element.parent().parent().parent().addClass('has-error');
+                }
+            },
+            success: function(element) {
+                if(element.parent().parent().hasClass('form-group'))
+                {  
+                    element.parent().parent().removeClass('has-error');
+                    element.parent().parent().addClass('has-success');
+                }
+                else
+                {  
+                    element.parent().parent().parent().removeClass('has-error');
+                    element.parent().parent().parent().addClass('has-success');
+                }
+
+                element.remove();
+            }
+        });
+
+        // validate form elements
+        $(".form-horizontal").validate({
+            onfocusout: function(element) {
+               this.element(element);
+            },
+            rules: {
+                name: {
+                    required: true
+                }
+            },  
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+    });
+</script>
+{% endblock %}

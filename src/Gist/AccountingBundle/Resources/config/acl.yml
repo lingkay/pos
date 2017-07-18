@@ -1,0 +1,58 @@
+acl:
+    - category: Accounting
+      entries:
+        - id: gist_accounting.menu
+          label: "Menu"
+    - category: Bank Account
+      entries:
+        - id: gist_accounting_bank_accounts.menu
+          label: "Menu"
+        - id: gist_accounting_bank_accounts.view
+          label: "View"
+        - id: gist_accounting_bank_accounts.add
+          label: "Add"
+        - id: gist_accounting_bank_accounts.edit
+          label: "Edit"
+        - id: gist_accounting_bank_accounts.delete
+          label: "Delete"
+    - category: Banks
+      entries:
+        - id: gist_accounting_banks.menu
+          label: "Menu"
+        - id: gist_accounting_banks.view
+          label: "View"
+        - id: gist_accounting_banks.add
+          label: "Add"
+        - id: gist_accounting_banks.edit
+          label: "Edit"
+        - id: gist_accounting_banks.delete
+          label: "Delete"
+
+    - category: Terminals
+      entries:
+        - id: gist_terminals.menu
+          label: "Menu"
+    - category: Terminal
+      entries:
+        - id: gist_terminals_terminal.menu
+          label: "Menu"
+        - id: gist_terminals_terminal.view
+          label: "View"
+        - id: gist_terminals_terminal.add
+          label: "Add"
+        - id: gist_terminals_terminal.edit
+          label: "Edit"
+        - id: gist_terminals_terminal.delete
+          label: "Delete"
+    - category: Terminal Operator
+      entries:
+        - id: gist_terminals_terminal_operator.menu
+          label: "Menu"
+        - id: gist_terminals_terminal_operator.view
+          label: "View"
+        - id: gist_terminals_terminal_operator.add
+          label: "Add"
+        - id: gist_terminals_terminal_operator.edit
+          label: "Edit"
+        - id: gist_terminals_terminal_operator.delete
+          label: "Delete"
