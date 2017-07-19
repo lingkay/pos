@@ -70,7 +70,7 @@ function ajaxGetProductCategories()
 {
     
     $( "#prod_cats" ).empty();
-    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
 
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
