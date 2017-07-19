@@ -82,9 +82,7 @@
         <!-- BEGIN LOGO -->
         <div class="page-logo">
 
-            <div class="menu-toggler sidebar-toggler">
-                <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
-            </div>
+            <div style="color: white; font-color: white; font-size: 16px; margin-top: 10px;" id="top_nav_dt"></div>
             
         </div>
 
@@ -104,84 +102,7 @@
 </div>
 <!-- BEGIN CONTAINER -->
 <div class="page-container">
-    <!-- BEGIN SIDEBAR -->
-    <div class="page-sidebar-wrapper">
-        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-        <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-        <div class="page-sidebar navbar-collapse collapse">
-        <div class="menu-logo">
-                <a href="/">
-                    <span class="helper"></span>
-                    <img src="{{ asset('bundles/gisttemplate/assets/global/img/cosmeti_logo.png') }}" style="width:100%;" alt="logo" class="logo-default"/>
-                    <span class="helper"></span>
-                </a>
-        </div>
-            
-        </div>
-    </div>
-    <!-- END SIDEBAR -->
-    <!-- BEGIN CONTENT -->
-    <div class="page-content-wrapper">
-        <div class="page-content">
-            <!-- BEGIN PAGE HEADER-->
-            <div class="row">
-                <div class="col-md-12">
-                    <!-- BEGIN PAGE TITLE & BREADCRUMB-->
-                    <h3 class="page-title">
-                    {% block header_title %}
-                    {{ head_title }} <small>{{ head_subtitle }}</small>
-                    {% endblock %}
-                    </h3>
-                    <ul class="page-breadcrumb breadcrumb">
-                        <li>
-                            <i class="fa fa-home"></i>
-                            <a href="/">Home</a>
-                            <i class="fa fa-angle-right"></i>
-                        </li>
-                        {% for trail in bcrumb %}
-                        <li>
-                            {% if (trail.url != null) %}
-                            <a href="{{ trail.url }}">{{ trail.label }}</a>
-                            {% else %}
-                            {{ trail.label }}
-                            {% endif %}
-
-                            {% if (not loop.last) %}
-                            <i class="fa fa-angle-right"></i>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-                        <li class="pull-right">
-                        {% block header_right %}{% endblock %}
-                        </li>
-                    </ul>
-                    <!-- END PAGE TITLE & BREADCRUMB-->
-                </div>
-            </div>
-            <!-- END PAGE HEADER-->
-
-            {% for flash_msg in app.session.flashbag.get('error') %}
-            {# <div class="alert alert-danger alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-                <strong>Error: </strong>
-                {{ flash_msg }}
-            </div> #}
-                {{ form.hidden('error[]',flash_msg) }}
-            {% endfor %}
-
-            {% for flash_msg in app.session.flashbag.get('success') %}
-            {# <div class="alert alert-success alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-                <strong>Success: </strong>
-                {{ flash_msg }}
-            </div> #}
-                {{ form.hidden('success[]',flash_msg) }}
-            {% endfor %}
-
-            {% block content %}{% endblock %}
-        </div>
-    </div>
-    <!-- END CONTENT -->
+   {% block content %}{% endblock %}
 </div>
 <!-- END CONTAINER -->
 <!-- BEGIN FOOTER -->
@@ -275,7 +196,74 @@
 {% endjavascripts %}
 <!-- END PAGE LEVEL SCRIPTS -->
 <script>
+function startTime() {
+
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    var mm = formatMonthName(today.getMonth());
+    var day = formatCurrentDay(today.getDay());
+    var dd = today.getDay();
+    var time = formatAMPM(today);
+    var yy = today.getFullYear();
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('top_nav_dt').innerHTML =
+    day + " " + mm + " " + dd + ", " + yy + " - " +time;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+
+function formatAMPM(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return strTime;
+}
+
+function formatMonthName(monthN)
+{
+    var month = new Array();
+    month[0] = "January";
+    month[1] = "February";
+    month[2] = "March";
+    month[3] = "April";
+    month[4] = "May";
+    month[5] = "June";
+    month[6] = "July";
+    month[7] = "August";
+    month[8] = "September";
+    month[9] = "October";
+    month[10] = "November";
+    month[11] = "December";
+    return month[monthN];
+}
+
+function formatCurrentDay(dayN)
+{
+    var weekday = new Array(7);
+    weekday[0] =  "Sunday";
+    weekday[1] = "Monday";
+    weekday[2] = "Tuesday";
+    weekday[3] = "Wednesday";
+    weekday[4] = "Thursday";
+    weekday[5] = "Friday";
+    weekday[6] = "Saturday";
+    return weekday[dayN];
+}
+
 jQuery(document).ready(function() {
+
+    startTime();
+
     $(".select2-search__field").attr("placeholder", "Search...");
     $('#print_btn').prop('target', "_blank");
     Metronic.init(); // init metronic core componets
