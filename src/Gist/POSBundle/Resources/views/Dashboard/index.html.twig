@@ -12,11 +12,12 @@
                 <div class="portlet-title">
                     <div class="caption">Product Categories</div>
                 </div>
-                <div class="portlet-body form" style="background-color: #2D2D2D;">
+                <div class="portlet-body form" id="prod_cats" style="background-color: #2D2D2D;">
                 	<br>
                 	{% for pc in product_categories|default(null) %}
                     	<button class="btn btn-lg btn-block" style="background-color: #556E93; color: #ffffff;">{{pc.getName}}</button>
                 	{% endfor %}
+                    <button class="btn btn-lg btn-block" style="background-color: #556E93; color: #ffffff;">DUMMY</button>
                 </div>
             </div>
         </div>
@@ -65,9 +66,21 @@
 
 {% block js %}
 <script>
+function ajaxGetProductCategories()
+{
+    
+    $( "#prod_cats" ).empty();
+    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
 
-$(document).ready(function(){
-
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, item) {
+            // alert(item.name);
+            $("#prod_cats").append("<button class=\"btn btn-lg btn-block\" style=\"background-color: #556E93; color: #ffffff;\">"+item.name+"</button>")
+        });
     });
+}
+$(document).ready(function(){
+    ajaxGetProductCategories();
+});
 </script>
 {% endblock %}
