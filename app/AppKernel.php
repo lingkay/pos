@@ -37,6 +37,7 @@ class AppKernel extends Kernel
             new Gist\LogBundle\GistLogBundle(),
             new Gist\UserBundle\GistUserBundle(),
             new Gist\MediaBundle\GistMediaBundle(),
+            new Gist\POSBundle\GistPOSBundle(),
             new Gist\PdfBundle\GistPdfBundle(),
             new Gist\NotificationBundle\GistNotificationBundle(),
 
@@ -60,7 +61,7 @@ class AppKernel extends Kernel
             // new Hris\TrainingBundle\HrisTrainingBundle(),
             // new Hris\CompanyOverviewBundle\HrisCompanyOverviewBundle(),
             // new Hris\ProfileBundle\HrisProfileBundle(),
-            new Hris\DashboardBundle\HrisDashboardBundle(),
+            // new Hris\DashboardBundle\HrisDashboardBundle(),
             // new Hris\ReportBundle\HrisReportBundle(),
             new Hris\TemplateBundle\HrisTemplateBundle(),
             // new Hris\NotificationBundle\HrisNotificationBundle(),

@@ -50,8 +50,8 @@ hris_admin:
 #     resource: "@HrisReportBundle/Resources/config/routing.yml"
 #     prefix:   /report
 
-hris_dashboard:
-    resource: "@HrisDashboardBundle/Resources/config/routing.yml"
+gist_pos:
+    resource: "@GistPOSBundle/Resources/config/routing.yml"
     prefix:   /
 
 # hris_profile:
