@@ -1,0 +1,60 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% block content %}
+<div class="page-content landing">
+    <div class="row">
+        <div class="col-md-12">
+        <div style="margin-top: 10px;">&nbsp;</div>
+        <img src="bundles/gisttemplate/assets/global/img/cosmeti_logo.png" align="middle" style="display: block; margin: 0 auto; width: 280px;">
+        </div>
+    </div>
+    <div style="margin-top: 20px;">&nbsp;</div>
+    <div class="row">
+        <div class="col-md-4">
+        <a href="http://erp.cilanthropist.co">
+            <img src="bundles/gisttemplate/assets/global/img/erp_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
+        </a>
+        </div>
+        <div class="col-md-4">
+        <a href="http://pos.cilanthropist.co/pos">
+            <img src="bundles/gisttemplate/assets/global/img/pos_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
+        </a>
+        </div>
+        <div class="col-md-4">
+            <img src="bundles/gisttemplate/assets/global/img/crm_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+function ajaxGetProductCategories()
+{
+    $( "#prod_cats" ).empty();
+
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, item) {
+            // alert(item.name);
+            $("#prod_cats").append("<button class=\"btn btn-md btn-block\" onclick=\"ajaxGetProductCategories("+item.id+")\" style=\"background-color: #556E93; color: #ffffff;\">"+item.name+"</button>");
+        });
+    });
+}
+function ajaxGetProductCategories(cid)
+{
+    
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/{ cid: ':cid'}";
+    url = url.replace(":cid", cid);
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, item) {
+            alert(item.name);
+
+        });
+    });
+}
+$(document).ready(function(){
+    ajaxGetProductCategories();
+});
+</script>
+{% endblock %}

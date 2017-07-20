@@ -25,7 +25,7 @@
                 </div>
                 <div class="portlet-body form">
                 	<br>
-                	<div class="row">
+                	<div class="row" id="prods">
                 		{% for p in products|default(null) %}
 	        				<div class="col-md-3">
 	        					<a href="" style="text-decoration: none;">
@@ -65,14 +65,36 @@
 <script>
 function ajaxGetProductCategories()
 {
-    
     $( "#prod_cats" ).empty();
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
 
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             // alert(item.name);
-            $("#prod_cats").append("<button class=\"btn btn-md btn-block\" style=\"background-color: #556E93; color: #ffffff;\">"+item.name+"</button>")
+            $("#prod_cats").append("<button class=\"btn btn-md btn-block\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff;\">"+item.name+"</button>");
+        });
+    });
+}
+function ajaxGetProducts(cid)
+{
+
+    // alert(cid);
+    $( "#prods" ).empty();
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, item) {
+            $("#prods").append("<div class=\"col-md-3\">\
+                    <a href=\"\" style=\"text-decoration: none;\">\
+                    <div class=\"thumbnail\">\
+                        <img src="+item.image_url+" style=\"height: 180px; width: 100%; display: block;\">\
+                        <div class=\"caption\" style=\"font-size: 14px !important;\">\
+                            <h3 style=\"font-size: 14px !important; margin: 0!important;\">"+item.name+"</h3>\
+                            <h3 style=\"font-size: 14px !important; margin: 0!important;\"><b>PHP 0</b></h3>\
+                        </div>\
+                    </div>\
+                    </a>\
+                </div>");
+
         });
     });
 }

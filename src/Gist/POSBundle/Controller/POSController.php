@@ -16,4 +16,14 @@ class POSController extends Controller
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
+
+    public function landingAction()
+    {
+    	$this->title = 'Dashboard';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+
+        
+
+        return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
+    }
 }

@@ -1,4 +1,7 @@
 gist_dashboard_index:
-    path:     /
+    path:     /pos
     defaults: { _controller: GistPOSBundle:POS:index }
 
+gist_main_index:
+    path:     /
+    defaults: { _controller: GistPOSBundle:POS:landing }
