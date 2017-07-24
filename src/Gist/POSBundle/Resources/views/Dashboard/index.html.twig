@@ -7,7 +7,7 @@
         <!-- START -->
         <br>
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-2" style="padding: 1px !important;">
         	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;">
                 <div class="portlet-title">
                     <div class="caption">Product Categories</div>
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-7" style="padding: 1px !important;">
         	<div class="portlet box blue-hoki">
                 <div class="portlet-title">
                     <div class="caption">Products</div>
@@ -93,7 +93,7 @@ function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
 
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             // alert(item.name);
@@ -108,7 +108,7 @@ function ajaxGetProducts(cid)
     $("#prods").append("<div class=\"col-md-12\"><h2>Loading products...</h2></div>");
 
     
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         $( "#prods" ).empty();
         var count = 0;
@@ -124,13 +124,13 @@ function ajaxGetProducts(cid)
             img = item.image_url;
         }
 
-            $("#prods").append("<div class=\"col-md-3\">\
+            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
                     <a href=\"#\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+")\">\
-                    <div class=\"thumbnail\">\
-                        <img src="+img+" style=\"height: 180px; width: 100%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 14px !important;\">\
-                            <h3 style=\"font-size: 14px !important; margin: 0!important;\">"+item.name+"</h3>\
-                            <h3 style=\"font-size: 14px !important; margin: 0!important;\"><b>PHP "+price+"</b></h3>\
+                    <div class=\"thumbnail\" style=\"margin: 0px !important\">\
+                        <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
+                        <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
+                            <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
+                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+price+"</b></h3>\
                         </div>\
                     </div>\
                     </a>\
