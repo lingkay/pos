@@ -7,7 +7,7 @@
         <!-- START -->
         <br>
     <div class="row">
-        <div class="col-md-2" style="padding: 1px !important;">
+        <div class="col-md-2" style="padding-right: 1px !important;">
         	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;">
                 <div class="portlet-title">
                     <div class="caption">Product Categories</div>
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7" style="padding: 1px !important;">
+        <div class="col-md-7" style="padding-right: 1px !important; padding-left: 0px !important;">
         	<div class="portlet box blue-hoki">
                 <div class="portlet-title">
                     <div class="caption">Products</div>
@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" style="padding-left: 1px !important;">
         	<div class="portlet box blue-hoki" style="background-color: #ffffff;">
                 <div class="portlet-title">
                     <div class="caption">Cart</div>
@@ -43,9 +43,9 @@
                 <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
                     <thead>
                         <tr>
-                            <th width="60%">Item</th>
+                            <th width="50%">Item</th>
                             <th>Price</th>
-                            <th></th>
+                            <th width="25%"></th>
                         </tr>
                     </thead>
                     <tbody id="cart_items">
@@ -71,10 +71,10 @@ function addToCart(product_name, srp)
 {
     var field = '<tr>';     
         // field += '<input type="hidden" name="item_id[]" value="'+item_id+'">';
-        field += '<td><input type="text" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-        field += '<td><input type="text" name="srp[]" class="form-control srp" readonly="true" value="'+srp+'"></td>'; 
+        field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
+        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="srp[]" class="form-control srp" readonly="true" value="'+srp+'"></td>'; 
         //field += '<td><input type="number" name="qty" class="form-control qty" min="1" value="1"></td>';    
-        field += '<td><a href="javascript:void(0)" class="btn btn-xs default red remove_row">X</a></td>'; 
+        field += '<td><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a><a href="javascript:void(0)" class="btn btn-xs default green indiv_adj"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
         field += '</tr>';
 
         $('#cart_items').prepend(field);
@@ -93,7 +93,7 @@ function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
 
-    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             // alert(item.name);
@@ -108,7 +108,7 @@ function ajaxGetProducts(cid)
     $("#prods").append("<div class=\"col-md-12\"><h2>Loading products...</h2></div>");
 
     
-    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         $( "#prods" ).empty();
         var count = 0;
@@ -161,7 +161,7 @@ $(document).ready(function(){
 
 
 
-    $("#prods").append("<div class=\"col-md-12\"><h2>Select a product categoy</h2></div>");
+    $("#prods").append("<div class=\"col-md-12\"><h2>Select a product category</h2></div>");
 
     $(document).on("click",".remove_row", function(e){
             e.preventDefault();            
