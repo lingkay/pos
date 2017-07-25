@@ -2,11 +2,9 @@
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
 <div class="page-content">
-    <div class="row">
-        <div class="col-md-12">
-        <!-- START -->
+
         <br>
-    <div class="row">
+    <div class="row" style="margin-right: 0px !important;">
         <div class="col-md-2" style="padding-right: 1px !important;">
         	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;">
                 <div class="portlet-title">
@@ -33,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3" style="padding-left: 1px !important;">
+        <div class="col-md-3" style="padding-left: 1px !important; padding-right: 0px !important;">
         	<div class="portlet box blue-hoki" style="background-color: #ffffff;">
                 <div class="portlet-title">
                     <div class="caption">Cart</div>
@@ -53,32 +51,57 @@
                     </tbody>
                 </table>
                 </div>
+                <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <h3>Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
                     
                 </div>
             </div>
         </div>
     </div>
-        <!-- END -->
+
+</div>
+
+<div id="item_adjustment" class="modal fade" tabindex="-2" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 id="form_title" class="modal-title">Item Price Adjustment Form</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green add-ig-field" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Apply</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal" href="#ledger_entries_form">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block js %}
 <script>
-function addToCart(product_name, srp)
+function addToCart(product_name, srp, min_price, id)
 {
     var field = '<tr>';     
         // field += '<input type="hidden" name="item_id[]" value="'+item_id+'">';
+        field += '<input type=\"hidden\" name=\"product_id[]\" value=\"'+id+'\" >';
+        field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
+        field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
         field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="srp[]" class="form-control srp" readonly="true" value="'+srp+'"></td>'; 
+        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control srp" readonly="true" value="'+srp+'"></td>'; 
         //field += '<td><input type="number" name="qty" class="form-control qty" min="1" value="1"></td>';    
         field += '<td><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a><a href="javascript:void(0)" class="btn btn-xs default green indiv_adj"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
         field += '</tr>';
 
         $('#cart_items').prepend(field);
         computeCart();
+        computeCartMinimum();
 }
 function computeCart()
 {
@@ -89,11 +112,20 @@ function computeCart()
 
     $("#cart_price").text(addCommas(total.toString()));
 }
+function computeCartMinimum()
+{
+    var total = 0;
+    $('.min_price').each(function(){
+        total = total + parseInt($(this).val());
+    });
+
+    $("#cart_min_price").val(addCommas(total.toString()));
+}
 function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
 
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             // alert(item.name);
@@ -108,7 +140,7 @@ function ajaxGetProducts(cid)
     $("#prods").append("<div class=\"col-md-12\"><h2>Loading products...</h2></div>");
 
     
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         $( "#prods" ).empty();
         var count = 0;
@@ -125,7 +157,7 @@ function ajaxGetProducts(cid)
         }
 
             $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
-                    <a href=\"#\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+")\">\
+                    <a href=\"#\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important\">\
                         <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
@@ -159,16 +191,20 @@ function addCommas(nStr)
 $(document).ready(function(){
     ajaxGetProductCategories();
 
-
-
-    $("#prods").append("<div class=\"col-md-12\"><h2>Select a product category</h2></div>");
-
     $(document).on("click",".remove_row", function(e){
             e.preventDefault();            
             var tr = $(this).closest('tr');
             tr.remove();
             computeCart();
+            computeCartMinimum();
             return false;
+        });
+
+
+    $("#prods").append("<div class=\"col-md-12\"><h2>Select a product category</h2></div>");
+
+    $(document).on("click",".indiv_adj", function(e){
+            $('#item_adjustment').modal('show');
         });
 });
 </script>
