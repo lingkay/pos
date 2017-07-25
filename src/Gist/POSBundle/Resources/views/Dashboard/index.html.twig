@@ -38,7 +38,7 @@
                 </div>
                 <div class="portlet-body form">
                 <div style="overflow:scroll; height:400px; overflow-x: hidden;">
-                <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
+                <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_table">
                     <thead>
                         <tr>
                             <th width="50%">Item</th>
@@ -58,20 +58,19 @@
             </div>
         </div>
     </div>
-
-</div>
-
-<div id="item_adjustment" class="modal fade" tabindex="-2" aria-hidden="true">
+<div id="item_adjustment" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
+                        <input type="hidden" id="item_adjustment_prod_id" value="0">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                         <h4 id="form_title" class="modal-title">Item Price Adjustment Form</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row form-horizontal form">
-                            
+                            {{ form.group_select('Option', 'indiv_adj', indiv_options, '', 3, 4, false) }}
+                            {{ form.group_text('New Price', 'new_price', '', 3, 4, true) }}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -82,19 +81,23 @@
             </div>
         </div>
     </div>
+</div>
+
+
 {% endblock %}
 
 {% block js %}
 <script>
 function addToCart(product_name, srp, min_price, id)
 {
-    var field = '<tr>';     
+    var field = '<tr class=\"row_prod_'+id+'\">';     
         // field += '<input type="hidden" name="item_id[]" value="'+item_id+'">';
-        field += '<input type=\"hidden\" name=\"product_id[]\" value=\"'+id+'\" >';
+        field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
         field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
         field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
+        field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
         field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control srp" readonly="true" value="'+srp+'"></td>'; 
+        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>'; 
         //field += '<td><input type="number" name="qty" class="form-control qty" min="1" value="1"></td>';    
         field += '<td><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a><a href="javascript:void(0)" class="btn btn-xs default green indiv_adj"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
         field += '</tr>';
@@ -106,11 +109,12 @@ function addToCart(product_name, srp, min_price, id)
 function computeCart()
 {
     var total = 0;
-    $('.srp').each(function(){
+    $('.display_price').each(function(){
         total = total + parseInt($(this).val());
     });
 
     $("#cart_price").text(addCommas(total.toString()));
+    console.log('Sell Price:'+total);
 }
 function computeCartMinimum()
 {
@@ -120,6 +124,7 @@ function computeCartMinimum()
     });
 
     $("#cart_min_price").val(addCommas(total.toString()));
+    console.log('Min Price:'+total);
 }
 function ajaxGetProductCategories()
 {
@@ -188,8 +193,54 @@ function addCommas(nStr)
     }
     return x1 + x2;
 }
+
+function applyIndividualAdjustment()
+{   
+    var indiv_adj_opt = $('#cform-indiv_adj').val();
+    if (indiv_adj_opt != '') {
+        var selected_prod_id = $('#item_adjustment_prod_id').val();
+    
+        // alert('modal: '+selected_prod_id);
+        var row = $("#cart_table > tbody > tr.row_prod_"+selected_prod_id);
+        var srp = row.find('.srp').val();
+        // alert(srp);
+
+        if (indiv_adj_opt == 'gift') {
+            row.find('.display_price').val(0.00);
+        } else if (indiv_adj_opt == '40p') {
+            var discounted_srp = srp * .4;
+            row.find('.display_price').val(discounted_srp);
+        } else if (indiv_adj_opt == 'chg') {
+            $('#cgroup-new_price').show();
+        } else {
+            row.find('.display_price').val(srp);
+        }
+    } else {
+        //none selected
+    }
+    
+
+}
 $(document).ready(function(){
     ajaxGetProductCategories();
+
+    $('#cgroup-new_price').val('');
+    $('#cgroup-new_price').hide();
+
+    //FOR INDIV ITEM ADJUSTMENT
+    $('#cform-indiv_adj').on("change", function()
+    {
+        // alert('hey!');
+        applyIndividualAdjustment();
+    });
+
+    $('#item_adjustment').on('hidden.bs.modal', function () {
+      //recompute cart total after update
+      $('#item_adjustment_prod_id').val(0);
+      $("#cform-indiv_adj").val('').trigger('change');
+      computeCart();
+      computeCartMinimum();
+    });
 
     $(document).on("click",".remove_row", function(e){
             e.preventDefault();            
@@ -205,6 +256,9 @@ $(document).ready(function(){
 
     $(document).on("click",".indiv_adj", function(e){
             $('#item_adjustment').modal('show');
+            var selected_prod_id = $(this).closest('tr').find('.product_id').val();
+            // alert(selected_prod_id);
+            $('#item_adjustment_prod_id').val(selected_prod_id);
         });
 });
 </script>
