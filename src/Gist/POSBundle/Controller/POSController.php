@@ -20,10 +20,11 @@ class POSController extends Controller
         );
 
         $params['bulk_options'] = array(
-            '1' => 'Gift',
-            '2' => 'Discount Amount',
-            '3' => 'Discount',
-            '4' => 'Amount to Pay'
+            'none' => 'None',
+            'bgift' => 'Gift',
+            'bdiscamt' => 'Discount Amount',
+            'bdic' => 'Discount',
+            'bamt' => 'Amount to Pay'
         );
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
