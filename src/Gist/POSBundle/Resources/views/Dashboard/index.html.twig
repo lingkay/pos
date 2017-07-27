@@ -10,9 +10,8 @@
                 <div class="portlet-title">
                     <div class="caption">Product Categories</div>
                 </div>
-                <div class="portlet-body form" id="prod_cats" style="background-color: #2D2D2D;">
-                	<br>
-                    <button class="btn btn-lg btn-block" style="background-color: #556E93; color: #ffffff;">...</button>
+                <div class="portlet-body form" id="prod_cats" style=" height:460px; overflow:scroll;overflow-x: hidden;">
+                	
                 </div>
             </div>
         </div>
@@ -51,9 +50,14 @@
                     </tbody>
                 </table>
                 </div>
+                <div class="row">
+                {{ form.group_text('Approval Code', 'app_code', '', 3, 4, false) }}
+                </div>
+                <br>
                 <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                 <a href="javascript:void(0)" class="btn" style="background-color: green; color: #ffffff;">Checkout</a>
                 <a href="" class="btn" style="background-color: red; color: #ffffff;">Void</a>
+
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
                 <h3>Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
@@ -68,7 +72,7 @@
                 <form method="post" action="">
                     <div class="modal-header">
                         <input type="hidden" id="item_adjustment_prod_id" value="0">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
                         <h4 id="form_title" class="modal-title">Item Price Adjustment Form</h4>
                     </div>
                     <div class="modal-body">
@@ -79,7 +83,7 @@
                     </div>
                     <div class="modal-footer">
                         <a class="btn default green apply_indiv" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Apply</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal" href="#ledger_entries_form">Cancel</button>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -90,7 +94,7 @@
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
                         <h4 id="form_title" class="modal-title">Bulk Adjustment Form</h4>
                     </div>
                     <div class="modal-body">
@@ -103,17 +107,14 @@
                     </div>
                     <div class="modal-footer">
                         <a class="btn default green apply_bulk" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Apply</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal" href="#ledger_entries_form">Cancel</button>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-
 {% endblock %}
-
 {% block js %}
 <script>
 function addToCart(product_name, srp, min_price, id)
@@ -154,12 +155,18 @@ function computeCartMinimum()
 
     $("#cart_min_price").val(addCommas(total.toString()));
     console.log('Min Price:'+total);
+
+    if (total > $('#cart_int_price').val()) {
+        $('#cgroup-app_code').show();
+    } else {
+        $('#cgroup-app_code').hide();
+    }
 }
 function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
-
-    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    $("#prod_cats").append("<div style=\"height: 10px;\">");
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -167,10 +174,10 @@ function ajaxGetProductCategories()
                 img = item.image_url;
             }
             // alert(item.name);
-            $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff;\">"+item.name+"</button>");
+            $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
 
             $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
-                    <a href=\"#\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
+                    <a href=\"#\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important\">\
                         <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
@@ -186,10 +193,10 @@ function ajaxGetProducts(cid)
 {
 
     $( "#prods" ).empty();
-    $("#prods").append("<div class=\"col-md-12\"><h2>Loading products...</h2></div>");
-
+    $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
+    $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     
-    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         $( "#prods" ).empty();
         var count = 0;
@@ -221,7 +228,7 @@ function ajaxGetProducts(cid)
 
        if (count == 0) {
             $( "#prods" ).empty();
-            //$("#prods").append("<div class=\"col-md-12\"><h2>No products in selected category</h2></div>");
+            $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;No products in selected category</h2></div>");
        }
     });
 }
@@ -247,7 +254,7 @@ function applyIndividualAdjustment()
         var srp = row.find('.srp').val();
 
         if (indiv_adj_opt == 'gift') {
-            row.find('.display_price').val(0.00);
+            row.find('.display_price').val('0.00');
         } else if (indiv_adj_opt == '40p') {
             var discounted_srp = srp * .4;
             row.find('.display_price').val(discounted_srp);
@@ -265,27 +272,31 @@ function applyBulkAdjustment()
 {   
     var bulk_adj_opt = $('#cform-bulk_adj').val();
     if (bulk_adj_opt != '') {
-
-        //  var srp = row.find('.srp').val();
-
         if (bulk_adj_opt == 'bgift') {
-            $('.display_price').each(function() {
-                $(this).val('0.00');
-                computeCart();
-                computeCartMinimum();
-            });
+            // $('.display_price').each(function() {
+            //     $(this).val('0.00');
+            //     computeCart();
+            //     computeCartMinimum();
+            // });
+            $('#cart_price').text(0);
+            $('#cart_int_price').val(0);
         } else if (bulk_adj_opt == 'bdiscamt') {
             var new_cart_total = $('#cart_int_price').val() - $('#cform-discount_amount').val();
-            $('#cart_price').text(addCommas(new_cart_total));
+            if (new_cart_total >= 0) {
+                $('#cart_price').text(addCommas(new_cart_total));
+                $('#cart_int_price').val(new_cart_total);
+            }
         } else if (bulk_adj_opt == 'bdisc') {
-            alert($('#cform-discount_pct').val()*.100);
             var new_cart_total = $('#cart_int_price').val() - ($('#cart_int_price').val() * ($('#cform-discount_pct').val()/100));
-            $('#cart_price').text(addCommas(new_cart_total));
+            if (new_cart_total >= 0) {
+                $('#cart_price').text(addCommas(new_cart_total));
+                $('#cart_int_price').val(new_cart_total);
+            }
         } else if (bulk_adj_opt == 'bamt') {
             $('#cart_price').text(addCommas($('#cform-new_total').val()));
         } else {
             $('.display_price').each(function() {
-                if ($(this).val() == 0) {
+                if ($(this).val() == "0" || $(this).val() == "0.00") {
                     //revert prices only if bulk discount came from gift
                     var row = $(this).closest('tr');
                     var srp = row.find('.srp').val();
@@ -301,17 +312,62 @@ function applyBulkAdjustment()
     }
 }
 
-$(document).ready(function(){
-    ajaxGetProductCategories();
+function revertOriginalPrices()
+{
+    $('.display_price').each(function() {
+        if ($(this).val() == "0" || $(this).val() == 0.00) {
+            //revert prices only if bulk discount came from gift
+            var row = $(this).closest('tr');
+            var srp = row.find('.srp').val();
+            $(this).val(srp);
+        }
+        
+    });
+    computeCart();
+    computeCartMinimum();
+}
 
-    $('#cform-new_price').val('');
-    $('#cgroup-new_price').hide();
-    $('#cform-new_total').val('');
-    $('#cgroup-new_total').hide();
+function hideBulkAmounts()
+{
     $('#cform-discount_amount').val('');
     $('#cgroup-discount_amount').hide();
     $('#cform-discount_pct').val('');
     $('#cgroup-discount_pct').hide();
+    $('#cform-new_total').val('');
+    $('#cgroup-new_total').hide();
+}
+
+function cancelBulkAdjustment()
+{
+    revertOriginalPrices();
+    $('#cgroup-new_total').hide();
+    $('#cform-new_total').val('');
+    $('#cform-discount_amount').val('');
+    $('#cgroup-discount_amount').hide();
+    $('#cform-discount_pct').val('');
+    $('#cgroup-discount_pct').hide();
+    $('.indiv_adj').show();
+    $('.remove_row').show();
+    $('.display_price').each(function() {
+        if ($(this).val() == "0" || $(this).val() == 0.00) {
+            //revert prices only if bulk discount came from gift
+            var row = $(this).closest('tr');
+            var srp = row.find('.srp').val();
+            $(this).val(srp);
+        }
+        
+    });
+
+}
+
+$(document).ready(function(){
+    $('#cgroup-app_code').hide();
+
+    ajaxGetProductCategories();
+
+    $('#cform-new_price').val('');
+    $('#cgroup-new_price').hide();
+    hideBulkAmounts();
 
     $(document).on("click",".apply_indiv", function(e){
         applyIndividualAdjustment();
@@ -320,6 +376,13 @@ $(document).ready(function(){
     $(document).on("click",".apply_bulk", function(e){
         applyBulkAdjustment();
     });
+
+    $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
 
     
     $(document).on("click",".category_btn", function(e){
@@ -346,29 +409,40 @@ $(document).ready(function(){
     $('#cform-bulk_adj').on("change", function()
     {
         var bulk_adj_opt = $('#cform-bulk_adj').val();
-        if (bulk_adj_opt == 'bamt') {
+        $('.indiv_adj').each(function() {
+            $(this).hide();
+        });
+
+        $('.remove_row').each(function() {
+            $(this).hide();
+        });
+
+        if (bulk_adj_opt == 'bgift') {
+
+        } else if (bulk_adj_opt == 'bamt') {
+            hideBulkAmounts();
             $('#cform-new_total').val('');
             $('#cgroup-new_total').show();
+            // revertOriginalPrices();
         } else if (bulk_adj_opt == 'bdiscamt') {
+            hideBulkAmounts();
             $('#cform-discount_amount').val('');
             $('#cgroup-discount_amount').show();
+            // revertOriginalPrices();
         } else if (bulk_adj_opt == 'bdisc') {
+            hideBulkAmounts();
             $('#cform-discount_pct').val('');
             $('#cgroup-discount_pct').show();
+            
         } else {
-            $('#cgroup-new_total').hide();
-            $('#cform-new_total').val('');
-            $('#cform-discount_amount').val('');
-            $('#cgroup-discount_amount').hide();
-            $('#cform-discount_pct').val('');
-            $('#cgroup-discount_pct').hide();
+            cancelBulkAdjustment();
         }
     });
 
 
     $('#item_adjustment').on('hidden.bs.modal', function () {
       //recompute cart total after update
-      $('#item_adjustment_prod_id').val(0);
+      $('#item_adjustment_prod_id').val(0.00);
       $("#cform-indiv_adj").val('').trigger('change');
       computeCart();
       computeCartMinimum();
@@ -376,7 +450,14 @@ $(document).ready(function(){
 
     $('#bulk_adjustment').on('hidden.bs.modal', function () {
       //recompute cart total after update
-      $("#cform-bulk_adj").val('').trigger('change');
+      // $("#cform-bulk_adj").val('').trigger('change');
+        $('#cgroup-new_total').hide();
+        $('#cform-new_total').val('');
+        $('#cform-discount_amount').val('');
+        $('#cgroup-discount_amount').hide();
+        $('#cform-discount_pct').val('');
+        $('#cgroup-discount_pct').hide();
+        computeCartMinimum();
 
     });
 
