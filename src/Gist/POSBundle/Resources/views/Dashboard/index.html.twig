@@ -365,6 +365,9 @@ function cancelBulkAdjustment()
         
     });
 
+    $("#prods").removeClass("disabledbutton");
+    $("#prod_cats").removeClass("disabledbutton");
+
 }
 
 $(document).ready(function(){
@@ -423,6 +426,9 @@ $(document).ready(function(){
         $('.remove_row').each(function() {
             $(this).hide();
         });
+
+        $("#prods").addClass("disabledbutton");
+        $("#prod_cats").addClass("disabledbutton");
 
         if (bulk_adj_opt == 'bgift') {
 
