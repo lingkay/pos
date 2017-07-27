@@ -36,7 +36,7 @@
                     <div class="caption">Cart</div>
                 </div>
                 <div class="portlet-body form">
-                <div style="overflow:scroll; height:370px; overflow-x: hidden;">
+                <div style="overflow:scroll; height:350px; overflow-x: hidden;">
                 <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_table">
                     <thead>
                         <tr>
@@ -51,7 +51,7 @@
                 </table>
                 </div>
                 <div class="row">
-                {{ form.group_text('Approval Code', 'app_code', '', 3, 4, false) }}
+                {{ form.group_text('Approval Code', 'app_code', '', 4, 6, false) }}
                 </div>
                 <br>
                 <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
@@ -293,6 +293,7 @@ function applyBulkAdjustment()
                 $('#cart_int_price').val(new_cart_total);
             }
         } else if (bulk_adj_opt == 'bamt') {
+            $('#cart_int_price').val($('#cform-new_total').val());
             $('#cart_price').text(addCommas($('#cform-new_total').val()));
         } else {
             $('.display_price').each(function() {
@@ -448,6 +449,10 @@ $(document).ready(function(){
       computeCartMinimum();
     });
 
+    $('#bulk_adjustment').on('shown.bs.modal', function () {
+        
+    });
+
     $('#bulk_adjustment').on('hidden.bs.modal', function () {
       //recompute cart total after update
       // $("#cform-bulk_adj").val('').trigger('change');
@@ -483,6 +488,23 @@ $(document).ready(function(){
     $(document).on("click",".bulk_adj", function(e){
         $('#bulk_adjustment').modal('show');
     });
+
+
+    $("#cform-discount_pct").keyup(function() {
+        $("#cform-discount_pct").val(this.value.match(/[0-9]*/));
+    });
+
+    $("#cform-discount_amount").keyup(function() {
+        $("#cform-discount_amount").val(this.value.match(/[0-9]*/));
+    });
+
+    $("#cform-new_price").keyup(function() {
+        $("#cform-new_price").val(this.value.match(/[0-9]*/));
+    });
+
+
+
+
 });
 </script>
 {% endblock %}
