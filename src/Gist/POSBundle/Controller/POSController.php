@@ -23,7 +23,7 @@ class POSController extends Controller
             'none' => 'None',
             'bgift' => 'Gift',
             'bdiscamt' => 'Discount Amount',
-            'bdic' => 'Discount',
+            'bdisc' => 'Discount',
             'bamt' => 'Amount to Pay'
         );
 

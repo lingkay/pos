@@ -55,6 +55,7 @@
                 <a href="javascript:void(0)" class="btn" style="background-color: green; color: #ffffff;">Checkout</a>
                 <a href="" class="btn" style="background-color: red; color: #ffffff;">Void</a>
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
+                <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
                 <h3>Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
                     
                 </div>
@@ -117,8 +118,10 @@
 <script>
 function addToCart(product_name, srp, min_price, id)
 {
-    var field = '<tr class=\"row_prod_'+id+'\">';     
-        field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
+    //id = erp product id
+    var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+    var field = '<tr class=\"row_prod_'+row_id+'\">';     
+        field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
         field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
         field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
         field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
@@ -138,6 +141,7 @@ function computeCart()
         total = total + parseInt($(this).val());
     });
 
+    $('#cart_int_price').val(total);
     $("#cart_price").text(addCommas(total.toString()));
     console.log('Sell Price:'+total);
 }
@@ -155,7 +159,7 @@ function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
 
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -185,7 +189,7 @@ function ajaxGetProducts(cid)
     $("#prods").append("<div class=\"col-md-12\"><h2>Loading products...</h2></div>");
 
     
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         $( "#prods" ).empty();
         var count = 0;
@@ -271,16 +275,23 @@ function applyBulkAdjustment()
                 computeCartMinimum();
             });
         } else if (bulk_adj_opt == 'bdiscamt') {
-
+            var new_cart_total = $('#cart_int_price').val() - $('#cform-discount_amount').val();
+            $('#cart_price').text(addCommas(new_cart_total));
         } else if (bulk_adj_opt == 'bdisc') {
-
+            alert($('#cform-discount_pct').val()*.100);
+            var new_cart_total = $('#cart_int_price').val() - ($('#cart_int_price').val() * ($('#cform-discount_pct').val()/100));
+            $('#cart_price').text(addCommas(new_cart_total));
         } else if (bulk_adj_opt == 'bamt') {
             $('#cart_price').text(addCommas($('#cform-new_total').val()));
         } else {
             $('.display_price').each(function() {
-                var row = $(this).closest('tr');
-                var srp = row.find('.srp').val();
-                $(this).val(srp);
+                if ($(this).val() == 0) {
+                    //revert prices only if bulk discount came from gift
+                    var row = $(this).closest('tr');
+                    var srp = row.find('.srp').val();
+                    $(this).val(srp);
+                }
+                
             });
             computeCart();
             computeCartMinimum();
@@ -338,9 +349,19 @@ $(document).ready(function(){
         if (bulk_adj_opt == 'bamt') {
             $('#cform-new_total').val('');
             $('#cgroup-new_total').show();
+        } else if (bulk_adj_opt == 'bdiscamt') {
+            $('#cform-discount_amount').val('');
+            $('#cgroup-discount_amount').show();
+        } else if (bulk_adj_opt == 'bdisc') {
+            $('#cform-discount_pct').val('');
+            $('#cgroup-discount_pct').show();
         } else {
             $('#cgroup-new_total').hide();
             $('#cform-new_total').val('');
+            $('#cform-discount_amount').val('');
+            $('#cgroup-discount_amount').hide();
+            $('#cform-discount_pct').val('');
+            $('#cgroup-discount_pct').hide();
         }
     });
 
