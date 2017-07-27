@@ -281,18 +281,24 @@ function applyBulkAdjustment()
             $('#cart_price').text(0);
             $('#cart_int_price').val(0);
         } else if (bulk_adj_opt == 'bdiscamt') {
+            computeCart();
+            computeCartMinimum();
             var new_cart_total = $('#cart_int_price').val() - $('#cform-discount_amount').val();
             if (new_cart_total >= 0) {
                 $('#cart_price').text(addCommas(new_cart_total));
                 $('#cart_int_price').val(new_cart_total);
             }
         } else if (bulk_adj_opt == 'bdisc') {
+            computeCart();
+            computeCartMinimum();
             var new_cart_total = $('#cart_int_price').val() - ($('#cart_int_price').val() * ($('#cform-discount_pct').val()/100));
             if (new_cart_total >= 0) {
                 $('#cart_price').text(addCommas(new_cart_total));
                 $('#cart_int_price').val(new_cart_total);
             }
         } else if (bulk_adj_opt == 'bamt') {
+            computeCart();
+            computeCartMinimum();
             $('#cart_int_price').val($('#cform-new_total').val());
             $('#cart_price').text(addCommas($('#cform-new_total').val()));
         } else {
@@ -450,7 +456,7 @@ $(document).ready(function(){
     });
 
     $('#bulk_adjustment').on('shown.bs.modal', function () {
-        
+
     });
 
     $('#bulk_adjustment').on('hidden.bs.modal', function () {
