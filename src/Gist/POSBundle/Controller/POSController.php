@@ -27,6 +27,12 @@ class POSController extends Controller
             'bamt' => 'Amount to Pay'
         );
 
+        $params['trans_options'] = array(
+            'reg' => 'Regular',
+            'per' => 'Per-item',
+            'bulk' => 'Bulk'
+        );
+
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
 

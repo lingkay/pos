@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7" style="padding-right: 1px !important; padding-left: 0px !important;">
+        <div class="col-md-6" style="padding-right: 1px !important; padding-left: 0px !important;">
         	<div class="portlet box blue-hoki">
                 <div class="portlet-title">
                     <div class="caption">Products <span id="selected_pcat"></span></div>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3" style="padding-left: 1px !important; padding-right: 0px !important;">
+        <div class="col-md-4" style="padding-left: 1px !important; padding-right: 0px !important;">
         	<div class="portlet box blue-hoki" style="background-color: #ffffff;">
                 <div class="portlet-title">
                     <div class="caption">Cart</div>
@@ -54,9 +54,10 @@
                 {{ form.group_text('Approval Code', 'app_code', '', 4, 6, false) }}
                 </div>
                 <br>
-                <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
+                <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
+                {#<a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                 <a href="javascript:void(0)" class="btn" style="background-color: green; color: #ffffff;">Checkout</a>
-                <a href="" class="btn" style="background-color: red; color: #ffffff;">Void</a>
+                <a href="" class="btn" style="background-color: red; color: #ffffff;">Void</a>#}
 
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
@@ -113,10 +114,43 @@
             </div>
         </div>
     </div>
+    <div id="transaction_type_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Select Transaction Type</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            {{ form.group_select('Type', 'trans_opts', trans_options, '', 3, 4, false) }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green apply_indiv" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 {% block js %}
 <script>
+function hideItemAdjustment()
+{
+    $('.indiv_adj').each(function() {
+        $(this).hide();
+    });
+}
+function showItemAdjustment()
+{
+    $('.indiv_adj').each(function() {
+        $(this).show();
+    });
+}
 function addToCart(product_name, srp, min_price, id)
 {
     //id = erp product id
@@ -132,6 +166,7 @@ function addToCart(product_name, srp, min_price, id)
         field += '</tr>';
 
         $('#cart_items').prepend(field);
+        hideItemAdjustment();
         computeCart();
         computeCartMinimum();
 }
@@ -166,7 +201,8 @@ function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
     $("#prod_cats").append("<div style=\"height: 10px;\">");
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    //var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -176,7 +212,7 @@ function ajaxGetProductCategories()
             // alert(item.name);
             $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
 
-            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
+            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
                     <a href=\"#\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important\">\
                         <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
@@ -196,7 +232,8 @@ function ajaxGetProducts(cid)
     $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
     $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    // var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         $( "#prods" ).empty();
         var count = 0;
@@ -212,7 +249,7 @@ function ajaxGetProducts(cid)
             img = item.image_url;
         }
 
-            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
+            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
                     <a href=\"#\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important\">\
                         <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
@@ -388,11 +425,15 @@ $(document).ready(function(){
     });
 
     $(window).keydown(function(event){
-    if(event.keyCode == 13) {
-      event.preventDefault();
-      return false;
-    }
-  });
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+    });
+
+    $(document).on("click",".next_step_btn", function(e){
+        $('#transaction_type_modal').modal('show');
+    });
 
     
     $(document).on("click",".category_btn", function(e){
