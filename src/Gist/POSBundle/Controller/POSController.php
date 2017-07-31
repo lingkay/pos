@@ -13,9 +13,8 @@ class POSController extends Controller
         $params = $this->getViewParams('', 'gist_dashboard_index');
 
         $params['indiv_options'] = array(
-            'none' => 'None',
             'gift' => 'Gift/Free',
-            '40p' => 'Discount %',
+            'disc' => 'Discount %',
             'chg' => 'Change of Price'
         );
 
