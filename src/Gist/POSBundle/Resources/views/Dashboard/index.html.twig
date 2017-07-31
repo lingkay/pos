@@ -5,24 +5,24 @@
 
         <br>
     <div class="row" style="margin-right: 0px !important;">
-        <div class="col-md-2" style="padding-right: 1px !important;">
-        	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;">
+        <div class="col-md-2" style="padding-right: 1px !important; border: 0px !important;">
+        	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;border: 0px !important;">
                 <div class="portlet-title">
                     <div class="caption">Product Categories</div>
                 </div>
-                <div class="portlet-body form" id="prod_cats" style=" height:460px; overflow:scroll;overflow-x: hidden;">
+                <div class="portlet-body form" id="prod_cats" style="height: 440px; overflow:scroll;overflow-x: hidden;">
                 	
                 </div>
             </div>
         </div>
-        <div class="col-md-6" style="padding-right: 1px !important; padding-left: 0px !important;">
-        	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;">
+        <div class="col-md-4" style="padding-right: 1px !important; padding-left: 5px !important;">
+        	<div class="portlet box blue-hoki" style="background-color: #2D2D2D;border: 0px !important;">
                 <div class="portlet-title">
                     <div class="caption">Products <span id="selected_pcat"></span></div>
                 </div>
                 <div class="portlet-body form">
                 	<br>
-                    <div  style="overflow:scroll; height:440px; overflow-x: hidden;">
+                    <div  style="height: 440px;overflow:scroll; overflow-x: hidden;">
                 	<div class="row" id="prods">
                 		
                     </div>
@@ -30,13 +30,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4" style="padding-left: 1px !important; padding-right: 0px !important;">
-        	<div class="portlet box blue-hoki" style="background-color: #ffffff;">
+        <div class="col-md-6" style="padding-left: 1px !important; padding-right: 0px !important;">
+        	<div class="portlet box blue-hoki" style="background-color: #ffffff;border: 0px !important;">
                 <div class="portlet-title">
                     <div class="caption">Cart</div>
                 </div>
                 <div class="portlet-body form">
-                <div style="overflow:scroll; height:300px; overflow-x: hidden;">
+                <div style="overflow:scroll; overflow-x: hidden; height: 330px;">
                 <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_table">
                     <thead>
                         <tr>
@@ -70,6 +70,7 @@
             </div>
         </div>
     </div>
+
     <div id="item_adjustment" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -165,7 +166,7 @@ function addToCart(product_name, srp, min_price, id)
         field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
         field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
         field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>';  
-        field += '<td><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a><a href="javascript:void(0)" class="btn btn-xs default green indiv_adj"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
+        field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a><a href="javascript:void(0)" class="btn btn-xs default green indiv_adj"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
         field += '</tr>';
 
         $('#cart_items').prepend(field);
@@ -218,9 +219,9 @@ function ajaxGetProductCategories()
             // alert(item.name);
             $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
 
-            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
+            $("#prods").append("<div class=\"col-md-6\" style=\"margin: 0px !important; padding: 1px !important\" >\
                     <a href=\"#\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important\">\
+                    <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
                         <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
                             <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
@@ -265,9 +266,9 @@ function ajaxGetProducts(cid)
             img = item.image_url;
         }
 
-            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
+            $("#prods").append("<div class=\"col-md-6\" style=\"margin: 0px !important; padding: 2px !important\" >\
                     <a href=\"#\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important\">\
+                    <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
                         <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
                             <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
@@ -321,18 +322,58 @@ function applyIndividualAdjustment()
     }
 }
 
+function hideCartLastColumn()
+{
+    $('td:last-child').each(function(){
+        $(this).css("display", "none");
+    });
+
+    $('th:last-child').each(function(){
+        $(this).css("display", "none");
+    });
+}
+
+function showCartLastColumn()
+{
+    $('td:last-child').each(function(){
+        $(this).css("display", "");
+    });
+
+    $('th:last-child').each(function(){
+        $(this).css("display", "");
+    });
+}
+
 function proceedToTransaction()
 {
     var select_trans = $('#cform-trans_opts').val();
     if (select_trans != '') {
         $("#prods").addClass("disabledbutton");
+
         $("#prod_cats").addClass("disabledbutton");
         if (select_trans == 'reg') {
             $('.next_step_btn').hide();
             $('.checkout_btn').show();
             $('.remove_row').hide();
+            hideCartLastColumn();
         } else if (select_trans == 'per') {
-            alert('per item selected');
+            hideCartLastColumn();
+            $('#cart_table').find('tr').each(function(){
+                $(this).find('th').eq(2).after('<th>Type</th>');
+                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                    {{ form.group_select_only('Type', 'trans_opts', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+            });
+
+            $('#cart_table').find('tr').each(function(){
+                $(this).find('th').eq(3).after('<th>Adjusted</th>');
+                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control item_name" readonly="true" value="0.00"></td>');
+            });
+
+            var ths = $('th');
+            var element = ths.eq(0);
+            element.width(200);
+            var element2 = ths.eq(1);
+            element2.width(100);
         } else if (select_trans == 'bulk') {
             $('.next_step_btn').hide();
             $('.remove_row').hide();

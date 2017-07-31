@@ -15,7 +15,7 @@ class POSController extends Controller
         $params['indiv_options'] = array(
             'none' => 'None',
             'gift' => 'Gift/Free',
-            '40p' => '40% Discount',
+            '40p' => 'Discount %',
             'chg' => 'Change of Price'
         );
 
@@ -23,14 +23,14 @@ class POSController extends Controller
             'none' => 'None',
             'bgift' => 'Gift',
             'bdiscamt' => 'Discount Amount',
-            'bdisc' => 'Discount',
+            'bdisc' => 'Discount %',
             'bamt' => 'Amount to Pay'
         );
 
         $params['trans_options'] = array(
-            'reg' => 'Regular',
-            'per' => 'Per-item',
-            'bulk' => 'Bulk'
+            'reg' => 'Regular Transaction',
+            'per' => 'Per-item Discount',
+            'bulk' => 'Bulk Discount'
         );
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
