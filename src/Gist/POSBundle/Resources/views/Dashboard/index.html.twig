@@ -214,8 +214,8 @@ function ajaxGetProductCategories()
     $( "#prod_cats" ).empty();
     $( "#prods" ).empty();
     $("#prod_cats").append("<div style=\"height: 10px;\">");
-    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
-    // var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    // var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -240,8 +240,8 @@ function ajaxGetProductCategories()
 }
 function ajaxGetVAT()
 {
-    var url = "http://dev.gisterp2/inventory/pos/get/vat";
-    // var url = "http://erp.cilanthropist.co/inventory/pos/get/vat";
+    // var url = "http://dev.gisterp2/inventory/pos/get/vat";
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/vat";
     $.getJSON(url, function(json){  
         //alert(json);
     });
@@ -254,8 +254,8 @@ function ajaxGetProducts(cid)
     $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     $( "#prods" ).empty();
     
-    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
-    // var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, item) {
