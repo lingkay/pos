@@ -50,8 +50,9 @@
                     </tbody>
                 </table>
                 </div>
+                <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
                 <div class="row">
-                {{ form.group_text('Approval Code', 'app_code', '', 4, 6, false) }}
+                {{ form.group_text('Approval Code', 'app_code', '', 4, 2, false) }}
                 </div>
                 <br>
                 <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
@@ -63,7 +64,7 @@
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
                 <input type="hidden" id="cart_int_orig_price" name="cart_int_price" value="0">
                 <h3 class="orig_price_h3">Original Total: <b>Php <span id="cart_orig_price" value="0">0</span></b></h3>
-                <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value=""></span></b></h4>
+                
                 <h3>Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
                     
                 </div>
@@ -171,35 +172,42 @@ function addToCart(product_name, srp, min_price, id)
 
         $('#cart_items').prepend(field);
         hideItemAdjustment();
-        computeCart();
+        
+        if($('.checkout_btn').is(':visible')) {
+            
+        } else {
+            computeCart();
+        }
+        appendPerItemFields();
         computeCartMinimum();
 }
 function computeCart()
 {
     var total = 0;
+    var new_total = 0;
     $('.display_price').each(function(){
         total = total + parseInt($(this).val());
     });
 
-    $('#cart_int_price').val(total);
-    $('#cart_int_orig_price').val(total);
-    $("#cart_price").text(addCommas(total.toString()));
-    $("#cart_orig_price").text(addCommas(total.toString()));
-    console.log('Sell Price:'+total);
-}
-function computeCartIndivTrans()
-{
-    var total = 0;
     $('.adjusted_price').each(function(){
-        total = total + parseInt($(this).val());
+        new_total = new_total + parseInt($(this).val());
     });
 
-    $('#cart_int_price').val(total);
+    $("#cart_orig_price").text(addCommas(total.toString()));
     $('#cart_int_orig_price').val(total);
-    $("#cart_price").text(addCommas(total.toString()));
-    //$("#cart_orig_price").text(addCommas(total.toString()));
+
+    if ($('.checkout_btn').is(':visible')) {
+        $('#cart_int_price').val(new_total);
+        $("#cart_price").text(addCommas(new_total.toString()));
+    } else {
+        $('#cart_int_price').val(total);
+        $("#cart_price").text(addCommas(total.toString()));
+    }
+    
+    
     console.log('Sell Price:'+total);
 }
+
 function computeCartMinimum()
 {
     var total = 0;
@@ -221,8 +229,8 @@ function ajaxGetProductCategories()
     $( "#prod_cats" ).empty();
     $( "#prods" ).empty();
     $("#prod_cats").append("<div style=\"height: 10px;\">");
-    // var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    // var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -245,6 +253,14 @@ function ajaxGetProductCategories()
         });
     });
 }
+function ajaxGetVAT()
+{
+    var url = "http://dev.gisterp2/inventory/pos/get/vat";
+    // var url = "http://erp.cilanthropist.co/inventory/pos/get/vat";
+    $.getJSON(url, function(json){  
+        //alert(json);
+    });
+}
 function ajaxGetProducts(cid)
 {
 
@@ -263,8 +279,8 @@ function ajaxGetProducts(cid)
     //                 </a>\
     //             </div>");
     
-    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    // var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, item) {
@@ -361,52 +377,19 @@ function proceedToTransaction()
 {
     var select_trans = $('#cform-trans_opts').val();
     if (select_trans != '') {
-        $("#prods").addClass("disabledbutton");
-
-        $("#prod_cats").addClass("disabledbutton");
+        // $("#prods").addClass("disabledbutton");
+        // $("#prod_cats").addClass("disabledbutton");
         if (select_trans == 'reg') {
             $('.next_step_btn').hide();
             $('.checkout_btn').show();
             $('.remove_row').hide();
             hideCartLastColumn();
         } else if (select_trans == 'per') {
-            hideCartLastColumn();
+            // hideCartLastColumn();
             $('.next_step_btn').hide();
             $('.checkout_btn').show();
-            $('#cart_table').find('tr').each(function(){
-                $(this).find('th').eq(2).after('<th>Discount Type</th>');
-                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
-                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
-            });
-
-            $('#cart_table').find('tr').each(function(){
-                $(this).find('th').eq(3).after('<th>Value</th>');
-                $(this).find('td').eq(3).after("<td style=\"font-size: 10px !important;\">\
-                    <input type=\"text\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-            });
-
-            $('#cart_table').find('tr').each(function(){
-                $(this).find('th').eq(4).after('<th>Adjusted Price</th>');
-                $(this).find('td').eq(4).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
-            });
-
-
-
-            $('.adjusted_price').each(function(){
-                var row = $(this).closest('tr');
-                var srp = row.find('.srp').val();
-                $(this).val(srp);
-            });
-
-            var ths = $('th');
-            var element = ths.eq(0);
-            element.width(170);
-            var element2 = ths.eq(1);
-            element2.width(75);
-            var element2 = ths.eq(4);
-            element2.width(75);
-            var element2 = ths.eq(5);
-            element2.width(75);
+            appendPerItemColumns();
+            appendPerItemFields();
             $('.orig_price_h3').show();
         } else if (select_trans == 'bulk') {
             $('.next_step_btn').hide();
@@ -423,16 +406,55 @@ function proceedToTransaction()
     }
 }
 
+function appendPerItemColumns()
+{
+    $('#cart_table').find('tr').each(function(){
+        $(this).find('th').eq(1).after('<th>Discount Type</th>');
+    });
+
+    $('#cart_table').find('tr').each(function(){
+        $(this).find('th').eq(2).after('<th>Value</th>');
+    });
+
+    $('#cart_table').find('tr').each(function(){
+        $(this).find('th').eq(3).after('<th>Adjusted Price</th>');
+    });
+    var ths = $('th');
+    var element = ths.eq(0);
+    element.width(170);
+    var element2 = ths.eq(1);
+    element2.width(75);
+    var element2 = ths.eq(3);
+    element2.width(75);
+    var element2 = ths.eq(4);
+    element2.width(75);
+}
+
+function appendPerItemFields()
+{
+    if ($('.checkout_btn').is(':visible')) {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('td').length < 6) {
+                $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
+                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                    <input type=\"text\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
+
+                var srp = $(this).find('.srp').val();
+                var ap = $(this).find('.adjusted_price');
+                ap.val(srp);
+                computeCart();
+            }
+        });
+    }
+}
+
 function applyBulkAdjustment()
 {   
     var bulk_adj_opt = $('#cform-bulk_adj').val();
     if (bulk_adj_opt != '') {
         if (bulk_adj_opt == 'bgift') {
-            // $('.display_price').each(function() {
-            //     $(this).val('0.00');
-            //     computeCart();
-            //     computeCartMinimum();
-            // });
             $('#cart_price').text(0);
             $('#cart_int_price').val(0);
             $('#applied_bulk_discount').text('Gift');
@@ -557,12 +579,12 @@ function apply_indiv(x)
         per_item_discount_amt.val('');
     }
 
-    computeCartIndivTrans();
+    computeCart();
     computeCartMinimum();
 }
 
-$(document).ready(function(){
-
+$(document).ready(function(){   
+    ajaxGetVAT();
     toastr.options = {
       "closeButton": false,
       "debug": false,
@@ -600,7 +622,7 @@ $(document).ready(function(){
             adjusted_price.val($(this).val());
         }
         
-        computeCartIndivTrans();
+        computeCart();
         computeCartMinimum();
 
     });
@@ -682,8 +704,8 @@ $(document).ready(function(){
             $(this).hide();
         });
 
-        $("#prods").addClass("disabledbutton");
-        $("#prod_cats").addClass("disabledbutton");
+        // $("#prods").addClass("disabledbutton");
+        // $("#prod_cats").addClass("disabledbutton");
 
         if (bulk_adj_opt == 'bgift') {
 
@@ -737,7 +759,12 @@ $(document).ready(function(){
             e.preventDefault();            
             var tr = $(this).closest('tr');
             tr.remove();
-            computeCart();
+            if($('.checkout_btn').is(':visible')) {
+                computeCart();
+            } else {
+                computeCart();
+            }
+            
             computeCartMinimum();
             return false;
         });
