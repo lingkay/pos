@@ -58,7 +58,9 @@
                 <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
                 <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                 <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout</a>
+                <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Clear Discount</a>
                 <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
+
 
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
@@ -72,29 +74,6 @@
         </div>
     </div>
 
-    <div id="item_adjustment" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-header">
-                        <input type="hidden" id="item_adjustment_prod_id" value="0">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Item Price Adjustment Form</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            {{ form.group_select('Option', 'indiv_adj', indiv_options, '', 3, 4, false) }}
-                            {{ form.group_text('New Price', 'new_price', '', 3, 4, false) }}
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn default green apply_indiv" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Apply</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <div id="bulk_adjustment" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -133,7 +112,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green proceed_btn" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <a class="btn default green proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
                         <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
@@ -173,12 +152,12 @@ function addToCart(product_name, srp, min_price, id)
         $('#cart_items').prepend(field);
         hideItemAdjustment();
         
-        if($('.checkout_btn').is(':visible')) {
-            
+        if($('.checkout_btn').is(':visible') && $('.bulk_adj').is(':hidden')) {
+            appendPerItemFields();
         } else {
             computeCart();
         }
-        appendPerItemFields();
+        
         computeCartMinimum();
 }
 function computeCart()
@@ -196,12 +175,18 @@ function computeCart()
     $("#cart_orig_price").text(addCommas(total.toString()));
     $('#cart_int_orig_price').val(total);
 
-    if ($('.checkout_btn').is(':visible')) {
+    if ($('.checkout_btn').is(':visible') && $('.bulk_adj').is(':hidden')) {
         $('#cart_int_price').val(new_total);
         $("#cart_price").text(addCommas(new_total.toString()));
     } else {
-        $('#cart_int_price').val(total);
-        $("#cart_price").text(addCommas(total.toString()));
+        if($('.bulk_adj').is(':hidden')) {
+            $('#cart_int_price').val(total);
+            $("#cart_price").text(addCommas(total.toString()));
+        } else {
+            $('#cart_int_price').val(total);
+            applyBulkAdjustment();
+        }
+        
     }
     
     
@@ -268,16 +253,6 @@ function ajaxGetProducts(cid)
     $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
     $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     $( "#prods" ).empty();
-    // $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
-    //                 <a href=\"#\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProductCategories()\">\
-    //                 <div class=\"thumbnail\" style=\"margin: 0px !important\">\
-    //                     <img src=\"\" style=\"height: 150px; width: 80%; display: block;\">\
-    //                     <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-    //                         <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">Go Back</h3>\
-    //                     </div>\
-    //                 </div>\
-    //                 </a>\
-    //             </div>");
     
     var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
     // var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
@@ -382,7 +357,8 @@ function proceedToTransaction()
         if (select_trans == 'reg') {
             $('.next_step_btn').hide();
             $('.checkout_btn').show();
-            $('.remove_row').hide();
+            // $('.remove_row').hide();
+            // $('.clear_discount').show();
             hideCartLastColumn();
         } else if (select_trans == 'per') {
             // hideCartLastColumn();
@@ -391,18 +367,23 @@ function proceedToTransaction()
             appendPerItemColumns();
             appendPerItemFields();
             $('.orig_price_h3').show();
+            $('.clear_discount').show();
         } else if (select_trans == 'bulk') {
             $('.next_step_btn').hide();
-            $('.remove_row').hide();
+            // $('.remove_row').hide();
             $('.bulk_adj').show();
+            $('#proc').show();
+            $('#transaction_type_modal').modal('hide');
+            $('#bulk_adjustment').modal('show');
             $('.bulk_discount_h4').show();
             $('.checkout_btn').show();
             $('.orig_price_h3').show();
+            $('.clear_discount').show();
         } else {
-
+            $('.clear_discount').hide();
         }
     } else {
-
+        $('.clear_discount').hide();
     }
 }
 
@@ -459,9 +440,7 @@ function applyBulkAdjustment()
             $('#cart_int_price').val(0);
             $('#applied_bulk_discount').text('Gift');
         } else if (bulk_adj_opt == 'bdiscamt') {
-            computeCart();
-            computeCartMinimum();
-            var new_cart_total = $('#cart_int_price').val() - $('#cform-discount_amount').val();
+            var new_cart_total = $('#cart_int_orig_price').val() - $('#cform-discount_amount').val();
             if (new_cart_total >= 0) {
                 $('#cart_price').text(addCommas(new_cart_total));
                 $('#cart_int_price').val(new_cart_total);
@@ -470,9 +449,7 @@ function applyBulkAdjustment()
                 toastr['error']('Invalid discount amount.', 'Error');
             }
         } else if (bulk_adj_opt == 'bdisc') {
-            computeCart();
-            computeCartMinimum();
-            var new_cart_total = $('#cart_int_price').val() - ($('#cart_int_price').val() * ($('#cform-discount_pct').val()/100));
+            var new_cart_total = $('#cart_int_orig_price').val() - ($('#cart_int_orig_price').val() * ($('#cform-discount_pct').val()/100));
             if (new_cart_total >= 0) {
                 $('#cart_price').text(addCommas(new_cart_total));
                 $('#cart_int_price').val(new_cart_total);
@@ -481,8 +458,6 @@ function applyBulkAdjustment()
                 toastr['error']('Invalid discount.', 'Error');
             }
         } else if (bulk_adj_opt == 'bamt') {
-            computeCart();
-            computeCartMinimum();
             $('#cart_int_price').val($('#cform-new_total').val());
             $('#cart_price').text(addCommas($('#cform-new_total').val()));
             $('#applied_bulk_discount').text('Change Amount');
@@ -545,12 +520,8 @@ function cancelBulkAdjustment()
             var row = $(this).closest('tr');
             var srp = row.find('.srp').val();
             $(this).val(srp);
-        }
-        
+        }  
     });
-
-    
-
 }
 
 function apply_indiv(x)
@@ -630,6 +601,7 @@ $(document).ready(function(){
 
     $('#cgroup-app_code').hide();
     $('.bulk_adj').hide();
+    $('.clear_discount').hide();
     $('.checkout_btn').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
@@ -669,9 +641,6 @@ $(document).ready(function(){
         }
     });
 
-    
-
-    
     $(document).on("click",".category_btn", function(e){
 
         $('.category_btn').each(function() {
@@ -700,57 +669,40 @@ $(document).ready(function(){
             $(this).hide();
         });
 
-        $('.remove_row').each(function() {
-            $(this).hide();
-        });
-
-        // $("#prods").addClass("disabledbutton");
-        // $("#prod_cats").addClass("disabledbutton");
-
         if (bulk_adj_opt == 'bgift') {
 
         } else if (bulk_adj_opt == 'bamt') {
-            hideBulkAmounts();
-            $('#cform-new_total').val('');
-            $('#cgroup-new_total').show();
-            // revertOriginalPrices();
-        } else if (bulk_adj_opt == 'bdiscamt') {
-            hideBulkAmounts();
             $('#cform-discount_amount').val('');
-            $('#cgroup-discount_amount').show();
-            // revertOriginalPrices();
-        } else if (bulk_adj_opt == 'bdisc') {
-            hideBulkAmounts();
+            $('#cgroup-discount_amount').hide();
             $('#cform-discount_pct').val('');
+            $('#cgroup-discount_pct').hide();
+            // $('#cform-new_total').val('');
+            $('#cgroup-new_total').show();
+        } else if (bulk_adj_opt == 'bdiscamt') {
+            // $('#cform-discount_amount').val('');
+            $('#cgroup-discount_amount').show();
+            $('#cform-discount_pct').val('');
+            $('#cgroup-discount_pct').hide();
+            $('#cform-new_total').val('');
+            $('#cgroup-new_total').hide();
+        } else if (bulk_adj_opt == 'bdisc') {
+            $('#cform-discount_amount').val('');
+            $('#cgroup-discount_amount').hide();
+            // $('#cform-discount_pct').val('');
             $('#cgroup-discount_pct').show();
-            
+            $('#cform-new_total').val('');
+            $('#cgroup-new_total').hide();
         } else {
             cancelBulkAdjustment();
         }
     });
 
 
-    $('#item_adjustment').on('hidden.bs.modal', function () {
-      //recompute cart total after update
-      $('#item_adjustment_prod_id').val(0.00);
-      $("#cform-indiv_adj").val('').trigger('change');
-      computeCart();
-      computeCartMinimum();
-    });
-
     $('#bulk_adjustment').on('shown.bs.modal', function () {
 
     });
 
     $('#bulk_adjustment').on('hidden.bs.modal', function () {
-      //recompute cart total after update
-      // $("#cform-bulk_adj").val('').trigger('change');
-        $('#cgroup-new_total').hide();
-        $('#cform-new_total').val('');
-        $('#cform-discount_amount').val('');
-        $('#cgroup-discount_amount').hide();
-        $('#cform-discount_pct').val('');
-        $('#cgroup-discount_pct').hide();
         computeCartMinimum();
 
     });
@@ -770,15 +722,6 @@ $(document).ready(function(){
         });
 
 
-    //$("#prods").append("<div class=\"col-md-12\"><h2>Select a product category</h2></div>");
-
-    $(document).on("click",".indiv_adj", function(e){
-        $('#item_adjustment').modal('show');
-        var selected_prod_id = $(this).closest('tr').find('.product_id').val();
-        // alert(selected_prod_id);
-        $('#item_adjustment_prod_id').val(selected_prod_id);
-    });
-
     $(document).on("click",".bulk_adj", function(e){
         $('#bulk_adjustment').modal('show');
     });
@@ -788,10 +731,6 @@ $(document).ready(function(){
         $("#cform-discount_pct").val(this.value.match(/[0-9]*/));
     });
 
-
-
-
-
     $("#cform-discount_amount").keyup(function() {
         $("#cform-discount_amount").val(this.value.match(/[0-9]*/));
     });
@@ -799,10 +738,6 @@ $(document).ready(function(){
     $("#cform-new_price").keyup(function() {
         $("#cform-new_price").val(this.value.match(/[0-9]*/));
     });
-
-
-
-
 });
 </script>
 {% endblock %}
