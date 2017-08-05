@@ -67,7 +67,7 @@
                 <input type="hidden" id="cart_int_orig_price" name="cart_int_price" value="0">
                 <h3 class="orig_price_h3">Original Total: <b>Php <span id="cart_orig_price" value="0">0</span></b></h3>
                 
-                <h3>Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
+                <h3 class="cart_price_h3">Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
                     
                 </div>
             </div>
@@ -205,8 +205,10 @@ function computeCartMinimum()
 
     if (total > $('#cart_int_price').val()) {
         $('#cgroup-app_code').show();
+        $('.cart_price_h3').css({'color': 'red'});
     } else {
         $('#cgroup-app_code').hide();
+        $('.cart_price_h3').css({'color': 'black'});
     }
 }
 function ajaxGetProductCategories()
@@ -357,6 +359,7 @@ function proceedToTransaction()
         if (select_trans == 'reg') {
             $('.next_step_btn').hide();
             $('.checkout_btn').show();
+            $('#transaction_type_modal').modal('hide');
             // $('.remove_row').hide();
             // $('.clear_discount').show();
             hideCartLastColumn();
@@ -366,6 +369,7 @@ function proceedToTransaction()
             $('.checkout_btn').show();
             appendPerItemColumns();
             appendPerItemFields();
+            $('#transaction_type_modal').modal('hide');
             $('.orig_price_h3').show();
             $('.clear_discount').show();
         } else if (select_trans == 'bulk') {
