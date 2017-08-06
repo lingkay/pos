@@ -61,14 +61,31 @@
                 <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Clear Discount</a>
                 <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
 
-
+                <input type="hidden" id="session_vat" name="session_vat" value="0">
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
                 <input type="hidden" id="cart_int_orig_price" name="cart_int_price" value="0">
-                <h3 class="orig_price_h3">Original Total: <b>Php <span id="cart_orig_price" value="0">0</span></b></h3>
-                
-                <h3 class="cart_price_h3">Total: <b>Php <span id="cart_price" value="0">0</span></b></h3>
-                    
+                <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_totals_table">
+                    <thead>
+                        <tr>
+                            <th width="40%"></th>
+                            <th width="30%">Amount Net of VAT</th>
+                            <th width="30%">VAT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="orig_totals_row">
+                            <td><p style="font-size:16px;" class="orig_price_h3">Original Total: <b>Php <span id="cart_orig_price" value="0">0</p></b></p></td>
+                            <td><p style="font-size:16px;" class="orig_amt_vat"><b>Php <span id="cart_orig_amt_vat" value="0">0</p></b></p></td>
+                            <td><p style="font-size:16px;" class="orig_vat"><b>Php <span id="cart_orig_vat" value="0">0</p></b></p></td>
+                        </tr>
+                        <tr class="new_total_row">
+                            <td><p style="font-size:16px;" class="cart_price_h3">Total: <b>Php <span id="cart_price" value="0">0</span></b></p></td>
+                            <td><p style="font-size:16px;" class="new_amt_vat"><b>Php <span id="cart_new_amt_vat" value="0">0</p></b></p></td>
+                            <td><p style="font-size:16px;" class="new_vat"><b>Php <span id="cart_new_vat" value="0">0</p></b></p></td>
+                        </tr>
+                    </tbody>
+                </table>  
                 </div>
             </div>
         </div>
@@ -178,16 +195,39 @@ function computeCart()
     if ($('.checkout_btn').is(':visible') && $('.bulk_adj').is(':hidden')) {
         $('#cart_int_price').val(new_total);
         $("#cart_price").text(addCommas(new_total.toString()));
+
+        var vat = parseInt($('#session_vat').val());
+        var amt_net_of_vat = new_total * (1.12);
+        var vat_amt = amt_net_of_vat - new_total;
+        $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+        $("#cart_new_vat").text(addCommas(vat_amt.toString()));
     } else {
         if($('.bulk_adj').is(':hidden')) {
             $('#cart_int_price').val(total);
             $("#cart_price").text(addCommas(total.toString()));
+            var vat = parseInt($('#session_vat').val());
+            var amt_net_of_vat = total * (1.12);
+            var vat_amt = amt_net_of_vat - total;
+            $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+            $("#cart_new_vat").text(addCommas(vat_amt.toString()));
         } else {
+            var vat = parseInt($('#session_vat').val());
+            var amt_net_of_vat = total * (1.12);
+            var vat_amt = amt_net_of_vat - total;
+            $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+            $("#cart_new_vat").text(addCommas(vat_amt.toString()));
             $('#cart_int_price').val(total);
             applyBulkAdjustment();
         }
         
     }
+
+    var vat = parseInt($('#session_vat').val());
+    var amt_net_of_vat = total * (1.12);
+    var vat_amt = amt_net_of_vat - total;
+    // alert(vat_amt);
+    $("#cart_orig_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+    $("#cart_orig_vat").text(addCommas(vat_amt.toString()));
     
     
     console.log('Sell Price:'+total);
@@ -244,9 +284,11 @@ function ajaxGetVAT()
 {
     // var url = "http://dev.gisterp2/inventory/pos/get/vat";
     var url = "http://erp.cilanthropist.co/inventory/pos/get/vat";
+    var vat = 0;
     $.getJSON(url, function(json){  
-        //alert(json);
+        $('#session_vat').val(json)
     });
+
 }
 function ajaxGetProducts(cid)
 {
@@ -370,6 +412,7 @@ function proceedToTransaction()
             appendPerItemColumns();
             appendPerItemFields();
             $('#transaction_type_modal').modal('hide');
+            $('.orig_totals_row').show();
             $('.orig_price_h3').show();
             $('.clear_discount').show();
         } else if (select_trans == 'bulk') {
@@ -381,6 +424,7 @@ function proceedToTransaction()
             $('#bulk_adjustment').modal('show');
             $('.bulk_discount_h4').show();
             $('.checkout_btn').show();
+            $('.orig_totals_row').show();
             $('.orig_price_h3').show();
             $('.clear_discount').show();
         } else {
@@ -442,10 +486,12 @@ function revertDiscounts()
     $('#cart_price').text(addCommas($('#cart_int_orig_price').val()));
     $('#cart_int_price').val($('#cart_int_orig_price').val());
     computeCartMinimum();
+    $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
     $('#applied_bulk_discount').val('');
     $('.checkout_btn').hide();
+    $('.bulk_adj').hide();
     $('.next_step_btn').show();
     $('.clear_discount').hide();
 }
@@ -642,6 +688,7 @@ $(document).ready(function(){
     $('.bulk_adj').hide();
     $('.clear_discount').hide();
     $('.checkout_btn').hide();
+    $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
     ajaxGetProductCategories();
