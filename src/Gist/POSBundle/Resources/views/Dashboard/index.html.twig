@@ -237,7 +237,7 @@ function computeCartMinimum()
         total = total + parseInt($(this).val());
     });
 
-    $("#cart_min_price").val(addCommas(total.toString()));
+    $("#cart_min_price").val(total);
     console.log('Min Price:'+total);
 
     if (total > $('#cart_int_price').val()) {
@@ -247,7 +247,21 @@ function computeCartMinimum()
         $('#cgroup-app_code').hide();
         $('.cart_price_h3').css({'color': 'black'});
     }
+
+    computeExtraAmount();
 }
+
+function computeExtraAmount()
+{
+    var cart_min_price = parseInt($("#cart_min_price").val());
+    var cart_price = parseInt($("#cart_int_price").val());
+    var extra_amt = cart_price - cart_min_price;
+    var extra_amt_disp = addDashes(extra_amt.toString());
+    $('#cart_min_pricex').text(addCommas(cart_min_price.toString()));
+    $('#cart_pricex').text(addCommas(cart_price.toString()));
+    $('#ea_amt').text(extra_amt_disp);
+}
+
 function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
@@ -340,6 +354,19 @@ function addCommas(nStr)
     var rgx = /(\d+)(\d{3})/;
     while (rgx.test(x1)) {
         x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+
+function addDashes(nStr)
+{
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + '-' + '$2');
     }
     return x1 + x2;
 }
