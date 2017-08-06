@@ -179,8 +179,10 @@ function addToCart(product_name, srp, min_price, id)
 }
 function computeCart()
 {
+    // alert('computeCart');
     var total = 0;
     var new_total = 0;
+    var vat = parseInt($('#session_vat').val())/100;
     $('.display_price').each(function(){
         total = total + parseInt($(this).val());
     });
@@ -196,35 +198,30 @@ function computeCart()
         $('#cart_int_price').val(new_total);
         $("#cart_price").text(addCommas(new_total.toString()));
 
-        var vat = parseInt($('#session_vat').val());
-        var amt_net_of_vat = new_total * (1.12);
-        var vat_amt = amt_net_of_vat - new_total;
+        
+        var amt_net_of_vat = (new_total / (1.12)).toFixed(2);
+        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
         $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_new_vat").text(addCommas(vat_amt.toString()));
     } else {
         if($('.bulk_adj').is(':hidden')) {
             $('#cart_int_price').val(total);
             $("#cart_price").text(addCommas(total.toString()));
-            var vat = parseInt($('#session_vat').val());
-            var amt_net_of_vat = total * (1.12);
-            var vat_amt = amt_net_of_vat - total;
+            
+            var amt_net_of_vat = (total / (1.12)).toFixed(2);
+            var vat_amt = (amt_net_of_vat * vat).toFixed(2);
             $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
             $("#cart_new_vat").text(addCommas(vat_amt.toString()));
         } else {
-            var vat = parseInt($('#session_vat').val());
-            var amt_net_of_vat = total * (1.12);
-            var vat_amt = amt_net_of_vat - total;
-            $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
-            $("#cart_new_vat").text(addCommas(vat_amt.toString()));
-            $('#cart_int_price').val(total);
             applyBulkAdjustment();
+           
         }
         
     }
 
-    var vat = parseInt($('#session_vat').val());
-    var amt_net_of_vat = total * (1.12);
-    var vat_amt = amt_net_of_vat - total;
+
+    var amt_net_of_vat = (total / (1.12)).toFixed(2);
+    var vat_amt = (amt_net_of_vat * vat).toFixed(2);
     // alert(vat_amt);
     $("#cart_orig_amt_vat").text(addCommas(amt_net_of_vat.toString()));
     $("#cart_orig_vat").text(addCommas(vat_amt.toString()));
@@ -524,6 +521,7 @@ function applyBulkAdjustment()
             $('#cart_price').text(0);
             $('#cart_int_price').val(0);
             $('#applied_bulk_discount').text('Gift');
+
         } else if (bulk_adj_opt == 'bdiscamt') {
             var new_cart_total = $('#cart_int_orig_price').val() - $('#cform-discount_amount').val();
             if (new_cart_total >= 0) {
@@ -563,6 +561,15 @@ function applyBulkAdjustment()
     } else {
 
     }
+
+    var vat = parseInt($('#session_vat').val())/100;
+    var totalx = $('#cart_int_price').val();
+    // alert(totalx+'');
+    var amt_net_of_vat = (totalx / (1.12)).toFixed(2);
+    var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+    $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+    $("#cart_new_vat").text(addCommas(vat_amt.toString()));
+    $('#cart_int_price').val(totalx);
 }
 
 function revertOriginalPrices()
