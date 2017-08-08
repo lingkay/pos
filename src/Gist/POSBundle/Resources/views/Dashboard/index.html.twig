@@ -50,6 +50,7 @@
                     </tbody>
                 </table>
                 </div>
+                <h4 class="savings_h4">You saved: <b><span id="customer_savings" value=""></span></b></h4>
                 <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
                 <div class="row">
                 {{ form.group_text('Approval Code', 'app_code', '', 4, 2, false) }}
@@ -140,6 +141,9 @@
 {% endblock %}
 {% block js %}
 <script>
+// GIST POS
+// August 8, 2017
+
 function hideItemAdjustment()
 {
     $('.indiv_adj').each(function() {
@@ -152,36 +156,13 @@ function showItemAdjustment()
         $(this).show();
     });
 }
-function addToCart(product_name, srp, min_price, id)
-{
-    //id = erp product id
-    var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-    var field = '<tr class=\"row_prod_'+row_id+'\">';     
-        field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
-        field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
-        field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
-        field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
-        field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>';  
-        field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a><a href="javascript:void(0)" class="btn btn-xs default green indiv_adj"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
-        field += '</tr>';
 
-        $('#cart_items').prepend(field);
-        hideItemAdjustment();
-        
-        if($('.checkout_btn').is(':visible') && $('.bulk_adj').is(':hidden')) {
-            appendPerItemFields();
-        } else {
-            computeCart();
-        }
-        
-        computeCartMinimum();
-}
 function computeCart()
 {
     // alert('computeCart');
     var total = 0;
     var new_total = 0;
+    var savings = 0;
     var vat = parseInt($('#session_vat').val())/100;
     $('.display_price').each(function(){
         total = total + parseInt($(this).val());
@@ -197,8 +178,8 @@ function computeCart()
     if ($('.checkout_btn').is(':visible') && $('.bulk_adj').is(':hidden')) {
         $('#cart_int_price').val(new_total);
         $("#cart_price").text(addCommas(new_total.toString()));
-
-        
+        savings = total - new_total;
+        $('#customer_savings').text(addCommas(savings.toString()));
         var amt_net_of_vat = (new_total / (1.12)).toFixed(2);
         var vat_amt = (amt_net_of_vat * vat).toFixed(2);
         $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
@@ -251,100 +232,7 @@ function computeCartMinimum()
     computeExtraAmount();
 }
 
-function computeExtraAmount()
-{
-    var cart_min_price = parseInt($("#cart_min_price").val());
-    var cart_price = parseInt($("#cart_int_price").val());
-    var extra_amt = cart_price - cart_min_price;
-    var extra_amt_disp = addDashes(extra_amt.toString());
-    $('#cart_min_pricex').text(addCommas(cart_min_price.toString()));
-    $('#cart_pricex').text(addCommas(cart_price.toString()));
-    $('#ea_amt').text(extra_amt_disp);
-}
 
-function ajaxGetProductCategories()
-{
-    $( "#prod_cats" ).empty();
-    $( "#prods" ).empty();
-    $("#prod_cats").append("<div style=\"height: 10px;\">");
-    // var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
-    $.getJSON(url, function(json){  
-       $.each(json, function(i, item) {
-            var img = "http://nahmdong.com/vitalhill/img/default.png";
-            if (item.image_url != null) {
-                img = item.image_url;
-            }
-            // alert(item.name);
-            $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
-
-            $("#prods").append("<div class=\"col-md-6\" style=\"margin: 0px !important; padding: 1px !important\" >\
-                    <a href=\"javascript:void(0)\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                        </div>\
-                    </div>\
-                    </a>\
-                </div>");
-        });
-    });
-}
-function ajaxGetVAT()
-{
-    // var url = "http://dev.gisterp2/inventory/pos/get/vat";
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/vat";
-    var vat = 0;
-    $.getJSON(url, function(json){  
-        $('#session_vat').val(json)
-    });
-
-}
-function ajaxGetProducts(cid)
-{
-
-    $( "#prods" ).empty();
-    $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
-    $("#cat_btn_"+cid).css({'background-color': '#484c50'});
-    $( "#prods" ).empty();
-    
-    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
-    $.getJSON(url, function(json){  
-        var count = 0;
-       $.each(json, function(i, item) {
-        count++;
-        var price = 0;
-        if (item.srp != null) {
-            price = item.srp;
-        } 
-
-        var img = "http://nahmdong.com/vitalhill/img/default.png";
-        if (item.image_url != null) {
-            img = item.image_url;
-        }
-
-            $("#prods").append("<div class=\"col-md-6\" style=\"margin: 0px !important; padding: 2px !important\" >\
-                    <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+price+"</b></h3>\
-                        </div>\
-                    </div>\
-                    </a>\
-                </div>");
-
-        });
-
-       if (count == 0) {
-            $( "#prods" ).empty();
-            $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;No products in selected category</h2></div>");
-       }
-    });
-}
 function addCommas(nStr)
 {
     nStr += '';
@@ -394,27 +282,7 @@ function applyIndividualAdjustment()
     }
 }
 
-function hideCartLastColumn()
-{
-    $('td:last-child').each(function(){
-        $(this).css("display", "none");
-    });
 
-    $('th:last-child').each(function(){
-        $(this).css("display", "none");
-    });
-}
-
-function showCartLastColumn()
-{
-    $('td:last-child').each(function(){
-        $(this).css("display", "");
-    });
-
-    $('th:last-child').each(function(){
-        $(this).css("display", "");
-    });
-}
 
 function proceedToTransaction()
 {
@@ -428,10 +296,12 @@ function proceedToTransaction()
             $('#transaction_type_modal').modal('hide');
             // $('.remove_row').hide();
             // $('.clear_discount').show();
+            $('.savings_h4').hide();
             hideCartLastColumn();
         } else if (select_trans == 'per') {
             // hideCartLastColumn();
             $('.next_step_btn').hide();
+            $('.savings_h4').show();
             $('.checkout_btn').show();
             appendPerItemColumns();
             appendPerItemFields();
@@ -442,6 +312,7 @@ function proceedToTransaction()
         } else if (select_trans == 'bulk') {
             $('.next_step_btn').hide();
             // $('.remove_row').hide();
+            $('.savings_h4').show();
             $('.bulk_adj').show();
             $('#proc').show();
             $('#transaction_type_modal').modal('hide');
@@ -725,6 +596,7 @@ $(document).ready(function(){
     $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
+    $('.savings_h4').hide();
     ajaxGetProductCategories();
 
     $('#cform-new_price').val('');
@@ -756,6 +628,7 @@ $(document).ready(function(){
 
     $(document).on("click",".clear_discount", function(e){
         revertDiscounts();
+        $('.savings_h4').hide();
     });
 
     $(window).keydown(function(event){
