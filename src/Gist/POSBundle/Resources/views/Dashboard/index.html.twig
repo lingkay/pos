@@ -59,7 +59,7 @@
                 <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
                 <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                 <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout</a>
-                <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Clear Discount</a>
+                <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
                 <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
 
                 <input type="hidden" id="session_vat" name="session_vat" value="0">
@@ -126,7 +126,54 @@
                     </div>
                     <div class="modal-body">
                         <div class="row form-horizontal form">
-                            {{ form.group_select('Type', 'trans_opts', trans_options, '', 3, 4, false) }}
+                            <div class="col-md-4" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/regular_trans.png') }}"></a>
+                                <h4>Regular Transaction</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/per_trans.png') }}"></a>
+                                <h4>Per Item Discount</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_bulk"  onclick="proceedToTransaction('bulk')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk_trans.png') }}"></a>
+                                <h4>Bulk Discount</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="checkout_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Checkout & Payment</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="col-md-3" class="proceed_btn_reg" onclick="">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_cash.png') }}"></a>
+                                <h4>Cash</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_card.png') }}"></a>
+                                <h4>Card</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}"></a>
+                                <h4>Check</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_gc.png') }}"></a>
+                                <h4>Gift Card</h4>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -197,9 +244,7 @@ function computeCart()
             applyBulkAdjustment();
            
         }
-        
     }
-
 
     var amt_net_of_vat = (total / (1.12)).toFixed(2);
     var vat_amt = (amt_net_of_vat * vat).toFixed(2);
@@ -284,9 +329,9 @@ function applyIndividualAdjustment()
 
 
 
-function proceedToTransaction()
+function proceedToTransaction(x)
 {
-    var select_trans = $('#cform-trans_opts').val();
+    var select_trans = x;
     if (select_trans != '') {
         // $("#prods").addClass("disabledbutton");
         // $("#prod_cats").addClass("disabledbutton");
@@ -297,6 +342,7 @@ function proceedToTransaction()
             // $('.remove_row').hide();
             // $('.clear_discount').show();
             $('.savings_h4').hide();
+            $('.clear_discount').show();
             hideCartLastColumn();
         } else if (select_trans == 'per') {
             // hideCartLastColumn();
@@ -544,6 +590,38 @@ function apply_indiv(x)
     computeCartMinimum();
 }
 
+function hideCartLastColumn()
+{
+    $('td:last-child').each(function(){
+        if ($(this).closest('table').attr('id') == 'cart_table') {
+            $(this).css("display", "none");    
+        }
+        
+    });
+
+    $('th:last-child').each(function(){
+        if ($(this).closest('table').attr('id') == 'cart_table') {
+            $(this).css("display", "none");
+        }
+    });
+}
+
+function showCartLastColumn()
+{
+    ('td:last-child').each(function(){
+        if ($(this).closest('table').attr('id') == 'cart_table') {
+            $(this).css("display", "");
+        }
+    });
+
+    $('th:last-child').each(function(){
+        if ($(this).closest('table').attr('id') == 'cart_table') {
+            $(this).css("display", "");
+        }
+    });
+}
+
+
 $(document).ready(function(){   
     ajaxGetVAT();
     toastr.options = {
@@ -607,6 +685,15 @@ $(document).ready(function(){
     $(document).on("click",".next_step_btn", function(e){
         if ($('#cart_table tr').length > 1) {
             $('#transaction_type_modal').modal('show');
+        } else {
+            toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
+        }
+        
+    });
+
+    $(document).on("click",".checkout_btn", function(e){
+        if ($('#cart_table tr').length > 1) {
+            $('#checkout_modal').modal('show');
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
         }

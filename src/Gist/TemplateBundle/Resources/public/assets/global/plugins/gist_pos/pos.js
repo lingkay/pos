@@ -121,25 +121,4 @@ function ajaxGetProducts(cid)
 }
 
 
-function hideCartLastColumn()
-{
-    $('td:last-child').each(function(){
-        $(this).css("display", "none");
-    });
-
-    $('th:last-child').each(function(){
-        $(this).css("display", "none");
-    });
-}
-
-function showCartLastColumn()
-{
-    $('td:last-child').each(function(){
-        $(this).css("display", "");
-    });
-
-    $('th:last-child').each(function(){
-        $(this).css("display", "");
-    });
-}
 
