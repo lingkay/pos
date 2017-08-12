@@ -32,7 +32,7 @@ class POSController extends Controller
             'bulk' => 'Bulk Discount'
         );
 
-        $url="http://dev.gisterp2/inventory/pos/get/banks";
+        $url="http://erp.cilanthropist.co/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
