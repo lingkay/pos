@@ -32,6 +32,14 @@ class POSController extends Controller
             'bulk' => 'Bulk Discount'
         );
 
+        $url="http://dev.gisterp2/inventory/pos/get/banks";
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+
+
+        $params['bank_options'] = $vars;
+
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
 
