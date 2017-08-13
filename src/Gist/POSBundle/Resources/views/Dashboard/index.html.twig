@@ -265,6 +265,16 @@
                                     <div class="col-md-4">
                                     </div>
                                 </div>
+                                <div class="row" style="margin-top: 5px !important; margin-bottom: 10px !important;">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" class="btn default red numeric_key" data-value="CLEAR">Clear</a>
+                                        <a href="javascript:void(0)" class="btn default red numeric_key" data-value="DEL">Delete</a>
+                                    </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
                                 {{ form.group_text('Change Amount', 'cash_chg_amt', '0.00', 4, 4, true) }}
                             </div>
                         </div>
@@ -569,9 +579,14 @@ $(document).ready(function(){
 
     $(document).on('keyup', '#cform-cash_received_amt', function () {
         $(this).val(this.value.match(/[0-9]*/));
-        var amt_to_pay = $('#transaction_amt_to_pay').val();
-        var change = parseInt($(this).val()) - amt_to_pay;
-        $('#cform-cash_chg_amt').val(addCommas(change));
+        if ($(this).val() != '') {
+            var amt_to_pay = $('#transaction_amt_to_pay').val();
+            var change = parseInt($(this).val()) - amt_to_pay;
+            $('#cform-cash_chg_amt').val(addCommas(change));
+        } else {
+            $('#cform-cash_chg_amt').val("0.00");
+        }
+        
 
     });
 
@@ -597,14 +612,14 @@ $(document).ready(function(){
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
         }
-        
     });
 
     $(document).on("click",".checkout_btn", function(e){
         if ($('#cart_table tr').length > 1) {
             $('#checkout_modal').modal('show');
             if (parseInt($('#transaction_balance').val()) == 0) {
-
+                $('.co_amt_to_pay').text(addCommas($('#cart_int_price').val().toString()));
+                $('.co_balance').text(addCommas($('#cart_int_price').val().toString()));
             } else {
                 $('.co_amt_to_pay').text(addCommas($('#cart_int_price').val().toString()));
                 $('.co_balance').text(addCommas($('#cart_int_price').val().toString()));
@@ -645,11 +660,21 @@ $(document).ready(function(){
 
     $(document).on("click",".numeric_key", function(e){
         //alert($(this).data("value"));
-        $('#cform-cash_received_amt')[0].value += $(this).data("value");
-        var amt_to_pay = $('#transaction_amt_to_pay').val();
-        var change = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
-        $('#cform-cash_chg_amt').val(addCommas(change));
-
+        if ($(this).data("value") == 'CLEAR') {
+            $('#cform-cash_received_amt').val(0.00);
+            $('#cform-cash_chg_amt').val(0.00);
+        } else if ($(this).data("value") == 'DEL') {
+            var str = $('#cform-cash_received_amt').val();
+            $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
+            var amt_to_pay = $('#transaction_amt_to_pay').val();
+            var change = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            $('#cform-cash_chg_amt').val(addCommas(change));
+        } else {
+            $('#cform-cash_received_amt')[0].value += $(this).data("value");
+            var amt_to_pay = $('#transaction_amt_to_pay').val();
+            var change = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            $('#cform-cash_chg_amt').val(addCommas(change));
+        }
     });
 
     $(document).on("click",".clear_discount", function(e){
