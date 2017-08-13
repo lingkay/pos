@@ -36,9 +36,14 @@ class POSController extends Controller
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
+        $url2="http://erp.cilanthropist.co/inventory/pos/get/terminal_operators";
+        $result2 = file_get_contents($url2);
+        $vars2 = json_decode($result2, true);
+
 
 
         $params['bank_options'] = $vars;
+        $params['terminal_operators'] = $vars2;
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }

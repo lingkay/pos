@@ -50,10 +50,9 @@
                     </tbody>
                 </table>
                 </div>
-                <h4 class="savings_h4">You saved: <b><span id="customer_savings" value=""></span></b></h4>
-                <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
+                
                 <div class="row">
-                {{ form.group_text('Approval Code', 'app_code', '', 4, 2, false) }}
+                {#{{ form.group_text('Approval Code', 'app_code', '', 4, 2, false) }}#}
                 </div>
                 <br>
                 <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
@@ -61,7 +60,10 @@
                 <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout</a>
                 <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
                 <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
-
+                <br>
+                <br>
+                <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
+                <h4 class="savings_h4">You saved: <b><span id="customer_savings" value=""></span></b></h4>
                 <input type="hidden" id="session_vat" name="session_vat" value="0">
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
@@ -183,7 +185,7 @@
                                 <h4>Card</h4>
                             </div>
                             <div class="col-md-3" class=""  onclick="">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}"></a>
+                                <a href="javascript:void(0)" class="co_check_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}"></a>
                                 <h4>Check</h4>
                             </div>
                             <div class="col-md-3" class=""  onclick="">
@@ -219,6 +221,50 @@
                         <div class="row form-horizontal form" style="margin-top: 20px;">
                             <div class="col-md-12">
                                 {{ form.group_text('Received Amount', 'cash_received_amt', '', 4, 4, false) }}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="7">7</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="8">8</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="9">9</a>
+                                    </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 5px !important;">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="4">4</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="5">5</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="6">6</a>
+                                    </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 5px !important;">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="1">1</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="2">2</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="3">3</a>
+                                    </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 5px !important; margin-bottom: 10px !important;">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <a href="javascript:void(0)" class="btn btn-lg default white" style="color: white !important; background-color: white !important; cursor: default !important;">0</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="0">0</a>
+                                        <a href="javascript:void(0)" class="btn btn-lg default white" style="color: white !important; background-color: white !important; cursor: default !important;">0</a>
+                                    </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
                                 {{ form.group_text('Change Amount', 'cash_chg_amt', '0.00', 4, 4, true) }}
                             </div>
                         </div>
@@ -250,8 +296,50 @@
                         </div>
                         <div class="row form-horizontal form" style="margin-top: 20px;">
                             <div class="col-md-12">
+                                {{ form.group_select('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 4, 4, false) }}
+                                {{ form.group_text('Charge Amount', 'cc_charge_amt', '', 4, 4, false) }}
                                 {{ form.group_select('Bank', 'cc_bank', bank_options, '', 4, 4, false) }}
                                 {{ form.group_text('Credit Card Number', 'cc_card_number', '', 4, 4, false) }}
+                                {{ form.group_text('Name on Card', 'cc_card_name', '', 4, 4, false) }}
+                                {{ form.group_text('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
+                                {{ form.group_text('CVV', 'cc_card_cvv', '', 4, 4, false) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green cash_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="check_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Check Payment</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="col-md-6">
+                                <h4>Amount to pay <b>Php <span class="co_amt_to_pay">0.00</span></b></h4>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Balance <b>Php <span class="co_balance" >0.00</span></b></h4>
+                            </div>
+                        </div>
+                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                            <div class="col-md-12">
+                                {{ form.group_select('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
+                                {{ form.group_text('Bank Code', 'check_bank_code', '', 4, 4, false) }}
+                                {{ form.group_text('Account Number', 'check_account_number', '', 4, 4, false) }}
+                                {{ form.group_text('Check Number', 'check_number', '', 4, 4, false) }}
+                                {{ form.group_date('Check Date','check_date', '',4,4) }}
+                                {{ form.group_text("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
+                                {{ form.group_text('Check Amount', 'check_amount', '', 4, 4, false) }}
                             </div>
                         </div>
                     </div>
@@ -267,14 +355,104 @@
 {% endblock %}
 {% block js %}
 <script>
+function ajaxGetProductCategories()
+{
+    $( "#prod_cats" ).empty();
+    $( "#prods" ).empty();
+    $("#prod_cats").append("<div style=\"height: 10px;\">");
+    // var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, item) {
+            var img = "http://nahmdong.com/vitalhill/img/default.png";
+            if (item.image_url != null) {
+                img = item.image_url;
+            }
+            // alert(item.name);
+            $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
+
+            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 1px !important\" >\
+                    <a href=\"javascript:void(0)\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
+                    <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
+                        <img src="+img+" style=\"height: 90px; width: 60%; display: block;\">\
+                        <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
+                            <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
+                        </div>\
+                    </div>\
+                    </a>\
+                </div>");
+        });
+    });
+}
+
+function ajaxGetProducts(cid)
+{
+
+    $( "#prods" ).empty();
+    $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
+    $("#cat_btn_"+cid).css({'background-color': '#484c50'});
+    $( "#prods" ).empty();
+    
+    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    $.getJSON(url, function(json){  
+        var count = 0;
+       $.each(json, function(i, item) {
+        count++;
+        var price = 0;
+        if (item.srp != null) {
+            price = item.srp;
+        } 
+
+        var img = "http://nahmdong.com/vitalhill/img/default.png";
+        if (item.image_url != null) {
+            img = item.image_url;
+        }
+
+            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
+                    <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
+                    <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
+                        <img src="+img+" style=\"height: 90px; width: 60%; display: block;\">\
+                        <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
+                            <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
+                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+price+"</b></h3>\
+                        </div>\
+                    </div>\
+                    </a>\
+                </div>");
+
+        });
+
+       if (count == 0) {
+            $( "#prods" ).empty();
+            $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;No products in selected category</h2></div>");
+       }
+    });
+}
 // GIST POS
 // August 8, 2017
+function appendPerItemFields()
+{
+    if ($('.checkout_btn').is(':visible') && $('#reg_trans_flag').val() != 1) {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('td').length < 6) {
+                $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
+                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                    <input type=\"text\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
 
-
+                var srp = $(this).find('.srp').val();
+                var ap = $(this).find('.adjusted_price');
+                ap.val(srp);
+                computeCart();
+            }
+        });
+    }
+}
 
 function computeCart()
 {
-    // alert('computeCart');
     var total = 0;
     var new_total = 0;
     var savings = 0;
@@ -320,12 +498,8 @@ function computeCart()
 
     var amt_net_of_vat = (total / (1.12)).toFixed(2);
     var vat_amt = (amt_net_of_vat * vat).toFixed(2);
-    // alert(vat_amt);
     $("#cart_orig_amt_vat").text(addCommas(amt_net_of_vat.toString()));
     $("#cart_orig_vat").text(addCommas(vat_amt.toString()));
-    
-    
-    console.log('Sell Price:'+total);
 }
 
 function computeCartMinimum()
@@ -336,188 +510,17 @@ function computeCartMinimum()
     });
 
     $("#cart_min_price").val(total);
-    console.log('Min Price:'+total);
 
     if (total > $('#cart_int_price').val()) {
-        $('#cgroup-app_code').show();
+        //$('#cgroup-app_code').show();
         $('.cart_price_h3').css({'color': 'red'});
     } else {
-        $('#cgroup-app_code').hide();
+        //$('#cgroup-app_code').hide();
         $('.cart_price_h3').css({'color': 'black'});
     }
 
     computeExtraAmount();
 }
-
-
-function proceedToTransaction(x)
-{
-    var select_trans = x;
-    if (select_trans != '') {
-        // $("#prods").addClass("disabledbutton");
-        // $("#prod_cats").addClass("disabledbutton");
-        if (select_trans == 'reg') {
-            $('.next_step_btn').hide();
-            $('.checkout_btn').show();
-            $('#transaction_type_modal').modal('hide');
-            // $('.remove_row').hide();
-            // $('.clear_discount').show();
-            $('.savings_h4').hide();
-            $('.clear_discount').show();
-            $('#reg_trans_flag').val(1);
-            // hideCartLastColumn();
-        } else if (select_trans == 'per') {
-            // hideCartLastColumn();
-            $('#reg_trans_flag').val(0);
-            $('.next_step_btn').hide();
-            $('.savings_h4').show();
-            $('.checkout_btn').show();
-            appendPerItemColumns();
-            appendPerItemFields();
-            $('#transaction_type_modal').modal('hide');
-            $('.orig_totals_row').show();
-            $('.orig_price_h3').show();
-            $('.clear_discount').show();
-        } else if (select_trans == 'bulk') {
-            $('.next_step_btn').hide();
-            $('#reg_trans_flag').val(0);
-            // $('.remove_row').hide();
-            $('.savings_h4').show();
-            $('.bulk_adj').show();
-            $('#proc').show();
-            $('#transaction_type_modal').modal('hide');
-            $('#bulk_adjustment').modal('show');
-            $('.bulk_discount_h4').show();
-            $('.checkout_btn').show();
-            $('.orig_totals_row').show();
-            $('.orig_price_h3').show();
-            $('.clear_discount').show();
-        } else {
-            $('.clear_discount').hide();
-            $('#reg_trans_flag').val(0);
-        }
-    } else {
-        $('.clear_discount').hide();
-        $('#reg_trans_flag').val(0);
-    }
-}
-
-
-
-function revertDiscounts()
-{
-    $('#cart_table').find('tr').each(function(){
-        if ($(this).children('th').length > 5) {
-            $(this).find('th').eq(2).remove();
-            $(this).find('th').eq(2).remove();
-            $(this).find('th').eq(2).remove();
-        }
-
-        if ($(this).children('td').length > 5) {
-            $(this).find('td').eq(2).remove();
-            $(this).find('td').eq(2).remove();
-            $(this).find('td').eq(2).remove();
-        }
-    });
-
-    //alert($('#cart_int_orig_price').val());
-    $('.cart_price_h3').css({'color': 'black'});
-    $('#cgroup-new_total').hide();
-    $('#cform-new_total').val('');
-    $('#cform-discount_amount').val('');
-    $('#cgroup-discount_amount').hide();
-    $('#cform-discount_pct').val('');
-    $('#cgroup-discount_pct').hide();
-    $('#cart_price').text(addCommas($('#cart_int_orig_price').val()));
-    $('#cart_int_price').val($('#cart_int_orig_price').val());
-    computeCartMinimum();
-    $('.orig_totals_row').hide();
-    $('.orig_price_h3').hide();
-    $('.bulk_discount_h4').hide();
-    $('#applied_bulk_discount').val('');
-    $('.checkout_btn').hide();
-    $('.bulk_adj').hide();
-    $('.next_step_btn').show();
-    $('.clear_discount').hide();
-}
-
-
-
-function applyBulkAdjustment()
-{   
-    var bulk_adj_opt = $('#cform-bulk_adj').val();
-    if (bulk_adj_opt != '') {
-        if (bulk_adj_opt == 'bgift') {
-            $('#cart_price').text(0);
-            $('#cart_int_price').val(0);
-            $('#applied_bulk_discount').text('Gift');
-
-        } else if (bulk_adj_opt == 'bdiscamt') {
-            var new_cart_total = $('#cart_int_orig_price').val() - $('#cform-discount_amount').val();
-            if (new_cart_total >= 0) {
-                $('#cart_price').text(addCommas(new_cart_total));
-                $('#cart_int_price').val(new_cart_total);
-                $('#applied_bulk_discount').text('Less Php '+$('#cform-discount_amount').val()+'');
-            } else {
-                toastr['error']('Invalid discount amount.', 'Error');
-            }
-        } else if (bulk_adj_opt == 'bdisc') {
-            var new_cart_total = $('#cart_int_orig_price').val() - ($('#cart_int_orig_price').val() * ($('#cform-discount_pct').val()/100));
-            if (new_cart_total >= 0) {
-                $('#cart_price').text(addCommas(new_cart_total));
-                $('#cart_int_price').val(new_cart_total);
-                $('#applied_bulk_discount').text('Less '+$('#cform-discount_pct').val()+'% off');
-            } else {
-                toastr['error']('Invalid discount.', 'Error');
-            }
-        } else if (bulk_adj_opt == 'bamt') {
-            $('#cart_int_price').val($('#cform-new_total').val());
-            $('#cart_price').text(addCommas($('#cform-new_total').val()));
-            $('#applied_bulk_discount').text('Change Amount');
-        } else {
-            $('.display_price').each(function() {
-                if ($(this).val() == "0" || $(this).val() == "0.00") {
-                    //revert prices only if bulk discount came from gift
-                    var row = $(this).closest('tr');
-                    var srp = row.find('.srp').val();
-                    $(this).val(srp);
-                }
-                
-            });
-            $('#applied_bulk_discount').text('');
-            computeCart();
-            computeCartMinimum();
-        }
-    } else {
-
-    }
-
-    var vat = parseInt($('#session_vat').val())/100;
-    var totalx = $('#cart_int_price').val();
-    // alert(totalx+'');
-    var amt_net_of_vat = (totalx / (1.12)).toFixed(2);
-    var vat_amt = (amt_net_of_vat * vat).toFixed(2);
-    $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
-    $("#cart_new_vat").text(addCommas(vat_amt.toString()));
-    $('#cart_int_price').val(totalx);
-}
-
-function revertOriginalPrices()
-{
-    $('.display_price').each(function() {
-        if ($(this).val() == "0" || $(this).val() == 0.00) {
-            //revert prices only if bulk discount came from gift
-            var row = $(this).closest('tr');
-            var srp = row.find('.srp').val();
-            $(this).val(srp);
-        }
-        
-    });
-    computeCart();
-    computeCartMinimum();
-}
-
-
 
 
 $(document).ready(function(){   
@@ -573,7 +576,7 @@ $(document).ready(function(){
     });
 
 
-    $('#cgroup-app_code').hide();
+    //$('#cgroup-app_code').hide();
     $('.bulk_adj').hide();
     $('.clear_discount').hide();
     $('.checkout_btn').hide();
@@ -622,6 +625,11 @@ $(document).ready(function(){
         $('#cc_modal').modal('show');
     });
 
+    $(document).on("click",".co_check_payment", function(e){
+        $('#checkout_modal').modal('hide');
+        $('#check_modal').modal('show');
+    });
+
     //Proceed
     $(document).on("click",".proceed_btn", function(e){
         proceedToTransaction();
@@ -633,6 +641,15 @@ $(document).ready(function(){
 
     $(document).on("click",".apply_bulk", function(e){
         applyBulkAdjustment();
+    });
+
+    $(document).on("click",".numeric_key", function(e){
+        //alert($(this).data("value"));
+        $('#cform-cash_received_amt')[0].value += $(this).data("value");
+        var amt_to_pay = $('#transaction_amt_to_pay').val();
+        var change = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+        $('#cform-cash_chg_amt').val(addCommas(change));
+
     });
 
     $(document).on("click",".clear_discount", function(e){

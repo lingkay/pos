@@ -23,35 +23,7 @@ function addToCart(product_name, srp, min_price, id)
         computeCartMinimum();
 }
 
-function ajaxGetProductCategories()
-{
-    $( "#prod_cats" ).empty();
-    $( "#prods" ).empty();
-    $("#prod_cats").append("<div style=\"height: 10px;\">");
-    // var url = "http://dev.gisterp2/inventory/pos/get/product_categories";
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
-    $.getJSON(url, function(json){  
-       $.each(json, function(i, item) {
-            var img = "http://nahmdong.com/vitalhill/img/default.png";
-            if (item.image_url != null) {
-                img = item.image_url;
-            }
-            // alert(item.name);
-            $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
 
-            $("#prods").append("<div class=\"col-md-6\" style=\"margin: 0px !important; padding: 1px !important\" >\
-                    <a href=\"javascript:void(0)\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                        </div>\
-                    </div>\
-                    </a>\
-                </div>");
-        });
-    });
-}
 function ajaxGetVAT()
 {
     // var url = "http://dev.gisterp2/inventory/pos/get/vat";
@@ -62,50 +34,7 @@ function ajaxGetVAT()
     });
 
 }
-function ajaxGetProducts(cid)
-{
 
-    $( "#prods" ).empty();
-    $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
-    $("#cat_btn_"+cid).css({'background-color': '#484c50'});
-    $( "#prods" ).empty();
-    
-    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
-    $.getJSON(url, function(json){  
-        var count = 0;
-       $.each(json, function(i, item) {
-        count++;
-        var price = 0;
-        if (item.srp != null) {
-            price = item.srp;
-        } 
-
-        var img = "http://nahmdong.com/vitalhill/img/default.png";
-        if (item.image_url != null) {
-            img = item.image_url;
-        }
-
-            $("#prods").append("<div class=\"col-md-6\" style=\"margin: 0px !important; padding: 2px !important\" >\
-                    <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #7e88ff !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 150px; width: 80%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 12px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+price+"</b></h3>\
-                        </div>\
-                    </div>\
-                    </a>\
-                </div>");
-
-        });
-
-       if (count == 0) {
-            $( "#prods" ).empty();
-            $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;No products in selected category</h2></div>");
-       }
-    });
-}
 
 function computeExtraAmount()
 {
@@ -183,25 +112,7 @@ function appendPerItemColumns()
 }
 
 
-function appendPerItemFields()
-{
-    if ($('.checkout_btn').is(':visible') && $('#reg_trans_flag').val() != 1) {
-        $('#cart_table').find('tr').each(function(){
-            if ($(this).children('td').length < 6) {
-                $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
-                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
-                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
-                    <input type=\"text\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
 
-                var srp = $(this).find('.srp').val();
-                var ap = $(this).find('.adjusted_price');
-                ap.val(srp);
-                computeCart();
-            }
-        });
-    }
-}
 
 function hideBulkAmounts()
 {
@@ -320,3 +231,170 @@ function apply_indiv(x)
     computeCartMinimum();
 }
 
+
+function proceedToTransaction(x)
+{
+    var select_trans = x;
+    if (select_trans != '') {
+        // $("#prods").addClass("disabledbutton");
+        // $("#prod_cats").addClass("disabledbutton");
+        if (select_trans == 'reg') {
+            $('.next_step_btn').hide();
+            $('.checkout_btn').show();
+            $('#transaction_type_modal').modal('hide');
+            // $('.remove_row').hide();
+            // $('.clear_discount').show();
+            $('.savings_h4').hide();
+            $('.clear_discount').show();
+            $('#reg_trans_flag').val(1);
+            // hideCartLastColumn();
+        } else if (select_trans == 'per') {
+            // hideCartLastColumn();
+            $('#reg_trans_flag').val(0);
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.checkout_btn').show();
+            appendPerItemColumns();
+            appendPerItemFields();
+            $('#transaction_type_modal').modal('hide');
+            $('.orig_totals_row').show();
+            $('.orig_price_h3').show();
+            $('.clear_discount').show();
+        } else if (select_trans == 'bulk') {
+            $('.next_step_btn').hide();
+            $('#reg_trans_flag').val(0);
+            // $('.remove_row').hide();
+            $('.savings_h4').show();
+            $('.bulk_adj').show();
+            $('#proc').show();
+            $('#transaction_type_modal').modal('hide');
+            $('#bulk_adjustment').modal('show');
+            $('.bulk_discount_h4').show();
+            $('.checkout_btn').show();
+            $('.orig_totals_row').show();
+            $('.orig_price_h3').show();
+            $('.clear_discount').show();
+        } else {
+            $('.clear_discount').hide();
+            $('#reg_trans_flag').val(0);
+        }
+    } else {
+        $('.clear_discount').hide();
+        $('#reg_trans_flag').val(0);
+    }
+}
+
+
+
+function revertDiscounts()
+{
+    $('#cart_table').find('tr').each(function(){
+        if ($(this).children('th').length > 5) {
+            $(this).find('th').eq(2).remove();
+            $(this).find('th').eq(2).remove();
+            $(this).find('th').eq(2).remove();
+        }
+
+        if ($(this).children('td').length > 5) {
+            $(this).find('td').eq(2).remove();
+            $(this).find('td').eq(2).remove();
+            $(this).find('td').eq(2).remove();
+        }
+    });
+
+    //alert($('#cart_int_orig_price').val());
+    $('.cart_price_h3').css({'color': 'black'});
+    $('#cgroup-new_total').hide();
+    $('#cform-new_total').val('');
+    $('#cform-discount_amount').val('');
+    $('#cgroup-discount_amount').hide();
+    $('#cform-discount_pct').val('');
+    $('#cgroup-discount_pct').hide();
+    $('#cart_price').text(addCommas($('#cart_int_orig_price').val()));
+    $('#cart_int_price').val($('#cart_int_orig_price').val());
+    computeCartMinimum();
+    $('.orig_totals_row').hide();
+    $('.orig_price_h3').hide();
+    $('.bulk_discount_h4').hide();
+    $('#applied_bulk_discount').val('');
+    $('.checkout_btn').hide();
+    $('.bulk_adj').hide();
+    $('.next_step_btn').show();
+    $('.clear_discount').hide();
+}
+
+
+
+function applyBulkAdjustment()
+{   
+    var bulk_adj_opt = $('#cform-bulk_adj').val();
+    if (bulk_adj_opt != '') {
+        if (bulk_adj_opt == 'bgift') {
+            $('#cart_price').text(0);
+            $('#cart_int_price').val(0);
+            $('#applied_bulk_discount').text('Gift');
+
+        } else if (bulk_adj_opt == 'bdiscamt') {
+            var new_cart_total = $('#cart_int_orig_price').val() - $('#cform-discount_amount').val();
+            if (new_cart_total >= 0) {
+                $('#cart_price').text(addCommas(new_cart_total));
+                $('#cart_int_price').val(new_cart_total);
+                $('#applied_bulk_discount').text('Less Php '+$('#cform-discount_amount').val()+'');
+            } else {
+                toastr['error']('Invalid discount amount.', 'Error');
+            }
+        } else if (bulk_adj_opt == 'bdisc') {
+            var new_cart_total = $('#cart_int_orig_price').val() - ($('#cart_int_orig_price').val() * ($('#cform-discount_pct').val()/100));
+            if (new_cart_total >= 0) {
+                $('#cart_price').text(addCommas(new_cart_total));
+                $('#cart_int_price').val(new_cart_total);
+                $('#applied_bulk_discount').text('Less '+$('#cform-discount_pct').val()+'% off');
+            } else {
+                toastr['error']('Invalid discount.', 'Error');
+            }
+        } else if (bulk_adj_opt == 'bamt') {
+            $('#cart_int_price').val($('#cform-new_total').val());
+            $('#cart_price').text(addCommas($('#cform-new_total').val()));
+            $('#applied_bulk_discount').text('Change Amount');
+        } else {
+            $('.display_price').each(function() {
+                if ($(this).val() == "0" || $(this).val() == "0.00") {
+                    //revert prices only if bulk discount came from gift
+                    var row = $(this).closest('tr');
+                    var srp = row.find('.srp').val();
+                    $(this).val(srp);
+                }
+                
+            });
+            $('#applied_bulk_discount').text('');
+            computeCart();
+            computeCartMinimum();
+        }
+    } else {
+
+    }
+
+    var vat = parseInt($('#session_vat').val())/100;
+    var totalx = $('#cart_int_price').val();
+    // alert(totalx+'');
+    var amt_net_of_vat = (totalx / (1.12)).toFixed(2);
+    var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+    $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+    $("#cart_new_vat").text(addCommas(vat_amt.toString()));
+    $('#cart_int_price').val(totalx);
+}
+
+function revertOriginalPrices()
+{
+    $('.display_price').each(function() {
+        if ($(this).val() == "0" || $(this).val() == 0.00) {
+            //revert prices only if bulk discount came from gift
+            var row = $(this).closest('tr');
+            var srp = row.find('.srp').val();
+            $(this).val(srp);
+        }
+        
+    });
+    computeCart();
+    computeCartMinimum();
+}
