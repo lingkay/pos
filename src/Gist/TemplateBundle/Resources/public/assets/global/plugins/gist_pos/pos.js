@@ -327,12 +327,13 @@ function revertDiscounts()
 
 function applyBulkAdjustment()
 {   
-    var bulk_adj_opt = $('#cform-bulk_adj').val();
+    var bulk_adj_opt = $('#bulk_opt_sel').val();
     if (bulk_adj_opt != '') {
         if (bulk_adj_opt == 'bgift') {
             $('#cart_price').text(0);
             $('#cart_int_price').val(0);
             $('#applied_bulk_discount').text('Gift');
+            $('#customer_savings').text(addCommas($('#cart_int_orig_price').val()));
 
         } else if (bulk_adj_opt == 'bdiscamt') {
             var new_cart_total = $('#cart_int_orig_price').val() - $('#cform-discount_amount').val();
@@ -340,22 +341,27 @@ function applyBulkAdjustment()
                 $('#cart_price').text(addCommas(new_cart_total));
                 $('#cart_int_price').val(new_cart_total);
                 $('#applied_bulk_discount').text('Less Php '+$('#cform-discount_amount').val()+'');
+                $('#customer_savings').text(addCommas($('#cform-discount_amount').val()));
             } else {
                 toastr['error']('Invalid discount amount.', 'Error');
             }
         } else if (bulk_adj_opt == 'bdisc') {
             var new_cart_total = $('#cart_int_orig_price').val() - ($('#cart_int_orig_price').val() * ($('#cform-discount_pct').val()/100));
+            var savings = $('#cart_int_orig_price').val() * ($('#cform-discount_pct').val()/100);
             if (new_cart_total >= 0) {
                 $('#cart_price').text(addCommas(new_cart_total));
                 $('#cart_int_price').val(new_cart_total);
                 $('#applied_bulk_discount').text('Less '+$('#cform-discount_pct').val()+'% off');
+                $('#customer_savings').text(addCommas(savings.toString()));
             } else {
                 toastr['error']('Invalid discount.', 'Error');
             }
         } else if (bulk_adj_opt == 'bamt') {
+            var savings = $('#cart_int_price').val() - $('#cform-new_total').val();
             $('#cart_int_price').val($('#cform-new_total').val());
             $('#cart_price').text(addCommas($('#cform-new_total').val()));
             $('#applied_bulk_discount').text('Change Amount');
+            $('#customer_savings').text(addCommas(savings.toString()));
         } else {
             $('.display_price').each(function() {
                 if ($(this).val() == "0" || $(this).val() == "0.00") {

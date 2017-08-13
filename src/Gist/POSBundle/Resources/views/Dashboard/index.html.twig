@@ -71,6 +71,7 @@
                 <input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
                 <input type="hidden" id="transaction_balance" name="transaction_balance" value="0">
                 <input type="hidden" id="reg_trans_flag" name="reg_trans_flag" value="0">
+                <input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="">
                 <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_totals_table">
                     <thead>
                         <tr>
@@ -103,11 +104,27 @@
                 <form method="post" action="">
                     <div class="modal-header">
                         <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Bulk Adjustment Form</h4>
+                        <h4 id="form_title" class="modal-title">Bulk Discount Form</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row form-horizontal form">
-                            {{ form.group_select('Option', 'bulk_adj', bulk_options, '', 3, 4, false) }}
+                            <div class="col-md-3" class="proceed_btn_reg" onclick="updateBulkForm('bgift')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk1.png') }}"></a>
+                                <h4>Gift</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="updateBulkForm('bdisc')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk2.png') }}"></a>
+                                <h4>Discount %</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="updateBulkForm('bdiscamt')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk3.png') }}"></a>
+                                <h4>Discount</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="updateBulkForm('bamt')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk4.png') }}"></a>
+                                <h4>Amount to Pay</h4>
+                            </div>
+                            <div style="margin-bottom: 15px;"></div>
                             {{ form.group_text('New Price', 'new_total', '', 3, 4, false) }}
                             {{ form.group_text('Discount Amount', 'discount_amount', '', 3, 4, false) }}
                             {{ form.group_text('Discount %', 'discount_pct', '', 3, 4, false) }}
@@ -365,6 +382,50 @@
 {% endblock %}
 {% block js %}
 <script>
+function updateBulkForm(opt)
+{
+    var bulk_adj_opt = opt;
+    $('.indiv_adj').each(function() {
+        $(this).hide();
+    });
+
+    if (bulk_adj_opt == 'bgift') {
+        $('#bulk_opt_sel').val('bgift');
+        $('#cform-discount_amount').val('');
+        $('#cgroup-discount_amount').hide();
+        $('#cform-discount_pct').val('');
+        $('#cgroup-discount_pct').hide();
+        $('#cform-new_total').val('');
+        $('#cgroup-new_total').hide();
+    } else if (bulk_adj_opt == 'bamt') {
+        $('#bulk_opt_sel').val('bamt');
+        $('#cform-discount_amount').val('');
+        $('#cgroup-discount_amount').hide();
+        $('#cform-discount_pct').val('');
+        $('#cgroup-discount_pct').hide();
+        // $('#cform-new_total').val('');
+        $('#cgroup-new_total').show();
+    } else if (bulk_adj_opt == 'bdiscamt') {
+        // $('#cform-discount_amount').val('');
+        $('#bulk_opt_sel').val('bdiscamt');
+        $('#cgroup-discount_amount').show();
+        $('#cform-discount_pct').val('');
+        $('#cgroup-discount_pct').hide();
+        $('#cform-new_total').val('');
+        $('#cgroup-new_total').hide();
+    } else if (bulk_adj_opt == 'bdisc') {
+        $('#bulk_opt_sel').val('bdisc');
+        $('#cform-discount_amount').val('');
+        $('#cgroup-discount_amount').hide();
+        // $('#cform-discount_pct').val('');
+        $('#cgroup-discount_pct').show();
+        $('#cform-new_total').val('');
+        $('#cgroup-new_total').hide();
+    } else {
+        $('#bulk_opt_sel').val('na');
+        cancelBulkAdjustment();
+    }
+}
 function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
@@ -712,37 +773,7 @@ $(document).ready(function(){
 
     $('#cform-bulk_adj').on("change", function()
     {
-        var bulk_adj_opt = $('#cform-bulk_adj').val();
-        $('.indiv_adj').each(function() {
-            $(this).hide();
-        });
-
-        if (bulk_adj_opt == 'bgift') {
-
-        } else if (bulk_adj_opt == 'bamt') {
-            $('#cform-discount_amount').val('');
-            $('#cgroup-discount_amount').hide();
-            $('#cform-discount_pct').val('');
-            $('#cgroup-discount_pct').hide();
-            // $('#cform-new_total').val('');
-            $('#cgroup-new_total').show();
-        } else if (bulk_adj_opt == 'bdiscamt') {
-            // $('#cform-discount_amount').val('');
-            $('#cgroup-discount_amount').show();
-            $('#cform-discount_pct').val('');
-            $('#cgroup-discount_pct').hide();
-            $('#cform-new_total').val('');
-            $('#cgroup-new_total').hide();
-        } else if (bulk_adj_opt == 'bdisc') {
-            $('#cform-discount_amount').val('');
-            $('#cgroup-discount_amount').hide();
-            // $('#cform-discount_pct').val('');
-            $('#cgroup-discount_pct').show();
-            $('#cform-new_total').val('');
-            $('#cgroup-new_total').hide();
-        } else {
-            cancelBulkAdjustment();
-        }
+        
     });
 
 
