@@ -321,6 +321,37 @@ function revertDiscounts()
     $('.bulk_adj').hide();
     $('.next_step_btn').show();
     $('.clear_discount').hide();
+
+    var vat = parseInt($('#session_vat').val())/100;
+    var tax_coverage = $('#tax_coverage').val();
+    var total = parseInt($('#cart_int_orig_price').val());
+    var orig_total = parseInt($('#cart_int_orig_price').val());
+
+    var new_amt = $('#cart_int_orig_price').val();
+    if ($('#tax_coverage').val() == 'incl') {
+        $('#transaction_amt_to_pay').val(new_amt);
+        $('#transaction_balance').val(new_amt);
+    } else if ($('#tax_coverage').val() == 'excl') {
+        var vat_amt = $('#cart_new_amt_vat').text();
+        $('#transaction_amt_to_pay').val(vat_amt);
+        $('#transaction_balance').val(vat_amt);
+    }
+
+
+    if (tax_coverage == 'incl') {
+        var amt_net_of_vat = total.toFixed(2);
+        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+        $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+        $("#cart_new_vat").text(addCommas(vat_amt.toString()));
+    } else if (tax_coverage == 'excl') {
+        var vat_amt = parseInt(total * vat).toFixed(2);
+        var amt_net_of_vat = (parseInt(total) + parseInt(vat_amt)).toFixed(2);
+        $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
+        $("#cart_new_vat").text(addCommas(vat_amt.toString()));
+    } else {
+        $("#cart_new_amt_vat").text("No vat set in ERP");
+        $("#cart_new_vat").text("No vat set in ERP");
+    }
 }
 
 
@@ -384,6 +415,16 @@ function applyBulkAdjustment()
     var tax_coverage = $('#tax_coverage').val();
     var total = parseInt($('#cart_int_price').val());
     var orig_total = parseInt($('#cart_int_orig_price').val());
+
+    var new_amt = $('#cart_int_price').val();
+    if ($('#tax_coverage').val() == 'incl') {
+        $('#transaction_amt_to_pay').val(new_amt);
+        $('#transaction_balance').val(new_amt);
+    } else if ($('#tax_coverage').val() == 'excl') {
+        var vat_amt = $('#cart_new_amt_vat').text();
+        $('#transaction_amt_to_pay').val(vat_amt);
+        $('#transaction_balance').val(vat_amt);
+    }
 
 
     if (tax_coverage == 'incl') {

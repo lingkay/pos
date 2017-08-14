@@ -67,7 +67,7 @@
                 <input type="hidden" id="session_vat" name="session_vat" value="0">
                 <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
                 <input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
-                <input type="hidden" id="cart_int_orig_price" name="cart_int_price" value="0">
+                <input type="hidden" id="cart_int_orig_price" name="cart_int_orig_price" value="0">
                 <input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
                 <input type="hidden" id="transaction_balance" name="transaction_balance" value="0">
                 <input type="hidden" id="reg_trans_flag" name="reg_trans_flag" value="0">
@@ -528,6 +528,7 @@ function computeCart()
     var total = 0;
     var new_total = 0;
     var savings = 0;
+    
     var vat = parseInt($('#session_vat').val())/100;
     $('.display_price').each(function(){
         total = total + parseInt($(this).val());
@@ -542,17 +543,35 @@ function computeCart()
 
     if ($('.checkout_btn').is(':visible') && $('.bulk_adj').is(':hidden') && $('#reg_trans_flag').val() != 1) {
         $('#cart_int_price').val(new_total);
-        $('#transaction_amt_to_pay').val(new_total);
-        $('#transaction_balance').val(new_total);
+        computeVAT(new_total, total);
+        // $('#transaction_amt_to_pay').val(new_total);
+        // $('#transaction_balance').val(new_total);
+        if ($('#tax_coverage').val() == 'incl') {
+            $('#transaction_amt_to_pay').val(new_total);
+            $('#transaction_balance').val(new_total);
+        } else if ($('#tax_coverage').val() == 'excl') {
+            var vat_amt = $('#cart_new_amt_vat').text();
+            $('#transaction_amt_to_pay').val(vat_amt);
+            $('#transaction_balance').val(vat_amt);
+        }
         $("#cart_price").text(addCommas(new_total.toString()));
         savings = total - new_total;
         $('#customer_savings').text(addCommas(savings.toString()));
-        computeVAT(new_total, total);
+        
     } else {
         if($('.bulk_adj').is(':hidden')) {
             $('#cart_int_price').val(total);
-            $('#transaction_amt_to_pay').val(total);
-            $('#transaction_balance').val(total);
+            // $('#transaction_amt_to_pay').val(total);
+            // $('#transaction_balance').val(total);
+            var new_amt = $('#cart_int_price').val();
+            if ($('#tax_coverage').val() == 'incl') {
+                $('#transaction_amt_to_pay').val(new_amt);
+                $('#transaction_balance').val(new_amt);
+            } else if ($('#tax_coverage').val() == 'excl') {
+                var vat_amt = $('#cart_new_amt_vat').text();
+                $('#transaction_amt_to_pay').val(vat_amt);
+                $('#transaction_balance').val(vat_amt);
+            }
             $("#cart_price").text(addCommas(total.toString()));
             
             computeVAT(total, total);
@@ -561,6 +580,8 @@ function computeCart()
             
         }
     }
+
+    
 
     
 }
@@ -701,14 +722,15 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".checkout_btn", function(e){
+        // computeCart();
         if ($('#cart_table tr').length > 1) {
             $('#checkout_modal').modal('show');
             if (parseInt($('#transaction_balance').val()) == 0) {
-                $('.co_amt_to_pay').text(addCommas($('#cart_int_price').val().toString()));
-                $('.co_balance').text(addCommas($('#cart_int_price').val().toString()));
+                $('.co_amt_to_pay').text(addCommas($('#transaction_amt_to_pay').val().toString()));
+                $('.co_balance').text(addCommas($('#transaction_amt_to_pay').val().toString()));
             } else {
-                $('.co_amt_to_pay').text(addCommas($('#cart_int_price').val().toString()));
-                $('.co_balance').text(addCommas($('#cart_int_price').val().toString()));
+                $('.co_amt_to_pay').text(addCommas($('#transaction_amt_to_pay').val().toString()));
+                $('.co_balance').text(addCommas($('#transaction_amt_to_pay').val().toString()));
             }
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
