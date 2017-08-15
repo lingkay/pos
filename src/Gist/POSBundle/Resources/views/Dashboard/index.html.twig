@@ -532,13 +532,13 @@ function computeCart()
     var new_total = 0;
     var savings = 0;
     
-    var vat = parseInt($('#session_vat').val())/100;
+    var vat = parseFloat($('#session_vat').val())/100;
     $('.display_price').each(function(){
-        total = total + parseInt($(this).val());
+        total = total + parseFloat($(this).val());
     });
 
     $('.adjusted_price').each(function(){
-        new_total = new_total + parseInt($(this).val());
+        new_total = new_total + parseFloat($(this).val());
     });
 
     $("#cart_orig_price").text(addCommas(total.toString()));
@@ -591,27 +591,27 @@ function computeCart()
 
 function computeVAT(total, orig_total)
 {
-    var vat = parseInt($('#session_vat').val())/100;
+    var vat = parseFloat($('#session_vat').val())/100;
     var tax_coverage = $('#tax_coverage').val();
 
     if (tax_coverage == 'incl') {
-        var amt_net_of_vat = total.toFixed(2);
-        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+        var vat_amt = (total * vat).toFixed(2);
+        var amt_net_of_vat = (total - vat_amt).toFixed(2);;
         $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_new_vat").text(addCommas(vat_amt.toString()));
 
-        var amt_net_of_vat = orig_total.toFixed(2);
-        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+        var vat_amt = (orig_total * vat).toFixed(2);
+        var amt_net_of_vat = (orig_total-vat_amt).toFixed(2);;
         $("#cart_orig_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_orig_vat").text(addCommas(vat_amt.toString()));
     } else if (tax_coverage == 'excl') {
-        var vat_amt = parseInt(total * vat).toFixed(2);
-        var amt_net_of_vat = (parseInt(total) + parseInt(vat_amt)).toFixed(2);
+        var vat_amt = parseFloat(total * vat).toFixed(2);
+        var amt_net_of_vat = (parseFloat(total) + parseFloat(vat_amt)).toFixed(2);
         $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_new_vat").text(addCommas(vat_amt.toString()));
 
-        var vat_amt = parseInt(orig_total * vat).toFixed(2);
-        var amt_net_of_vat = (parseInt(orig_total) + parseInt(vat_amt)).toFixed(2);
+        var vat_amt = parseFloat(orig_total * vat).toFixed(2);
+        var amt_net_of_vat = (parseFloat(orig_total) + parseFloat(vat_amt)).toFixed(2);
         $("#cart_orig_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_orig_vat").text(addCommas(vat_amt.toString()));
     } else {
@@ -626,7 +626,7 @@ function computeCartMinimum()
 {
     var total = 0;
     $('.min_price').each(function(){
-        total = total + parseInt($(this).val());
+        total = total + parseFloat($(this).val());
     });
 
     $("#cart_min_price").val(total);
@@ -672,7 +672,7 @@ $(document).ready(function(){
         var pos_indiv_discount_opt = row.find('.pos_indiv_discount_opt').val();
 
         if (pos_indiv_discount_opt == 'disc') {
-            if (parseInt($(this).val()) > 100) {
+            if (parseFloat($(this).val()) > 100) {
                 toastr['error']('Discount percentage exceeded.', 'Error');
                 $(this).val(100);
             }
@@ -691,8 +691,15 @@ $(document).ready(function(){
         $(this).val(this.value.match(/[0-9]*/));
         if ($(this).val() != '') {
             var amt_to_pay = $('#transaction_amt_to_pay').val();
-            var change = parseInt($(this).val()) - amt_to_pay;
-            $('#cform-cash_chg_amt').val(addCommas(change));
+            var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
+            if (chg_amt >= 0) {
+                var change = chg_amt;  
+                $('#cform-cash_chg_amt').val(addCommas(change));  
+            } else {
+                var change = 0.00;
+                $('#cform-cash_chg_amt').val(change);
+            }
+            
         } else {
             $('#cform-cash_chg_amt').val("0.00");
         }
@@ -728,7 +735,7 @@ $(document).ready(function(){
         // computeCart();
         if ($('#cart_table tr').length > 1) {
             $('#checkout_modal').modal('show');
-            if (parseInt($('#transaction_balance').val()) == 0) {
+            if (parseFloat($('#transaction_balance').val()) == 0) {
                 $('.co_amt_to_pay').text(addCommas($('#transaction_amt_to_pay').val().toString()));
                 $('.co_balance').text(addCommas($('#transaction_amt_to_pay').val().toString()));
             } else {
@@ -788,19 +795,35 @@ $(document).ready(function(){
     $(document).on("click",".numeric_key", function(e){
         //alert($(this).data("value"));
         if ($(this).data("value") == 'CLEAR') {
-            $('#cform-cash_received_amt').val(0.00);
+            $('#cform-cash_received_amt').val("");
             $('#cform-cash_chg_amt').val(0.00);
         } else if ($(this).data("value") == 'DEL') {
             var str = $('#cform-cash_received_amt').val();
             $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
             var amt_to_pay = $('#transaction_amt_to_pay').val();
-            var change = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            // var change = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
+            var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
+            //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
+            if (chg_amt >= 0) {
+                var change = chg_amt;  
+                $('#cform-cash_chg_amt').val(addCommas(change));  
+            } else {
+                var change = 0.00;
+                $('#cform-cash_chg_amt').val(change);
+            }
             $('#cform-cash_chg_amt').val(addCommas(change));
         } else {
             $('#cform-cash_received_amt')[0].value += $(this).data("value");
             var amt_to_pay = $('#transaction_amt_to_pay').val();
-            var change = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
-            $('#cform-cash_chg_amt').val(addCommas(change));
+            var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
+            //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
+            if (chg_amt >= 0) {
+                var change = chg_amt;  
+                $('#cform-cash_chg_amt').val(addCommas(change));  
+            } else {
+                var change = 0.00;
+                $('#cform-cash_chg_amt').val(change);
+            }
         }
     });
 

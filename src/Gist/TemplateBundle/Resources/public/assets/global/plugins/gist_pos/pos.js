@@ -339,8 +339,8 @@ function revertDiscounts()
 
 
     if (tax_coverage == 'incl') {
-        var amt_net_of_vat = total.toFixed(2);
-        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+        var vat_amt = (total * vat).toFixed(2);
+        var amt_net_of_vat = (total-vat_amt).toFixed(2);
         $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_new_vat").text(addCommas(vat_amt.toString()));
     } else if (tax_coverage == 'excl') {
@@ -428,13 +428,13 @@ function applyBulkAdjustment()
 
 
     if (tax_coverage == 'incl') {
-        var amt_net_of_vat = total.toFixed(2);
-        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+        var vat_amt = (total * vat).toFixed(2);
+        var amt_net_of_vat = (total - vat_amt).toFixed(2);;
         $("#cart_new_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_new_vat").text(addCommas(vat_amt.toString()));
 
-        var amt_net_of_vat = orig_total.toFixed(2);
-        var vat_amt = (amt_net_of_vat * vat).toFixed(2);
+        var vat_amt = (orig_total * vat).toFixed(2);
+        var amt_net_of_vat = (orig_total-vat_amt).toFixed(2);;
         $("#cart_orig_amt_vat").text(addCommas(amt_net_of_vat.toString()));
         $("#cart_orig_vat").text(addCommas(vat_amt.toString()));
     } else if (tax_coverage == 'excl') {
