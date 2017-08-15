@@ -696,12 +696,12 @@ $(document).ready(function(){
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
             } else {
-                var change = 0.00;
+                var change = 0;
                 $('#cform-cash_chg_amt').val(change);
             }
             
         } else {
-            $('#cform-cash_chg_amt').val("0.00");
+            $('#cform-cash_chg_amt').val("0");
         }
         
 
@@ -796,7 +796,7 @@ $(document).ready(function(){
         //alert($(this).data("value"));
         if ($(this).data("value") == 'CLEAR') {
             $('#cform-cash_received_amt').val("");
-            $('#cform-cash_chg_amt').val(0.00);
+            $('#cform-cash_chg_amt').val(0);
         } else if ($(this).data("value") == 'DEL') {
             var str = $('#cform-cash_received_amt').val();
             $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
@@ -808,7 +808,7 @@ $(document).ready(function(){
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
             } else {
-                var change = 0.00;
+                var change = 0;
                 $('#cform-cash_chg_amt').val(change);
             }
             $('#cform-cash_chg_amt').val(addCommas(change));
@@ -821,7 +821,7 @@ $(document).ready(function(){
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
             } else {
-                var change = 0.00;
+                var change = 0;
                 $('#cform-cash_chg_amt').val(change);
             }
         }
