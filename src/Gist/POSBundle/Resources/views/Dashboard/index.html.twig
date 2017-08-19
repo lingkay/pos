@@ -691,7 +691,8 @@ $(document).ready(function(){
         $(this).val(this.value.match(/[0-9]*/));
         if ($(this).val() != '') {
             var amt_to_pay = $('#transaction_amt_to_pay').val();
-            var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
+            var chg_amt = parseInt($(this).val()) - parseInt(amt_to_pay);
+            alert(chg_amt);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
@@ -802,7 +803,7 @@ $(document).ready(function(){
             $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
             var amt_to_pay = $('#transaction_amt_to_pay').val();
             // var change = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
-            var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
+            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
             //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
@@ -815,7 +816,7 @@ $(document).ready(function(){
         } else {
             $('#cform-cash_received_amt')[0].value += $(this).data("value");
             var amt_to_pay = $('#transaction_amt_to_pay').val();
-            var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
+            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
             //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
