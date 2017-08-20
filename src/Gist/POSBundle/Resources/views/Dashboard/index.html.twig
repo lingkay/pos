@@ -607,10 +607,8 @@ function addToCart(product_name, srp, min_price, id)
         } else if ($('#string_trans_type').val() == 'per') {
             computeCartRaw();
             computeCartIndiv();
-        }
-        
+        } 
 }
-
 
 function computeCartRaw() 
 {
@@ -765,11 +763,7 @@ function computeVATIndiv(total)
         $("#cart_new_amt_vat").text("No vat set in ERP");
         $("#cart_new_vat").text("No vat set in ERP");
     }
-
-
 }
-
-
 
 function proceedToTransaction(x)
 {
@@ -832,9 +826,6 @@ function revertDiscounts()
     });
 
     var float_orig_price = parseFloat($('#float_cart_orig_price').val());
-    // console.log('XXXXXXXXXXXXXXXXXXX: '+float_orig_price)
-
-
     $('#string_trans_type').val('none');
     $('.updated_totals_row').hide();
     $('.checkout_btn').hide();
@@ -846,7 +837,6 @@ function revertDiscounts()
 
 
 
-    //alert($('#float_cart_orig_price').val());
     $('.cart_price_h3').css({'color': 'black'});
     $('#cgroup-new_total').hide();
     $('#cform-new_total').val('');
@@ -856,7 +846,7 @@ function revertDiscounts()
     $('#cgroup-discount_pct').hide();
     // $('.cart_price').text(addCommas($('#float_cart_orig_price').val()));
     
-    // computeCartMinimum();
+    computeCartRaw();
     $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
@@ -966,7 +956,7 @@ function applyBulkAdjustment()
             }
         } else if (bulk_adj_opt == 'bamt') {
             var savings = $('#float_cart_orig_price').val() - $('#cform-new_total').val();
-            alert(savings);
+            // alert(savings);
             computeCartBulk(parseFloat($('#cform-new_total').val()));
             $('#applied_bulk_discount').text('Change Amount');
             $('#customer_savings').text(addCommas(parseFloat(savings)));
