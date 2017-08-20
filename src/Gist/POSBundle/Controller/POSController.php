@@ -40,7 +40,7 @@ class POSController extends Controller
         $result2 = file_get_contents($url2);
         $vars2 = json_decode($result2, true);
 
-        $url3="http://dev.gisterp2/inventory/pos/get/tax_coverage";
+        $url3="http://erp.cilanthropist.co/inventory/pos/get/tax_coverage";
         $result3 = file_get_contents($url3);
         $vars3 = str_replace('"', '', $result3);
 
