@@ -485,8 +485,13 @@ function ajaxGetProducts(cid)
        $.each(json, function(i, item) {
         count++;
         var price = 0;
+        var orig_srp = 0;
         if (item.srp != null) {
             price = item.srp;
+        } 
+
+        if (item.orig_srp != null) {
+            orig_srp = item.orig_srp;
         } 
 
         var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -500,7 +505,7 @@ function ajaxGetProducts(cid)
                         <img src="+img+" style=\"height: 90px; width: 60%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
                             <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+price+"</b></h3>\
+                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+orig_srp+"</b></h3>\
                         </div>\
                     </div>\
                     </a>\
