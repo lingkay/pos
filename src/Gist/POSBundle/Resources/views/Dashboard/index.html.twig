@@ -7,7 +7,7 @@
 <input type="hidden" id="float_cart_new_price" value="0">
 <!-- END CART VARS -->
 <!-- TRANSACTION VARS -->
-<input type="hidden" id="float_trans_amount" name="transaction_amt_to_pay" value="0">
+<input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
 <input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
 <input type="hidden" id="string_trans_type" value="none">
 <!-- END TRANSACTION VARS -->
@@ -634,6 +634,8 @@ function computeCartRaw()
     $('.initial_cart_price').text(addCommas(sale_price));
     $('.updated_cart_price').text(addCommas(sale_price)); //will be overwritten by peritem/bulk if set
     $('.transaction_total').text(addCommas(sale_price));
+    $('#transaction_amt_to_pay').val(addCommas(sale_price));
+    $('#float_trans_amount').val(sale_price);
 
     // compute taxes and vat
     computeVATRaw(sale_price);
@@ -658,7 +660,8 @@ function computeCartIndiv()
     // display new cart total
     $('.updated_cart_price').text(addCommas(sale_price));
     $('.transaction_total').text(addCommas(sale_price));
-
+    $('#transaction_amt_to_pay').val(addCommas(sale_price));
+    $('#float_trans_amount').val(sale_price);
     // compute taxes and vat
     computeVATIndiv(sale_price);
 
@@ -675,7 +678,8 @@ function computeCartBulk(sale_price)
     // display new cart total
     $('.updated_cart_price').text(addCommas(sale_price));
     $('.transaction_total').text(addCommas(sale_price));
-
+    $('#transaction_amt_to_pay').val(addCommas(sale_price));
+    $('#float_trans_amount').val(sale_price);
     // compute taxes and vat
     computeVATIndiv(sale_price);
 
@@ -1367,7 +1371,7 @@ $(document).ready(function(){
         $(this).val(this.value.match(/[0-9]*/));
         if ($(this).val() != '') {
             var amt_to_pay = $('#transaction_amt_to_pay').val();
-            var chg_amt = parseInt($(this).val()) - parseInt(amt_to_pay);
+            var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             alert(chg_amt);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
@@ -1406,11 +1410,11 @@ $(document).ready(function(){
         if ($('#cart_table tr').length > 1) {
             $('#checkout_modal').modal('show');
             if (parseFloat($('#transaction_balance').val()) == 0) {
-                $('.co_amt_to_pay').text(addCommas($('#transaction_amt_to_pay').val()));
-                $('.co_balance').text(addCommas($('#transaction_amt_to_pay').val()));
+                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
+                $('.co_balance').text($('#transaction_amt_to_pay').val());
             } else {
-                $('.co_amt_to_pay').text(addCommas($('#transaction_amt_to_pay').val()));
-                $('.co_balance').text(addCommas($('#transaction_amt_to_pay').val()));
+                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
+                $('.co_balance').text($('#transaction_amt_to_pay').val());
             }
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
@@ -1459,6 +1463,7 @@ $(document).ready(function(){
     
 
     $(document).on("click",".numeric_key", function(e){
+        console.log('num: '+parseInt($('#cform-cash_received_amt').val()));
         //alert($(this).data("value"));
         if ($(this).data("value") == 'CLEAR') {
             $('#cform-cash_received_amt').val("");
@@ -1466,7 +1471,7 @@ $(document).ready(function(){
         } else if ($(this).data("value") == 'DEL') {
             var str = $('#cform-cash_received_amt').val();
             $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
-            var amt_to_pay = $('#transaction_amt_to_pay').val();
+            var amt_to_pay = $('#float_trans_amount').val();
             // var change = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
             var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
             //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
@@ -1480,11 +1485,13 @@ $(document).ready(function(){
             $('#cform-cash_chg_amt').val(addCommas(change));
         } else {
             $('#cform-cash_received_amt')[0].value += $(this).data("value");
-            var amt_to_pay = $('#transaction_amt_to_pay').val();
+            var amt_to_pay = $('#float_trans_amount').val();
             var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            console.log('amt_to_pay chg: '+amt_to_pay);
             //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
+                console.log('chg: '+change);
                 $('#cform-cash_chg_amt').val(addCommas(change));  
             } else {
                 var change = 0;
