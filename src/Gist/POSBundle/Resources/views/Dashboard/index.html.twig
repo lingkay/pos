@@ -59,10 +59,22 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="products_tab">
                                 <br>
-                                <div  style="height: 420px;overflow:scroll; overflow-x: hidden;">
+                                <div  style="height: 400px;overflow:scroll; overflow-x: hidden;">
                                 <div class="row" id="prods">
                                     
                                 </div>
+                                </div>
+                                <div class="row" style="margin-right: 0px !important;">
+                                    <div class="col-md-4" >
+                                        <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
+                                            <p style="font-size:18px;">&nbsp;Number of items: <b><span style="margin-right: 0px;" class="cart_items_count" value="0">0</span></b>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="view_cart_btn btn btn-xs default blue">View Cart</a></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8" >
+                                        <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
+                                            <p style="font-size:18px;">&nbsp;Transaction Total: <b>Php <span class="transaction_total" value="0">0</span></b></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="cart_tab">
@@ -78,7 +90,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="cart_items">
-
+                                                    <tr class="init_row_prods">
+                                                        <td colspan="3"><p>No items added</p></td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -94,7 +108,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="payments_list">
-
+                                                    <tr class="init_row_payment">
+                                                        <td colspan="3"><p>No payments added</p></td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -145,7 +161,6 @@
                                         </table>
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -153,21 +168,9 @@
             </div>
         </div>
     </div>
-    <div class="row" style="margin-right: 0px !important;">
-        <div class="col-md-3" >
-            <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
-                <p style="font-size:18px;">&nbsp;Number of items: <b><span style="margin-right: 0px;" class="cart_items_count" value="0">0</span></b></p>
-            </div>
-        </div>
-        <div class="col-md-4" >
-            <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
-                <p style="font-size:18px;">&nbsp;Transaction Total: <b>Php <span class="transaction_total" value="0">0</span></b>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="view_cart_btn">View Cart</a></p>
-            </div>
-        </div>
-        <div class="col-md-5" >
-            <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
-                
-            </div>
+    <div class="row" style="margin-bottom: 0px !important;">
+        <div class="col-md-12" >
+            
         </div>
     </div>
 
@@ -641,6 +644,7 @@ function ajaxGetVAT()
 
 function addToCart(product_name, srp, min_price, id)
 {
+    $('.init_row_prods').remove();
     var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
     var field = '<tr class=\"row_prod_'+row_id+'\">';     
         field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
@@ -678,6 +682,7 @@ function addToCart(product_name, srp, min_price, id)
 
 function addToPayments(payment_type, amount, details = null)
 {
+    $('.init_row_payment').remove();
     var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
     var field = '<tr class=\"row_payment_'+row_id+'\">';     
         // field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
@@ -1311,6 +1316,14 @@ $(document).ready(function(){
         var rowCount = $('#cart_table tr').length-1;
         $('.cart_items_count').text(rowCount.toString());
 
+        if (rowCount == 0) {
+            var field = '<tr class=\"init_row_prods\">';     
+            field += '<td colspan=\"3\"><p>No items added</p></td>';
+            field += '</tr>';
+
+            $('#cart_items').prepend(field);
+        }
+
         if($('#string_trans_type') != 'none') {
             computeCartRaw();
         } else {
@@ -1549,6 +1562,16 @@ $(document).ready(function(){
         var tr = $(this).closest('tr');
         tr.remove();
 
+        //count number of payments in list
+        var rowCount = $('#payments_table tr').length-1;
+
+        if (rowCount == 0) {
+            var field = '<tr class=\"init_row_payment\">';     
+            field += '<td colspan=\"3\"><p>No payments added</p></td>';
+            field += '</tr>';
+
+            $('#payments_table').prepend(field);
+        }
 
         computeBalance();
         toastr['success']('Payment removed', 'Success');
