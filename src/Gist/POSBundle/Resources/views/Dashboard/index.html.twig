@@ -683,7 +683,7 @@ function ajaxSearchCustomer()
         var field = '<tr class=\"row_payment_'+row_id+'\">';     
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'"></td>';  
-            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>'; 
+            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default green"><i class="fa fa-eye" aria-hidden="true"></i></a></td>'; 
             field += '</tr>';
 
             $('#customers_list').prepend(field);
@@ -1738,6 +1738,14 @@ $(document).ready(function(){
 
             }
         });
+    });
+
+    $(document).on("click",".remove_customer", function(e){
+        e.preventDefault();            
+        var tr = $(this).closest('tr');
+        tr.remove();
+        return false;
+
     });
 
     $(document).on("click",".remove_payment_row", function(e){
