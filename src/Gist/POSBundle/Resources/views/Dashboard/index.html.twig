@@ -43,6 +43,12 @@
                 <div class="portlet-body form" id="prod_cats" style="height: 400px; overflow:scroll;overflow-x: hidden;">
                 	
                 </div>
+                <div style="background-color: #ffffff !important;">
+                &nbsp;&nbsp;
+                <a href="javascript:void(0)" class="cp_customers"><img style="height: 50px;width: 50px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_customer.png') }}"></a>&nbsp;&nbsp;
+                <a href="javascript:void(0)" class="cp_quotation"><img style="height: 50px;width: 50px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_quotation.png') }}"></a>&nbsp;&nbsp;
+                <a href="javascript:void(0)" class="cp_freeze"><img style="height: 50px;width: 50px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_pause.png') }}"></a>
+                </div>
             </div>
         </div>
         <div class="col-md-10">
@@ -59,7 +65,7 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="products_tab">
                                 <br>
-                                <div  style="height: 400px;overflow:scroll; overflow-x: hidden;">
+                                <div  style="height: 410px;overflow:scroll; overflow-x: hidden;">
                                 <div class="row" id="prods">
                                     
                                 </div>
@@ -168,11 +174,7 @@
             </div>
         </div>
     </div>
-    <div class="row" style="margin-bottom: 0px !important;">
-        <div class="col-md-12" >
-            
-        </div>
-    </div>
+
 
     <div id="bulk_adjustment" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -465,6 +467,84 @@
             </div>
         </div>
     </div>
+    <div id="customer_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Search customer</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                            <div class="col-md-5" id="check_form">
+                                <div class="check_field">
+                                    {{ form.group_text_pos('First Name', 'cust_search_firstname', '', 5, 7, false) }}
+                                    {{ form.group_text_pos('Last Name', 'cust_search_lastname', '', 5, 7, false) }}
+                                </div>
+                            </div>
+                            <div class="col-md-7" id="check_form">
+                                    {{ form.group_text_pos('Mobile #', 'cust_search_mobile', '', 6, 6, false) }}
+                                    {{ form.group_text_pos('Email','cust_search_email', '',6, 6) }}
+                                    <a class="btn default green customer_search_btn pull-right" style="margin=0" href="javascript:void(0)">Search</a>
+                            </div>
+
+                            <h4 id="form_title" class="modal-title">Search Results</h4>
+                            <hr>
+                            <div class="col-md-12" id="check_form" style="height: 200px; overflow:scroll;overflow-x: hidden;">
+                            <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="customers_table">
+                                    <thead>
+                                        <tr>
+                                            <th width="50%">Name</th>
+                                            <th width="40%">E-mail</th>
+                                            <th width="10%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customers_list">
+                                        <tr class="init_row_customer">
+                                            <td colspan="3"><p>No customer found</p></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="add_customer_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Add new customer</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                            <div class="col-md-12" id="check_form">
+                                <div class="check_field">
+                                    {{ form.group_text_pos('First Name', 'cust_firstname', '', 4,4, false) }}
+                                    {{ form.group_text_pos('Last Name', 'cust_lastname', '', 4,4, false) }}
+                                    {{ form.group_text_pos('Mobile #', 'cust_mobile', '', 4,4, false) }}
+                                    {{ form.group_text_pos('Email','cust_email', '',4,4) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green save_customer_button" style="margin=0" href="javascript:void(0)">Submit</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="hidden">
@@ -579,7 +659,80 @@ function ajaxGetProducts(cid)
     });
 }
 
-// sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+function ajaxSearchCustomer()
+{
+
+    var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
+    var last_name = "%20"; if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};//$('#cform-cust_search_lastname').val();
+    var email = "%20"; if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};//$('#cform-cust_search_email').val();
+    var number = "%20"; if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};//$('#cform-cust_search_mobile').val();
+
+    $('#customers_list').empty();
+    
+    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
+    var url = "http://erp.cilanthropist.co/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number;
+    $.getJSON(url, function(json){  
+        var count = 0;
+       $.each(json, function(i, cust) {
+        count++;
+        var name = cust.last_name + ', ' + cust.first_name;
+        
+        $('.init_row_customer').remove();
+
+        var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+        var field = '<tr class=\"row_payment_'+row_id+'\">';     
+            field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
+            field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'"></td>';  
+            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>'; 
+            field += '</tr>';
+
+            $('#customers_list').prepend(field);
+
+        });
+
+       if (count == 0) {
+            var field = '<tr class=\"init_row_prods\">';     
+            field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="add_customer btn btn-xs default blue">Add Customer</a></p></td>';
+            field += '</tr>';
+
+            $('#customers_list').prepend(field);
+       }
+    });
+}
+
+function ajaxAddCustomer()
+{
+
+    var first_name = "%20"; if($('#cform-cust_firstname').val() != ''){first_name = $('#cform-cust_firstname').val()};
+    var last_name = "%20"; if($('#cform-cust_lastname').val() != ''){last_name = $('#cform-cust_lastname').val()};//$('#cform-cust_lastname').val();
+    var email = "%20"; if($('#cform-cust_email').val() != ''){email = $('#cform-cust_email').val()};//$('#cform-cust_email').val();
+    var number = "%20"; if($('#cform-cust_mobile').val() != ''){number = $('#cform-cust_mobile').val()};//$('#cform-cust_mobile').val();
+
+
+    var url = "http://erp.cilanthropist.co/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number;
+    $.getJSON(url, function(json){  
+        var count = 0;
+       $.each(json, function(i, cust) {
+            //var new_customer_id = cust.new_customer_id
+            toastr['success']('Customer added', 'Success');
+        });
+    });
+    clearCustomerAdd();
+    $('#add_customer_modal').modal('hide');
+    $('#customer_modal').modal('show');
+    
+
+
+}
+
+function clearCustomerAdd()
+{
+    $('#cform-cust_firstname').val('');
+    $('#cform-cust_lastname').val('');
+    $('#cform-cust_email').val('');
+    $('#cform-cust_mobile').val('');
+}
+
 function addDashes(nStr)
 {
     nStr += '';
@@ -1334,9 +1487,28 @@ $(document).ready(function(){
         return false;
     });
 
+    $(document).on("click",".cp_customers", function(e){
+        $('#customer_modal').modal('show');
+    });
+
+    $(document).on("click",".customer_search_btn", function(e){
+        ajaxSearchCustomer();
+    });
+
+    $(document).on("click",".save_customer_button", function(e){
+        ajaxAddCustomer();
+    });
+
+    $(document).on("click",".add_customer", function(e){
+        $('#customer_modal').modal('hide');
+        $('#add_customer_modal').modal('show');
+    });
+
+    
+
 
     $(document).on("click",".next_step_btn", function(e){
-        if ($('#cart_table tr').length > 1) {
+        if ($('#cart_table tr').length > 2) {
             $('#transaction_type_modal').modal('show');
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
