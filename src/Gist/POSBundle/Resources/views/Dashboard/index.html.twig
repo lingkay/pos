@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-10" style="padding-right: 1px !important; padding-left: 5px !important;">
+        <div class="col-md-10">
             <div class="portlet box tabbable" style="background-color: #292929 !important;border: 0px !important;"> 
                 <div class="portlet-title">
                     <div class="caption"><i class="icon-reorder"></i>&nbsp;</div>
@@ -53,40 +53,59 @@
                 <div class="portlet-body">
                     <div class="tabbable portlet-tabs">
                         <ul class="nav nav-tabs">
-                            <li><a href="#cart_tab" data-toggle="tab">Cart</a></li>
-                            <li class="active"><a href="#products_tab" data-toggle="tab">Products</a></li>
+                            <li id="cart_li"><a href="#cart_tab" data-toggle="tab" id="cart_a">Cart</a></li>
+                            <li id="products_li" class="active"><a href="#products_tab" data-toggle="tab" id="products_a">Products</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="products_tab">
                                 <br>
-                                <div  style="height: 370px;overflow:scroll; overflow-x: hidden;">
+                                <div  style="height: 420px;overflow:scroll; overflow-x: hidden;">
                                 <div class="row" id="prods">
                                     
                                 </div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="cart_tab">
-                                <div style="overflow:scroll; overflow-x: hidden; height: 300px;">
-                                <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_table">
-                                    <thead>
-                                        <tr>
-                                            <th width="60%">Item</th>
-                                            <th width="25%">Price</th>
-                                            <th width="10%"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="cart_items">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div style="overflow:scroll; overflow-x: hidden; height: 350px;">
+                                            <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="cart_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="60%">Item</th>
+                                                        <th width="25%">Price</th>
+                                                        <th width="10%"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="cart_items">
 
-                                    </tbody>
-                                </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div style="overflow:scroll; overflow-x: hidden; height: 350px;">
+                                            <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="payments_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="40%">Type</th>
+                                                        <th width="50%">Amount</th>
+                                                        <th width="10%"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="payments_list">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
+                                
                                 
                                 <div class="row">
                                 {#{{ form.group_text('Approval Code', 'app_code', '', 4, 2, false) }}#}
                                 </div>
                                 <br>
-                                
-                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
@@ -103,10 +122,10 @@
                                         <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_totals_table">
                                             <thead>
                                                 <tr>
-                                                    <th width="25%">Type</th>
-                                                    <th width="25%">Amount</th>
-                                                    <th width="30%">Amount Net of VAT</th>
-                                                    <th width="20%">VAT</th>
+                                                    <th width="20%" style="font-size: 12px;">Type</th>
+                                                    <th width="30%" style="font-size: 12px;">Amount</th>
+                                                    <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
+                                                    <th width="20%" style="font-size: 12px;">VAT</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -142,7 +161,7 @@
         </div>
         <div class="col-md-4" >
             <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
-                <p style="font-size:18px;">&nbsp;Transaction Total: <b>Php <span style="margin-right: 15px;" class="transaction_total" value="0">0</span></b><a href="javascript:void(0)">View Cart</a></p>
+                <p style="font-size:18px;">&nbsp;Transaction Total: <b>Php <span class="transaction_total" value="0">0</span></b>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="view_cart_btn">View Cart</a></p>
             </div>
         </div>
         <div class="col-md-5" >
@@ -266,7 +285,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green proceed_btn" style="margin=0" href="javascript:void(0)">Finish</a>
+                        <a class="btn default green finish_btn" style="margin=0" href="javascript:void(0)">Finish</a>
                         <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
@@ -390,7 +409,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green cash_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <a class="btn default green card_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
                         <a class="btn default cc_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
                         {#<button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>#}
                     </div>
@@ -428,7 +447,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green cash_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <a class="btn default green check_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
                         <a class="btn default check_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
                         {#<button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>#}
                     </div>
@@ -613,6 +632,55 @@ function addToCart(product_name, srp, min_price, id)
             computeCartRaw();
             computeCartIndiv();
         } 
+
+        computeBalance();
+
+
+}
+
+function addToPayments(payment_type, amount)
+{
+    var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+    var field = '<tr class=\"row_payment_'+row_id+'\">';     
+        // field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
+        // field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
+        // field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"srp\" value=\"'+srp+'\" >';
+        field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
+        field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
+        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="'+addCommas(amount)+'"></td>';  
+        field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>'; 
+        field += '</tr>';
+
+        $('#payments_list').prepend(field);
+        computeBalance();
+
+
+}
+
+
+function computeBalance()
+{
+    //sum payments first then subtract to transaction amount
+    var payments = 0;
+    var transaction_amount = $('#float_trans_amount').val();
+    var balance = 0;
+    $('.payment_amt_float').each(function(){
+        payments = payments + parseFloat($(this).val());
+    });
+
+    balance = transaction_amount - payments;
+    $('#float_trans_balance').val(balance);
+    $('.co_balance').text(addCommas(balance));
+
+    if ($('#string_trans_type').val() == 'none') {
+
+    } else if ($('#string_trans_type').val() == 'per') {
+
+    } else if ($('#string_trans_type').val() == 'bulk') {
+
+    } else {
+
+    }
 }
 
 function computeCartRaw() 
@@ -986,48 +1054,6 @@ function applyBulkAdjustment()
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function appendPerItemColumns()
 {
     $('#cart_table').find('tr').each(function(){
@@ -1043,113 +1069,37 @@ function appendPerItemColumns()
     });
     var ths = $('th');
     var element = ths.eq(0);
-    element.width(250);
+    element.width(200);
     var element2 = ths.eq(1);
-    element2.width(110);
+    element2.width(60);
     var element2 = ths.eq(2);
-    element2.width(110);
+    element2.width(60);
     var element2 = ths.eq(3);
-    element2.width(110);
+    element2.width(60);
     var element2 = ths.eq(4);
-    element2.width(110);
+    element2.width(60);
 }
 
-
-
-
-function hideBulkAmounts()
+function appendPerItemFields()
 {
-    $('#cform-discount_amount').val('');
-    $('#cgroup-discount_amount').hide();
-    $('#cform-discount_pct').val('');
-    $('#cgroup-discount_pct').hide();
-    $('#cform-new_total').val('');
-    $('#cgroup-new_total').hide();
+    if ($('#string_trans_type').val() == "per") {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('td').length < 6) {
+                $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
+                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                    <input type=\"text\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
+
+                var srp = $(this).find('.srp').val();
+                var ap = $(this).find('.adjusted_price');
+                ap.val(srp);
+                //computeCart();
+            }
+        });
+    }
 }
 
-function cancelBulkAdjustment()
-{
-    revertOriginalPrices();
-    $('#cgroup-new_total').hide();
-    $('#cform-new_total').val('');
-    $('#cform-discount_amount').val('');
-    $('#cgroup-discount_amount').hide();
-    $('#cform-discount_pct').val('');
-    $('#cgroup-discount_pct').hide();
-    $('.display_price').each(function() {
-        if ($(this).val() == "0" || $(this).val() == 0.00) {
-            //revert prices only if bulk discount came from gift
-            var row = $(this).closest('tr');
-            var srp = row.find('.srp').val();
-            $(this).val(srp);
-        }  
-    });
-}
-
-
-function hideCartLastColumn()
-{
-    $('td:last-child').each(function(){
-        if ($(this).closest('table').attr('id') == 'cart_table') {
-            $(this).css("display", "none");    
-        }
-        
-    });
-
-    $('th:last-child').each(function(){
-        if ($(this).closest('table').attr('id') == 'cart_table') {
-            $(this).css("display", "none");
-        }
-    });
-}
-
-function showCartLastColumn()
-{
-    ('td:last-child').each(function(){
-        if ($(this).closest('table').attr('id') == 'cart_table') {
-            $(this).css("display", "");
-        }
-    });
-
-    $('th:last-child').each(function(){
-        if ($(this).closest('table').attr('id') == 'cart_table') {
-            $(this).css("display", "");
-        }
-    });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function revertOriginalPrices()
-{
-    $('.display_price').each(function() {
-        if ($(this).val() == "0" || $(this).val() == 0.00) {
-            //revert prices only if bulk discount came from gift
-            var row = $(this).closest('tr');
-            var srp = row.find('.srp').val();
-            $(this).val(srp);
-        }
-        
-    });
-    computeCart();
-    computeCartMinimum();
-}
-
-
-
-
-// 
 function updateBulkForm(opt)
 {
     var bulk_adj_opt = opt;
@@ -1195,32 +1145,101 @@ function updateBulkForm(opt)
     }
 }
 
-// GIST POS
-// August 8, 2017
-function appendPerItemFields()
-{
-    if ($('#string_trans_type').val() == "per") {
-        $('#cart_table').find('tr').each(function(){
-            if ($(this).children('td').length < 6) {
-                $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
-                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
-                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
-                    <input type=\"text\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
 
-                var srp = $(this).find('.srp').val();
-                var ap = $(this).find('.adjusted_price');
-                ap.val(srp);
-                //computeCart();
-            }
-        });
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function hideBulkAmounts()
+{
+    $('#cform-discount_amount').val('');
+    $('#cgroup-discount_amount').hide();
+    $('#cform-discount_pct').val('');
+    $('#cgroup-discount_pct').hide();
+    $('#cform-new_total').val('');
+    $('#cgroup-new_total').hide();
+}
+
+function cancelBulkAdjustment()
+{
+    revertOriginalPrices();
+    $('#cgroup-new_total').hide();
+    $('#cform-new_total').val('');
+    $('#cform-discount_amount').val('');
+    $('#cgroup-discount_amount').hide();
+    $('#cform-discount_pct').val('');
+    $('#cgroup-discount_pct').hide();
+    $('.display_price').each(function() {
+        if ($(this).val() == "0" || $(this).val() == 0.00) {
+            //revert prices only if bulk discount came from gift
+            var row = $(this).closest('tr');
+            var srp = row.find('.srp').val();
+            $(this).val(srp);
+        }  
+    });
+}
+
+
+
+function revertOriginalPrices()
+{
+    $('.display_price').each(function() {
+        if ($(this).val() == "0" || $(this).val() == 0.00) {
+            //revert prices only if bulk discount came from gift
+            var row = $(this).closest('tr');
+            var srp = row.find('.srp').val();
+            $(this).val(srp);
+        }
+        
+    });
+    computeCart();
+    computeCartMinimum();
 }
 
 
 
 
-$(document).ready(function(){   
+
+$(document).ready(function(){ 
+    ajaxGetProductCategories();  
     ajaxGetVAT();
     toastr.options = {
       "closeButton": false,
@@ -1344,40 +1363,26 @@ $(document).ready(function(){
     $(document).on("click",".apply_bulk", function(e){
         applyBulkAdjustment();
     });
-    // END CLEAN
 
+    $(document).on("click",".view_cart_btn", function(e){
+        $('#cart_a').click();
+    });
 
+    $(document).on("click",".category_btn", function(e){
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+        $('.category_btn').each(function() {
+            $(this).css({'background-color': '#556E93'});
+        });
+        $('#products_a').click();
+        $('#selected_pcat').text(' - '+$(this).html());
+        $(this).css({'background-color': '#484c50'});
+    });
 
     $(document).on('keyup', '#cform-cash_received_amt', function () {
         $(this).val(this.value.match(/[0-9]*/));
         if ($(this).val() != '') {
-            var amt_to_pay = $('#transaction_amt_to_pay').val();
+            var amt_to_pay = $('#float_trans_amount').val();
             var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
-            alert(chg_amt);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
@@ -1393,6 +1398,64 @@ $(document).ready(function(){
 
     });
 
+    $(document).on("click",".numeric_key", function(e){
+        if ($(this).data("value") == 'CLEAR') {
+            $('#cform-cash_received_amt').val("");
+            $('#cform-cash_chg_amt').val(0);
+        } else if ($(this).data("value") == 'DEL') {
+            var str = $('#cform-cash_received_amt').val();
+            $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
+            var amt_to_pay = $('#float_trans_amount').val();
+            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            if (chg_amt >= 0) {
+                var change = chg_amt;  
+                $('#cform-cash_chg_amt').val(addCommas(change));  
+            } else {
+                var change = 0;
+                $('#cform-cash_chg_amt').val(change);
+            }
+            $('#cform-cash_chg_amt').val(addCommas(change));
+        } else {
+            $('#cform-cash_received_amt')[0].value += $(this).data("value");
+            var amt_to_pay = $('#float_trans_amount').val();
+            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            if (chg_amt >= 0) {
+                var change = chg_amt;  
+                $('#cform-cash_chg_amt').val(addCommas(change));  
+            } else {
+                var change = 0;
+                $('#cform-cash_chg_amt').val(change);
+            }
+        }
+    });
+
+    
+
+    $(window).keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+    });
+
+
+    $(document).on("click",".cash_proceed_btn", function(e){
+        var payment_amt = $('#cform-cash_received_amt').val();
+        if (payment_amt > 0) {
+            addToPayments('Cash', parseFloat(payment_amt));
+            $('#cash_modal').modal('hide');
+            $('#cform-cash_received_amt').val('')
+            $('#checkout_modal').modal('show');
+        } else {
+            toastr['error']('Invalid payment amount.', 'Error');
+        }
+        
+    });
+
+    // END CLEAN
+
+
+
 
     //$('#cgroup-app_code').hide();
     $('.bulk_adj').hide();
@@ -1402,7 +1465,7 @@ $(document).ready(function(){
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
     $('.savings_h4').hide();
-    ajaxGetProductCategories();
+    
 
     $('#cform-new_price').val('');
     $('#cgroup-new_price').hide();
@@ -1462,76 +1525,6 @@ $(document).ready(function(){
     $(document).on("click",".proceed_btn", function(e){
         proceedToTransaction();
     });
-
-
-
-    
-
-    $(document).on("click",".numeric_key", function(e){
-        console.log('num: '+parseInt($('#cform-cash_received_amt').val()));
-        //alert($(this).data("value"));
-        if ($(this).data("value") == 'CLEAR') {
-            $('#cform-cash_received_amt').val("");
-            $('#cform-cash_chg_amt').val(0);
-        } else if ($(this).data("value") == 'DEL') {
-            var str = $('#cform-cash_received_amt').val();
-            $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
-            var amt_to_pay = $('#float_trans_amount').val();
-            // var change = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
-            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
-            //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
-            if (chg_amt >= 0) {
-                var change = chg_amt;  
-                $('#cform-cash_chg_amt').val(addCommas(change));  
-            } else {
-                var change = 0;
-                $('#cform-cash_chg_amt').val(change);
-            }
-            $('#cform-cash_chg_amt').val(addCommas(change));
-        } else {
-            $('#cform-cash_received_amt')[0].value += $(this).data("value");
-            var amt_to_pay = $('#float_trans_amount').val();
-            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
-            console.log('amt_to_pay chg: '+amt_to_pay);
-            //var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
-            if (chg_amt >= 0) {
-                var change = chg_amt;  
-                console.log('chg: '+change);
-                $('#cform-cash_chg_amt').val(addCommas(change));  
-            } else {
-                var change = 0;
-                $('#cform-cash_chg_amt').val(change);
-            }
-        }
-    });
-
-    
-
-    $(window).keydown(function(event){
-        if(event.keyCode == 13) {
-          event.preventDefault();
-          return false;
-        }
-    });
-
-    $(document).on("click",".category_btn", function(e){
-
-        $('.category_btn').each(function() {
-            $(this).css({'background-color': '#556E93'});
-        });
-        $('#selected_pcat').text(' - '+$(this).html());
-        $(this).css({'background-color': '#484c50'});
-    });
-
-
-    
-    
-
-
-    
-
-
-    
 });
 </script>
 {% endblock %}
