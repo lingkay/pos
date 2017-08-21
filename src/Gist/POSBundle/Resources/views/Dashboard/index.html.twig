@@ -672,6 +672,8 @@ function addToCart(product_name, srp, min_price, id)
         } else if ($('#string_trans_type').val() == 'per') {
             computeCartRaw();
             computeCartIndiv();
+        } else if ($('#string_trans_type').val() == 'reg') {
+            computeCartRaw();
         } 
         toastr['success'](product_name+' added to cart', 'Success');
 
@@ -950,7 +952,7 @@ function revertDiscounts()
 
 
 
-    $('.cart_price_h3').css({'color': 'black'});
+    // $('.cart_price_h3').css({'color': 'black'});
     $('#cgroup-new_total').hide();
     $('#cform-new_total').val('');
     $('#cform-discount_amount').val('');
@@ -1413,6 +1415,15 @@ $(document).ready(function(){
 
     });
 
+    $(document).on("click",".finish_btn", function(e){
+        var balance = $('#float_trans_balance').val();
+        if (balance <= 0) {
+            //proceed
+        } else {
+            toastr['error']('Balance of '+addCommas(parseFloat(balance))+' not paid', 'Transaction incomplete');
+        }
+    });
+
     $(document).on("click",".apply_bulk", function(e){
         applyBulkAdjustment();
     });
@@ -1591,7 +1602,8 @@ $(document).ready(function(){
     $(document).on("click",".checkout_btn", function(e){
         if ($('#cart_table tr').length > 1) {
             $('#checkout_modal').modal('show');
-            if (parseFloat($('#float_trans_balance').val()) == 0) {
+            var rowCount = $('#payments_table tr').length-1;
+            if (parseFloat($('#float_trans_balance').val()) == 0 && rowCount == 0) {
                 $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
                 $('.co_balance').text($('#transaction_amt_to_pay').val());
             } else {
