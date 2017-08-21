@@ -439,18 +439,22 @@
                             </div>
                         </div>
                         <div class="row form-horizontal form" style="margin-top: 20px;">
-                            <div class="col-md-12">
-                                {{ form.group_select('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
-                                {{ form.group_text_pos('Bank Code', 'check_bank_code', '', 4, 4, false) }}
-                                {{ form.group_text_pos('Account Number', 'check_account_number', '', 4, 4, false) }}
-                                {{ form.group_text_pos('Check Number', 'check_number', '', 4, 4, false) }}
-                                {{ form.group_date('Check Date','check_date', '',4,4) }}
-                                {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
-                                {{ form.group_text_pos('Check Amount', 'check_amount', '', 4, 4, false) }}
+                            <div class="col-md-12" id="check_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
+                                <div class="check_field">
+                                    <h4 class="form-section">Check Details</h4>
+                                    {#{{ form.radio_set_pos('Type','check_type[]',check_type_options,'') }}  #} 
+                                    {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Account Number', 'check_account_number', '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Check Number', 'check_number', '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Check Date','check_date', '',4,4) }}
+                                    {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Check Amount', 'check_amount', '', 4, 4, false) }}
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <a href="javascript:void(0)" class="btn blue add_check_btn">Add Check</a>
                         <a class="btn default green check_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
                         <a class="btn default check_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
                     </div>
@@ -473,6 +477,19 @@
             {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 4, false) }}
             {{ form.group_text_pos('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
             {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 4, false) }}
+        </div>
+    </div>
+    <div id="check_fields">
+        <div class="check_field">
+            <br>
+            <h4 class="form-section">Check Details</h4>
+            {#{{ form.radio_set_pos('Type','check_type[]',check_type_options,'') }}  #} 
+            {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
+            {{ form.group_text_pos('Account Number', 'check_account_number', '', 4, 4, false) }}
+            {{ form.group_text_pos('Check Number', 'check_number', '', 4, 4, false) }}
+            {{ form.group_text_pos('Check Date','check_date', '',4,4) }}
+            {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
+            {{ form.group_text_pos('Check Amount', 'check_amount', '', 4, 4, false) }}
         </div>
     </div>
 </div>
@@ -1165,7 +1182,11 @@ function clearCreditCardModal()
     $("#cc_fields").clone().find("input").val("").end().appendTo('#cc_form');
 }
 
-
+function clearCheckModal()
+{
+    $('#check_form').empty();
+    $("#check_fields").clone().find("input").val("").end().appendTo('#check_form');
+}
 
 
 
@@ -1499,6 +1520,30 @@ $(document).ready(function(){
         });
     });
 
+    $(document).on("click",".check_proceed_btn", function(e){
+        $('.check_field').each(function() {
+            var check_number = $(this).find('#cform-check_number').val();
+            // var cc_name = $(this).find('#cform-cc_card_name').val();
+            var payment_amt = $(this).find('#cform-check_amount').val(); 
+            // var cc_bank = $(this).find('#cform-cc_bank').val(); 
+            if (check_number != '' && payment_amt != '') {
+                if (payment_amt > 0) {
+                    // var cc_details = cc_number + "," + cc_name + "," + cc_bank;
+                    // var arrString = JSON.stringify(cc_details);
+
+                    addToPayments('Check', parseFloat(payment_amt));
+                    $('#check_modal').modal('hide');
+                    clearCheckModal();
+                    $('#checkout_modal').modal('show');
+                } else {
+                    toastr['error']('Invalid payment amount.', 'Error');
+                }
+            } else {
+
+            }
+        });
+    });
+
     $(document).on("click",".remove_payment_row", function(e){
         e.preventDefault();            
         var tr = $(this).closest('tr');
@@ -1512,6 +1557,11 @@ $(document).ready(function(){
 
     $(document).on("click",".add_card_btn", function(e){
         $("#cc_fields").clone().find("input").val("").end().appendTo('#cc_form');
+        return false;
+    });
+
+    $(document).on("click",".add_check_btn", function(e){
+        $("#check_fields").clone().find("input").val("").end().appendTo('#check_form');
         return false;
     });
 
@@ -1530,9 +1580,13 @@ $(document).ready(function(){
         
     });
 
+    // $('input[type=radio][name=check_type]').change(function() {
+    //     alert(this.value);
+    // });
+
     // END CLEAN
 
-
+    // $('.check_date_main_div').hide();
 
 
     //$('#cgroup-app_code').hide();
@@ -1582,6 +1636,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".check_go_back", function(e){
+        clearCheckModal();
         $('#check_modal').modal('hide');
         $('#checkout_modal').modal('show');
     });

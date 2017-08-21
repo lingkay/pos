@@ -38,6 +38,11 @@ class POSController extends Controller
             'gold' => 'Gold'
         );
 
+        $params['check_type_options'] = array(
+            'cash_check' => 'Cash Check',
+            'pdc' => 'PDC'
+        );
+
         $url="http://erp.cilanthropist.co/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
