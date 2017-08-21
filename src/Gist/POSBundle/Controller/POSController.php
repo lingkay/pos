@@ -32,6 +32,12 @@ class POSController extends Controller
             'bulk' => 'Bulk Discount'
         );
 
+        $params['card_class'] = array(
+            'black' => 'Black',
+            'silver' => 'Silver',
+            'gold' => 'Gold'
+        );
+
         $url="http://erp.cilanthropist.co/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);

@@ -371,7 +371,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green cash_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <a class="btn default green cash_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
                         <a class="btn default cash_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
                         {#<button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>#}
                     </div>
@@ -396,22 +396,26 @@
                                 <h4>Balance <b>Php <span class="co_balance" >0.00</span></b></h4>
                             </div>
                         </div>
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
-                            <div class="col-md-12">
-                                {{ form.group_select('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 4, 4, false) }}
-                                {{ form.group_text('Charge Amount', 'cc_charge_amt', '', 4, 4, false) }}
-                                {{ form.group_select('Bank', 'cc_bank', bank_options, '', 4, 4, false) }}
-                                {{ form.group_text('Credit Card Number', 'cc_card_number', '', 4, 4, false) }}
-                                {{ form.group_text('Name on Card', 'cc_card_name', '', 4, 4, false) }}
-                                {{ form.group_text('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
-                                {{ form.group_text('CVV', 'cc_card_cvv', '', 4, 4, false) }}
+                        <div class="row form-horizontal form cc_main_form" style="margin-top: 20px;">
+                            <div class="col-md-12" id="cc_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
+                                <div class="cc_field">
+                                    <h4 class="form-section">Card Details</h4>
+                                    {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 4, 4, false) }}
+                                    {{ form.group_selectx('Bank', 'cc_bank', bank_options, '', 4, 4, false) }}
+                                    {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Credit Card Number', 'cc_card_number', '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 4, false) }}
+                                    {{ form.group_text_pos('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
+                                    {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 4, false) }}
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green card_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <a href="javascript:void(0)" class="btn blue add_card_btn">Add Card</a>
+                        <a class="btn default green card_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
                         <a class="btn default cc_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
-                        {#<button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>#}
                     </div>
                 </form>
             </div>
@@ -437,22 +441,38 @@
                         <div class="row form-horizontal form" style="margin-top: 20px;">
                             <div class="col-md-12">
                                 {{ form.group_select('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
-                                {{ form.group_text('Bank Code', 'check_bank_code', '', 4, 4, false) }}
-                                {{ form.group_text('Account Number', 'check_account_number', '', 4, 4, false) }}
-                                {{ form.group_text('Check Number', 'check_number', '', 4, 4, false) }}
+                                {{ form.group_text_pos('Bank Code', 'check_bank_code', '', 4, 4, false) }}
+                                {{ form.group_text_pos('Account Number', 'check_account_number', '', 4, 4, false) }}
+                                {{ form.group_text_pos('Check Number', 'check_number', '', 4, 4, false) }}
                                 {{ form.group_date('Check Date','check_date', '',4,4) }}
-                                {{ form.group_text("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
-                                {{ form.group_text('Check Amount', 'check_amount', '', 4, 4, false) }}
+                                {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
+                                {{ form.group_text_pos('Check Amount', 'check_amount', '', 4, 4, false) }}
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green check_proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <a class="btn default green check_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
                         <a class="btn default check_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
-                        {#<button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>#}
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="hidden">
+    <div id="cc_fields">
+        <div class="cc_field">
+            <br>
+            <h4 class="form-section">Card Details</h4>
+            {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 4, 4, false) }}
+            {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 4, 4, false) }}
+            {{ form.group_selectx('Bank', 'cc_bank', bank_options, '', 4, 4, false) }}
+            {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 4, 4, false) }}
+            {{ form.group_text_pos('Credit Card Number', 'cc_card_number', '', 4, 4, false) }}
+            {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 4, false) }}
+            {{ form.group_text_pos('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
+            {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 4, false) }}
         </div>
     </div>
 </div>
@@ -632,19 +652,20 @@ function addToCart(product_name, srp, min_price, id)
             computeCartRaw();
             computeCartIndiv();
         } 
+        toastr['success'](product_name+' added to cart', 'Success');
 
         computeBalance();
 
 
 }
 
-function addToPayments(payment_type, amount)
+function addToPayments(payment_type, amount, details = null)
 {
     var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
     var field = '<tr class=\"row_payment_'+row_id+'\">';     
         // field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
         // field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
-        // field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"srp\" value=\"'+srp+'\" >';
+        field += '<input type=\"hidden\" name=\"payment_details_array[]\" class=\"payment_details_array\" value=\"'+details+'\" >';
         field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
         field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
         field += '<td><input type="text" style=\"font-size: 10px !important;\" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="'+addCommas(amount)+'"></td>';  
@@ -652,6 +673,7 @@ function addToPayments(payment_type, amount)
         field += '</tr>';
 
         $('#payments_list').prepend(field);
+        toastr['success']('Payment added', 'Success');
         computeBalance();
 
 
@@ -769,14 +791,12 @@ function computeVATRaw(total)
     var vat_amt = 0;
     var amt_net_of_vat = 0;
     var incl_divisor = tax_rate + 1;
-    console.log("incl_divisor: "+incl_divisor);
+
 
     if (tax_coverage == 'incl') {
         vat_amt = total*tax_rate;
         amt_net_of_vat = total - vat_amt;
-        console.log("total: "+round(total,2));
-        console.log("vat_amt: "+round(vat_amt,2));
-        console.log("amt_net_of_vat: "+round(amt_net_of_vat,2));
+
         $('#float_new_tax_vat_amt').val(round(vat_amt,2));
         $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
         $('#float_orig_tax_vat_amt').val(round(vat_amt,2));
@@ -788,9 +808,7 @@ function computeVATRaw(total)
     } else if (tax_coverage == 'excl') {
         vat_amt = total - (total/incl_divisor);
         amt_net_of_vat = total - vat_amt;
-        console.log("total: "+round(total,2));
-        console.log("vat_amt: "+round(vat_amt,2));
-        console.log("amt_net_of_vat: "+round(amt_net_of_vat,2));
+
         $('#float_new_tax_vat_amt').val(round(vat_amt,2));
         $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
         $('#float_orig_tax_vat_amt').val(round(vat_amt,2));
@@ -814,14 +832,12 @@ function computeVATIndiv(total)
     var vat_amt = 0;
     var amt_net_of_vat = 0;
     var incl_divisor = tax_rate + 1;
-    console.log("incl_divisor: "+incl_divisor);
+    // console.log("incl_divisor: "+incl_divisor);
 
     if (tax_coverage == 'incl') {
         vat_amt = total*tax_rate;
         amt_net_of_vat = total - vat_amt;
-        console.log("total: "+round(total,2));
-        console.log("vat_amt: "+round(vat_amt,2));
-        console.log("amt_net_of_vat: "+round(amt_net_of_vat,2));
+        
         $('#float_new_tax_vat_amt').val(round(vat_amt,2));
         $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
         $("#updated_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
@@ -829,9 +845,7 @@ function computeVATIndiv(total)
     } else if (tax_coverage == 'excl') {
         vat_amt = total - (total/incl_divisor);
         amt_net_of_vat = total - vat_amt;
-        console.log("total: "+round(total,2));
-        console.log("vat_amt: "+round(vat_amt,2));
-        console.log("amt_net_of_vat: "+round(amt_net_of_vat,2));
+        
         $('#float_new_tax_vat_amt').val(round(vat_amt,2));
         $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
         $("#updated_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
@@ -1006,7 +1020,7 @@ function apply_indiv(x)
 }
 
 function applyBulkAdjustment()
-{   
+{   group_selectx
     var bulk_adj_opt = $('#bulk_opt_sel').val();
     if (bulk_adj_opt != '') {
         if (bulk_adj_opt == 'bgift') {
@@ -1145,6 +1159,11 @@ function updateBulkForm(opt)
     }
 }
 
+function clearCreditCardModal()
+{
+    $('#cc_form').empty();
+    $("#cc_fields").clone().find("input").val("").end().appendTo('#cc_form');
+}
 
 
 
@@ -1246,13 +1265,13 @@ $(document).ready(function(){
       "debug": false,
       "newestOnTop": false,
       "progressBar": true,
-      "positionClass": "toast-bottom-right",
+      "positionClass": "toast-top-right",
       "preventDuplicates": true,
       "onclick": null,
       "showDuration": "300",
-      "hideDuration": "1000",
-      "timeOut": "5000",
-      "extendedTimeOut": "1000",
+      "hideDuration": "500",
+      "timeOut": "4000",
+      "extendedTimeOut": "500",
       "showEasing": "swing",
       "hideEasing": "linear",
       "showMethod": "fadeIn",
@@ -1398,6 +1417,10 @@ $(document).ready(function(){
 
     });
 
+    $(document).on('keyup', '.cc_charge_amt', function () {
+        $(this).val(this.value.match(/[0-9]*/));
+    });
+
     $(document).on("click",".numeric_key", function(e){
         if ($(this).data("value") == 'CLEAR') {
             $('#cform-cash_received_amt').val("");
@@ -1444,10 +1467,65 @@ $(document).ready(function(){
         if (payment_amt > 0) {
             addToPayments('Cash', parseFloat(payment_amt));
             $('#cash_modal').modal('hide');
-            $('#cform-cash_received_amt').val('')
+            $('#cform-cash_received_amt').val('');
             $('#checkout_modal').modal('show');
         } else {
             toastr['error']('Invalid payment amount.', 'Error');
+        }
+        
+    });
+
+    $(document).on("click",".card_proceed_btn", function(e){
+        $('.cc_field').each(function() {
+            var cc_number = $(this).find('#cform-cc_card_number').val();
+            var cc_name = $(this).find('#cform-cc_card_name').val();
+            var payment_amt = $(this).find('#cform-cc_charge_amt').val(); 
+            var cc_bank = $(this).find('#cform-cc_bank').val(); 
+            if (cc_number != '' && payment_amt != '') {
+                if (payment_amt > 0) {
+                    var cc_details = cc_number + "," + cc_name + "," + cc_bank;
+                    // var arrString = JSON.stringify(cc_details);
+
+                    addToPayments('Credit Card', parseFloat(payment_amt), cc_details);
+                    $('#cc_modal').modal('hide');
+                    clearCreditCardModal();
+                    $('#checkout_modal').modal('show');
+                } else {
+                    toastr['error']('Invalid payment amount.', 'Error');
+                }
+            } else {
+
+            }
+        });
+    });
+
+    $(document).on("click",".remove_payment_row", function(e){
+        e.preventDefault();            
+        var tr = $(this).closest('tr');
+        tr.remove();
+
+
+        computeBalance();
+        toastr['success']('Payment removed', 'Success');
+        return false;
+    });
+
+    $(document).on("click",".add_card_btn", function(e){
+        $("#cc_fields").clone().find("input").val("").end().appendTo('#cc_form');
+        return false;
+    });
+
+    $(document).on("click",".checkout_btn", function(e){
+        if ($('#cart_table tr').length > 1) {
+            $('#checkout_modal').modal('show');
+            if (parseFloat($('#float_trans_balance').val()) == 0) {
+                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
+                $('.co_balance').text($('#transaction_amt_to_pay').val());
+            } else {
+                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
+            }
+        } else {
+            toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
         }
         
     });
@@ -1473,22 +1551,7 @@ $(document).ready(function(){
 
 
 
-    $(document).on("click",".checkout_btn", function(e){
-        // computeCart();
-        if ($('#cart_table tr').length > 1) {
-            $('#checkout_modal').modal('show');
-            if (parseFloat($('#transaction_balance').val()) == 0) {
-                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
-                $('.co_balance').text($('#transaction_amt_to_pay').val());
-            } else {
-                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
-                $('.co_balance').text($('#transaction_amt_to_pay').val());
-            }
-        } else {
-            toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
-        }
-        
-    });
+
 
     $(document).on("click",".co_cash_payment", function(e){
         $('#checkout_modal').modal('hide');
@@ -1507,11 +1570,13 @@ $(document).ready(function(){
 
     
     $(document).on("click",".cash_go_back", function(e){
+        $('#cform-cash_received_amt').val('');
         $('#cash_modal').modal('hide');
         $('#checkout_modal').modal('show');
     });
 
     $(document).on("click",".cc_go_back", function(e){
+        clearCreditCardModal();
         $('#cc_modal').modal('hide');
         $('#checkout_modal').modal('show');
     });

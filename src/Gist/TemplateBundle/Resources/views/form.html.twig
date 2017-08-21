@@ -95,6 +95,15 @@
 </div>
 {% endmacro %}
 
+{% macro group_text_pos(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+<div id="{{ prefix }}group-{{ name }}" class="form-group">
+    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="col-md-{{ body_size }}">
+        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}}" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro group_text_ig(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
     <div id="{{ prefix }}group-{{ name }}" class="form-group">
         <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
@@ -255,6 +264,18 @@
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
         <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+        {{ self.options(options, value) }}
+        </select>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro group_selectx(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+{% import _self as self %}
+<div id="{{ prefix }}group-{{ name }}" class="form-group">
+    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="col-md-{{ body_size }}">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
         {{ self.options(options, value) }}
         </select>
     </div>
