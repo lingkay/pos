@@ -97,7 +97,7 @@
                                                 </thead>
                                                 <tbody id="cart_items">
                                                     <tr class="init_row_prods">
-                                                        <td colspan="3"><p>No items added</p></td>
+                                                        <td colspan="3" class="xrow"><p>No items added</p></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1473,7 +1473,7 @@ $(document).ready(function(){
 
         if (rowCount == 0) {
             var field = '<tr class=\"init_row_prods\">';     
-            field += '<td colspan=\"3\"><p>No items added</p></td>';
+            field += '<td colspan=\"3\" class=\"xrow\"><p>No items added</p></td>';
             field += '</tr>';
 
             $('#cart_items').prepend(field);
@@ -1508,7 +1508,7 @@ $(document).ready(function(){
 
 
     $(document).on("click",".next_step_btn", function(e){
-        if ($('#cart_table tr').length > 2) {
+        if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
             $('#transaction_type_modal').modal('show');
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
