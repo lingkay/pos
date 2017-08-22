@@ -10,6 +10,7 @@
 <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
 <input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
 <input type="hidden" id="string_trans_type" value="none">
+<input type="hidden" id="string_trans_mode" value="normal">
 <!-- END TRANSACTION VARS -->
 <!-- TAX VARS -->
 <input type="hidden" id="float_tax_rate" value="0">
@@ -540,6 +541,44 @@
                     <div class="modal-footer">
                         <a class="btn default green save_customer_button" style="margin=0" href="javascript:void(0)">Submit</a>
                         <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="quotation_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <h3 id="form_title" class="modal-title">Enable quotation mode?</h3>
+                            <hr>
+                            <p style="font-size: 18px;">This mode will not require any payment. To go back to normal mode, press the quotation again.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a>
+                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">No</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="rev_quotation_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <h3 id="form_title" class="modal-title">Disable quotation mode?</h3>
+                            <hr>
+                            <p style="font-size: 18px;">This will revert back to normal mode.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a>
+                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">No</a>
                     </div>
                 </form>
             </div>
@@ -1503,6 +1542,26 @@ $(document).ready(function(){
         $('#customer_modal').modal('hide');
         $('#add_customer_modal').modal('show');
     });
+
+    $(document).on("click",".cp_quotation", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            $('#quotation_modal').modal('show');
+        } else {
+            $('#rev_quotation_modal').modal('show');
+        }
+    });
+
+    $(document).on("click",".quotation_continue_btn", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            $('#string_trans_mode').val('quotation');
+            $('#quotation_modal').modal('hide');
+        } else {
+            $('#string_trans_mode').val('normal');
+            $('#rev_quotation_modal').modal('hide');
+        }
+        
+    });
+    
 
     
 
