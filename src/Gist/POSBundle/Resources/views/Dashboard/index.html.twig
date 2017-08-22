@@ -1498,6 +1498,8 @@ $(document).ready(function(){
       "hideMethod": "fadeOut"
     }
 
+
+
     // CLEAN
     $('.updated_totals_row').hide();
 
@@ -1554,9 +1556,15 @@ $(document).ready(function(){
     $(document).on("click",".quotation_continue_btn", function(e){
         if ($('#string_trans_mode').val() == 'normal') {
             $('#string_trans_mode').val('quotation');
+            $('#pos_mode').text('Quotation');
+            // toastr['success']('Quotation mode enabled.', 'POS Mode Changed');
+            swal("POS Mode Changed", "Quotation mode enabled!", "success")
             $('#quotation_modal').modal('hide');
         } else {
             $('#string_trans_mode').val('normal');
+            $('#pos_mode').text('Normal');
+            // toastr['success']('Quotation mode disabled.', 'POS Mode Changed');
+            swal("POS Mode Changed", "Quotation mode disabled!", "success")
             $('#rev_quotation_modal').modal('hide');
         }
         
@@ -1649,9 +1657,18 @@ $(document).ready(function(){
     $(document).on("click",".finish_btn", function(e){
         var balance = $('#float_trans_balance').val();
         if (balance <= 0) {
-            //proceed
+            swal("Payment Complete!", "Enter customer information on the next form", "success")
+            $('#checkout_modal').modal('hide');
+            $('#customer_modal').modal('show');
         } else {
-            toastr['error']('Balance of '+addCommas(parseFloat(balance))+' not paid', 'Transaction incomplete');
+            if ($('#string_trans_mode').val() == "quotation") {
+                swal("Payment Complete!", "Enter customer information on the next form", "success")
+                $('#checkout_modal').modal('hide');
+                $('#customer_modal').modal('show');
+            } else {
+                // toastr['error']('Balance of '+addCommas(parseFloat(balance))+' not paid', 'Transaction incomplete');
+                sweetAlert("Oops...", "Balance of "+addCommas(parseFloat(balance))+" not paid", "error");
+            }
         }
     });
 
