@@ -1520,11 +1520,16 @@ $(document).ready(function(){
             $('#cart_items').prepend(field);
         }
 
-        if($('#string_trans_type') != 'none') {
+        if($('#string_trans_type') == 'none' || $('#string_trans_type') == 'reg') {
             computeCartRaw();
+        } else if($('#string_trans_type') == 'per') {
+            computeCartIndiv();
+        } else if($('#string_trans_type') == 'bulk') {
+            computeCartBulk();
         } else {
             computeCartRaw();
         }
+        computeBalance();
         return false;
     });
 
@@ -1582,20 +1587,7 @@ $(document).ready(function(){
         }
     });
 
-    $(document).on("click",".remove_row", function(e){
-        e.preventDefault();            
-        var tr = $(this).closest('tr');
-        tr.remove();
-        if($('#string_trans_type') == 'reg') {
-            computeCartIndiv();
-        } else if($('#string_trans_type') == 'none') {
-            computeCartRaw();
-        } else {
 
-        }
-
-        return false;
-    });
 
     $(document).on("click",".clear_discount", function(e){
         revertDiscounts();
