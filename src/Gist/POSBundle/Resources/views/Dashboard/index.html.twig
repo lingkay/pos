@@ -46,127 +46,85 @@
                 </div>
                 <div style="background-color: #ffffff !important;">
                 &nbsp;&nbsp;
-                <a href="javascript:void(0)" class="cp_customers"><img style="height: 50px;width: 50px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_customer.png') }}"></a>&nbsp;&nbsp;
-                <a href="javascript:void(0)" class="cp_quotation"><img style="height: 50px;width: 50px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_quotation.png') }}"></a>&nbsp;&nbsp;
-                <a href="javascript:void(0)" class="cp_freeze"><img style="height: 50px;width: 50px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_pause.png') }}"></a>
+                
                 </div>
             </div>
         </div>
-        <div class="col-md-10">
-            <div class="portlet box tabbable" style="background-color: #292929 !important;border: 0px !important;"> 
+        <div class="col-md-5">
+            <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
                 <div class="portlet-title">
-                    <div class="caption"><i class="icon-reorder"></i>&nbsp;</div>
+                    <div class="caption">Products</div>
                 </div>
                 <div class="portlet-body">
-                    <div class="tabbable portlet-tabs">
-                        <ul class="nav nav-tabs">
-                            <li id="cart_li"><a href="#cart_tab" data-toggle="tab" id="cart_a">Cart</a></li>
-                            <li id="products_li" class="active"><a href="#products_tab" data-toggle="tab" id="products_a">Products</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="products_tab">
-                                <br>
-                                <div  style="height: 410px;overflow:scroll; overflow-x: hidden;">
-                                <div class="row" id="prods">
-                                    
-                                </div>
-                                </div>
-                                <div class="row" style="margin-right: 0px !important;">
-                                    <div class="col-md-4" >
-                                        <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
-                                            <p style="font-size:18px;">&nbsp;Number of items: <b><span style="margin-right: 0px;" class="cart_items_count" value="0">0</span></b>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="view_cart_btn btn btn-xs default blue">View Cart</a></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8" >
-                                        <div class="alert" style="background-color: #eaeaea !important; border-color: #d6e9c6 !important; color: #000000 !important;"> 
-                                            <p style="font-size:18px;">&nbsp;Transaction Total: <b>Php <span class="transaction_total" value="0">0</span></b></p>
-                                        </div>
-                                    </div>
+                    <br>
+                    <div  style="height: 410px;overflow:scroll; overflow-x: hidden;">
+                        <div class="row" id="prods">
+                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
+                <div class="portlet-title">
+                    <div class="caption">Cart</div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div style="overflow:scroll; overflow-x: hidden; height: 280px;">
+                                <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="cart_table">
+                                    <thead>
+                                        <tr>
+                                            <th width="60%">Item</th>
+                                            <th width="25%">Price</th>
+                                            <th width="10%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cart_items">
+                                        <tr class="init_row_prods">
+                                            <td colspan="3" class="xrow"><p>No items added</p></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12" >
+                                    <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
+                                    <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
+                                    <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout</a>
+                                    <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
+                                    <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
+                                    <br>
+                                    <br>
+                                    <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
+                                    <h4 class="savings_h4">You saved: <b><span id="customer_savings" value=""></span></b></h4>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="cart_tab">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div style="overflow:scroll; overflow-x: hidden; height: 350px;">
-                                            <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="cart_table">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="60%">Item</th>
-                                                        <th width="25%">Price</th>
-                                                        <th width="10%"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="cart_items">
-                                                    <tr class="init_row_prods">
-                                                        <td colspan="3" class="xrow"><p>No items added</p></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div style="overflow:scroll; overflow-x: hidden; height: 350px;">
-                                            <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="payments_table">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="40%">Type</th>
-                                                        <th width="50%">Amount</th>
-                                                        <th width="10%"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="payments_list">
-                                                    <tr class="init_row_payment">
-                                                        <td colspan="3"><p>No payments added</p></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                
-                                <div class="row">
-                                {#{{ form.group_text('Approval Code', 'app_code', '', 4, 2, false) }}#}
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
-                                        <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
-                                        <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout</a>
-                                        <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
-                                        <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
-                                        <br>
-                                        <br>
-                                        <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
-                                        <h4 class="savings_h4">You saved: <b><span id="customer_savings" value=""></span></b></h4>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="cart_totals_table">
-                                            <thead>
-                                                <tr>
-                                                    <th width="20%" style="font-size: 12px;">Type</th>
-                                                    <th width="30%" style="font-size: 12px;">Amount</th>
-                                                    <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
-                                                    <th width="20%" style="font-size: 12px;">VAT</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="initial_totals">
-                                                    <td><p style="font-size:12px;">Total</p></td>
-                                                    <td><p style="font-size:12px;" class="cart_price_h3"><b>Php <span class="initial_cart_price" value="0">0</span></b></p></td>
-                                                    <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0</span></b></p></td>
-                                                    <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0</span></b></p></td>
-                                                </tr>
-                                                <tr class="updated_totals_row">
-                                                    <td><p style="font-size:12px;">Updated Total</p></td>
-                                                    <td><p style="font-size:12px;" class="updated_price_h3"><b>Php <span class="updated_cart_price" value="0">0</span></b></p></td>
-                                                    <td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_amt_net_vat" value="0">0</span></b></p></td>
-                                                    <td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_vat_amt" value="0">0</span></b></p></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-striped table-bordered table-hover" style="" id="cart_totals_table">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%" style="font-size: 12px;">Amount</th>
+                                                <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
+                                                <th width="30%" style="font-size: 12px;">VAT</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="initial_totals">
+                                                <td><p style="font-size:12px;" class="cart_price_h3">Total <b>Php <span class="initial_cart_price" value="0">0</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0</span></b></p></td>
+                                            </tr>
+                                            <tr class="updated_totals_row">
+                                                <td><p style="font-size:12px;" class="updated_price_h3">Updated<b>Php <span class="updated_cart_price" value="0">0</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_amt_net_vat" value="0">0</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_vat_amt" value="0">0</span></b></p></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -267,26 +225,30 @@
                             </div>
                         </div>
                         <div class="row form-horizontal form">
-                            <div class="col-md-12">
-                                <hr>
+                            <div class="col-md-2">
+                                <div style="margin-top: 15px;"></div>
+                                <a href="javascript:void(0)" class="co_cash_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_cash.png') }}" width="70px" width="70px"></a>
+                                <a href="javascript:void(0)" class="co_cc_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_card.png') }}" width="70px"></a>
+                                <a href="javascript:void(0)" class="co_check_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}" width="70px"></a>
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_gc.png') }}" width="70px"></a>
                             </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-3" class="" onclick="">
-                                <a href="javascript:void(0)" class="co_cash_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_cash.png') }}"></a>
-                                <h4>Cash</h4>
-                            </div>
-                            <div class="col-md-3" class=""  onclick="">
-                                <a href="javascript:void(0)" class="co_cc_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_card.png') }}"></a>
-                                <h4>Card</h4>
-                            </div>
-                            <div class="col-md-3" class=""  onclick="">
-                                <a href="javascript:void(0)" class="co_check_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}"></a>
-                                <h4>Check</h4>
-                            </div>
-                            <div class="col-md-3" class=""  onclick="">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_gc.png') }}"></a>
-                                <h4>Gift Card</h4>
+                            <div class="col-md-10">
+                                <div style="overflow:scroll; overflow-x: hidden; height: 250px;">
+                                    <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="payments_table">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%">Type</th>
+                                                <th width="50%">Amount</th>
+                                                <th width="10%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="payments_list">
+                                            <tr class="init_row_payment">
+                                                <td colspan="3"><p>No payments added</p></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -634,10 +596,10 @@ function ajaxGetProductCategories()
             // alert(item.name);
             $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
 
-            $("#prods").append("<div class=\"col-md-2\" style=\"margin: 0px !important; padding: 1px !important\" >\
+            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 1px !important\" >\
                     <a href=\"javascript:void(0)\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 90px; width: 60%; display: block;\">\
+                        <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
                             <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
                         </div>\
@@ -677,10 +639,10 @@ function ajaxGetProducts(cid)
             img = item.image_url;
         }
 
-            $("#prods").append("<div class=\"col-md-2\" style=\"margin: 0px !important; padding: 2px !important\" >\
+            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
                     <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 90px; width: 60%; display: block;\">\
+                        <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
                             <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
                             <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+orig_srp+"</b></h3>\
@@ -870,7 +832,7 @@ function addToCart(product_name, srp, min_price, id)
             computeCartRaw();
             applyBulkAdjustment();
         }
-        toastr['success'](product_name+' added to cart', 'Success');
+        // toastr['success'](product_name+' added to cart', 'Success');
 
         computeBalance();
 
