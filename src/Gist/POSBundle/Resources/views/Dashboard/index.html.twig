@@ -50,7 +50,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
                 <div class="portlet-title">
                     <div class="caption">Products</div>
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
                 <div class="portlet-title">
                     <div class="caption">Cart</div>
@@ -99,7 +99,7 @@
                                     <br>
                                     <br>
                                     <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
-                                    <h4 class="savings_h4">You saved: <b><span id="customer_savings" value=""></span></b></h4>
+                                    <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
                                 </div>
                             </div>
                             <div class="row">
@@ -596,7 +596,7 @@ function ajaxGetProductCategories()
             // alert(item.name);
             $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
 
-            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 1px !important\" >\
+            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 1px !important\" >\
                     <a href=\"javascript:void(0)\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
                         <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
@@ -639,7 +639,7 @@ function ajaxGetProducts(cid)
             img = item.image_url;
         }
 
-            $("#prods").append("<div class=\"col-md-3\" style=\"margin: 0px !important; padding: 2px !important\" >\
+            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
                     <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
                         <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
@@ -1274,15 +1274,15 @@ function appendPerItemColumns()
     });
     var ths = $('th');
     var element = ths.eq(0);
-    element.width(200);
+    element.width(100);
     var element2 = ths.eq(1);
-    element2.width(60);
+    element2.width(70);
     var element2 = ths.eq(2);
-    element2.width(60);
+    element2.width(80);
     var element2 = ths.eq(3);
-    element2.width(60);
+    element2.width(70);
     var element2 = ths.eq(4);
-    element2.width(60);
+    element2.width(70);
 }
 
 function appendPerItemFields()
