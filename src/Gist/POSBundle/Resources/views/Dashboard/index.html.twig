@@ -963,6 +963,7 @@ function computeCartIndiv()
     // compute each item's original price
     $('.adjusted_price').each(function(){
         sale_price = sale_price + parseFloat($(this).val());
+        // alert($(this).val());
     });
 
     // assign new values
@@ -1233,10 +1234,11 @@ function apply_indiv(x)
     }
 
     computeCartIndiv();
+    computeBalance();
 }
 
 function applyBulkAdjustment()
-{   group_selectx
+{   
     var bulk_adj_opt = $('#bulk_opt_sel').val();
     if (bulk_adj_opt != '') {
         if (bulk_adj_opt == 'bgift') {
@@ -1282,6 +1284,7 @@ function applyBulkAdjustment()
     } else {
 
     }
+    computeBalance();
 }
 
 function appendPerItemColumns()
@@ -1520,11 +1523,14 @@ $(document).ready(function(){
             $('#cart_items').prepend(field);
         }
 
-        if($('#string_trans_type') == 'none' || $('#string_trans_type') == 'reg') {
+        if($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
             computeCartRaw();
-        } else if($('#string_trans_type') == 'per') {
+        } else if($('#string_trans_type').val() == 'per') {
+            // alert('remove indiv');
+            computeCartRaw();
             computeCartIndiv();
-        } else if($('#string_trans_type') == 'bulk') {
+        } else if($('#string_trans_type').val() == 'bulk') {
+            computeCartRaw();
             computeCartBulk();
         } else {
             computeCartRaw();
@@ -1643,6 +1649,7 @@ $(document).ready(function(){
         
         computeCartIndiv();
         computeCartMinimum();
+        computeBalance();
 
     });
 
