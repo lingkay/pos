@@ -866,7 +866,10 @@ function addToCart(product_name, srp, min_price, id)
             computeCartIndiv();
         } else if ($('#string_trans_type').val() == 'reg') {
             computeCartRaw();
-        } 
+        } else if ($('#string_trans_type').val() == 'bulk') {
+            computeCartRaw();
+            applyBulkAdjustment();
+        }
         toastr['success'](product_name+' added to cart', 'Success');
 
         computeBalance();
@@ -1531,7 +1534,7 @@ $(document).ready(function(){
             computeCartIndiv();
         } else if($('#string_trans_type').val() == 'bulk') {
             computeCartRaw();
-            computeCartBulk();
+            applyBulkAdjustment();
         } else {
             computeCartRaw();
         }
