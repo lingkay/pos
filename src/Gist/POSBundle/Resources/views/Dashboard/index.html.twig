@@ -963,11 +963,17 @@ function computeCartIndiv()
     //this function will only compute PER ITEM totals.
     var sale_price = 0;
 
+
     // compute each item's original price
     $('.adjusted_price').each(function(){
         sale_price = sale_price + parseFloat($(this).val());
         // alert($(this).val());
     });
+
+    var orig_price = $('#float_cart_orig_price').val();
+    var savings = orig_price - sale_price;
+
+    $('#customer_savings').text(addCommas(parseFloat(savings)));
 
     // assign new values
     $('#float_cart_new_price').val(sale_price);
@@ -1141,6 +1147,7 @@ function revertDiscounts()
     $('.updated_totals_row').hide();
     $('.checkout_btn').hide();
     $('.bulk_adj').hide();
+    $('#customer_savings').text("0.00");
     $('.next_step_btn').show();
     $('.clear_discount').hide();
     $('.initial_cart_price').text(addCommas(float_orig_price));
@@ -1600,6 +1607,7 @@ $(document).ready(function(){
 
     $(document).on("click",".clear_discount", function(e){
         revertDiscounts();
+        $('.customer_savings').text("0.00");
         $('.savings_h4').hide();
     });
 
