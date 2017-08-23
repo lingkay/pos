@@ -1703,7 +1703,7 @@ $(document).ready(function(){
     $(document).on('keyup', '#cform-cash_received_amt', function () {
         $(this).val(this.value.match(/[0-9]*/));
         if ($(this).val() != '') {
-            var amt_to_pay = $('#float_trans_amount').val();
+            var amt_to_pay = $('#float_trans_balance').val();
             var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
@@ -1731,8 +1731,8 @@ $(document).ready(function(){
         } else if ($(this).data("value") == 'DEL') {
             var str = $('#cform-cash_received_amt').val();
             $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
-            var amt_to_pay = $('#float_trans_amount').val();
-            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            var amt_to_pay = $('#float_trans_balance').val();
+            var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
             if (chg_amt >= 0) {
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
@@ -1743,8 +1743,8 @@ $(document).ready(function(){
             $('#cform-cash_chg_amt').val(addCommas(change));
         } else {
             $('#cform-cash_received_amt')[0].value += $(this).data("value");
-            var amt_to_pay = $('#float_trans_amount').val();
-            var chg_amt = parseInt($('#cform-cash_received_amt').val()) - amt_to_pay;
+            var amt_to_pay = $('#float_trans_balance').val();
+            var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
             if (chg_amt >= 0) {
                 var change = chg_amt;  
                 $('#cform-cash_chg_amt').val(addCommas(change));  
