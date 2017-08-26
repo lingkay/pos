@@ -347,8 +347,8 @@
             </div>
         </div>
     </div>
-    <div id="cc_modal" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+    <div id="cc_modal"  class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" style="width: 800px !important;">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
@@ -365,17 +365,23 @@
                             </div>
                         </div>
                         <div class="row form-horizontal form cc_main_form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="cc_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
+                            <div class="col-md-12" id="cc_form" style="height: 350px; overflow:scroll;overflow-x: hidden;">
                                 <div class="cc_field">
                                     <h4 class="form-section">Card Details</h4>
-                                    {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 4, 4, false) }}
-                                    {{ form.group_selectx('Bank', 'cc_bank', bank_options, '', 4, 4, false) }}
-                                    {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Credit Card Number', 'cc_card_number', '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
-                                    {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 4, false) }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, false) }}
+                                            {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, false) }}
+                                            {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, false) }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.group_text_pos('Card Number', 'cc_card_number', '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 5, 6, false) }}
+                                            {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 5, 6, false) }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -390,7 +396,7 @@
         </div>
     </div>
     <div id="check_modal" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width: 800px !important;">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
@@ -410,13 +416,19 @@
                             <div class="col-md-12" id="check_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
                                 <div class="check_field">
                                     <h4 class="form-section">Check Details</h4>
-                                    {#{{ form.radio_set_pos('Type','check_type[]',check_type_options,'') }}  #} 
-                                    {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Account Number', 'check_account_number', '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Check Number', 'check_number', '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Check Date','check_date', '',4,4) }}
-                                    {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
-                                    {{ form.group_text_pos('Check Amount', 'check_amount', '', 4, 4, false) }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Account Number', 'check_account_number', '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Check Number', 'check_number', '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{ form.group_text_pos('Check Date','check_date', '',5, 6) }}
+                                            {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
+                                            {{ form.group_text_pos("Payor's Name", 'check_payor_name', '', 5, 6, false) }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -553,27 +565,39 @@
         <div class="cc_field">
             <br>
             <h4 class="form-section">Card Details</h4>
-            {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 4, 4, false) }}
-            {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 4, 4, false) }}
-            {{ form.group_selectx('Bank', 'cc_bank', bank_options, '', 4, 4, false) }}
-            {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 4, 4, false) }}
-            {{ form.group_text_pos('Credit Card Number', 'cc_card_number', '', 4, 4, false) }}
-            {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 4, false) }}
-            {{ form.group_text_pos('Expiration Date (MM/YY)', 'cc_card_expiry', '', 4, 4, false) }}
-            {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 4, false) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
+                    {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, false) }}
+                    {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, false) }}
+                    {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, false) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.group_text_pos('Card Number', 'cc_card_number', '', 5, 6, false) }}
+                    {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 5, 6, false) }}
+                    {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 5, 6, false) }}
+                    {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 5, 6, false) }}
+                </div>
+            </div>
         </div>
     </div>
     <div id="check_fields">
         <div class="check_field">
             <br>
             <h4 class="form-section">Check Details</h4>
-            {#{{ form.radio_set_pos('Type','check_type[]',check_type_options,'') }}  #} 
-            {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 4, 4, false) }}
-            {{ form.group_text_pos('Account Number', 'check_account_number', '', 4, 4, false) }}
-            {{ form.group_text_pos('Check Number', 'check_number', '', 4, 4, false) }}
-            {{ form.group_text_pos('Check Date','check_date', '',4,4) }}
-            {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 4, 4, false) }}
-            {{ form.group_text_pos('Check Amount', 'check_amount', '', 4, 4, false) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 5, 6, false) }}
+                    {{ form.group_text_pos('Account Number', 'check_account_number', '', 5, 6, false) }}
+                    {{ form.group_text_pos('Check Number', 'check_number', '', 5, 6, false) }}
+                    {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.group_text_pos('Check Date','check_date', '',5, 6) }}
+                    {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
+                    {{ form.group_text_pos("Payor's Name", 'check_payor_name', '', 5, 6, false) }}
+                </div>
+            </div>
         </div>
     </div>
 </div>
