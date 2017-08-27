@@ -95,11 +95,11 @@
 </div>
 {% endmacro %}
 
-{% macro group_text_pos(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+{% macro group_text_pos(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}}" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}}" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
     </div>
 </div>
 {% endmacro %}
@@ -275,7 +275,7 @@
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
         {{ self.options(options, value) }}
         </select>
     </div>
@@ -287,7 +287,7 @@
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+        <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
         {{ self.options(options, value) }}
         </select>
     </div>

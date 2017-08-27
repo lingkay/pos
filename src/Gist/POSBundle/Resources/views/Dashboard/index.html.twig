@@ -369,17 +369,17 @@
                                 <div class="cc_field">
                                     <h4 class="form-section">Card Details</h4>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
-                                            {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, false) }}
-                                            {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, false) }}
-                                            {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, false) }}
+                                            {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                                            {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
+                                            {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
                                         </div>
-                                        <div class="col-md-6">
-                                            {{ form.group_text_pos('Card Number', 'cc_card_number', '', 5, 6, false) }}
-                                            {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 5, 6, false) }}
-                                            {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 5, 6, false) }}
-                                            {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 5, 6, false) }}
+                                        <div class="col-md-7">
+                                            {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
+                                            {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
+                                            {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'mm/yyyy', false) }}
+                                            {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
                                         </div>
                                     </div>
                                 </div>
@@ -566,17 +566,17 @@
             <br>
             <h4 class="form-section">Card Details</h4>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
-                    {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, false) }}
-                    {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, false) }}
-                    {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, false) }}
+                    {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                    {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
+                    {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
                 </div>
-                <div class="col-md-6">
-                    {{ form.group_text_pos('Card Number', 'cc_card_number', '', 5, 6, false) }}
-                    {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 5, 6, false) }}
-                    {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 5, 6, false) }}
-                    {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 5, 6, false) }}
+                <div class="col-md-7">
+                    {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
+                    {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
+                    {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'MM/YYYY', false) }}
+                    {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
                 </div>
             </div>
         </div>
@@ -2108,11 +2108,16 @@ $(document).ready(function(){
         $('input[name=cc_card_cvv]').payment('formatCardCVC');
         $('input[name=cc_card_expiry').payment('formatCardExpiry');
 
+        var objDiv = document.getElementById("cc_form");
+        objDiv.scrollTop = objDiv.scrollHeight;
+
         return false;
     });
 
     $(document).on("click",".add_check_btn", function(e){
         $("#check_fields").clone().find("input").val("").end().appendTo('#check_form');
+        var objDiv = document.getElementById("check_form");
+        objDiv.scrollTop = objDiv.scrollHeight;
         return false;
     });
 
