@@ -14,6 +14,7 @@ class POSController extends Controller
 
         $params['indiv_options'] = array(
             'gift' => 'Gift/Free',
+            'discamt' => 'Discount Amount',
             'disc' => 'Discount %',
             'chg' => 'Change of Price'
         );

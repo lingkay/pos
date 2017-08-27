@@ -1303,7 +1303,11 @@ function apply_indiv(x)
         adjusted_price.val(srp);
         per_item_discount_amt.val('');
         per_item_discount_amt.attr("readonly", false); 
-    } else {
+    } else if ($(x).val() == 'discamt') {
+        adjusted_price.val(srp);
+        per_item_discount_amt.val('');
+        per_item_discount_amt.attr("readonly", false); 
+    }else {
         adjusted_price.val(srp);
         per_item_discount_amt.attr("readonly", true); 
         per_item_discount_amt.val('');
@@ -1822,22 +1826,30 @@ $(document).ready(function(){
     });
 
     $(document).on('keyup', '.per_item_discount_amt', function () {
-        // $(this).val(this.value.match(/[0-9]*/));
         var row = $(this).closest('tr');
         var srp = row.find('.srp').val();
+        var input_amt = $(this).val();
         var adjusted_price = row.find('.adjusted_price');
         var per_item_discount_amt = row.find('.per_item_discount_amt');
         var pos_indiv_discount_opt = row.find('.pos_indiv_discount_opt').val();
 
         if (pos_indiv_discount_opt == 'disc') {
-            if (parseFloat($(this).val()) > 100) {
+            if (parseFloat(input_amt) > 100) {
                 toastr['error']('Discount percentage exceeded.', 'Error');
                 $(this).val(100);
             }
-            var discounted_price = srp - (srp * ($(this).val()/100));
+            var discounted_price = srp - (srp * (input_amt/100));
             adjusted_price.val(discounted_price);
+        } else if (pos_indiv_discount_opt == 'discamt') {
+            if (input_amt < 0 || input_amt == '') {
+                var discounted_price = parseFloat(srp);
+                adjusted_price.val(discounted_price);
+            } else {
+                var discounted_price = parseFloat(srp) - parseFloat(input_amt);
+                adjusted_price.val(discounted_price);
+            }
         } else if (pos_indiv_discount_opt == 'chg') {
-            adjusted_price.val($(this).val());
+            adjusted_price.val(input_amt);
         }
         
         computeCartIndiv();
