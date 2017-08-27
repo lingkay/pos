@@ -44,6 +44,17 @@ class POSController extends Controller
             'pdc' => 'PDC'
         );
 
+        $params['gender_options'] = array(
+            'male' => 'Male',
+            'female' => 'Female'
+        );
+
+        $params['marital_options'] = array(
+            'single' => 'Single',
+            'married' => 'Married',
+            'widow' => 'Widow'
+        );
+
         $url="http://erp.cilanthropist.co/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);

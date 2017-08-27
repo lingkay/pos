@@ -399,6 +399,25 @@
 {% endif %}
 {% endmacro %}
 
+{% macro group_date_pos(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+{% import _self as self %}
+{% if readonly %}
+    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+{% else %}
+<div class="form-group posgrp_{{name}}">
+    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class ="col-md-{{ body_size }}">
+        <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
+            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+            <span class="input-group-btn">
+                <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}
+
 {% macro group_date_pdc(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
 {% import _self as self %}
 {% if readonly %}
@@ -502,7 +521,7 @@
 {% endmacro %}
 
 {% macro radio(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<label>
+<label class="radio-inline">
 {% if group == null %}
     {% set grp = "radio-group" %}
 {% else %}
@@ -526,7 +545,22 @@
 {% import _self as form %}
 <div class="form-group">
     <label class="col-md-4 control-label">{{ label }}</label>
-    <div class="col-md-4">
+    <div class="col-md-7">
+        <div class="radio-list"> 
+        {% for id,display in fields %}
+            {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endmacro %}
+
+{% macro radio_set_pos2(label, name, fields, value, disabled = false) %}
+{% import _self as form %}
+<div class="form-group">
+    <label class="col-md-2 control-label">{{ label }}</label>
+    <div class="col-md-8">
         <div class="radio-list"> 
         {% for id,display in fields %}
             {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
