@@ -1573,6 +1573,33 @@ $(document).ready(function(){
       "hideMethod": "fadeOut"
     }
 
+    // CC
+
+
+
+    /* Fancy restrictive input formatting via jQuery.payment library*/
+    $('input[name=cc_card_number]').payment('formatCardNumber');
+    $('input[name=cc_card_cvv]').payment('formatCardCVC');
+    $('input[name=cc_card_expiry').payment('formatCardExpiry');
+
+    /* Form validation using Stripe client-side validation helpers */
+    jQuery.validator.addMethod("cc_card_number", function(value, element) {
+        return this.optional(element) || Stripe.card.validateCardNumber(value);
+    }, "Please specify a valid credit card number.");
+
+    jQuery.validator.addMethod("cc_card_expiry", function(value, element) {    
+        /* Parsing month/year uses jQuery.payment library */
+        value = $.payment.cardExpiryVal(value);
+        return this.optional(element) || Stripe.card.validateExpiry(value.month, value.year);
+    }, "Invalid expiration date.");
+
+    jQuery.validator.addMethod("cc_card_cvv", function(value, element) {
+        return this.optional(element) || Stripe.card.validateCVC(value);
+    }, "Invalid CVC.");
+
+
+    // END CC
+
 
 
     // CLEAN
@@ -2077,6 +2104,10 @@ $(document).ready(function(){
 
     $(document).on("click",".add_card_btn", function(e){
         $("#cc_fields").clone().find("input").val("").end().appendTo('#cc_form');
+        $('input[name=cc_card_number]').payment('formatCardNumber');
+        $('input[name=cc_card_cvv]').payment('formatCardCVC');
+        $('input[name=cc_card_expiry').payment('formatCardExpiry');
+
         return false;
     });
 
