@@ -375,6 +375,7 @@
                                         <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                                             {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                                            {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
                                         </div>
@@ -626,6 +627,7 @@
                 <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                     {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                    {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
                 </div>

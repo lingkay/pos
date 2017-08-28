@@ -63,6 +63,15 @@ class POSController extends Controller
         $result2 = file_get_contents($url2);
         $vars2 = json_decode($result2, true);
 
+        $url_chg="http://erp.cilanthropist.co/pos_erp/get/charge_rates";
+        $result_chg = file_get_contents($url_chg);
+        $vars_chg = json_decode($result_chg, true);
+
+        $opts = array();
+        foreach ($vars_chg as $o)
+            $opts[$o['id']] = $o['name']." @ ".$o['value']."%";
+
+
         $url3="http://erp.cilanthropist.co/inventory/pos/get/tax_coverage";
         $result3 = file_get_contents($url3);
         $vars3 = str_replace('"', '', $result3);
@@ -72,6 +81,7 @@ class POSController extends Controller
 
         $params['bank_options'] = $vars;
         $params['terminal_operators'] = $vars2;
+        $params['charge_rates'] = $opts;
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
