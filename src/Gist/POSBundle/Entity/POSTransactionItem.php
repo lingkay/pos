@@ -13,10 +13,10 @@ use stdClass;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="gist_pos_trans_items")
+ * @ORM\Table(name="gist_pos_trans_item")
  */
 
-class POSTransactionItems
+class POSTransactionItem
 {
 
 
@@ -47,7 +47,7 @@ class POSTransactionItems
     protected $discount_value;
 
     /**
-     * @ORM\ManyToOne(targetEntity="POSTransactions")
+     * @ORM\ManyToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
      */
     protected $transaction;

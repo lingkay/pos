@@ -4,11 +4,17 @@ namespace Gist\POSBundle\Controller;
 
 // use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Gist\TemplateBundle\Model\BaseController as Controller;
+use Gist\POSBundle\Entity\POSTransaction;
+use Gist\POSBundle\Entity\POSTransactionItem;
+use Gist\POSBundle\Entity\POSTransactionPayment;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class POSController extends Controller
 {
     public function indexAction()
     {
+        $em = $this->getDoctrine()->getManager();
     	$this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
 
@@ -55,6 +61,18 @@ class POSController extends Controller
             'widow' => 'Widow'
         );
 
+        $last_entry = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array(),array('id' => 'DESC'),1);
+        if (count($last_entry) > 0) {
+            $params['next_id'] = '005-' . str_pad($last_entry->getID() + 1,6,'0',STR_PAD_LEFT);
+            $params['next_sys_id'] = $last_entry->getID() + 1;
+        } else {
+            $params['next_id'] = '005-' . str_pad(0 + 1,6,'0',STR_PAD_LEFT);
+            $params['next_sys_id'] = "1";
+        }
+
+
+        
+
         $url="http://erp.cilanthropist.co/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
@@ -94,5 +112,41 @@ class POSController extends Controller
         
 
         return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
+    }
+
+
+    // POS SAVING AND SENDING METHODS
+
+    public function saveTransaction($trans_id, $trans_total, $transaction_balance, $status, $customer_id = null)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction = new POSTransaction();
+
+        $transaction->setStatus($status);
+
+        $em->persist($transaction);
+        $em->flush();
+    }
+
+    public function saveTransactionItems($trans_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $disc_type, $disc_value)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction_item = new POSTransactionItem();
+        
+        $transaction_item->setStatus($status);
+
+        $em->persist($transaction_item);
+        $em->flush();
+    }
+
+    public function saveTransactionPayments($trans_id, $payment_type, $amount)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction_payment = new POSTransactionPayment();
+        
+        $transaction_payment->setStatus($status);
+
+        $em->persist($transaction_payment);
+        $em->flush();
     }
 }

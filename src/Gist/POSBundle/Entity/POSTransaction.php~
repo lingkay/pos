@@ -16,14 +16,15 @@ use stdClass;
  * @ORM\Table(name="gist_pos_trans")
  */
 
-class POSTransactions
+class POSTransaction
 {
 
 
     use HasGeneratedID;
     use TrackCreate;
 
-
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $trans_display_id;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $product_id;
@@ -151,5 +152,77 @@ class POSTransactions
     public function getCustomerId()
     {
         return $this->customer_id;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     *
+     * @return POSTransactions
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set transId
+     *
+     * @param string $transId
+     *
+     * @return POSTransaction
+     */
+    public function setTransId($transId)
+    {
+        $this->trans_id = $transId;
+
+        return $this;
+    }
+
+    /**
+     * Get transId
+     *
+     * @return string
+     */
+    public function getTransId()
+    {
+        return $this->trans_id;
+    }
+
+    /**
+     * Set transDisplayId
+     *
+     * @param string $transDisplayId
+     *
+     * @return POSTransaction
+     */
+    public function setTransDisplayId($transDisplayId)
+    {
+        $this->trans_display_id = $transDisplayId;
+
+        return $this;
+    }
+
+    /**
+     * Get transDisplayId
+     *
+     * @return string
+     */
+    public function getTransDisplayId()
+    {
+        return $this->trans_display_id;
     }
 }
