@@ -428,7 +428,8 @@
                                             {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
                                         </div>
                                         <div class="col-md-6">
-                                            {{ form.group_text_pos('Check Date','check_date', '',5, 6) }}
+                                            {{ form.checkbox_pos('check_is_pdc', 0, 'Post dated check', '', '')}}
+                                            {{ form.group_date_pos('Check Date','check_date', '',5, 6) }}
                                             {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
                                             {{ form.group_text_pos("Payor's Name", 'check_payor_name', '', 5, 6, false) }}
                                         </div>
@@ -652,7 +653,8 @@
                     {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
                 </div>
                 <div class="col-md-6">
-                    {{ form.group_text_pos('Check Date','check_date', '',5, 6) }}
+                    {{ form.checkbox_pos('check_is_pdc', 0, 'Post dated check', '', '')}}
+                    {{ form.group_date_pos('Check Date','check_date', '',5, 6) }}
                     {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
                     {{ form.group_text_pos("Payor's Name", 'check_payor_name', '', 5, 6, false) }}
                 </div>
@@ -1695,6 +1697,28 @@ $(document).ready(function(){
       "showMethod": "fadeIn",
       "hideMethod": "fadeOut"
     }
+
+    $('.posgrp_check_date').hide();
+
+    $(document).on("click",".check_is_pdc", function(e){
+        var row = $(this).closest('.check_field');
+        var opt = row.find('.posgrp_check_date');
+        //TO REMOVE CHECK
+        //var opt = row.find('#uniform-cform-check_is_pdc > span');
+        //opt.removeClass('checked');
+
+        if ($(this).val() == 0) {
+            $(this).val(1);
+            opt.show();
+        } else {
+            $(this).val(0);
+            opt.hide();
+        }
+
+        //alert($(this).val());
+        
+        
+    });
 
     $('.pos_field').on('keypress', function (event) {
         var regex = new RegExp("^[a-zA-Z0-9]+$");

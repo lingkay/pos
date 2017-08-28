@@ -56,6 +56,8 @@
 </label>
 {% endmacro %}
 
+
+
 {% macro checkbox_set(name, fields, checked_arr, disabled = false, prefix = 'c') %}
 {% import _self as self %}
 <div class="checkbox-list">
@@ -91,6 +93,20 @@
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
         <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro checkbox_pos(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+<div id="xgroup-pdc" class="form-group">
+    <label class="col-md-5 control-label">{{ display }}</label>
+    <div class="col-md-6">
+        {% if group == null %}
+            {% set grp = name %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+            <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
     </div>
 </div>
 {% endmacro %}
