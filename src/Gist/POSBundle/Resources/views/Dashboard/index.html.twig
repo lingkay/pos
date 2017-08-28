@@ -1704,8 +1704,8 @@ function loadFrozenTransactions()
 {
     $('#frozen_list').empty();
     // $('.init_row_frozen').remove();
-    // var url = "http://dev.gistpos/pos/get_frozen_transactions";
-    var url = "http://dev.gistpos/pos/get_frozen_transactions";
+    // var url = "http://pos.cilanthropist.co/pos/get_frozen_transactions";
+    var url = "http://pos.cilanthropist.co/pos/get_frozen_transactions";
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, x) {
@@ -1766,7 +1766,7 @@ function freezeTransaction()
     var customer_id = $('#transaction_customer_id').val();
 
     // {id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}/{tax_rate}/{orig_vat_amt}/{new_vat_amt}/{orig_amt_net_vat}/{new_amt_net_vat}/{tax_coverage}/{cart_min}/{orig_cart_total}/{new_cart_total}
-    var url = "http://dev.gistpos/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total;
+    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total;
 
 
     $.getJSON(url, function(json){  
@@ -1805,7 +1805,7 @@ function freezeTransaction()
                     
 
 
-                    var url2 = "http://dev.gistpos/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
+                    var url2 = "http://pos.cilanthropist.co/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
 
 
                     $.getJSON(url2, function(json){  
@@ -1843,7 +1843,7 @@ function freezeTransaction()
                     var payment_type = $(this).find('.payment_type').val();
                     var amount = $(this).find('.payment_amt_float').val();
 
-                    var url3 = "http://dev.gistpos/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
+                    var url3 = "http://pos.cilanthropist.co/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
 
 
                     $.getJSON(url3, function(json){  
