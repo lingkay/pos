@@ -99,7 +99,7 @@
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}}" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
     </div>
 </div>
 {% endmacro %}
@@ -407,7 +407,7 @@
 <div class="form-group posgrp_{{name}}">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
+        <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
             <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
             <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>

@@ -11,6 +11,7 @@
 <input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
 <input type="hidden" id="string_trans_type" value="none">
 <input type="hidden" id="string_trans_mode" value="normal">
+<input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="0">
 <!-- END TRANSACTION VARS -->
 <!-- TAX VARS -->
 <input type="hidden" id="float_tax_rate" value="0">
@@ -335,6 +336,8 @@
                                     </div>
                                 </div>
                                 {#{{ form.group_hidden('Change Amount', 'cash_chg_amt', '0.00', 4, 4, true) }}#}
+                                <br>
+                                <h4>Change <b>Php <span id="cash_chg_amt" >0.00</span></b></h4>
                             </div>
                         </div>
                     </div>
@@ -540,8 +543,8 @@
                     <div class="modal-footer">
                     <a class="btn default red customer_clear_search_btn" style="margin=0" href="javascript:void(0)">Clear Fields</a>
                         <a class="btn default green customer_search_btn" style="margin=0" href="javascript:void(0)">Search</a>
-                        <a class="btn default blue add_customer" style="margin=0" href="javascript:void(0)">Add New Customer</a>
-                        <a class="btn default green customer_search_again_btn" style="margin=0" href="javascript:void(0)">Search Again</a>
+                        <a class="btn default blue save_customer_button" style="margin=0" href="javascript:void(0)">Add New Customer</a>
+                        <a class="btn default blue customer_search_again_btn" style="margin=0" href="javascript:void(0)">Search Again</a>
                         <a class="btn default green customer_continue_btn" style="margin=0" href="javascript:void(0)">Continue</a>
                         <button type="button" class="btn default cancel_cust_search" data-toggle="modal">Cancel</button>
                     </div>
@@ -549,29 +552,26 @@
             </div>
         </div>
     </div>
-    <div id="add_customer_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div id="final_modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="post" action="">
-                    <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Add new customer</h4>
-                    </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="check_form">
-                                <div class="check_field">
-                                    {{ form.group_text_pos('First Name', 'cust_firstname', '', 4,4, false) }}
-                                    {{ form.group_text_pos('Last Name', 'cust_lastname', '', 4,4, false) }}
-                                    {{ form.group_text_pos('Mobile #', 'cust_mobile', '', 4,4, false) }}
-                                    {{ form.group_text_pos('Email','cust_email', '',4,4) }}
-                                </div>
+                        <div class="row form-horizontal form">
+                            <h3 id="form_title" class="modal-title">Transaction complete!</h3>
+                            <br>
+                            <div class="col-md-4" class="proceed_btn_reg" onclick="finalModalAction('save')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}"></a>
+                                <h4>Save</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_reg" onclick="finalModalAction('save_print')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/receipt.png') }}"></a>
+                                <h4>Save & Print Receipt</h4>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green save_customer_button" style="margin=0" href="javascript:void(0)">Submit</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <p><i>Leaving this modal will reset the POS</i></p>
                     </div>
                 </form>
             </div>
@@ -661,6 +661,17 @@
 {% endblock %}
 {% block js %}
 <script>
+function finalModalAction(opt)
+{
+    if (opt == 'save') {
+        $('#final_modal').modal('hide');
+        swal('Transaction saved!','Resetting POS...please wait','success');
+        location.reload();
+    } else {
+
+    }
+}
+
 function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
@@ -744,6 +755,7 @@ function ajaxGetProducts(cid)
 function ajaxSearchCustomer()
 {
 
+
     var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
     var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
     var last_name = "%20"; if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};//$('#cform-cust_search_lastname').val();
@@ -768,6 +780,9 @@ function ajaxSearchCustomer()
     
     // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
     var url = "http://erp.cilanthropist.co/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
+
+
+    url.replace('%2F','');
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, cust) {
@@ -818,23 +833,45 @@ function ajaxSearchCustomer()
 function ajaxAddCustomer()
 {
 
-    var first_name = "%20"; if($('#cform-cust_firstname').val() != ''){first_name = $('#cform-cust_firstname').val()};
-    var last_name = "%20"; if($('#cform-cust_lastname').val() != ''){last_name = $('#cform-cust_lastname').val()};//$('#cform-cust_lastname').val();
-    var email = "%20"; if($('#cform-cust_email').val() != ''){email = $('#cform-cust_email').val()};//$('#cform-cust_email').val();
-    var number = "%20"; if($('#cform-cust_mobile').val() != ''){number = $('#cform-cust_mobile').val()};//$('#cform-cust_mobile').val();
+    var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
+    var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
+    var last_name = "%20"; if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};//$('#cform-cust_search_lastname').val();
+    var email = "%20"; if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};//$('#cform-cust_search_email').val();
+    var number = "%20"; if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};//$('#cform-cust_search_mobile').val();
+
+    var customer_id = "%20"; if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
+    var gender = "%20"; if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
+    var marital_status = "%20"; if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
+    var date_married = "%20"; if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
+    var home_phone = "%20"; if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
+    var birthday = "%20"; if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
+    var address1 = "%20"; if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
+    var address2 = "%20"; if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
+
+    var city = "%20"; if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
+    var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
+    var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
+    var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_address_2').val()};
 
 
-    var url = "http://erp.cilanthropist.co/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number;
+
+
+    var url = "http://erp.cilanthropist.co/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
+
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, cust) {
             //var new_customer_id = cust.new_customer_id
-            toastr['success']('Customer added', 'Success');
+            //toastr['success']('Customer added', 'Success');
+            swal("Success!", 'Customer added!',"success");
+            $('#transaction_customer_id').val(cust.new_customer_id);
+            $('#customer_modal').modal('hide');
+            if ($('#string_trans_type').val() != 'none') {
+                $('#final_modal').modal('show');
+            }
         });
     });
     clearCustomerAdd();
-    $('#add_customer_modal').modal('hide');
-    $('#customer_modal').modal('show');
     
 
 
@@ -1657,6 +1694,15 @@ $(document).ready(function(){
       "hideMethod": "fadeOut"
     }
 
+    $('.pos_field').on('keypress', function (event) {
+        var regex = new RegExp("^[a-zA-Z0-9]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+           event.preventDefault();
+           return false;
+        }
+    });
+
     $('.posgrp_cust_search_marriage_date').hide();
     $('.customer_continue_btn').hide();
     $('.customer_search_again_btn').hide();
@@ -1681,6 +1727,14 @@ $(document).ready(function(){
         $('.customer_continue_btn').hide();
         $('.customer_search_again_btn').hide();
     });
+
+    $(document).on("click",".customer_continue_btn", function(e) {
+        swal("Success!", 'Customer selected!',"success");
+        $('#customer_modal').modal('hide');
+        if ($('#string_trans_type').val() != 'none') {
+            $('#final_modal').modal('show');
+        }
+    }); 
 
     $(document).on("click",".cancel_cust_search", function(e){
         clearCustomerFields();
@@ -1713,7 +1767,7 @@ $(document).ready(function(){
             $('#cform-cust_search_marriage_date').val('');
         }
 
-
+        $('#transaction_customer_id').val(row.find('.id').val());
 
         $('#cform-cust_search_id').val(row.find('.id').val());
         $('#cform-cust_search_firstname').val();
@@ -1737,6 +1791,9 @@ $(document).ready(function(){
                 $(this).addClass('checked');
             }
         });
+
+        var objDiv = document.getElementById("cust_formx");
+        objDiv.scrollTop = 0;
     });
 
 
@@ -1990,6 +2047,10 @@ $(document).ready(function(){
 
     });
 
+    $('#final_modal').on('hidden', function () {
+        location.reload();
+    });
+
     $(document).on('keyup', '.per_item_discount_amt', function () {
         var row = $(this).closest('tr');
         var srp = row.find('.srp').val();
@@ -2134,16 +2195,16 @@ $(document).ready(function(){
             var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             if (chg_amt >= 0) {
                 var change = chg_amt;  
-                $('#cform-cash_chg_amt').val(addCommas(change));  
+                $('#cash_chg_amt').text(addCommas(change));  
             } else {
-                var change = 0;
-                $('#cform-cash_chg_amt').val(change);
+                var change = '0.00';
+                $('#cash_chg_amt').text(change);
             }
 
             computeBalanceDisplay($(this).val());
             
         } else {
-            $('#cform-cash_chg_amt').val("0");
+            $('#cash_chg_amt').text("0.00");
         }
         
 
@@ -2156,7 +2217,7 @@ $(document).ready(function(){
     $(document).on("click",".numeric_key", function(e){
         if ($(this).data("value") == 'CLEAR') {
             $('#cform-cash_received_amt').val("");
-            $('#cform-cash_chg_amt').val(0);
+            $('#cash_chg_amt').text(0.00);
         } else if ($(this).data("value") == 'DEL') {
             var str = $('#cform-cash_received_amt').val();
             $('#cform-cash_received_amt').val(str.substring(0, str.length - 1));
@@ -2164,12 +2225,12 @@ $(document).ready(function(){
             var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
             if (chg_amt >= 0) {
                 var change = chg_amt;  
-                $('#cform-cash_chg_amt').val(addCommas(change));  
+                $('#cash_chg_amt').text(addCommas(change));  
             } else {
-                var change = 0;
-                $('#cform-cash_chg_amt').val(change);
+                var change = '0.00';
+                $('#cash_chg_amt').text(change);
             }
-            $('#cform-cash_chg_amt').val(addCommas(change));
+            $('#cash_chg_amt').text(addCommas(change));
         } else {
             if($('#cform-cash_received_amt').val().indexOf('.') !== -1 && ($(this).data("value") == '.')) {
                 e.preventDefault();
@@ -2179,10 +2240,10 @@ $(document).ready(function(){
                 var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
                 if (chg_amt >= 0) {
                     var change = chg_amt;  
-                    $('#cform-cash_chg_amt').val(addCommas(change));  
+                    $('#cash_chg_amt').text(addCommas(change));  
                 } else {
-                    var change = 0;
-                    $('#cform-cash_chg_amt').val(change);
+                    var change = '0.00';
+                    $('#cash_chg_amt').text(change);
                 }
             }
         }
