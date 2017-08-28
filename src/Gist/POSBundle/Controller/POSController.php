@@ -235,11 +235,28 @@ class POSController extends Controller
         
         //send items (loop transactions then loop items)
         //send payments (loop transactions then loop payments)
+        $tax_rate = $transaction->getTaxRate();
+        $OrigVatAmt = $transaction->getOrigVatAmt();
+        $NewVatAmt = $transaction->getNewVatAmt();
+        $OrigAmtNetVat = $transaction->getOrigAmtNetVat();
+        $NewAmtNetVat = $transaction->getNewAmtNetVat();
+        $TaxCoverage = $transaction->getTaxCoverage();
+        $CartMin = $transaction->getCartMin();
+        $CartOrigTotal = $transaction->getCartOrigTotal();
+        $CartNewTotal = $transaction->getCartNewTotal();
 
-        // {id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}/{tax_rate}/{orig_vat_amt}/{new_vat_amt}/{orig_amt_net_vat}/{new_amt_net_vat}/{tax_coverage}/{cart_min}/{orig_cart_total}/{new_cart_total}
+        if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n/a'; }
+        if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n/a'; }
+        if (trim($NewVatAmt) == '' || $NewVatAmt == null) { $NewVatAmt = 'n/a'; }
+        if (trim($OrigAmtNetVat) == '' || $OrigAmtNetVat == null) { $OrigAmtNetVat = 'n/a'; }
+        if (trim($NewAmtNetVat) == '' || $NewAmtNetVat == null) { $NewAmtNetVat = 'n/a'; }
+        if (trim($TaxCoverage) == '' || $TaxCoverage == null) { $TaxCoverage = 'n/a'; }
+        if (trim($CartMin) == '' || $CartMin == null) { $CartMin = 'n/a'; }
+        if (trim($CartOrigTotal) == '' || $CartOrigTotal == null) { $CartOrigTotal = 'n/a'; }
+        if (trim($CartNewTotal) == '' || $CartNewTotal == null) { $CartNewTotal = 'n/a'; }
 
         foreach ($transactions as $transaction) {
-            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$transaction->getTaxRate()."/".$transaction->getOrigVatAmt()."/".$transaction->getNewVatAmt()."/".$transaction->getOrigAmtNetVat()."/".$transaction->getNewAmtNetVat()."/".$transaction->getTaxCoverage()."/".$transaction->getCartMin()."/".$transaction->getCartOrigTotal()."/".$transaction->getCartNewTotal());
+            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal()."/".$CartNewTotal());
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
