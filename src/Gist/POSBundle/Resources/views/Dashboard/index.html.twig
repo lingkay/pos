@@ -1751,7 +1751,7 @@ function freezeTransaction()
     var customer_id = $('#transaction_customer_id').val();
 
     
-    var url = "http://dev.gistpos/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status;
+    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status;
 
 
     $.getJSON(url, function(json){  
@@ -1790,7 +1790,7 @@ function freezeTransaction()
                     
 
 
-                    var url2 = "http://dev.gistpos/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
+                    var url2 = "http://pos.cilanthropist.co/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
 
 
                     $.getJSON(url2, function(json){  
@@ -1828,7 +1828,7 @@ function freezeTransaction()
                     var payment_type = $(this).find('.payment_type').val();
                     var amount = $(this).find('.payment_amt_float').val();
 
-                    var url3 = "http://dev.gistpos/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
+                    var url3 = "http://pos.cilanthropist.co/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
 
 
                     $.getJSON(url3, function(json){  

@@ -116,6 +116,7 @@ class POSController extends Controller
 
     public function getFrozenTransactionsAction()
     {
+        header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $frozen_transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('status'=>'Frozen'));
 
@@ -134,6 +135,7 @@ class POSController extends Controller
     // /pos/save_transaction/{id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}
     public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status)
     {
+        header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction = new POSTransaction();
 
@@ -156,6 +158,7 @@ class POSController extends Controller
 
     public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value)
     {
+        header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction_item = new POSTransactionItem();
 
@@ -193,6 +196,7 @@ class POSController extends Controller
 
     public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount)
     {
+        header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction_payment = new POSTransactionPayment();
 
@@ -213,6 +217,7 @@ class POSController extends Controller
     // SYNC TO ERP POS DATA
     public function syncDataAction()
     {
+        header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
 
         //send transactions
