@@ -915,7 +915,7 @@ function ajaxAddCustomer()
             $('#customer_modal').modal('hide');
             
             if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0) {
-                
+
                 $('#final_modal').modal('show');
             }
         });
@@ -1749,11 +1749,24 @@ function freezeTransaction()
     var transaction_total = $('#float_trans_amount').val();
     var transaction_balance = $('#float_trans_balance').val();
     var transaction_type = $('#string_trans_type').val();
+
+    var transaction_tax_rate = $('#float_tax_rate').val();
+    var transaction_orig_vat_amt = $('#float_orig_tax_vat_amt').val();
+    var transaction_new_vat_amt = $('#float_new_tax_vat_amt').val();
+    var transaction_orig_vat_amt_net = $('#float_orig_tax_amt_net_vat').val();
+    var transaction_new_vat_amt_net = $('#float_new_tax_amt_net_vat').val();
+    var transaction_tax_coverage = $('#string_tax_coverage').val();
+
+    var transaction_cart_min_total = $('#float_cart_minimum_total').val();
+    var transaction_cart_orig_total = $('#float_cart_orig_price').val();
+    var transaction_cart_new_total = $('#float_cart_new_price').val();
+
+
     var status = $('#transaction_status').val();
     var customer_id = $('#transaction_customer_id').val();
 
-    
-    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status;
+    // {id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}/{tax_rate}/{orig_vat_amt}/{new_vat_amt}/{orig_amt_net_vat}/{new_amt_net_vat}/{tax_coverage}/{cart_min}/{orig_cart_total}/{new_cart_total}
+    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total;
 
 
     $.getJSON(url, function(json){  

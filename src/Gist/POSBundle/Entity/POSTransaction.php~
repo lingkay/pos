@@ -45,6 +45,34 @@ class POSTransaction
     protected $synced_to_erp;
 
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $tax_rate;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $orig_vat_amt;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $new_vat_amt;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $orig_amt_net_vat;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $new_amt_net_vat;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $tax_coverage;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $cart_min;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $cart_orig_total;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $cart_new_total;
+
+
 
 
     public function __construct()
@@ -258,5 +286,29 @@ class POSTransaction
     public function getSyncedToErp()
     {
         return $this->synced_to_erp;
+    }
+
+    /**
+     * Set transactionBalance
+     *
+     * @param string $transactionBalance
+     *
+     * @return POSTransaction
+     */
+    public function setTransactionBalance($transactionBalance)
+    {
+        $this->transaction_balance = $transactionBalance;
+
+        return $this;
+    }
+
+    /**
+     * Get transactionBalance
+     *
+     * @return string
+     */
+    public function getTransactionBalance()
+    {
+        return $this->transaction_balance;
     }
 }

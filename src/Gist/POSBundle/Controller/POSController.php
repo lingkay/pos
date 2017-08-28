@@ -132,8 +132,8 @@ class POSController extends Controller
 
     // POS SAVING AND SENDING METHODS
 
-    // /pos/save_transaction/{id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status)
+    
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -147,6 +147,16 @@ class POSController extends Controller
         $transaction->setTransactionType($type);
         $transaction->setStatus('Frozen');
         $transaction->setSyncedToErp('false');
+
+        $transaction->setTaxRate($tax_rate);
+        $transaction->setOrigVatAmt($orig_vat_amt);
+        $transaction->setNewVatAmt($new_vat_amt);
+        $transaction->setOrigAmtNetVat($orig_amt_net_vat);
+        $transaction->setNewAmtNetVat($new_amt_net_vat);
+        $transaction->setTaxCoverage($tax_coverage);
+        $transaction->setCartMin($cart_min);
+        $transaction->setCartOrigTotal($orig_cart_total);
+        $transaction->setCartNewTotal($new_cart_total);
 
 
         $em->persist($transaction);
@@ -225,8 +235,11 @@ class POSController extends Controller
         
         //send items (loop transactions then loop items)
         //send payments (loop transactions then loop payments)
+
+        // {id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}/{tax_rate}/{orig_vat_amt}/{new_vat_amt}/{orig_amt_net_vat}/{new_amt_net_vat}/{tax_coverage}/{cart_min}/{orig_cart_total}/{new_cart_total}
+
         foreach ($transactions as $transaction) {
-            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus());
+            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$transaction->getTaxRate()."/".$transaction->getOrigVatAmt()."/".$transaction->getNewVatAmt()."/".$transaction->getOrigAmtNetVat()."/".$transaction->getNewAmtNetVat()."/".$transaction->getTaxCoverage()."/".$transaction->getCartMin()."/".$transaction->getCartOrigTotal()."/".$transaction->getCartNewTotal());
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
