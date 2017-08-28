@@ -913,7 +913,8 @@ function ajaxAddCustomer()
             swal("Success!", 'Customer added!',"success");
             $('#transaction_customer_id').val(cust.new_customer_id);
             $('#customer_modal').modal('hide');
-            if ($('#string_trans_type').val() != 'none') {
+            
+            if ($('#string_trans_type').val() != 'none' && $('#float_trans_balance').val() <= 0) {
                 $('#final_modal').modal('show');
             }
         });
@@ -1702,8 +1703,8 @@ function loadFrozenTransactions()
 {
     $('#frozen_list').empty();
     // $('.init_row_frozen').remove();
+    // var url = "http://pos.cilanthropist.co/pos/get_frozen_transactions";
     var url = "http://pos.cilanthropist.co/pos/get_frozen_transactions";
-
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, x) {
