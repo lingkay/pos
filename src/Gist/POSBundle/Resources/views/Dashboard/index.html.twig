@@ -162,10 +162,11 @@
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk4.png') }}"></a>
                                 <h4>Amount to Pay</h4>
                             </div>
-                            <div style="margin-bottom: 15px;"></div>
-                            {{ form.group_text('New Price', 'new_total', '', 3, 4, false) }}
-                            {{ form.group_text('Discount Amount', 'discount_amount', '', 3, 4, false) }}
-                            {{ form.group_text('Discount %', 'discount_pct', '', 3, 4, false) }}
+                            <div style="margin-bottom: 25px;">&nbsp;</div>
+                            {{ form.group_text('Selected Bulk Discount', 'selected_bulk', 'None', 4, 5, true) }}
+                            {{ form.group_text('New Price', 'new_total', '', 4, 5, false) }}
+                            {{ form.group_text('Less Amount', 'discount_amount', '', 4, 5, false) }}
+                            {{ form.group_text('Less %', 'discount_pct', '', 4, 5, false) }}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -1556,6 +1557,7 @@ function updateBulkForm(opt)
         $('#cform-discount_amount').val('');
         $('#cgroup-discount_amount').hide();
         $('#cform-discount_pct').val('');
+        $('#cform-selected_bulk').val('Gift');
         $('#cgroup-discount_pct').hide();
         $('#cform-new_total').val('');
         $('#cgroup-new_total').hide();
@@ -1564,6 +1566,7 @@ function updateBulkForm(opt)
         $('#cform-discount_amount').val('');
         $('#cgroup-discount_amount').hide();
         $('#cform-discount_pct').val('');
+        $('#cform-selected_bulk').val('Change Amount to Pay');
         $('#cgroup-discount_pct').hide();
         // $('#cform-new_total').val('');
         $('#cgroup-new_total').show();
@@ -1572,6 +1575,7 @@ function updateBulkForm(opt)
         $('#bulk_opt_sel').val('bdiscamt');
         $('#cgroup-discount_amount').show();
         $('#cform-discount_pct').val('');
+        $('#cform-selected_bulk').val('Discount Amount');
         $('#cgroup-discount_pct').hide();
         $('#cform-new_total').val('');
         $('#cgroup-new_total').hide();
@@ -1580,6 +1584,7 @@ function updateBulkForm(opt)
         $('#cform-discount_amount').val('');
         $('#cgroup-discount_amount').hide();
         // $('#cform-discount_pct').val('');
+        $('#cform-selected_bulk').val('Discount %');
         $('#cgroup-discount_pct').show();
         $('#cform-new_total').val('');
         $('#cgroup-new_total').hide();
