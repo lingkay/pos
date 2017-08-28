@@ -451,6 +451,45 @@
             </div>
         </div>
     </div>
+    <div id="freeze_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Frozen Transactions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            
+                        </div>
+                        <div class="row form-horizontal form" style="margin-top: 10px;">
+                            <div class="col-md-12" id="check_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
+                                <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="frozen_transactions">
+                                    <thead>
+                                        <tr>
+                                            <th width="40%">Transaction ID</th>
+                                            <th width="50%">Date Created</th>
+                                            <th width="10%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="frozen_list">
+                                        <tr class="init_row_frozen">
+                                            <td colspan="3"><p>No frozen transactions</p></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default blue freeze_btn" style="margin=0" href="javascript:void(0)">Freeze Current Transaction</a>
+                        <a class="btn default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div id="customer_modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog" style="width: 700px !important;">
             <div class="modal-content">
@@ -1659,6 +1698,194 @@ function revertOriginalPrices()
     computeCartMinimum();
 }
 
+function loadFrozenTransactions()
+{
+    $('#frozen_list').empty();
+    // $('.init_row_frozen').remove();
+    var url = "http://dev.gistpos/pos/get_frozen_transactions";
+
+    $.getJSON(url, function(json){  
+        var count = 0;
+       $.each(json, function(i, x) {
+            $('.init_row_prods').remove();
+            var field = '<tr class=\"row_prod_'+x.id+'\">';     
+                field += '<td><input type="text" style=\"font-size: 12px !important;\" value="'+x.disp_id+'" readonly="true" class="form-control"></td>';
+                field += '<td><input type="text" style=\"font-size: 12px !important;\"  class="form-control" readonly="true" value="'+x.date_created+'"></td>';  
+                field += '<td ><a href="javascript:void(0)" class="btn btn-xs default green"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
+                field += '</tr>';
+
+                $('#frozen_list').append(field);
+       });
+
+   });
+
+    // var rowCount = $('#frozen_transactions tr').length-1;
+    // alert(rowCount);
+    //     if (rowCount == 0) {
+    //         var field = '<tr class=\"init_row_frozen\">';     
+    //         field += '<td colspan=\"3\"><p>No frozen transactionsss</p></td>';
+    //         field += '</tr>';
+
+    //         $('#frozen_list').append(field);
+    //     }
+}
+
+function freezeTransaction()
+{
+    //vars
+    var trans_saved = false;
+    var items_saved = false;
+    var payments_saved = false;
+    var count_cart_items = $('#cart_items tr').length-1;
+    var count_payments = $('#payments_table tr').length-1;
+    //refresh list of frozen transactions
+    // loadFrozenTransactions();
+
+    //save transaction
+    var transaction_sys_id = $('#transaction_system_id').val();
+    var transaction_disp_id = $('#transaction_display_id').val();
+    var transaction_total = $('#float_trans_amount').val();
+    var transaction_balance = $('#float_trans_balance').val();
+    var transaction_type = $('#string_trans_type').val();
+    var status = $('#transaction_status').val();
+    var customer_id = $('#transaction_customer_id').val();
+
+    
+    var url = "http://dev.gistpos/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status;
+
+
+    $.getJSON(url, function(json){  
+        var count = 0;
+        $.each(json, function(i, trans) {
+            trans_saved = true;
+            //save items
+            if (count_cart_items > 0) {
+                $('#cart_items tr').each(function() {
+                    var product_id = $(this).find('.product_id').val();
+                    var orig_price = $(this).find('.srp').val();
+                    var min_price = $(this).find('.min_price').val();
+                    var product_name = $(this).find('.item_name').val();
+                    var discount_type = '%20';
+                    var discount_value = '%20';
+                    var adjusted_price = '%20';
+
+                    if ($('.pos_indiv_discount_opt').length > 0) {
+                        discount_type = $('.pos_indiv_discount_opt').val();
+                    } else {
+                        discount_type = '%20';
+                    }
+
+                    if ($('.per_item_discount_amt').length > 0) {
+                        discount_value = $('.per_item_discount_amt').val();
+                    } else {
+                        discount_value = '%20';
+                    }
+
+                    if ($('.adjusted_price').length > 0) {
+                        adjusted_price = $('.adjusted_price').val();
+                    } else {
+                        adjusted_price = '%20';
+                    }
+
+                    
+
+
+                    var url2 = "http://dev.gistpos/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
+
+
+                    $.getJSON(url2, function(json){  
+                        var count = 0;
+                        $.each(json, function(i, items) {
+                            items_saved = true;
+                            
+                            
+                        });
+
+
+                    });
+                });
+            } else {
+                items_saved = true;
+                if (trans_saved && items_saved) {
+                    swal({
+                          title: "Transaction Frozen!",
+                          text: "The page will now reload",
+                          type: "success",
+                          confirmButtonColor: "green",
+                          confirmButtonText: "Okay",
+                        },
+                        function(){
+                          location.reload();
+                        });
+                } else {
+                    swal('Error encountered',transaction_disp_id+' not frozen','error');
+                }
+            }
+
+            //save payments
+            if (count_payments > 0 && transaction_type != 'none') {
+                $('#payments_list tr').each(function() {
+                    var payment_type = $(this).find('.payment_type').val();
+                    var amount = $(this).find('.payment_amt_float').val();
+
+                    var url3 = "http://dev.gistpos/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
+
+
+                    $.getJSON(url3, function(json){  
+                        var count = 0;
+                        $.each(json, function(i, payments) {
+                            //reload form
+                            if (trans_saved && items_saved) {
+                                swal({
+                                      title: "Transaction Frozen!",
+                                      text: "The page will now reload",
+                                      type: "success",
+                                      confirmButtonColor: "green",
+                                      confirmButtonText: "Okay",
+                                    },
+                                    function(){
+                                      location.reload();
+                                    });
+                            } else {
+                                swal('Error encountered',transaction_disp_id+' not frozen','error');
+                            }
+                        });
+
+                    });
+                });
+            } else {
+                payments_saved = true;
+                if (trans_saved && items_saved) {
+                    swal({
+                          title: "Transaction Frozen!",
+                          text: "The page will now reload",
+                          type: "success",
+                          confirmButtonColor: "green",
+                          confirmButtonText: "Okay",
+                        },
+                        function(){
+                          location.reload();
+                        });
+                } else {
+                    swal('Error encountered',transaction_disp_id+' not frozen','error');
+                }
+            }
+        });
+
+    });
+}
+
+function unfreezeTransaction()
+{
+    //clear ALL
+
+    //load transaction
+
+    //load items
+
+    //load payments
+}
+
 function clearCustomerFields() 
 {
     $('.cust_search_gender').prop('checked', false);
@@ -1707,6 +1934,11 @@ $(document).ready(function(){
     }
 
     $('.posgrp_check_date').hide();
+
+    $(document).on("click",".freeze_btn", function(e){
+        //THIS WILL INITIATE SAVING OF TRANSACTION
+        freezeTransaction();
+    });
 
     $(document).on("click",".check_is_pdc", function(e){
         var row = $(this).closest('.check_field');
@@ -1932,6 +2164,11 @@ $(document).ready(function(){
         } else {
             $('#rev_quotation_modal').modal('show');
         }
+    });
+
+    $(document).on("click",".cp_freeze", function(e){
+        loadFrozenTransactions();
+        $('#freeze_modal').modal('show');
     });
 
     $(document).on("click",".quotation_continue_btn", function(e){

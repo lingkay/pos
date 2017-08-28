@@ -10,18 +10,23 @@
     </div>
     <div style="margin-top: 20px;">&nbsp;</div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
         <a href="#">
             <img src="bundles/gisttemplate/assets/global/img/erp_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
         </a>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
         <a href="{{path('gist_pos_index')}}">
             <img src="bundles/gisttemplate/assets/global/img/pos_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
         </a>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <img src="bundles/gisttemplate/assets/global/img/crm_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
+        </div>
+        <div class="col-md-3">
+        <a href="javascript:void(0)" class="sync_data">
+            <img src="bundles/gisttemplate/assets/global/img/sync.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
+        </a>
         </div>
     </div>
 </div>
@@ -55,6 +60,15 @@ function ajaxGetProductCategories(cid)
 }
 $(document).ready(function(){
     ajaxGetProductCategories();
+
+    $(document).on("click",".sync_data", function(e){
+        var route = "{{ path('gist_main_sync_pos_data')|escape('js') }}";
+        $.getJSON(route, function(json){  
+           $.each(json, function(i, x) {
+                swal('POS Data Synced!','POS Transactions sent to ERP','success');
+            });
+        });
+    });
 });
 </script>
 {% endblock %}

@@ -43,6 +43,11 @@ trait TrackCreate
         return $this->date_create->format('m/d/Y');
     }
 
+    public function getDateCreateFormatted3()
+    {
+        return $this->date_create->format('m-d-Y');
+    }
+
     public function setUserCreate(User $user)
     {
         $this->user_create = $user;

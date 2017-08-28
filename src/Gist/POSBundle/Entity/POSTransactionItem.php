@@ -35,7 +35,7 @@ class POSTransactionItem
     protected $minimum_price;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
-    protected $adjuested_price;
+    protected $adjusted_price;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $name;
@@ -145,9 +145,9 @@ class POSTransactionItem
      *
      * @return POSTransactionItems
      */
-    public function setAdjuestedPrice($adjuestedPrice)
+    public function setAdjustedPrice($adjustedPrice)
     {
-        $this->adjuested_price = $adjuestedPrice;
+        $this->adjusted_price = $adjustedPrice;
 
         return $this;
     }
@@ -157,9 +157,9 @@ class POSTransactionItem
      *
      * @return string
      */
-    public function getAdjuestedPrice()
+    public function getAdjustedPrice()
     {
-        return $this->adjuested_price;
+        return $this->adjusted_price;
     }
 
     /**
@@ -241,7 +241,7 @@ class POSTransactionItem
      *
      * @return POSTransactionItems
      */
-    public function setTransaction(\Gist\POSBundle\Entity\POSTransactions $transaction = null)
+    public function setTransaction($transaction = null)
     {
         $this->transaction = $transaction;
 

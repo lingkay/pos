@@ -2,6 +2,32 @@ gist_pos_index:
     path:     /pos
     defaults: { _controller: GistPOSBundle:POS:index }
 
+gist_main_sync_pos_data:
+    path:     /pos/sync_data
+    defaults: { _controller: GistPOSBundle:POS:syncData }
+
 gist_main_index:
     path:     /
     defaults: { _controller: GistPOSBundle:POS:landing }
+
+
+# POS AJAX
+gist_pos_get_frozen_transactions:
+    path:     /pos/get_frozen_transactions
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:getFrozenTransactions }
+
+gist_pos_save_transaction:
+    path:     /pos/save_transaction/{id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:saveTransaction }
+
+gist_pos_save_item:
+    path:     /pos/save_item/{trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:saveTransactionItems }
+
+gist_pos_save_payment:
+    path:     /pos/save_payment/{trans_sys_id}/{payment_type}/{amount}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:saveTransactionPayments }

@@ -133,7 +133,7 @@ class POSTransactionPayment
      *
      * @return POSTransactionPayments
      */
-    public function setTransaction(\Gist\POSBundle\Entity\POSTransactions $transaction = null)
+    public function setTransaction($transaction = null)
     {
         $this->transaction = $transaction;
 

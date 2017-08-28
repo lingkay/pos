@@ -114,39 +114,138 @@ class POSController extends Controller
         return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
     }
 
+    public function getFrozenTransactionsAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $frozen_transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('status'=>'Frozen'));
+
+        $transactions = array();
+
+        foreach ($frozen_transactions as $ft) {
+            $transactions[] = array('id'=>$ft->getID(), 'disp_id'=>$ft->getTransDisplayId(),'date_created'=>$ft->getDateCreateFormatted3());
+        }
+
+        return new JsonResponse($transactions);
+    }
+
 
     // POS SAVING AND SENDING METHODS
 
-    public function saveTransaction($trans_id, $trans_total, $transaction_balance, $status, $customer_id = null)
+    // /pos/save_transaction/{id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction = new POSTransaction();
 
-        $transaction->setStatus($status);
+        $transaction->setId($id);
+        $transaction->setTransDisplayId($display_id);
+        $transaction->setCustomerId($customer_id);
+        $transaction->setTransactionBalance($balance);
+        $transaction->setTransactionTotal($total);
+        $transaction->setTransactionType($type);
+        $transaction->setStatus('Frozen');
+        $transaction->setSyncedToErp('false');
+
 
         $em->persist($transaction);
         $em->flush();
+
+        $list_opts[] = array('status'=>$transaction->getStatus(),'new_id'=>$transaction->getID());
+        return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionItems($trans_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $disc_type, $disc_value)
+    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction_item = new POSTransactionItem();
+
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($trans_sys_id);
+
+        if (trim($adjusted_price) == '' || $adjusted_price == null) {
+            $adjusted_price = '0';
+        }
+
+        if (trim($discount_type) == '' || $discount_type == null) {
+            $discount_type = 'none';
+        }
+
+        if (trim($discount_value) == '' || $discount_value == null) {
+            $discount_value = '0';
+        }
+
+
         
-        $transaction_item->setStatus($status);
+        $transaction_item->setTransaction($transaction);
+        $transaction_item->setProductId($prod_id);
+        $transaction_item->setOrigPrice($orig_price);
+        $transaction_item->setMinimumPrice($min_price);
+        $transaction_item->setAdjustedPrice($adjusted_price);
+        $transaction_item->setName($prod_name);
+        $transaction_item->setDiscountType($discount_type);
+        $transaction_item->setDiscountValue($discount_value);
 
         $em->persist($transaction_item);
         $em->flush();
+
+        $list_opts[] = array('status'=>'ok');
+        return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionPayments($trans_id, $payment_type, $amount)
+    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction_payment = new POSTransactionPayment();
+
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($trans_sys_id);
         
-        $transaction_payment->setStatus($status);
+        $transaction_payment->setTransaction($transaction);
+        $transaction_payment->setType($payment_type);
+        $transaction_payment->setAmount($amount);
 
         $em->persist($transaction_payment);
         $em->flush();
+
+        $list_opts[] = array('status'=>'ok');
+        return new JsonResponse($list_opts);
+    }
+
+
+    // SYNC TO ERP POS DATA
+    public function syncDataAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        //send transactions
+        $transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('synced_to_erp'=>'false'));
+        
+        //send items (loop transactions then loop items)
+        //send payments (loop transactions then loop payments)
+        foreach ($transactions as $transaction) {
+            file_get_contents("http://dev.gisterp2/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus());
+
+            $transaction->setSyncedToErp('true');
+            $em->persist($transaction);
+
+            $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
+            $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
+
+            foreach ($payments as $payment) {
+                // {trans_sys_id}/{payment_type}/{amount}
+                file_get_contents("http://dev.gisterp2/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
+            }
+
+            foreach ($items as $item) {
+                // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
+                file_get_contents("http://dev.gisterp2/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
+            }
+
+        }
+
+        $em->flush();
+
+        
+
+        $list_opts[] = array('status'=>'ok');
+        return new JsonResponse($list_opts);
     }
 }

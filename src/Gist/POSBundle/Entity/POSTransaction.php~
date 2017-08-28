@@ -27,19 +27,22 @@ class POSTransaction
     protected $trans_display_id;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
-    protected $product_id;
-
-    /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $transaction_total;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
-    protected $trnasaction_balance;
+    protected $transaction_balance;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $customer_id;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $transaction_type;
+
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $status;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $synced_to_erp;
 
 
 
@@ -59,30 +62,6 @@ class POSTransaction
     }
 
     /**
-     * Set productId
-     *
-     * @param string $productId
-     *
-     * @return POSTransactions
-     */
-    public function setProductId($productId)
-    {
-        $this->product_id = $productId;
-
-        return $this;
-    }
-
-    /**
-     * Get productId
-     *
-     * @return string
-     */
-    public function getProductId()
-    {
-        return $this->product_id;
-    }
-
-    /**
      * Set transactionTotal
      *
      * @param string $transactionTotal
@@ -92,6 +71,13 @@ class POSTransaction
     public function setTransactionTotal($transactionTotal)
     {
         $this->transaction_total = $transactionTotal;
+
+        return $this;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
 
         return $this;
     }
@@ -224,5 +210,53 @@ class POSTransaction
     public function getTransDisplayId()
     {
         return $this->trans_display_id;
+    }
+
+    /**
+     * Set transactionType
+     *
+     * @param string $transactionType
+     *
+     * @return POSTransaction
+     */
+    public function setTransactionType($transactionType)
+    {
+        $this->transaction_type = $transactionType;
+
+        return $this;
+    }
+
+    /**
+     * Get transactionType
+     *
+     * @return string
+     */
+    public function getTransactionType()
+    {
+        return $this->transaction_type;
+    }
+
+    /**
+     * Set syncedToErp
+     *
+     * @param string $syncedToErp
+     *
+     * @return POSTransaction
+     */
+    public function setSyncedToErp($syncedToErp)
+    {
+        $this->synced_to_erp = $syncedToErp;
+
+        return $this;
+    }
+
+    /**
+     * Get syncedToErp
+     *
+     * @return string
+     */
+    public function getSyncedToErp()
+    {
+        return $this->synced_to_erp;
     }
 }
