@@ -1904,12 +1904,14 @@ $(document).ready(function(){
         if ($('#string_trans_mode').val() == 'normal') {
             $('#string_trans_mode').val('quotation');
             $('#pos_mode').text('Quotation');
+            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
             // toastr['success']('Quotation mode enabled.', 'POS Mode Changed');
             swal("POS Mode Changed", "Quotation mode enabled!", "success")
             $('#quotation_modal').modal('hide');
         } else {
             $('#string_trans_mode').val('normal');
             $('#pos_mode').text('Normal');
+            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
             // toastr['success']('Quotation mode disabled.', 'POS Mode Changed');
             swal("POS Mode Changed", "Quotation mode disabled!", "success")
             $('#rev_quotation_modal').modal('hide');
