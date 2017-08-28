@@ -914,7 +914,8 @@ function ajaxAddCustomer()
             $('#transaction_customer_id').val(cust.new_customer_id);
             $('#customer_modal').modal('hide');
             
-            if ($('#string_trans_type').val() != 'none' && $('#float_trans_balance').val() <= 0) {
+            if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0) {
+                
                 $('#final_modal').modal('show');
             }
         });
@@ -1998,7 +1999,7 @@ $(document).ready(function(){
     $(document).on("click",".customer_continue_btn", function(e) {
         swal("Success!", 'Customer selected!',"success");
         $('#customer_modal').modal('hide');
-        if ($('#string_trans_type').val() != 'none') {
+        if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0) {
             $('#final_modal').modal('show');
         }
     }); 
