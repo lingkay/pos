@@ -1702,7 +1702,7 @@ function loadFrozenTransactions()
 {
     $('#frozen_list').empty();
     // $('.init_row_frozen').remove();
-    var url = "http://dev.gistpos/pos/get_frozen_transactions";
+    var url = "http://pos.cilanthropist.co/pos/get_frozen_transactions";
 
     $.getJSON(url, function(json){  
         var count = 0;

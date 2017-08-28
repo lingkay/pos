@@ -221,7 +221,7 @@ class POSController extends Controller
         //send items (loop transactions then loop items)
         //send payments (loop transactions then loop payments)
         foreach ($transactions as $transaction) {
-            file_get_contents("http://dev.gisterp2/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus());
+            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus());
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
@@ -231,12 +231,12 @@ class POSController extends Controller
 
             foreach ($payments as $payment) {
                 // {trans_sys_id}/{payment_type}/{amount}
-                file_get_contents("http://dev.gisterp2/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
+                file_get_contents("http://erp.cilanthropist.co/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
             }
 
             foreach ($items as $item) {
                 // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
-                file_get_contents("http://dev.gisterp2/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
+                file_get_contents("http://erp.cilanthropist.co/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
             }
 
         }
