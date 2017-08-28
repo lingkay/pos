@@ -448,7 +448,7 @@
                 <form method="post" action="">
                     <div class="modal-header">
                         <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Search customer</h4>
+                        <h4 id="form_title" class="modal-title">Search/Add customer</h4>
                     </div>
                     <div class="modal-body" id="cust_formx" style="height: 500px; overflow:scroll;overflow-x: hidden;">
                         <div class="row form-horizontal form">
@@ -456,7 +456,7 @@
                                 {{ form.group_text_pos('Customer ID', 'cust_search_id', '', 4, 7, false) }}
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.radio_set_pos('Gender', 'cust_search_gender', gender_options, '', false) }}
+                                {{ form.radio_set_pos('Gender', 'cust_search_gender', gender_options, null, false) }}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
@@ -507,7 +507,7 @@
                             </div>
                             <div class="col-md-6" id="check_form">
                                 {{ form.group_text_pos('State', 'cust_search_state', '', 4, 7, false) }}
-                                {{ form.group_date('Zip','cust_search_zip', '',4, 7) }}
+                                {{ form.group_text_pos('Zip','cust_search_zip', '',4, 7) }}
                                 
                             </div>
                         </div>
@@ -516,16 +516,16 @@
                                 {{ form.group_textarea('Notes', 'cust_search_notes', '', 3, 2, 9, false) }}
                             </div>
                         </div>
-                        <div class="row form-horizontal form" >
+                        <div class="row form-horizontal form customer_seach_main_div" >
                             <h4 id="form_title" class="modal-title">Search Results</h4>
-                            <hr>
-                            <div class="col-md-12" id="check_form" style="height: 120px; overflow:scroll;overflow-x: hidden;">
-                            <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="customers_table">
+                            <hr style="margin-top: 2px; margin-bottom: 10px;">
+                            <div class="col-md-12" id="check_form" style="height: 160px; overflow:scroll;overflow-x: hidden;">
+                            <table class="table table-striped table-bordered table-hover" id="customers_table">
                                     <thead>
                                         <tr>
                                             <th width="50%">Name</th>
                                             <th width="40%">E-mail</th>
-                                            <th width="10%"></th>
+                                            <th width="10%">Select</th>
                                         </tr>
                                     </thead>
                                     <tbody id="customers_list">
@@ -538,9 +538,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                    <a class="btn default red customer_clear_search_btn" style="margin=0" href="javascript:void(0)">Clear Fields</a>
                         <a class="btn default green customer_search_btn" style="margin=0" href="javascript:void(0)">Search</a>
                         <a class="btn default blue add_customer" style="margin=0" href="javascript:void(0)">Add New Customer</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <a class="btn default green customer_search_again_btn" style="margin=0" href="javascript:void(0)">Search Again</a>
+                        <a class="btn default green customer_continue_btn" style="margin=0" href="javascript:void(0)">Continue</a>
+                        <button type="button" class="btn default cancel_cust_search" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -747,23 +750,55 @@ function ajaxSearchCustomer()
     var email = "%20"; if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};//$('#cform-cust_search_email').val();
     var number = "%20"; if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};//$('#cform-cust_search_mobile').val();
 
+    var customer_id = "%20"; if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
+    var gender = "%20"; if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
+    var marital_status = "%20"; if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
+    var date_married = "%20"; if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
+    var home_phone = "%20"; if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
+    var birthday = "%20"; if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
+    var address1 = "%20"; if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
+    var address2 = "%20"; if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
+
+    var city = "%20"; if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
+    var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
+    var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
+    var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_address_2').val()};
+
     $('#customers_list').empty();
     
     // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
-    var url = "http://erp.cilanthropist.co/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number;
+    var url = "http://erp.cilanthropist.co/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, cust) {
         count++;
         var name = cust.last_name + ', ' + cust.first_name;
+
+
         
         $('.init_row_customer').remove();
-
-        var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-        var field = '<tr class=\"row_payment_'+row_id+'\">';     
+        var field = '<tr class=\"row_cust_'+cust.id+'\">';    
+            field += '<input type="hidden" class="first_name" value="'+cust.first_name+'">';
+            field += '<input type="hidden" class="last_name" value="'+cust.last_name+'">';
+            field += '<input type="hidden" class="email" value="'+cust.email+'">';
+            field += '<input type="hidden" class="number" value="'+cust.number+'">';
+            field += '<input type="hidden" class="middle_name" value="'+cust.middle_name+'">';
+            field += '<input type="hidden" class="id" value="'+cust.id+'">';
+            field += '<input type="hidden" class="gender" value="'+cust.gender+'">';
+            field += '<input type="hidden" class="marital_status" value="'+cust.marital_status+'">';
+            field += '<input type="hidden" class="date_married" value="'+cust.date_married+'">';
+            field += '<input type="hidden" class="home_phone" value="'+cust.home_phone+'">';
+            field += '<input type="hidden" class="birthdate" value="'+cust.birthdate+'">';
+            field += '<input type="hidden" class="address1" value="'+cust.address1+'">';
+            field += '<input type="hidden" class="address2" value="'+cust.address2+'">';
+            field += '<input type="hidden" class="city" value="'+cust.city+'">';
+            field += '<input type="hidden" class="state" value="'+cust.state+'">';
+            field += '<input type="hidden" class="country" value="'+cust.country+'">';
+            field += '<input type="hidden" class="zip" value="'+cust.zip+'">';
+            field += '<input type="hidden" class="notes" value="'+cust.notes+'">';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'"></td>';  
-            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default green use_customer_btn"><i class="fa fa-eye" aria-hidden="true"></i></a></td>'; 
+            field += '<td><a href="javascript:void(0)" class="btn btn-xs default green use_customer_btn"><i class="fa fa-eye" aria-hidden="true"></i></a></td>'; 
             field += '</tr>';
 
             $('#customers_list').prepend(field);
@@ -1529,42 +1564,6 @@ function clearCheckModal()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function hideBulkAmounts()
 {
     $('#cform-discount_amount').val('');
@@ -1611,7 +1610,29 @@ function revertOriginalPrices()
     computeCartMinimum();
 }
 
-
+function clearCustomerFields() 
+{
+    $('.cust_search_gender').prop('checked', false);
+    $('#uniform-cform-cust_search_gender > span').removeClass('checked');
+    $('#cform-cust_search_id').val('');
+    $('#cform-cust_search_firstname').val('');
+    $('#cform-cust_search_middle_name').val('');
+    $('#cform-cust_search_lastname').val('');
+    $('#cform-cust_search_home_phone').val('');
+    $('#cform-cust_search_mobile').val('');
+    $('#cform-cust_search_email').val('');
+    $('#cform-cust_search_birthdate').val('');
+    $('#cform-cust_search_address_1').val('');
+    $('#cform-cust_search_address_2').val('');
+    $('#cform-cust_search_city').val('');
+    $('#cform-cust_search_state').val('');
+    $('#cform-cust_search_country').val('');
+    $('#cform-cust_search_zip').val('');
+    $('#cform-cust_search_marriage_date').val('');
+    $('#cform-notes').val('');
+    $('.cust_search_marital').prop('selectedIndex',0);
+    $('.posgrp_cust_search_marriage_date').hide();
+}
 
 
 
@@ -1637,6 +1658,8 @@ $(document).ready(function(){
     }
 
     $('.posgrp_cust_search_marriage_date').hide();
+    $('.customer_continue_btn').hide();
+    $('.customer_search_again_btn').hide();
 
     $('.cust_search_marital').on("change", function()
     {
@@ -1647,6 +1670,78 @@ $(document).ready(function(){
             $('.posgrp_cust_search_marriage_date').hide();
             $('#cform-cust_search_marriage_date').val('');
         }
+    });
+
+    $(document).on("click",".customer_search_again_btn", function(e){
+        clearCustomerFields();
+        $('.customer_seach_main_div').show();
+        $('.customer_search_btn').show();
+        $('.customer_clear_search_btn').show();
+        $('.add_customer').show();
+        $('.customer_continue_btn').hide();
+        $('.customer_search_again_btn').hide();
+    });
+
+    $(document).on("click",".cancel_cust_search", function(e){
+        clearCustomerFields();
+        $('#customer_modal').modal('hide');
+        $('.customer_seach_main_div').show();
+        $('.customer_search_btn').show();
+        $('.customer_clear_search_btn').show();
+        $('.add_customer').show();
+        $('.customer_continue_btn').hide();
+        $('.customer_search_again_btn').hide();
+    });
+
+
+    $(document).on("click",".use_customer_btn", function(e){
+        clearCustomerFields();
+        $('#customers_list').empty();
+        $('.customer_seach_main_div').hide();
+        $('.customer_search_btn').hide();
+        $('.customer_clear_search_btn').hide();
+        $('.add_customer').hide();
+        $('.customer_continue_btn').show();
+        $('.customer_search_again_btn').show();
+
+        var row = $(this).closest('tr');
+        var opt = row.find('.marital_status').val();
+        if (opt == 'married') {
+            $('.posgrp_cust_search_marriage_date').show();
+        } else {
+            $('.posgrp_cust_search_marriage_date').hide();
+            $('#cform-cust_search_marriage_date').val('');
+        }
+
+
+
+        $('#cform-cust_search_id').val(row.find('.id').val());
+        $('#cform-cust_search_firstname').val();
+        $('#cform-cust_search_middle_name').val(row.find('.middle_name').val());
+        $('#cform-cust_search_lastname').val(row.find('.last_name').val());
+        $('#cform-cust_search_home_phone').val(row.find('.home_phone').val());
+        $('#cform-cust_search_mobile').val(row.find('.number').val());
+        $('#cform-cust_search_email').val(row.find('.email').val());
+        $('#cform-cust_search_birthdate').val(row.find('.birthdate').val());
+        $('#cform-cust_search_address_1').val(row.find('.address1').val());
+        $('#cform-cust_search_address_2').val(row.find('.address2').val());
+        $('#cform-cust_search_city').val(row.find('.city').val());
+        $('#cform-cust_search_state').val(row.find('.state').val());
+        $('#cform-cust_search_country').val(row.find('.country').val());
+        $('#cform-cust_search_zip').val(row.find('.zip').val());
+        $('#cform-cust_search_marriage_date').val(row.find('.date_married').val());
+        $('#cform-cust_search_notes').val(row.find('.notes').val());
+        $('.cust_search_marital').val(row.find('.marital_status').val());
+        $('#uniform-cform-cust_search_gender > span').each(function() {
+            if ($(this).find('#cform-cust_search_gender').val() == row.find('.gender').val()) {
+                $(this).addClass('checked');
+            }
+        });
+    });
+
+
+    $(document).on("click",".customer_clear_search_btn", function(e){
+        clearCustomerFields();
     });
 
     // CC
