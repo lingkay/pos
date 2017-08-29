@@ -75,6 +75,12 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $bulk_discount_type;
 
+    /** @ORM\OneToMany(targetEntity="POSTransactionItem", mappedBy="transaction") */
+    protected $items;
+
+    /** @ORM\OneToMany(targetEntity="POSTransactionPayment", mappedBy="transaction") */
+    protected $payments;
+
 
 
 
@@ -90,6 +96,27 @@ class POSTransaction
         $this->dataHasGeneratedID($data);
         $this->dataTrackCreate($data);
         return $data;
+    }
+
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    public function getPayments()
+    {
+        return $this->payments;
+    }
+
+    public function getTotalPayments()
+    {
+        $total = 0;
+
+        foreach ($this->payments as $p) {
+            $total = $total + $p->getAmount();
+        }
+
+        return $total;
     }
 
     /**

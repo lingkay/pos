@@ -94,6 +94,7 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <br>
                             <div class="row">
                                 <div class="col-md-12" >
                                     <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
@@ -713,9 +714,10 @@ function finalModalAction(opt)
 {
     if (opt == 'save') {
         $('#final_modal').modal('hide');
-        swal('Transaction saved!','Resetting POS...please wait','success');
-        location.reload();
+        freezeTransaction(true);
+        // location.reload();
     } else {
+        freezeTransaction(true);
 
     }
 }
@@ -1739,7 +1741,7 @@ function loadFrozenTransactions()
     //     }
 }
 
-function freezeTransaction()
+function freezeTransaction(is_final = false)
 {
     //vars
     var trans_saved = false;
@@ -1838,17 +1840,33 @@ function freezeTransaction()
             } else {
                 items_saved = true;
 
-                swal({
-                      title: "Transaction Frozen!",
-                      text: "The page will now reload",
-                      type: "success",
-                      confirmButtonColor: "green",
-                      confirmButtonText: "Okay",
-                    },
-                    function(){
-                      location.reload();
-                    });
+                if (!is_final) {
+                    swal({
+                          title: "Transaction Frozen!",
+                          text: "The page will now reload",
+                          type: "success",
+                          confirmButtonColor: "green",
+                          confirmButtonText: "Okay",
+                        },
+                        function(){
+                            
+                                location.reload();
+                            
+                        });
+                } else {
+                    swal({
+                          title: "Transaction Saved!",
+                          text: "The page will now reload",
+                          type: "success",
+                          confirmButtonColor: "green",
+                          confirmButtonText: "Okay",
+                        },
+                        function(){
+                            
 
+                            
+                        });
+                }
             }
 
             //save payments
@@ -1865,16 +1883,33 @@ function freezeTransaction()
                         $.each(json, function(i, payments) {
                             //reload form
                             if (trans_saved && items_saved) {
-                                swal({
-                                      title: "Transaction Frozen!",
-                                      text: "The page will now reload",
-                                      type: "success",
-                                      confirmButtonColor: "green",
-                                      confirmButtonText: "Okay",
-                                    },
-                                    function(){
-                                      location.reload();
-                                    });
+                                if (!is_final) {
+                                    swal({
+                                          title: "Transaction Frozen!",
+                                          text: "The page will now reload",
+                                          type: "success",
+                                          confirmButtonColor: "green",
+                                          confirmButtonText: "Okay",
+                                        },
+                                        function(){
+                                            
+                                                location.reload();
+                                            
+                                        });
+                                } else {
+                                    swal({
+                                          title: "Transaction Saved!",
+                                          text: "The page will now reload",
+                                          type: "success",
+                                          confirmButtonColor: "green",
+                                          confirmButtonText: "Okay",
+                                        },
+                                        function(){
+                                            
+
+                                            
+                                        });
+                                }
                             } else {
                                 // swal('Error encountered',transaction_disp_id+' not frozen (items)','error');
                             }
@@ -1885,16 +1920,33 @@ function freezeTransaction()
             } else {
                 payments_saved = true;
 
-                swal({
-                      title: "Transaction Frozen!",
-                      text: "The page will now reload",
+                if (!is_final) {
+                    swal({
+                          title: "Transaction Frozen!",
+                          text: "The page will now reload",
                           type: "success",
-                      confirmButtonColor: "green",
-                      confirmButtonText: "Okay",
-                    },
-                    function(){
-                      location.reload();
-                    });
+                          confirmButtonColor: "green",
+                          confirmButtonText: "Okay",
+                        },
+                        function(){
+                            
+                                location.reload();
+                            
+                        });
+                } else {
+                    swal({
+                          title: "Transaction Saved!",
+                          text: "The page will now reload",
+                          type: "success",
+                          confirmButtonColor: "green",
+                          confirmButtonText: "Okay",
+                        },
+                        function(){
+                            
+
+                            
+                        });
+                }
 
             }
         });

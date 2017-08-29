@@ -27,6 +27,10 @@ class PdfManager
             $this->pdf = $this->pdf_container->create('L',array(30,75), 'en', true, 'UTF-8', array(2, 2, 2, 2));
             $this->pdf->pdf->setDisplayMode('real');
             break;
+        case 'pos_receipt':
+            $this->pdf = $this->pdf_container->create('P',array(280,100), 'en', true, 'UTF-8', array(2, 2, 2, 2));
+            $this->pdf->pdf->setDisplayMode('real');
+            break;
         case 'page' :
         default: $this->pdf = $this->pdf_container->create('P', 'A4', 'en', true, 'UTF-8', array(10, 15, 10, 15));
             break;

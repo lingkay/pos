@@ -210,6 +210,29 @@ class POSTransactionItem
         return $this->discount_type;
     }
 
+    public function getDiscountTypeFormatted()
+    {
+        $ret = '';
+        if ($this->discount_type == 'discamt')
+        {
+            $ret = 'Less ';
+        }
+        elseif ($this->discount_type == 'gift')
+        {
+            $ret = 'Gift ';
+        }
+        elseif ($this->discount_type == 'disc')
+        {
+            $ret = 'Less % ';
+        }
+        elseif ($this->discount_type == 'chg')
+        {
+            $ret = 'Change Price ';
+        }
+
+        return $ret;
+    }
+
     /**
      * Set discountValue
      *

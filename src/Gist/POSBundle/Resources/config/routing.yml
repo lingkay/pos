@@ -31,3 +31,8 @@ gist_pos_save_payment:
     path:     /pos/save_payment/{trans_sys_id}/{payment_type}/{amount}
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:saveTransactionPayments }
+
+gist_pos_print_receipt:
+    path:    /pos/print_receipt/{id}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:printReceipt }

@@ -288,4 +288,32 @@ class POSController extends Controller
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
     }
+
+    public function printReceiptAction($id)
+    {
+        $data = $this->getRequest()->request->all();
+
+
+        
+        $em = $this->getDoctrine()->getManager();
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+        
+
+        // $this->hookPreAction();
+        $params['transaction'] = $transaction;
+        $params['total_sales'] = $transaction->getTransactionTotal();
+        $params['change'] = $transaction->getTransactionTotal() - $transaction->getTransactionBalance();
+
+      
+        $twig = 'GistPOSBundle:POS:receipt.html.twig';
+
+        $pdf = $this->get('gist_pdf');
+        $pdf->newPdf('pos_receipt');
+
+        // // debug
+        // return $this->render($twig, $params);
+
+        $html = $this->render($twig, $params);
+        return $pdf->printPdf($html->getContent());
+    }
 }
