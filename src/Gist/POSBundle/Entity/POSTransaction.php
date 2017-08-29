@@ -72,6 +72,9 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $cart_new_total;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $bulk_discount_type;
+
 
 
 
@@ -526,5 +529,29 @@ class POSTransaction
     public function getCartNewTotal()
     {
         return $this->cart_new_total;
+    }
+
+    /**
+     * Set bulkDiscountType
+     *
+     * @param string $bulkDiscountType
+     *
+     * @return POSTransaction
+     */
+    public function setBulkDiscountType($bulkDiscountType)
+    {
+        $this->bulk_discount_type = $bulkDiscountType;
+
+        return $this;
+    }
+
+    /**
+     * Get bulkDiscountType
+     *
+     * @return string
+     */
+    public function getBulkDiscountType()
+    {
+        return $this->bulk_discount_type;
     }
 }
