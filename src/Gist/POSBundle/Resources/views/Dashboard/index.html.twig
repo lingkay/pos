@@ -624,6 +624,27 @@
             </div>
         </div>
     </div>
+    <div id="final_modal2" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <h3 id="form_title" class="modal-title">Transaction complete!</h3>
+                            <br>
+                            <div class="col-md-4" class="proceed_btn_reg" onclick="finalModalAction('save')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}"></a>
+                                <h4>Save</h4>
+                            </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <p><i>Leaving this modal will reset the POS</i></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div id="quotation_modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -2088,6 +2109,8 @@ $(document).ready(function(){
         $('#customer_modal').modal('hide');
         if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0) {
             $('#final_modal').modal('show');
+        } else if ($('#string_trans_mode').val() == 'quotation') {
+            $('#final_modal2').modal('show');
         }
     }); 
 
