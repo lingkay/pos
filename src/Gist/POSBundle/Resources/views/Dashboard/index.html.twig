@@ -1776,28 +1776,33 @@ function freezeTransaction()
             //save items
             if (count_cart_items > 0) {
                 $('#cart_items tr').each(function() {
-                    var product_id = $(this).find('.product_id').val();
-                    var orig_price = $(this).find('.srp').val();
-                    var min_price = $(this).find('.min_price').val();
-                    var product_name = $(this).find('.item_name').val();
+                    var row = $(this).closest('tr');
+                    var product_id = row.find('.product_id').val();
+                    var orig_price = row.find('.srp').val();
+                    var min_price = row.find('.min_price').val();
+                    var product_name = row.find('.item_name').val();
                     var discount_type = '%20';
                     var discount_value = '%20';
                     var adjusted_price = '%20';
 
-                    if ($('.pos_indiv_discount_opt').length > 0) {
-                        discount_type = $('.pos_indiv_discount_opt').val();
+                    var indiv_disc_opt = row.find('.pos_indiv_discount_opt');
+                    var per_item_discount_amt = row.find('.per_item_discount_amt');
+                    var adjusted_price_elem = row.find('.adjusted_price');
+
+                    if (indiv_disc_opt.length > 0) {
+                        discount_type = indiv_disc_opt.val();
                     } else {
                         discount_type = '%20';
                     }
 
-                    if ($('.per_item_discount_amt').length > 0) {
-                        discount_value = $('.per_item_discount_amt').val();
+                    if (per_item_discount_amt.length > 0) {
+                        discount_value = per_item_discount_amt.val();
                     } else {
                         discount_value = '%20';
                     }
 
-                    if ($('.adjusted_price').length > 0) {
-                        adjusted_price = $('.adjusted_price').val();
+                    if (adjusted_price_elem.length > 0) {
+                        adjusted_price = adjusted_price_elem.val();
                     } else {
                         adjusted_price = '%20';
                     }
