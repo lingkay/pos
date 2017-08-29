@@ -718,6 +718,8 @@ function finalModalAction(opt)
         // location.reload();
     } else {
         freezeTransaction(true);
+        var url = '{{ path("gist_pos_print_receipt", {'id': 'id'}) }}'; 
+        url = url.replace("id", $('#transaction_system_id').val());
 
     }
 }
@@ -1783,6 +1785,7 @@ function freezeTransaction(is_final = false)
         var count = 0;
         $.each(json, function(i, trans) {
             trans_saved = true;
+            $('#transaction_system_id').val(trans.new_id);
             //save items
             if (count_cart_items > 0) {
                 $('#cart_items tr').each(function() {
