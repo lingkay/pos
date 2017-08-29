@@ -1756,7 +1756,7 @@ function freezeTransaction(is_final = false)
     var trans_saved = false;
     var items_saved = false;
     var payments_saved = false;
-    var count_cart_items = $('#cart_items tr').length-1;
+    var count_cart_items = $('#cart_items tr').length;
     var count_payments = $('#payments_table .init_row_payment').length;
     //refresh list of frozen transactions
     // loadFrozenTransactions();
@@ -2110,6 +2110,7 @@ $(document).ready(function(){
         $('.customer_search_btn').hide();
         $('.customer_clear_search_btn').hide();
         $('.add_customer').hide();
+        $('.save_customer_button').hide();
         $('.customer_continue_btn').show();
         $('.customer_search_again_btn').show();
 
