@@ -1518,8 +1518,8 @@ function applyBulkAdjustment()
             var savings = $('#float_cart_orig_price').val() * ($('#cform-discount_pct').val()/100);
             if (new_cart_total >= 0) {
                 computeCartBulk(new_cart_total);
-                $('#applied_bulk_discount').text('Less '+$('#cform-discount_pct').val()+'%25 off');
-                $('#string_trans_bulk_type').val('Less '+$('#cform-discount_pct').val()+'%25 off');
+                $('#applied_bulk_discount').text('Less '+$('#cform-discount_pct').val()+' percent off');
+                $('#string_trans_bulk_type').val('Less '+$('#cform-discount_pct').val()+' percent off');
                 $('#customer_savings').text(addCommas(parseFloat(savings)));
             } else {
                 toastr['error']('Invalid discount.', 'Error');
