@@ -751,7 +751,7 @@ function finalModalAction(opt)
                 win.focus();
             } else {
                 //Browser has blocked it
-                alert('Please allow popups for this website');
+                alert('Receipt pop-up blocked. Please allow.');
             }
           }, 3000);
     }
@@ -2699,7 +2699,7 @@ $(document).ready(function(){
             var cc_name = $(this).find('#cform-cc_card_name').val();
             var payment_amt = $(this).find('#cform-cc_charge_amt').val(); 
             var cc_bank = $(this).find('#cform-cc_bank').val(); 
-            if (cc_number != '' && payment_amt != '') {
+            if (cc_number != '' && payment_amt != '' && cc_name != '') {
                 if (payment_amt > 0) {
                     var cc_details = cc_number + "," + cc_name + "," + cc_bank;
                     // var arrString = JSON.stringify(cc_details);
@@ -2712,7 +2712,7 @@ $(document).ready(function(){
                     toastr['error']('Invalid payment amount.', 'Error');
                 }
             } else {
-
+                swal('Incomplete fields!','Please enter credit card details to continue','error');
             }
         });
     });
@@ -2736,7 +2736,7 @@ $(document).ready(function(){
                     // toastr['error']('Invalid payment amount.', 'Error');
                 }
             } else {
-
+                swal('Incomplete fields!','Please enter check details to continue','error');
             }
         });
     });
