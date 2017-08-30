@@ -907,7 +907,7 @@ function ajaxSearchCustomer()
 
        if (count == 0) {
             var field = '<tr class=\"init_row_prods\">';     
-            field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="add_customer btn btn-xs default blue">Add Customer</a></p></td>';
+            field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;</p></td>';
             field += '</tr>';
 
             $('#customers_list').prepend(field);
@@ -2277,7 +2277,7 @@ $(document).ready(function(){
     $(document).on("click",".save_customer_button", function(e){
         var last_name = $('#cust_search_lastname').val();
         var first_name = $('#cust_search_firstname').val();
-        if ($('#cust_search_lastname').val() == '' && $('#cust_search_firstname').val() == '') {
+        if ($('#cform-cust_search_lastname').val() != '' &&  $('#cform-cust_search_firstname').val() != '') {
             ajaxAddCustomer();
         } else {
             swal("Missing fields!", "Please enter atleast a first and last name", "error");   
