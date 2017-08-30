@@ -2214,40 +2214,47 @@ $(document).ready(function(){
 
     $(document).on("click",".remove_row", function(e){
         var trans_type = $('#string_trans_type').val();
+        var trans_amt = $('#float_trans_amount').val();
+        var balance = $('#float_trans_balance').val();
 
-        if (trans_type == 'bulk') {
-            sweetAlert("Can't remove item!", "Reset transaction type to remove item/s", "error");
+        if (balance < trans_amt) {
+            sweetAlert("Can't remove item!", "Payment already made", "error");
         } else {
-            e.preventDefault();            
-            var tr = $(this).closest('tr');
-            tr.remove();
-
-            //count number of products in cart
-            var rowCount = $('#cart_table tr').length-1;
-            $('.cart_items_count').text(rowCount.toString());
-
-            if (rowCount == 0) {
-                var field = '<tr class=\"init_row_prods\">';     
-                field += '<td colspan=\"3\" class=\"xrow\"><p>No items added</p></td>';
-                field += '</tr>';
-
-                $('#cart_items').prepend(field);
-            }
-
-            if($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
-                computeCartRaw();
-            } else if($('#string_trans_type').val() == 'per') {
-                // alert('remove indiv');
-                computeCartRaw();
-                computeCartIndiv();
-            } else if($('#string_trans_type').val() == 'bulk') {
-                computeCartRaw();
-                applyBulkAdjustment();
+            if (trans_type == 'bulk') {
+                sweetAlert("Can't remove item!", "Reset transaction type to remove item/s", "error");
             } else {
-                computeCartRaw();
+                e.preventDefault();            
+                var tr = $(this).closest('tr');
+                tr.remove();
+
+                //count number of products in cart
+                var rowCount = $('#cart_table tr').length-1;
+                $('.cart_items_count').text(rowCount.toString());
+
+                if (rowCount == 0) {
+                    var field = '<tr class=\"init_row_prods\">';     
+                    field += '<td colspan=\"3\" class=\"xrow\"><p>No items added</p></td>';
+                    field += '</tr>';
+
+                    $('#cart_items').prepend(field);
+                }
+
+                if($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
+                    computeCartRaw();
+                } else if($('#string_trans_type').val() == 'per') {
+                    // alert('remove indiv');
+                    computeCartRaw();
+                    computeCartIndiv();
+                } else if($('#string_trans_type').val() == 'bulk') {
+                    computeCartRaw();
+                    applyBulkAdjustment();
+                } else {
+                    computeCartRaw();
+                }
+                computeBalance();    
             }
-            computeBalance();    
         }
+            
         
         return false;
     });
