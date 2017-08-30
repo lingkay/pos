@@ -2279,11 +2279,18 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".cp_quotation", function(e){
-        if ($('#string_trans_mode').val() == 'normal') {
-            $('#quotation_modal').modal('show');
+        var trans_amt = $('#float_trans_amount').val();
+        var balance = $('#float_trans_balance').val();
+        
+        if (balance < trans_amt && trans_amt > 0) {
+            swal("Cannot change to quotation!", "Payment already made", "error");
         } else {
-            $('#rev_quotation_modal').modal('show');
-        }
+            if ($('#string_trans_mode').val() == 'normal') {
+                $('#quotation_modal').modal('show');
+            } else {
+                $('#rev_quotation_modal').modal('show');
+            }
+        }   
     });
 
     $(document).on("click",".cp_freeze", function(e){
@@ -2291,7 +2298,7 @@ $(document).ready(function(){
         var balance = $('#float_trans_balance').val();
 
         if (balance == 0 && trans_amt > 0) {
-            swal("Cannot freeze transaction!", "Full payment already made", "error")
+            swal("Cannot freeze transaction!", "Full payment already made", "error");
         } else {
             loadFrozenTransactions();
             $('#freeze_modal').modal('show');
