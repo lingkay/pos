@@ -2277,7 +2277,7 @@ $(document).ready(function(){
     $(document).on("click",".save_customer_button", function(e){
         var last_name = $('#cust_search_lastname').val();
         var first_name = $('#cust_search_firstname').val();
-        if ($('#cust_search_lastname').length > 0 && $('#cust_search_firstname').length > 0) {
+        if ($('#cust_search_lastname').val() == '' && $('#cust_search_firstname')val() == '') {
             ajaxAddCustomer();
         } else {
             swal("Missing fields!", "Please enter atleast a first and last name", "error");   
