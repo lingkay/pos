@@ -740,6 +740,11 @@ function finalModalAction(opt)
         location.reload();
     } else {
         freezeTransaction(true);
+        setTimeout(
+          function() 
+          {
+            //do something special
+          }, 3000);
         var url = '{{ path("gist_pos_print_receipt", {'id': 'id'}) }}'; 
         url = url.replace("id", $('#transaction_system_id').val());
         var win = window.open(url, '_blank');
@@ -2619,6 +2624,7 @@ $(document).ready(function(){
             
         } else {
             $('#cash_chg_amt').text("0.00");
+            computeBalanceDisplay(0);
         }
         
 
@@ -2847,18 +2853,21 @@ $(document).ready(function(){
         $('#cform-cash_received_amt').val('');
         $('#cash_modal').modal('hide');
         $('#checkout_modal').modal('show');
+        computeBalanceDisplay(0);
     });
 
     $(document).on("click",".cc_go_back", function(e){
         clearCreditCardModal();
         $('#cc_modal').modal('hide');
         $('#checkout_modal').modal('show');
+        computeBalanceDisplayCardMulti(0);
     });
 
     $(document).on("click",".check_go_back", function(e){
         clearCheckModal();
         $('#check_modal').modal('hide');
         $('#checkout_modal').modal('show');
+        computeBalanceDisplayCheckMulti(0);
     });
 
     //Proceed
