@@ -636,7 +636,7 @@
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}"></a>
                                 <h4>Save</h4>
                             </div>
-
+                            </div>
                     </div>
                     <div class="modal-footer">
                         <p><i>Leaving this modal will reset the POS</i></p>
@@ -2281,7 +2281,7 @@ $(document).ready(function(){
     $(document).on("click",".cp_quotation", function(e){
         var trans_amt = $('#float_trans_amount').val();
         var balance = $('#float_trans_balance').val();
-        
+
         if (balance < trans_amt && trans_amt > 0) {
             swal("Cannot change to quotation!", "Payment already made", "error");
         } else {
