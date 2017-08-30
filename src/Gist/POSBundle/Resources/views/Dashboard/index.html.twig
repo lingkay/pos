@@ -736,7 +736,8 @@ function finalModalAction(opt)
     if (opt == 'save') {
         $('#final_modal').modal('hide');
         freezeTransaction(true);
-        // location.reload();
+        swal('Transaction saved!','The page will now reload','success');
+        location.reload();
     } else {
         freezeTransaction(true);
         var url = '{{ path("gist_pos_print_receipt", {'id': 'id'}) }}'; 
@@ -2270,7 +2271,13 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".save_customer_button", function(e){
-        ajaxAddCustomer();
+        var last_name = $('#cust_search_lastname').val();
+        var first_name = $('#cust_search_firstname').val();
+        if ($('#cust_search_lastname').length > 0 && $('#cust_search_firstname').length > 0) {
+            ajaxAddCustomer();
+        } else {
+            swal("Missing fields!", "Please enter atleast a first and last name", "error");   
+        }
     });
 
     $(document).on("click",".add_customer", function(e){
