@@ -743,18 +743,17 @@ function finalModalAction(opt)
         setTimeout(
           function() 
           {
-            //do something special
+            var url = '{{ path("gist_pos_print_receipt", {'id': 'id'}) }}'; 
+            url = url.replace("id", $('#transaction_system_id').val());
+            var win = window.open(url, '_blank');
+            if (win) {
+                //Browser has allowed it to be opened
+                win.focus();
+            } else {
+                //Browser has blocked it
+                alert('Please allow popups for this website');
+            }
           }, 3000);
-        var url = '{{ path("gist_pos_print_receipt", {'id': 'id'}) }}'; 
-        url = url.replace("id", $('#transaction_system_id').val());
-        var win = window.open(url, '_blank');
-        if (win) {
-            //Browser has allowed it to be opened
-            win.focus();
-        } else {
-            //Browser has blocked it
-            alert('Please allow popups for this website');
-        }
     }
 }
 
