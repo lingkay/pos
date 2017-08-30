@@ -2107,6 +2107,7 @@ $(document).ready(function(){
         $('.add_customer').show();
         $('.customer_continue_btn').hide();
         $('.customer_search_again_btn').hide();
+        $('.save_customer_button').show();
     });
 
     $(document).on("click",".customer_continue_btn", function(e) {
@@ -2154,7 +2155,7 @@ $(document).ready(function(){
         $('#transaction_customer_id').val(row.find('.id').val());
 
         $('#cform-cust_search_id').val(row.find('.id').val());
-        $('#cform-cust_search_firstname').val();
+        $('#cform-cust_search_firstname').val(row.find('.first_name').val());
         $('#cform-cust_search_middle_name').val(row.find('.middle_name').val());
         $('#cform-cust_search_lastname').val(row.find('.last_name').val());
         $('#cform-cust_search_home_phone').val(row.find('.home_phone').val());
