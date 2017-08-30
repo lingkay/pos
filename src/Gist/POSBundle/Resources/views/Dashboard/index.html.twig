@@ -2287,8 +2287,15 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".cp_freeze", function(e){
-        loadFrozenTransactions();
-        $('#freeze_modal').modal('show');
+        var trans_amt = $('#float_trans_amount').val();
+        var balance = $('#float_trans_balance').val();
+
+        if (balance == 0 && trans_amt > 0) {
+            swal("Cannot freeze transaction!", "Full payment already made", "error")
+        } else {
+            loadFrozenTransactions();
+            $('#freeze_modal').modal('show');
+        }
     });
 
     $(document).on("click",".quotation_continue_btn", function(e){
