@@ -87,7 +87,7 @@ class POSController extends Controller
 
         $opts = array();
         foreach ($vars_chg as $o)
-            $opts[$o['id']] = $o['name']." @ ".$o['value']."%";
+            $opts[$o['id']] = $o['name'];
 
 
         $url3="http://erp.cilanthropist.co/inventory/pos/get/tax_coverage";
