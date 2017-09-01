@@ -11,12 +11,12 @@
     <div style="margin-top: 20px;">&nbsp;</div>
     <div class="row">
         <div class="col-md-3">
-        <a href="#">
+        <a href="javascript:void(0)">
             <img src="bundles/gisttemplate/assets/global/img/erp_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
         </a>
         </div>
         <div class="col-md-3">
-        <a href="{{path('gist_pos_index')}}">
+        <a href="javascript:void(0)" class="pos_button">
             <img src="bundles/gisttemplate/assets/global/img/pos_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;">
         </a>
         </div>
@@ -30,6 +30,39 @@
         </div>
     </div>
 </div>
+
+<div id="pos_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    {#<div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">POS</h4>
+                    </div>#}
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="col-md-4" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
+                                <a href="{{path('gist_pos_index')}}"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pos.png') }}"></a>
+                                <h4>Point-of-Sales</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/clock_in.png') }}"></a>
+                                <h4>Clock-in</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/clock_out.png') }}"></a>
+                                <h4>Clock-out</h4>
+                            </div>
+                        </div>
+                    </div>
+                    {#<div class="modal-footer">
+                        <a class="btn default green proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>#}
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block js %}
@@ -68,6 +101,10 @@ $(document).ready(function(){
                 swal('POS Data Synced!','POS Transactions sent to ERP','success');
             });
         });
+    });
+
+    $(document).on("click",".pos_button", function(e){
+        $('#pos_modal').modal('show');
     });
 });
 </script>
