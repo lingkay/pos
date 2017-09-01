@@ -1792,6 +1792,7 @@ function freezeTransaction(is_final = false)
     var transaction_disp_id = $('#transaction_display_id').val();
     var transaction_total = $('#float_trans_amount').val();
     var transaction_balance = $('#float_trans_balance').val();
+    var transaction_mode = $('#string_trans_mode').val();
     var transaction_type = $('#string_trans_type').val();
     var bulk_type = $('#string_trans_bulk_type').val();
 
@@ -1811,7 +1812,7 @@ function freezeTransaction(is_final = false)
     var customer_id = $('#transaction_customer_id').val();
 
     // {id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}/{tax_rate}/{orig_vat_amt}/{new_vat_amt}/{orig_amt_net_vat}/{new_amt_net_vat}/{tax_coverage}/{cart_min}/{orig_cart_total}/{new_cart_total}
-    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type;
+    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode;
 
 
     $.getJSON(url, function(json){  

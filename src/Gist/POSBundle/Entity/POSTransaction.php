@@ -38,6 +38,9 @@ class POSTransaction
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $transaction_type;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $transaction_mode;
+
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $status;
 
@@ -117,6 +120,19 @@ class POSTransaction
         }
 
         return $total;
+    }
+    
+
+    public function setTransactionMode($transaction_mode)
+    {
+        $this->transaction_mode = $transaction_mode;
+
+        return $this;
+    }
+
+    public function getTransactionMode()
+    {
+        return $this->transaction_mode;
     }
 
     /**
