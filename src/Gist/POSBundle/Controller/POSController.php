@@ -61,7 +61,7 @@ class POSController extends Controller
             'widow' => 'Widow'
         );
 
-        $last_entry = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array(),array('id' => 'DESC'),1);
+        $last_entry = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('transaction_mode' => 'normal'),array('id' => 'DESC'),1);
         if (count($last_entry) > 0) {
             $params['next_id'] = '005-' . str_pad($last_entry->getID() + 1,6,'0',STR_PAD_LEFT);
             $params['next_sys_id'] = $last_entry->getID() + 1;
