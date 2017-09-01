@@ -111,9 +111,32 @@
 </div>
 {% endmacro %}
 
+{% macro checkbox_pos_white(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+<div id="xgroup-pdc" class="form-group">
+    <label style="color: white !important;" class="col-md-5 control-label">{{ display }}</label>
+    <div class="col-md-6">
+        {% if group == null %}
+            {% set grp = name %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+            <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro group_text_pos(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="col-md-{{ body_size }}">
+        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+    </div>
+</div>
+{% endmacro %}
+
+{% macro group_text_pos_white(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
+<div id="{{ prefix }}group-{{ name }}" class="form-group">
+    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
         <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
     </div>
@@ -234,6 +257,15 @@
 </div>
 {% endmacro %}
 
+{% macro group_textarea_white(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
+<div id="{{ prefix }}group-{{ name }}" class="form-group">
+    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="col-md-{{ body_size }}">
+        <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+    </div>
+</div>
+{% endmacro %}
+
 
 {% macro textarea(name, value, row_size, body_size, readonly = false, prefix = 'c') %}
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
@@ -302,6 +334,18 @@
 {% import _self as self %}
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="col-md-{{ body_size }}">
+        <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
+        {{ self.options(options, value) }}
+        </select>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro group_selectx2_white(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+{% import _self as self %}
+<div id="{{ prefix }}group-{{ name }}" class="form-group">
+    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
         <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
         {{ self.options(options, value) }}
@@ -422,6 +466,25 @@
 {% else %}
 <div class="form-group posgrp_{{name}}">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class ="col-md-{{ body_size }}">
+        <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
+            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+            <span class="input-group-btn">
+                <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro group_date_pos_white(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+{% import _self as self %}
+{% if readonly %}
+    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+{% else %}
+<div class="form-group posgrp_{{name}}">
+    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class ="col-md-{{ body_size }}">
         <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
             <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
@@ -570,6 +633,33 @@
     </div>
 </div>
 
+{% endmacro %}
+
+{% macro radio_set_pos_white(label, name, fields, value, disabled = false) %}
+{% import _self as form %}
+<div class="form-group">
+    <label style="color: white !important;" class="col-md-4 control-label">{{ label }}</label>
+    <div class="col-md-7">
+        <div class="radio-list"> 
+        {% for id,display in fields %}
+            {{ form.radio_white(name, id, display, value == id ? true : false, name, disabled) }}
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endmacro %}
+
+{% macro radio_white(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+<label class="radio-inline">
+{% if group == null %}
+    {% set grp = "radio-group" %}
+{% else %}
+    {% set grp = group %}
+{% endif %}
+    <input  type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
+    <span style="color: white !important;">{{ display }}</span>
+</label>
 {% endmacro %}
 
 {% macro radio_set_pos2(label, name, fields, value, disabled = false) %}

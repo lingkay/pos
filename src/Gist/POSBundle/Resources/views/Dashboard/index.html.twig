@@ -494,85 +494,85 @@
     </div>
     <div id="customer_modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog" style="width: 700px !important;">
-            <div class="modal-content">
+            <div class="modal-content" style="background-color: #0b114e;">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Search/Add customer</h4>
+                        <a style="color: white;" type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 style="color: white;" id="form_title" class="modal-title">Search/Add customer</h4>
                     </div>
                     <div class="modal-body" id="cust_formx" style="height: 500px; overflow:scroll;overflow-x: hidden;">
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos('Customer ID', 'cust_search_id', '', 4, 7, false) }}
+                                {{ form.group_text_pos_white('Customer ID', 'cust_search_id', '', 4, 7, false) }}
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.radio_set_pos('Gender', 'cust_search_gender', gender_options, null, false) }}
+                                {{ form.radio_set_pos_white('Gender', 'cust_search_gender', gender_options, null, false) }}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_selectx2('Status', 'cust_search_marital', marital_options, '', 4, 7, false) }}
+                                {{ form.group_selectx2_white('Status', 'cust_search_marital', marital_options, '', 4, 7, false) }}
                             </div>
                             <div class="col-md-6" id="check_form">
-                            {{ form.group_date_pos('Married On','cust_search_marriage_date', '',4, 7) }}
+                            {{ form.group_date_pos_white('Married On','cust_search_marriage_date', '',4, 7) }}
 
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-5" id="check_form">
-                                {{ form.group_text_pos('First Name', 'cust_search_firstname', '', 5, 6, false) }}
+                                {{ form.group_text_pos_white('First Name', 'cust_search_firstname', '', 5, 6, false) }}
                             </div>
                             <div class="col-md-2" id="check_form">
-                            {{ form.group_text_pos('MI', 'cust_search_middle_name', '', 2, 8, false) }}
+                            {{ form.group_text_pos_white('MI', 'cust_search_middle_name', '', 2, 8, false) }}
                             </div>
                             <div class="col-md-5" id="check_form">
-                                {{ form.group_text_pos('Last Name', 'cust_search_lastname', '', 5, 6, false) }}
+                                {{ form.group_text_pos_white('Last Name', 'cust_search_lastname', '', 5, 6, false) }}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos('Home #', 'cust_search_home_phone', '', 4, 7, false) }}
-                                {{ form.group_text_pos('Email','cust_search_email', '',4, 7) }}
+                                {{ form.group_text_pos_white('Home #', 'cust_search_home_phone', '', 4, 7, false) }}
+                                {{ form.group_text_pos_white('Email','cust_search_email', '',4, 7) }}
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos('Mobile #', 'cust_search_mobile', '', 4, 7, false) }}
-                                {{ form.group_date_pos('Birthday','cust_search_birthdate', '',4, 7) }}
+                                {{ form.group_text_pos_white('Mobile #', 'cust_search_mobile', '', 4, 7, false) }}
+                                {{ form.group_date_pos_white('Birthday','cust_search_birthdate', '',4, 7) }}
                                 
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-12" id="check_form">
-                                {{ form.group_text_pos('Address 1', 'cust_search_address_1', '', 2, 9, false) }}
+                                {{ form.group_text_pos_white('Address 1', 'cust_search_address_1', '', 2, 9, false) }}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-12" id="check_form">
-                                {{ form.group_text_pos('Address 2', 'cust_search_address_2', '', 2, 9, false) }}
+                                {{ form.group_text_pos_white('Address 2', 'cust_search_address_2', '', 2, 9, false) }}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos('City', 'cust_search_city', '', 4, 7, false) }}
-                                {{ form.group_text_pos('Country','cust_search_country', '',4, 7) }}
+                                {{ form.group_text_pos_white('City', 'cust_search_city', '', 4, 7, false) }}
+                                {{ form.group_text_pos_white('Country','cust_search_country', '',4, 7) }}
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos('State', 'cust_search_state', '', 4, 7, false) }}
-                                {{ form.group_text_pos('Zip','cust_search_zip', '',4, 7) }}
+                                {{ form.group_text_pos_white('State', 'cust_search_state', '', 4, 7, false) }}
+                                {{ form.group_text_pos_white('Zip','cust_search_zip', '',4, 7) }}
                                 
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-12" id="check_form">
-                                {{ form.group_textarea('Notes', 'cust_search_notes', '', 3, 2, 9, false) }}
+                                {{ form.group_textarea_white('Notes', 'cust_search_notes', '', 3, 2, 9, false) }}
                             </div>
                         </div>
                         <div class="row form-horizontal form customer_seach_main_div" >
-                            <h4 id="form_title" class="modal-title">Search Results</h4>
+                            <h4 style="color: white;" id="form_title" class="modal-title">Search Results</h4>
                             <hr style="margin-top: 2px; margin-bottom: 10px;">
                             <div class="col-md-12" id="check_form" style="height: 160px; overflow:scroll;overflow-x: hidden;">
-                            <table class="table table-striped table-bordered table-hover" id="customers_table">
+                            <table class="table table-bordered table-hover" id="customers_table" style="background-color: white !important;">
                                     <thead>
-                                        <tr>
+                                        <tr >
                                             <th width="50%">Name</th>
                                             <th width="40%">E-mail</th>
                                             <th width="10%">Select</th>
@@ -2002,6 +2002,25 @@ function unfreezeTransaction()
     //load payments
 }
 
+function resetCustomerModal()
+{
+    clearCustomerFields();
+    $('#customer_modal').modal('hide');
+    $('.customer_seach_main_div').show();
+    $('.customer_search_btn').show();
+    $('.customer_clear_search_btn').show();
+    $('.add_customer').show();
+    $('.customer_continue_btn').hide();
+    $('.customer_search_again_btn').hide();
+
+    $('#customers_list').empty();
+    var field = '<tr class=\"init_row_prods\">';     
+        field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;</p></td>';
+        field += '</tr>';
+
+    $('#customers_list').prepend(field);
+}
+
 function clearCustomerFields() 
 {
     $('.cust_search_gender').prop('checked', false);
@@ -2122,14 +2141,7 @@ $(document).ready(function(){
     }); 
 
     $(document).on("click",".cancel_cust_search", function(e){
-        clearCustomerFields();
-        $('#customer_modal').modal('hide');
-        $('.customer_seach_main_div').show();
-        $('.customer_search_btn').show();
-        $('.customer_clear_search_btn').show();
-        $('.add_customer').show();
-        $('.customer_continue_btn').hide();
-        $('.customer_search_again_btn').hide();
+        resetCustomerModal();
     });
 
 
@@ -2469,6 +2481,10 @@ $(document).ready(function(){
 
     $('#final_modal').on('hidden.bs.modal', function () {
         location.reload();
+    });
+
+    $('#customer_modal').on('hidden.bs.modal', function () {
+        resetCustomerModal();
     });
 
     $(document).on('keyup', '.per_item_discount_amt', function () {

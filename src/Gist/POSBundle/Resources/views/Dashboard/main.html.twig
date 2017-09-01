@@ -32,7 +32,7 @@
 </div>
 
 <div id="pos_modal" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog" style="width: 800px !important;">
             <div class="modal-content">
                 <form method="post" action="">
                     {#<div class="modal-header">
@@ -41,15 +41,19 @@
                     </div>#}
                     <div class="modal-body">
                         <div class="row form-horizontal form">
-                            <div class="col-md-4" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
+                            <div class="col-md-3" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
                                 <a href="{{path('gist_pos_index')}}"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pos.png') }}"></a>
                                 <h4>Point-of-Sales</h4>
                             </div>
-                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                            <div class="col-md-3" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/inventory.png') }}"></a>
+                                <h4>Inventory</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/clock_in.png') }}"></a>
                                 <h4>Clock-in</h4>
                             </div>
-                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/clock_out.png') }}"></a>
                                 <h4>Clock-out</h4>
                             </div>
