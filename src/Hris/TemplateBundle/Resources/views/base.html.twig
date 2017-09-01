@@ -108,25 +108,14 @@
     <!-- BEGIN HEADER INNER -->
     <div class="page-header-inner">
         <!-- BEGIN LOGO -->
-        <div class="page-logo">
-            <div style="color: white; font-color: white; font-size: 16px; margin-top: 10px;" id="top_nav_dt"></div>
-            
-        </div>
+
 
          
 
         <!-- END LOGO -->
         <!-- BEGIN RESPONSIVE MENU TOGGLER -->
-        <div class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
-        </div>
         <!-- END RESPONSIVE MENU TOGGLER -->
         {% embed "GistTemplateBundle::top_nav_menu.html.twig" %}{% endembed %}
-        <div class="top-menu">
-
-         <a href="javascript:void(0)" class="cp_customers"><img style="height: 30px;width: 30px; margin-top: 10px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_customer.png') }}"></a>&nbsp;&nbsp;
-                <a href="javascript:void(0)" class="cp_quotation"><img class="quotation_icon_img" style="height: 30px;width: 30px; margin-top: 10px; border-radius: 6px;" src="{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}"></a>&nbsp;&nbsp;
-                <a href="javascript:void(0)" class="cp_freeze"><img style="height: 30px;width: 30px; margin-top: 10px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_pause.png') }}"></a>
-         </div>
     </div>
     <!-- END HEADER INNER -->
 </div>
@@ -143,9 +132,11 @@
     <div class="page-footer-inner" style="color: white !important;">
          2017 &copy; CosmetiGroup Int'l Corp. | 22nd Floor Pearl Bank Center 146 Valero St., Salcedo Village, Makati City
     </div>
+    {% if tax_coverage|default('') != '' %}
     <div class="page-footer-inner right pull-right" style="color: white !important;">
             <b>Mode: <span id="pos_mode">Normal</span></b>{#TxC: <span id="x">{{tax_coverage|default('N/A')}}</span> CP: <span id="cart_pricex"></span> CMP: <span id="cart_min_pricex"></span>#}&nbsp;<b>|</b>&nbsp;<b>E.A.: <span id="ea_amt">0</span></b>&nbsp;<b>|</b>&nbsp;<b>Status: Connected</b>
         </div>
+    {% endif %}
 </div>
 <!-- END FOOTER -->
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->

@@ -1,6 +1,24 @@
 <!-- BEGIN TOP NAVIGATION MENU -->
+<div class="row">
+<div class="col-md-3">
+        <div class="page-logo">
+            <div style="color: white; font-color: white; font-size: 16px; margin-top: 10px;" id="top_nav_dt"></div>
+            
+        </div>
+</div>
+<div class="col-md-6">
+{% if tax_coverage|default('') != '' %}
+<div style="display: table; margin: 0 auto;">
+                <a href="javascript:void(0)" class="cp_customers" style="margin: auto; display: inline;"><img style="margin: auto; display: inline; height: 30px;width: 30px; margin-top: 10px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_customer.png') }}"></a>&nbsp;&nbsp;
+                <a href="javascript:void(0)" class="cp_quotation" style="margin: auto; display: inline;"><img class="quotation_icon_img" style="margin: auto; display: inline; height: 30px;width: 30px; border-radius: 6px;margin-top: 10px;" src="{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}"></a>&nbsp;&nbsp;
+                <a href="javascript:void(0)" class="cp_freeze" style="margin: auto; display: inline;"><img style="margin: auto; display: inline; height: 30px;width: 30px;margin-top: 10px;" src="{{ asset('bundles/gisttemplate/assets/global/img/cp_pause.png') }}"></a>
+
+</div>
+{% endif %}
+</div>
+<div class="col-md-3">
 <div class="top-menu">
-    <ul class="nav navbar-nav pull-right">
+    <ul class="nav navbar-nav">
 <!-- BEGIN NOTIFICATION DROPDOWN -->
             
         <li class="dropdown dropdown-user">
@@ -28,4 +46,9 @@
         <!-- END USER LOGIN DROPDOWN -->
     </ul>
 </div>
+</div>
+</div>
+
+
+
 <!-- END TOP NAVIGATION MENU -->

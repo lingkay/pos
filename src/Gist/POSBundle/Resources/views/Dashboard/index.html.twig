@@ -73,7 +73,7 @@
         <div class="col-md-6">
             <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
                 <div class="portlet-title">
-                    <div class="caption">Cart - Transaction {{next_id|default('0')}}</div>
+                    <div class="caption">Cart</div>
                 </div>
                 <div class="portlet-body">
                     <div class="row">
@@ -336,7 +336,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <a href="javascript:void(0)" class="btn default red numeric_key" data-value="CLEAR">Clear</a>
-                                        <a href="javascript:void(0)" class="btn default red numeric_key" data-value="DEL">Delete</a>
+                                        <a href="javascript:void(0)" class="btn default red numeric_key" data-value="DEL"><</a>
                                     </div>
                                     <div class="col-md-4">
                                     </div>
@@ -1784,10 +1784,6 @@ function freezeTransaction(is_final = false)
     var payments_saved = false;
     var count_cart_items = $('#cart_items tr').length;
     var count_payments = $('#payments_table .init_row_payment').length;
-    //refresh list of frozen transactions
-    // loadFrozenTransactions();
-
-    //save transaction
     var transaction_sys_id = $('#transaction_system_id').val();
     var transaction_disp_id = $('#transaction_display_id').val();
     var transaction_total = $('#float_trans_amount').val();
@@ -1795,23 +1791,23 @@ function freezeTransaction(is_final = false)
     var transaction_mode = $('#string_trans_mode').val();
     var transaction_type = $('#string_trans_type').val();
     var bulk_type = $('#string_trans_bulk_type').val();
-
     var transaction_tax_rate = $('#float_tax_rate').val();
     var transaction_orig_vat_amt = $('#float_orig_tax_vat_amt').val();
     var transaction_new_vat_amt = $('#float_new_tax_vat_amt').val();
     var transaction_orig_vat_amt_net = $('#float_orig_tax_amt_net_vat').val();
     var transaction_new_vat_amt_net = $('#float_new_tax_amt_net_vat').val();
     var transaction_tax_coverage = $('#string_tax_coverage').val();
-
     var transaction_cart_min_total = $('#float_cart_minimum_total').val();
     var transaction_cart_orig_total = $('#float_cart_orig_price').val();
     var transaction_cart_new_total = $('#float_cart_new_price').val();
 
 
-    var status = $('#transaction_status').val();
+    var status = 'Frozen';
+    if (is_final) {
+        status = 'Paid';
+    } 
     var customer_id = $('#transaction_customer_id').val();
 
-    // {id}/{display_id}/{total}/{balance}/{type}/{customer_id}/{status}/{tax_rate}/{orig_vat_amt}/{new_vat_amt}/{orig_amt_net_vat}/{new_amt_net_vat}/{tax_coverage}/{cart_min}/{orig_cart_total}/{new_cart_total}
     var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode;
 
 
@@ -2095,14 +2091,6 @@ $(document).ready(function(){
         
     });
 
-    // $('.pos_field').on('keypress', function (event) {
-    //     var regex = new RegExp("^[a-zA-Z0-9]+$");
-    //     var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-    //     if (!regex.test(key)) {
-    //        event.preventDefault();
-    //        return false;
-    //     }
-    // });
 
     $('.posgrp_cust_search_marriage_date').hide();
     $('.customer_continue_btn').hide();
@@ -2647,10 +2635,6 @@ $(document).ready(function(){
 
     });
 
-    // $(document).on('keyup', '.cc_charge_amt', function () {
-    //     $(this).val(this.value.match(/[0-9]*/));
-    // });
-
     $(document).on("click",".numeric_key", function(e){
         if ($(this).data("value") == 'CLEAR') {
             $('#cform-cash_received_amt').val("");
@@ -2823,16 +2807,7 @@ $(document).ready(function(){
         
     });
 
-    // $('input[type=radio][name=check_type]').change(function() {
-    //     alert(this.value);
-    // });
 
-    // END CLEAN
-
-    // $('.check_date_main_div').hide();
-
-
-    //$('#cgroup-app_code').hide();
     $('.bulk_adj').hide();
     $('.clear_discount').hide();
     $('.checkout_btn').hide();
