@@ -1985,6 +1985,17 @@ function freezeTransaction(is_final = false)
         });
 
     });
+    syncToERP();
+}
+
+function syncToERP()
+{
+    var route = "{{ path('gist_main_sync_pos_data')|escape('js') }}";
+    $.getJSON(route, function(json){  
+       $.each(json, function(i, x) {
+            swal('POS Data Synced!','POS Transaction ssent to ERP','success');
+        });
+    });
 }
 
 function unfreezeTransaction()
