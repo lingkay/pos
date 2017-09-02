@@ -345,7 +345,7 @@
     }
     value = $target.val() + digit;
     value = value.replace(/\D/g, '');
-    if (value.length > 6) {
+    if (value.length > 4) {
       return false;
     }
   };
