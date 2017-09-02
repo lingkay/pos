@@ -6,6 +6,10 @@ gist_main_sync_pos_data:
     path:     /pos/sync_data
     defaults: { _controller: GistPOSBundle:POS:syncData }
 
+gist_main_clock_tap:
+    path:     /pos/clock_tap/{type}
+    defaults: { _controller: GistPOSBundle:POS:clock }
+
 gist_main_index:
     path:     /
     defaults: { _controller: GistPOSBundle:POS:landing }

@@ -6,9 +6,11 @@ namespace Gist\POSBundle\Controller;
 use Gist\TemplateBundle\Model\BaseController as Controller;
 use Gist\POSBundle\Entity\POSTransaction;
 use Gist\POSBundle\Entity\POSTransactionItem;
+use Gist\POSBundle\Entity\POSClock;
 use Gist\POSBundle\Entity\POSTransactionPayment;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use DateTime;
 
 class POSController extends Controller
 {
@@ -318,5 +320,21 @@ class POSController extends Controller
 
         $html = $this->render($twig, $params);
         return $pdf->printPdf($html->getContent());
+    }
+
+    public function clockAction($type)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $clock = new POSClock();
+
+        $clock->setDate(new DateTime);
+        $clock->setType($type);
+        $clock->setUserId($this->getUser()->getId());
+
+        $em->persist($clock);
+        $em->flush();
+
+        $list_opts[] = array('status'=>'ok');
+        return new JsonResponse($list_opts);
     }
 }

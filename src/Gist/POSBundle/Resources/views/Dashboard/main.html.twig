@@ -49,11 +49,11 @@
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/inventory.png') }}"></a>
                                 <h4>Inventory</h4>
                             </div>
-                            <div class="col-md-3" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="clock('IN')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/clock_in.png') }}"></a>
                                 <h4>Clock-in</h4>
                             </div>
-                            <div class="col-md-3" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="clock('OUT')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/clock_out.png') }}"></a>
                                 <h4>Clock-out</h4>
                             </div>
@@ -95,6 +95,23 @@ function ajaxGetProductCategories(cid)
         });
     });
 }
+
+function clock(type)
+{
+    var url = '{{ path("gist_main_clock_tap", {'type': 'type'}) }}'; 
+    url = url.replace("type", type);
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, x) {
+            if (x.status == 'ok') {
+                swal('Clock '+type+' successful!','','success');
+                $('#pos_modal').modal('hide');
+            } else {
+                swal('Clock '+type+' not successful!','','error');
+            }
+        });
+    });
+}
+
 $(document).ready(function(){
     ajaxGetProductCategories();
 
