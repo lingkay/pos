@@ -175,12 +175,13 @@ function ajaxAddCustomer()
     var city = "%20"; if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
     var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
     var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
-    var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_address_2').val()};
+    var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_zip').val()};
+    var notes = "%20"; if($('#cform-cust_search_notes').val() != ''){zip = $('#cform-cust_search_notes').val()};
 
 
 
 
-    var url = "http://erp.cilanthropist.co/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
+    var url = "http://erp.cilanthropist.co/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes;
 
     $.getJSON(url, function(json){  
         var count = 0;
