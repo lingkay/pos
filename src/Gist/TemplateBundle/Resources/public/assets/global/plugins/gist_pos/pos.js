@@ -176,7 +176,7 @@ function ajaxAddCustomer()
     var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
     var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
     var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_zip').val()};
-    var notes = "%20"; if($('#cform-cust_search_notes').val() != ''){zip = $('#cform-cust_search_notes').val()};
+    var notes = "%20"; if($('#cform-cust_search_notes').val() != ''){notes = $('#cform-cust_search_notes').val()};
 
 
 
