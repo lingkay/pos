@@ -968,7 +968,7 @@ $(document).ready(function(){
             }
 
             // Copy data fields to form
-            cc_name.val(data.firstName+ ' '+data.lastName);
+            cc_name.val($.trim(data.firstName)+ ' '+$.trim(data.lastName));
             cc_num.val(data.account);
             cc_expiry.val(data.expMonth+'/'+data.expYear);
             $(document).off(".cardswipe-listener");
