@@ -376,7 +376,7 @@
                         <div class="row form-horizontal form cc_main_form" style="margin-top: 20px;">
                             <div class="col-md-12" id="cc_form" style="height: 350px; overflow:scroll;overflow-x: hidden;">
                                 <div class="cc_field">
-                                    <h4 class="form-section">Card Details</h4>
+                                    <h4 class="form-section">Card Details <a href="javascript:void(0)" class="btn btn-xs red remove_card pull-right"><i class="fa fa-remove"></i></a></h4>
                                     <div class="row">
                                         <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
@@ -390,6 +390,7 @@
                                             {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
                                             {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
                                             {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
+                                            <a href="javascript:void(0)" class="btn blue swipe_card pull-right">Swipe Card</a>
                                         </div>
                                     </div>
                                 </div>
@@ -425,7 +426,7 @@
                         <div class="row form-horizontal form" style="margin-top: 20px;">
                             <div class="col-md-12" id="check_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
                                 <div class="check_field">
-                                    <h4 class="form-section">Check Details</h4>
+                                    <h4 class="form-section">Check Details <a href="javascript:void(0)" class="btn btn-xs red remove_check pull-right"><i class="fa fa-remove"></i></a></h4>
                                     <div class="row">
                                         <div class="col-md-6">
                                             {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 5, 6, false) }}
@@ -683,13 +684,63 @@
             </div>
         </div>
     </div>
+    <div id="swipe_await" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="row">
+                                <div class="col-md-3"></div>    
+                                <div class="col-md-6" style="text-align: center;"><img height="200" width="300" src="{{ asset('bundles/gisttemplate/assets/global/img/swipe2.gif') }}"></div>
+                                <div class="col-md-3"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2"></div>    
+                                <div class="col-md-8" style="text-align: center;"><h2 class="center">Waiting for card swipe...</h2></div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
+                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="swipe_error" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="row">
+                                <div class="col-md-3"></div>    
+                                <div class="col-md-6" style="text-align: center;"><img height="180" width="180" src="{{ asset('bundles/gisttemplate/assets/global/img/error.png') }}"></div>
+                                <div class="col-md-3"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3"></div>    
+                                <div class="col-md-6" style="text-align: center;"><h2 class="center">Card not recognized</h2></div>
+                                <div class="col-md-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
+                        <a class="btn green default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Okay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
 <div class="hidden">
     <div id="cc_fields">
         <div class="cc_field">
-            <br>
-            <h4 class="form-section">Card Details</h4>
+            <h4 class="form-section">Card Details <a href="javascript:void(0)" class="btn btn-xs red remove_card pull-right"><i class="fa fa-remove"></i></a></h4>
             <div class="row">
                 <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
@@ -703,14 +754,14 @@
                     {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
                     {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'MM/YYYY', false) }}
                     {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
+                    <a href="javascript:void(0)" class="btn blue swipe_card pull-right">Swipe Card</a>
                 </div>
             </div>
         </div>
     </div>
     <div id="check_fields">
         <div class="check_field">
-            <br>
-            <h4 class="form-section">Check Details</h4>
+            <h4 class="form-section">Check Details <a href="javascript:void(0)" class="btn btn-xs red remove_check pull-right"><i class="fa fa-remove"></i></a></h4>
             <div class="row">
                 <div class="col-md-6">
                     {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 5, 6, false) }}
@@ -728,6 +779,8 @@
         </div>
     </div>
 </div>
+
+
 {% endblock %}
 {% block js %}
 <script>
@@ -829,7 +882,15 @@ function appendPerItemFields()
 
 
 
+
+
+
 $(document).ready(function(){ 
+
+
+
+        
+        
     ajaxGetProductCategories();  
     ajaxGetVAT();
     toastr.options = {
@@ -855,6 +916,83 @@ $(document).ready(function(){
     $(document).on("click",".freeze_btn", function(e){
         //THIS WILL INITIATE SAVING OF TRANSACTION
         freezeTransaction();
+    });
+
+    $(document).on("click",".swipe_card", function(e){
+        $('#swipe_await').modal('show');
+
+        // Event handler for scanstart.cardswipe.
+        var scanstart = function () {
+
+        };
+
+        // Event handler for scanend.cardswipe.
+        var scanend = function () {
+
+        };
+
+        // Event handler for success.cardswipe.  Displays returned data in a dialog
+        var success = function (event, data) {
+
+        }
+
+        var failure = function () {
+           
+        }
+        // Bind event listeners to the document
+        $(document)
+            .on("scanstart.cardswipe", scanstart)
+            .on("scanend.cardswipe", scanend)
+            .on("success.cardswipe", success)
+            .on("failure.cardswipe", failure)
+        ;
+
+        
+        // Bind event listeners to the document
+        
+
+        var row = $(this).closest('.cc_field');
+        var cc_num = row.find('.cc_card_number');
+        var cc_name = row.find('.cc_card_name');
+        var cc_expiry = row.find('.cc_card_expiry');
+
+
+        // Called by plugin on a successful scan.
+        var complete = function (data) {
+            $('#swipe_await').modal('hide');
+            // Is it a payment card?
+            if (data.type == "generic")
+            {
+                $('#swipe_error').modal('show');
+                return;
+            }
+
+            // Copy data fields to form
+            cc_name.val(data.firstName+ ' '+data.lastName);
+            cc_num.val(data.account);
+            cc_expiry.val(data.expMonth+'/'+data.expYear);
+            $(document).off(".cardswipe-listener");
+
+            
+        };
+
+        $.cardswipe({
+            firstLineOnly: true,
+            success: complete,
+            parsers: ["visa", "amex", "mastercard", "discover", "generic"],
+            debug: false
+        });
+
+
+    });
+    $(document).on("click",".remove_card", function(e){
+        $(this).closest('.cc_field').remove();
+        computeBalanceDisplayCardMulti(0);
+    });
+
+    $(document).on("click",".remove_check", function(e){
+        $(this).closest('.check_field').remove();
+        computeBalanceDisplayCheckMulti(0);
     });
 
     $(document).on("click",".check_is_pdc", function(e){
