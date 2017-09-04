@@ -385,7 +385,8 @@
                                             {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
                                         </div>
-                                        <div class="col-md-7">
+                                        <div class="col-md-7">                            
+                                            {{ form.group_selectx('Card Type', 'cc_card_type', card_types, '', 4, 7, '', false) }}
                                             {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
                                             {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
                                             {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
@@ -750,6 +751,7 @@
                     {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
                 </div>
                 <div class="col-md-7">
+                    {{ form.group_selectx('Card Type', 'cc_card_type', card_types, '', 4, 7, 'Card Type', false) }}
                     {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
                     {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
                     {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'MM/YYYY', false) }}
@@ -954,6 +956,7 @@ $(document).ready(function(){
         var row = $(this).closest('.cc_field');
         var cc_num = row.find('.cc_card_number');
         var cc_name = row.find('.cc_card_name');
+        var cc_type = row.find('.cc_card_type select');
         var cc_expiry = row.find('.cc_card_expiry');
 
 
@@ -968,6 +971,8 @@ $(document).ready(function(){
             }
 
             // Copy data fields to form
+            // cc_type.val(data.type);
+            $('.cc_card_type option[value='+data.type+']').prop('selected',true);
             cc_name.val($.trim(data.firstName)+ ' '+$.trim(data.lastName));
             cc_num.val(data.account);
             cc_expiry.val(data.expMonth+'/'+data.expYear);

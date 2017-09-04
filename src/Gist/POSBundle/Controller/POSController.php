@@ -27,6 +27,14 @@ class POSController extends Controller
             'chg' => 'Change of Price'
         );
 
+        // arsers: ["visa", "amex", "mastercard", "discover", "generic"],
+        $params['card_types'] = array(
+            'visa'=>'Visa',
+            'amex'=>'AMEX',
+            'mastercard'=>'Mastercard',
+            'discover'=>'Discover'
+        );
+
         $params['bulk_options'] = array(
             'none' => 'None',
             'bgift' => 'Gift',
