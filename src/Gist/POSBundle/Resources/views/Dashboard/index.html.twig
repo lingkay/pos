@@ -1001,7 +1001,10 @@ $(document).ready(function(){
                 return;
             }
 
-            if (parseFloat(data.expMonth) <= parseFloat(curr_mm) && parseFloat(data.expYear) <= parseFloat(curr_yy)) {
+            if (parseFloat(data.expYear) < parseFloat(curr_yy)) {
+                $('#swipe_expired').modal('show');
+                return;
+            } else if (parseFloat(data.expMonth) <= parseFloat(curr_mm) && parseFloat(data.expYear) <= parseFloat(curr_yy)) {
                 $('#swipe_expired').modal('show');
                 return;
             }
@@ -1395,15 +1398,28 @@ $(document).ready(function(){
         // alert(mm+'/'+yy);
         if (mm != '' && yy != '')
         {
-            if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
+            if (parseFloat(yy) < parseFloat(curr_yy)) {
                 $('#swipe_expired').modal('show');
                 $(this).val('');
+                // alert(mm+'/'+yy);
                 var row = $(this).closest('.cc_field');
                 var cc_num = row.find('.cc_card_number');
                 var cc_name = row.find('.cc_card_name');
                 var cc_type = row.find('.cc_card_type select');
 
                 cc_num.val('');
+                cc_name.val('');
+            } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
+                $('#swipe_expired').modal('show');
+                $(this).val('');
+                // alert(curr_mm+'/'+curr_yy+'   '+mm+'/'+yy);
+                var row = $(this).closest('.cc_field');
+                var cc_num = row.find('.cc_card_number');
+                var cc_name = row.find('.cc_card_name');
+                var cc_type = row.find('.cc_card_type select');
+
+                cc_num.val('');
+                cc_name.val('');
             }
         } 
         else 
