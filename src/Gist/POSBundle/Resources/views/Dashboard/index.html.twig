@@ -381,6 +381,7 @@
                                         <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                                             {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                                            {{ form.checkbox_pos('card_w_interest', 0, 'With interest', '', '')}}
                                             {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -389,7 +390,7 @@
                                             {{ form.group_selectx('Card Type', 'cc_card_type', card_types, '', 4, 7, '', false) }}
                                             {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
                                             {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
-                                            {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
+                                            {{ form.group_text_pos('Expiry Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
                                             {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
                                             <a href="javascript:void(0)" class="btn blue swipe_card pull-right">Swipe Card</a>
                                         </div>
@@ -737,6 +738,32 @@
             </div>
         </div>
     </div>
+    <div id="swipe_expired" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="row">
+                                <div class="col-md-3"></div>    
+                                <div class="col-md-6" style="text-align: center;"><img height="180" width="180" src="{{ asset('bundles/gisttemplate/assets/global/img/error.png') }}"></div>
+                                <div class="col-md-3"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3"></div>    
+                                <div class="col-md-6" style="text-align: center;"><h2 class="center">Card expired</h2></div>
+                                <div class="col-md-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
+                        <a class="btn green default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Okay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="hidden">
     <div id="cc_fields">
@@ -746,6 +773,7 @@
                 <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                     {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                    {{ form.checkbox_pos('card_w_interest', 0, 'With interest', '', '')}}
                     {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -754,7 +782,7 @@
                     {{ form.group_selectx('Card Type', 'cc_card_type', card_types, '', 4, 7, 'Card Type', false) }}
                     {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
                     {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
-                    {{ form.group_text_pos('Expiration Date', 'cc_card_expiry', '', 4, 7, 'MM/YYYY', false) }}
+                    {{ form.group_text_pos('Expiry Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
                     {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
                     <a href="javascript:void(0)" class="btn blue swipe_card pull-right">Swipe Card</a>
                 </div>
@@ -889,8 +917,7 @@ function appendPerItemFields()
 
 $(document).ready(function(){ 
 
-
-
+    
         
         
     ajaxGetProductCategories();  
@@ -959,6 +986,10 @@ $(document).ready(function(){
         var cc_type = row.find('.cc_card_type select');
         var cc_expiry = row.find('.cc_card_expiry');
 
+        var date = new Date();
+        // alert(date.getMonth()+1);
+        var curr_mm = date.getMonth()+1;
+        var curr_yy = date.getFullYear().toString().substr(-2);
 
         // Called by plugin on a successful scan.
         var complete = function (data) {
@@ -967,6 +998,11 @@ $(document).ready(function(){
             if (data.type == "generic")
             {
                 $('#swipe_error').modal('show');
+                return;
+            }
+
+            if (parseFloat(data.expMonth) <= parseFloat(curr_mm) && parseFloat(data.expYear) <= parseFloat(curr_yy)) {
+                $('#swipe_expired').modal('show');
                 return;
             }
 
@@ -1348,9 +1384,34 @@ $(document).ready(function(){
 
     });
 
-    // $("#cform-new_price").keyup(function() {
-    //     $("#cform-new_price").val(this.value.match(/[0-9]*/));
-    // });
+    $(".cc_card_expiry").focusout(function() {
+        var date = new Date();
+        // alert(date.getMonth()+1);
+        var curr_mm = date.getMonth()+1;
+        var curr_yy = date.getFullYear().toString().substr(-2);
+
+        var mm = $(this).val().substring(0, 2);
+        var yy = $(this).val().substring(5, 7);
+        // alert(mm+'/'+yy);
+        if (mm != '' && yy != '')
+        {
+            if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
+                $('#swipe_expired').modal('show');
+                $(this).val('');
+                var row = $(this).closest('.cc_field');
+                var cc_num = row.find('.cc_card_number');
+                var cc_name = row.find('.cc_card_name');
+                var cc_type = row.find('.cc_card_type select');
+
+                cc_num.val('');
+            }
+        } 
+        else 
+        {
+            swal('Invalid expirty date','Please enter expiry date again', 'error');
+            $(this).val('');
+        }
+    });
 
     $(document).on('keydown', '#cform-new_price', function (event) {
         if (event.shiftKey == true) {

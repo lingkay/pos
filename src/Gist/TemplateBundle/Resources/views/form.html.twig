@@ -323,7 +323,7 @@
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" placeholder="-- Select {{label}} --">
         {{ self.options(options, value) }}
         </select>
     </div>
