@@ -97,6 +97,15 @@
 </div>
 {% endmacro %}
 
+{% macro group_text_orig(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+<div id="{{ prefix }}group-{{ name }}" class="form-group">
+    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="col-md-{{ body_size }}">
+        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro checkbox_pos(name, value, display, checked, group, disabled = false, prefix = 'c') %}
 <div id="xgroup-pdc" class="form-group">
     <label class="col-md-5 control-label">{{ display }}</label>

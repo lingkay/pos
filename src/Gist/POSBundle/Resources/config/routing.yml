@@ -40,3 +40,19 @@ gist_pos_print_receipt:
     path:    /pos/print_receipt/{id}
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:printReceipt }
+
+# SETTINGS
+gist_pos_settings:
+    path:     /settings
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Settings:index }
+
+gist_pos_settings_save:
+    path:     /settings
+    methods: [POST]
+    defaults: { _controller: GistPOSBundle:Settings:indexSubmit }
+
+gist_pos_settings_sync_users:
+    path:     /settings/sync_users
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Settings:syncUsers }

@@ -19,7 +19,7 @@ class Warehouse
 {
     use HasGeneratedID;
     use HasName;
-    use TrackCreate;
+    // use TrackCreate;
     //use HasAddress;
     use HasInventoryAccount;
     //use HasPhones;
@@ -59,7 +59,7 @@ class Warehouse
         //$this->initHasAddress();
         $this->initHasInventoryAccount();
         //$this->initHasPhones();
-        $this->initTrackCreate();
+        // $this->initTrackCreate();
 
         $this->flag_threshold = true;
         $this->flag_shopfront = false;

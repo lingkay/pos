@@ -1,0 +1,86 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% block content %}
+<div class="page-content">
+	<form method="post" class="form-horizontal">
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-10">
+				<h2 class="form-section">POS Settings</h2>
+				<br>
+				<!--BEGIN TABS-->
+		            <div class="tabbable tabbable-custom tabbable-full-width">
+		                <!-- MAIN TABS -->
+		                <ul class="nav nav-tabs">
+		                    <li class="active">
+		                        <a href="#tab_sys_settings" data-toggle="tab">
+		                            System Settings </a>
+		                    </li>
+		                    <li>
+		                        <a href="#tab_sync_settings" data-toggle="tab">
+		                            Users</a>
+		                    </li>
+		                </ul>
+		                <!-- END MAIN TABS -->
+		                <div class="tab-content">
+		                    <div class="tab-pane active" id="tab_sys_settings">
+		                        {% include 'GistPOSBundle:Settings:system_settings.html.twig' %}
+		                    </div>
+		                    <div class="tab-pane" id="tab_sync_settings">
+		                        {% include 'GistPOSBundle:Settings:user_settings.html.twig' %}
+		                    </div>
+		                </div>
+		            </div>
+		            <!--END TABS-->
+			</div>
+			<div class="col-md-1"></div>
+		</div>
+	</form>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+function syncUsers()
+{
+    var route = "{{ path('gist_pos_settings_sync_users')|escape('js') }}";
+    $.getJSON(route, function(json){  
+       $.each(json, function(i, x) {
+            swal({
+              title: "Users Data Updated!",
+              text: "The page will now reload",
+              type: "success",
+              confirmButtonColor: "green",
+              confirmButtonText: "Okay",
+            },
+            function(){
+            	location.reload();
+                
+            });
+
+        });
+    });
+}
+
+$(document).ready(function(){ 
+
+	$(document).on("click",".sync_users", function(e){
+		swal({
+          title: "Proceed with action?",
+          text: "This will update all user records on this machine",	
+          imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
+          imageSize: '100x100',
+          showConfirmButton: true,
+          showCancelButton: true
+        },
+        function(){
+                // alert('hello');
+                //location.reload();
+            	syncUsers();
+        });
+		//update users here
+		// syncUsers();
+	});
+    
+});
+</script>
+{% endblock %}
