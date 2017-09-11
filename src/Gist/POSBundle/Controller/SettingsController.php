@@ -106,8 +106,8 @@ class SettingsController extends CrudController
         $em = $this->getDoctrine()->getManager();
         $area_id = $conf->get('gist_sys_area_id');
 
-        // $url="http://erp.cilanthropist.co/pos_erp/get/users/".$area_id;
-        $url="http://m55e.erp/pos_erp/get/users/".$area_id;
+        $url="http://erp.cilanthropist.co/pos_erp/get/users/".$area_id;
+        // $url="http://m55e.erp/pos_erp/get/users/".$area_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
