@@ -41,6 +41,9 @@ class POSTransaction
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $transaction_mode;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $transaction_cc_interest;
+
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $status;
 
@@ -133,6 +136,18 @@ class POSTransaction
     public function getTransactionMode()
     {
         return $this->transaction_mode;
+    }
+
+    public function setTransactionCCInterest($transaction_cc_interest)
+    {
+        $this->transaction_cc_interest = $transaction_cc_interest;
+
+        return $this;
+    }
+
+    public function getTransactionCCInterest()
+    {
+        return $this->transaction_cc_interest;
     }
 
     /**

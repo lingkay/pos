@@ -148,7 +148,7 @@ class POSController extends Controller
     // POS SAVING AND SENDING METHODS
 
     
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode)
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -174,6 +174,7 @@ class POSController extends Controller
         $transaction->setCartOrigTotal($orig_cart_total);
         $transaction->setCartNewTotal($new_cart_total);
         $transaction->setBulkDiscountType($bulk_type);
+        $transaction->setTransactionCCInterest($transaction_cc_interest);
 
 
         $em->persist($transaction);
@@ -266,6 +267,7 @@ class POSController extends Controller
             $CartNewTotal = $transaction->getCartNewTotal();
             $bulk_type = $transaction->getBulkDiscountType();
             $mode = $transaction->getTransactionMode();
+            $cc_interest = $transaction->getTransactionCCInterest();
 
             if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n-a'; }
             if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n-a'; }
@@ -278,8 +280,9 @@ class POSController extends Controller
             if (trim($CartNewTotal) == '' || $CartNewTotal == null) { $CartNewTotal = 'n-a'; }
             if (trim($bulk_type) == '' || $bulk_type == null) { $bulk_type = 'n-a'; }
             if (trim($mode) == '' || $mode == null) { $mode = 'n-a'; }
+            if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
 
-            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode);
+            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest);
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);

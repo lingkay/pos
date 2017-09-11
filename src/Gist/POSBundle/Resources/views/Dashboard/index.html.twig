@@ -12,6 +12,7 @@
 <input type="hidden" id="string_trans_type" value="none">
 <input type="hidden" id="string_trans_bulk_type" value="none">
 <input type="hidden" id="string_trans_mode" value="normal">
+<input type="hidden" id="string_trans_cc_interest" value="true">
 <input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="0">
 <input type="hidden" id="transaction_system_id" name="transaction_system_id" value="{{next_sys_id|default(0)}}">
 <input type="hidden" id="transaction_display_id" name="transaction_display_id" value="{{next_id|default(0)}}">
@@ -361,8 +362,16 @@
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Card Payment</h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h4 id="form_title" class="modal-title">Card Payment</h4>
+                            </div>
+                            <div class="col-md-4">
+                                <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        
+                                {{ form.checkbox_pos_xs('card_w_interest', 'with_interest', 'With interest', true, '')}}
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <div class="row form-horizontal form">
@@ -381,7 +390,6 @@
                                         <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                                             {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
-                                            {{ form.checkbox_pos('card_w_interest', 0, 'With interest', '', '')}}
                                             {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -831,7 +839,6 @@
                 <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                     {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
-                    {{ form.checkbox_pos('card_w_interest', 0, 'With interest', '', '')}}
                     {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -1837,6 +1844,16 @@ $(document).ready(function(){
             swal('Incomplete fields!','Please enter card details to continue','error');
         }   
     });
+
+    $(document).on("click",".card_w_interest", function(e){
+        var atLeastOneIsChecked = $('.card_w_interest:checkbox:checked').length > 0;
+
+        if (atLeastOneIsChecked) {
+            $('#string_trans_cc_interest').val('true');
+        } else {
+            $('#string_trans_cc_interest').val('false');
+        }
+    }); 
 
     $(document).on("click",".check_proceed_btn", function(e){
         var complete_flag = true;
