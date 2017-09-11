@@ -440,3 +440,11 @@ body { margin-top:20px; }
 }
 
 /*END CC*/
+
+
+
+.has-error_pos .form-control {
+  border-color: #ff0000;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}

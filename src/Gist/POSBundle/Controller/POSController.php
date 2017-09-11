@@ -87,6 +87,10 @@ class POSController extends Controller
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
+        $url_req="http://erp.cilanthropist.co/customer/fields/get_req";
+        $result_req = file_get_contents($url_req);
+        $vars_req = json_decode($result_req, true); 
+
         $url2="http://erp.cilanthropist.co/inventory/pos/get/terminal_operators";
         $result2 = file_get_contents($url2);
         $vars2 = json_decode($result2, true);
@@ -107,6 +111,7 @@ class POSController extends Controller
         $params['tax_coverage'] = $vars3;
         // $params['tax_coverage'] = "excl";
 
+        $params['cust_required_fields'] = $vars_req;
         $params['bank_options'] = $vars;
         $params['terminal_operators'] = $vars2;
         $params['charge_rates'] = $opts;

@@ -506,7 +506,11 @@
                     <div class="modal-body" id="cust_formx" style="height: 500px; overflow:scroll;overflow-x: hidden;">
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos_white('Customer ID', 'cust_search_id', '', 4, 7, false) }}
+                                {% if 'id' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Customer ID', 'cust_search_id', '', 4, 7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Customer ID', 'cust_search_id', '', 4, 7, '', false, '') }}
+                                {% endif %}
                             </div>
                             <div class="col-md-6" id="check_form">
                                 {{ form.radio_set_pos_white('Gender', 'cust_search_gender', gender_options, null, false) }}
@@ -514,7 +518,11 @@
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_selectx2_white('Status', 'cust_search_marital', marital_options, '', 4, 7, false) }}
+                                {% if 'marital_status' in cust_required_fields %}
+                                    {{ form.group_selectx2_white('Status*', 'cust_search_marital', marital_options, '', 4, 7,  false ,'f_required_select') }}
+                                {% else %}
+                                    {{ form.group_selectx2_white('Status', 'cust_search_marital', marital_options, '', 4, 7,false,'') }}
+                                {% endif %}
                             </div>
                             <div class="col-md-6" id="check_form">
                             {{ form.group_date_pos_white('Married On','cust_search_marriage_date', '',4, 7) }}
@@ -523,45 +531,95 @@
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-5" id="check_form">
-                                {{ form.group_text_pos_white('First Name', 'cust_search_firstname', '', 5, 6, false) }}
+                                {% if 'first_name' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('First Name*', 'cust_search_firstname', '', 5, 6, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('First Name', 'cust_search_firstname', '', 5, 6, '', false, '') }}
+                                {% endif %}
                             </div>
                             <div class="col-md-2" id="check_form">
-                            {{ form.group_text_pos_white('MI', 'cust_search_middle_name', '', 2, 8, false) }}
+                                {% if 'middle_name' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('MI*', 'cust_search_middle_name', '', 2, 8, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('MI', 'cust_search_middle_name', '', 2, 8, '', false, '') }}
+                                {% endif %}
                             </div>
                             <div class="col-md-5" id="check_form">
-                                {{ form.group_text_pos_white('Last Name', 'cust_search_lastname', '', 5, 6, false) }}
+                                {% if 'last_name' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Last Name*', 'cust_search_lastname', '', 5, 6, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Last Name', 'cust_search_lastname', '', 5, 6, '', false, '') }}
+                                {% endif %}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos_white('Home #', 'cust_search_home_phone', '', 4, 7, false) }}
-                                {{ form.group_text_pos_white('Email','cust_search_email', '',4, 7) }}
+                                {% if 'home_phone' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Home #*', 'cust_search_home_phone', '', 4,7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Home #', 'cust_search_home_phone', '', 4,7, '', false, '') }}
+                                {% endif %}
+                                {% if 'c_email_address' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Email*', 'cust_search_email', '', 4,7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Email', 'cust_search_email', '', 4,7, '', false, '') }}
+                                {% endif %}
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos_white('Mobile #', 'cust_search_mobile', '', 4, 7, false) }}
-                                {{ form.group_date_pos_white('Birthday','cust_search_birthdate', '',4, 7) }}
-                                
+                                {% if 'mobile_number' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Mobile #*', 'cust_search_mobile', '', 4,7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Mobile #', 'cust_search_mobile', '', 4,7, '', false, '') }}
+                                {% endif %}
+                                {% if 'birthdate' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Birthday*', 'cust_search_birthdate', '', 4,7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Birthday', 'cust_search_birthdate', '', 4,7, '', false, '') }}
+                                {% endif %}           
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-12" id="check_form">
-                                {{ form.group_text_pos_white('Address 1', 'cust_search_address_1', '', 2, 9, false) }}
+                                {% if 'address1' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Address 1*', 'cust_search_address_1', '', 2, 9, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Address 1', 'cust_search_address_1', '', 2, 9, '', false, '') }}
+                                {% endif %}   
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-12" id="check_form">
-                                {{ form.group_text_pos_white('Address 2', 'cust_search_address_2', '', 2, 9, false) }}
+                                {% if 'address2' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Address 2*', 'cust_search_address_2', '', 2, 9, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Address 2', 'cust_search_address_2', '', 2, 9, '', false, '') }}
+                                {% endif %}   
                             </div>
                         </div>
                         <div class="row form-horizontal form">
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos_white('City', 'cust_search_city', '', 4, 7, false) }}
-                                {{ form.group_text_pos_white('Country','cust_search_country', '',4, 7) }}
+                                {% if 'city' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('City*', 'cust_search_city', '', 4, 7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('City', 'cust_search_city', '', 4, 7, '', false, '') }}
+                                {% endif %}   
+                                {% if 'country' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Country*', 'cust_search_country', '', 4, 7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Country', 'cust_search_country', '', 4, 7, '', false, '') }}
+                                {% endif %}   
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.group_text_pos_white('State', 'cust_search_state', '', 4, 7, false) }}
-                                {{ form.group_text_pos_white('Zip','cust_search_zip', '',4, 7) }}
-                                
+                                {% if 'country' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('State*', 'cust_search_state', '', 4, 7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('State', 'cust_search_state', '', 4, 7, '', false, '') }}
+                                {% endif %} 
+                                {% if 'zip' in cust_required_fields %}
+                                    {{ form.group_text_pos_white('Zip*', 'cust_search_zip', '', 4, 7, '', false, 'f_required') }}
+                                {% else %}
+                                    {{ form.group_text_pos_white('Zip', 'cust_search_zip', '', 4, 7, '', false, '') }}
+                                {% endif %} 
                             </div>
                         </div>
                         <div class="row form-horizontal form">
@@ -1245,13 +1303,48 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".save_customer_button", function(e){
-        var last_name = $('#cust_search_lastname').val();
-        var first_name = $('#cust_search_firstname').val();
-        if ($('#cform-cust_search_lastname').val() != '' &&  $('#cform-cust_search_firstname').val() != '') {
+        var complete_flag = true;
+        $('.f_required').each(function() {
+            if ($(this).val() == '') {
+                
+                complete_flag = false;
+            }
+        });
+
+        $('.f_required_select').each(function() {
+
+            if ($(this).val() == '') {
+                
+                complete_flag = false;
+            }
+        });
+
+        if (complete_flag) {
             ajaxAddCustomer();
         } else {
-            swal("Missing fields!", "Please enter atleast a first and last name", "error");   
+            swal("Missing fields!", "Please complete form with (*)", "error"); 
+           // .parent().parent().addClass('has-error')
+            $('.f_required').each(function() {
+                if ($(this).val() == '') {
+                    $(this).parent().parent().addClass('has-error_pos');
+                }
+            });
+
+            $('.f_required_select').each(function() {
+                if ($(this).val() == '') {
+                    $(this).parent().parent().addClass('has-error_pos');
+                }//ff0000
+            });
         }
+        
+
+        // var last_name = $('#cust_search_lastname').val();
+        // var first_name = $('#cust_search_firstname').val();
+        // if ($('#cform-cust_search_lastname').val() != '' &&  $('#cform-cust_search_firstname').val() != '') {
+            
+        // } else {
+        //     swal("Missing fields!", "Please enter atleast a first and last name", "error");   
+        // }
     });
 
     $(document).on("click",".add_customer", function(e){

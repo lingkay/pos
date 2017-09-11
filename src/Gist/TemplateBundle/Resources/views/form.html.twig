@@ -134,11 +134,11 @@
 </div>
 {% endmacro %}
 
-{% macro group_text_pos_white(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
+{% macro group_text_pos_white(label, name, value, label_size, body_size, placeholderx = null, readonly = false, class = '') %}
+<div id="cgroup-{{ name }}" class="form-group">
+    <label style="color: white !important;" class="col-md-{{ label_size }} label-{{class}} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+        <input id="cform-{{ name }}" type="text" name="{{ name }}" class="form-control {{class}} {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
     </div>
 </div>
 {% endmacro %}
@@ -342,12 +342,12 @@
 </div>
 {% endmacro %}
 
-{% macro group_selectx2_white(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+{% macro group_selectx2_white(label, name, options, value, label_size, body_size, disabled = false, class = '') %}
 {% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
+<div id="cgroup-{{ name }}" class="form-group">
     <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
     <div class="col-md-{{ body_size }}">
-        <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
+        <select class="form-control {{name}} {{class}}" placeholder="-- Select {{label}} --">
         {{ self.options(options, value) }}
         </select>
     </div>
