@@ -1304,8 +1304,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".customer_search_btn", function(e){
-        var objDiv = document.getElementById("cust_formx");
-        objDiv.scrollTop = objDiv.scrollHeight;
+        
 
         var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
         var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
@@ -1333,9 +1332,13 @@ $(document).ready(function(){
                 swal('','You must enter atleast 7 digits to search by customer ID','error');
             }
             else {
+                var objDiv = document.getElementById("cust_formx");
+                objDiv.scrollTop = objDiv.scrollHeight;
                 ajaxSearchCustomer();
             }
         } else {
+            var objDiv = document.getElementById("cust_formx");
+            objDiv.scrollTop = objDiv.scrollHeight;
             ajaxSearchCustomer();
         }
 
