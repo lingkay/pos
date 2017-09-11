@@ -1306,7 +1306,40 @@ $(document).ready(function(){
     $(document).on("click",".customer_search_btn", function(e){
         var objDiv = document.getElementById("cust_formx");
         objDiv.scrollTop = objDiv.scrollHeight;
-        ajaxSearchCustomer();
+
+        var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
+        var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
+        var last_name = "%20"; if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};//$('#cform-cust_search_lastname').val();
+        var email = "%20"; if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};//$('#cform-cust_search_email').val();
+        var number = "%20"; if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};//$('#cform-cust_search_mobile').val();
+
+        var customer_id = "%20"; if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
+        var gender = "%20"; if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
+        var marital_status = "%20"; if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
+        var date_married = "%20"; if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
+        var home_phone = "%20"; if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
+        var birthday = "%20"; if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
+        var address1 = "%20"; if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
+        var address2 = "%20"; if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
+
+        var city = "%20"; if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
+        var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
+        var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
+        var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_address_2').val()};
+
+
+        if (first_name == '%20' && middle_name == '%20' && last_name == '%20' && email == '%20' && number == '%20' && gender == '%20' && marital_status == '%20' && date_married == '%20' && home_phone == '%20' && birthday == '%20' && address1 == '%20' && address2 == '%20' && city == '%20' && state == '%20' && country == '%20' && zip == '%20') {
+            if (customer_id.length < 7) {
+                swal('','You must enter atleast 7 digits to search by customer ID','error');
+            }
+            else {
+                ajaxSearchCustomer();
+            }
+        } else {
+            ajaxSearchCustomer();
+        }
+
+        
     });
 
     $(document).on("click",".save_customer_button", function(e){
