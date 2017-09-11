@@ -1327,7 +1327,7 @@ $(document).ready(function(){
         var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_address_2').val()};
 
 
-        if (first_name == '%20' && middle_name == '%20' && last_name == '%20' && email == '%20' && number == '%20' && gender == '%20' && marital_status == '%20' && date_married == '%20' && home_phone == '%20' && birthday == '%20' && address1 == '%20' && address2 == '%20' && city == '%20' && state == '%20' && country == '%20' && zip == '%20') {
+        if (first_name == '%20' && middle_name == '%20' && last_name == '%20' && email == '%20' && number == '%20' && gender == '%20' && marital_status == '%20' && date_married == '%20' && home_phone == '%20' && birthday == '%20' && address1 == '%20' && address2 == '%20' && city == '%20' && state == '%20' && country == '%20' && zip == '%20' && customer_id != '%20') {
             if (customer_id.length < 7) {
                 swal('','You must enter atleast 7 digits to search by customer ID','error');
             }
