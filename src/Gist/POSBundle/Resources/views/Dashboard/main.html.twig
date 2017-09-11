@@ -115,6 +115,11 @@ function clock(type)
 $(document).ready(function(){
     ajaxGetProductCategories();
 
+    var dept = "{{app.user.getDepartment|escape('js')}}";
+    if (dept == 'Sales') {
+        $('#pos_modal').modal('show');
+    }
+
     $(document).on("click",".sync_data", function(e){
         var route = "{{ path('gist_main_sync_pos_data')|escape('js') }}";
         $.getJSON(route, function(json){  
