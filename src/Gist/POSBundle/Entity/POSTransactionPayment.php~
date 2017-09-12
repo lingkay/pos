@@ -34,9 +34,51 @@ class POSTransactionPayment
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $amount;
 
+    // GENERIC
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $bank;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $trans_date;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $number;
+
+    // CARD
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_type;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_name;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_expiry;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_cvv;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_terms;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_class;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $card_terminal_operator;
+
+    // CHECK
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $check_account_number;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $check_payee;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $check_payor;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
-     * @ORM\JoinColumn(name="transaction_id", referencedColumnName="trans_id")
+     * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
      */
     protected $transaction;
 
@@ -133,7 +175,7 @@ class POSTransactionPayment
      *
      * @return POSTransactionPayments
      */
-    public function setTransaction(\Gist\POSBundle\Entity\POSTransactions $transaction = null)
+    public function setTransaction($transaction = null)
     {
         $this->transaction = $transaction;
 

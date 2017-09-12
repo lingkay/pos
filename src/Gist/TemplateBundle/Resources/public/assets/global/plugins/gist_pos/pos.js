@@ -4,7 +4,7 @@ function ajaxGetProductCategories()
     $( "#prod_cats" ).empty();
     $( "#prods" ).empty();
     $("#prod_cats").append("<div style=\"height: 10px;\">");
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://erp.purltech.com/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -35,7 +35,7 @@ function ajaxGetProducts(cid)
     $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     $( "#prods" ).empty();
     
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/"+cid;
+    var url = "http://erp.purltech.com/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, item) {
@@ -103,7 +103,7 @@ function ajaxSearchCustomer()
     $('#customers_list').empty();
     
     // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
-    var url = "http://erp.cilanthropist.co/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
+    var url = "http://erp.purltech.com/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
 
 
     url.replace('%2F','');
@@ -181,7 +181,7 @@ function ajaxAddCustomer()
 
 
 
-    var url = "http://erp.cilanthropist.co/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes;
+    var url = "http://erp.purltech.com/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes;
 
     $.getJSON(url, function(json){  
         var count = 0;
@@ -259,7 +259,7 @@ function round(value, exp) {
 
 function ajaxGetVAT()
 {
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/vat";
+    var url = "http://erp.purltech.com/inventory/pos/get/vat";
     var vat = 0;
     $.getJSON(url, function(json){  
         $('#float_tax_rate').val(json)
@@ -933,7 +933,7 @@ function revertOriginalPrices()
 function loadFrozenTransactions()
 {
     $('#frozen_list').empty();
-    var url = "http://pos.cilanthropist.co/pos/get_frozen_transactions";
+    var url = "http://pos.purltech.com/pos/get_frozen_transactions";
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, x) {
@@ -984,7 +984,7 @@ function freezeTransaction(is_final = false)
     } 
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = "http://pos.cilanthropist.co/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest;
+    var url = "http://pos.purltech.com/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest;
 
 
     $.getJSON(url, function(json){  
@@ -1032,7 +1032,7 @@ function freezeTransaction(is_final = false)
                     
 
 
-                    var url2 = "http://pos.cilanthropist.co/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
+                    var url2 = "http://pos.purltech.com/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
 
 
                     $.getJSON(url2, function(json){  
@@ -1084,7 +1084,7 @@ function freezeTransaction(is_final = false)
                     var payment_type = $(this).find('.payment_type').val();
                     var amount = $(this).find('.payment_amt_float').val();
 
-                    var url3 = "http://pos.cilanthropist.co/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
+                    var url3 = "http://pos.purltech.com/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
 
 
                     $.getJSON(url3, function(json){  

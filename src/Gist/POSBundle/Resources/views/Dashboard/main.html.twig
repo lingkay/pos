@@ -75,7 +75,7 @@ function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
 
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/product_categories";
+    var url = "http://erp.purltech.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             // alert(item.name);
@@ -86,7 +86,7 @@ function ajaxGetProductCategories()
 function ajaxGetProductCategories(cid)
 {
     
-    var url = "http://erp.cilanthropist.co/inventory/pos/get/products/{ cid: ':cid'}";
+    var url = "http://erp.purltech.co/inventory/pos/get/products/{ cid: ':cid'}";
     url = url.replace(":cid", cid);
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {

@@ -83,19 +83,19 @@ class POSController extends Controller
 
         
 
-        $url="http://erp.cilanthropist.co/inventory/pos/get/banks";
+        $url="http://erp.purltech.com/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
-        $url_req="http://erp.cilanthropist.co/customer/fields/get_req";
+        $url_req="http://erp.purltech.com/customer/fields/get_req";
         $result_req = file_get_contents($url_req);
         $vars_req = json_decode($result_req, true); 
 
-        $url2="http://erp.cilanthropist.co/inventory/pos/get/terminal_operators";
+        $url2="http://erp.purltech.com/inventory/pos/get/terminal_operators";
         $result2 = file_get_contents($url2);
         $vars2 = json_decode($result2, true);
 
-        $url_chg="http://erp.cilanthropist.co/pos_erp/get/charge_rates";
+        $url_chg="http://erp.purltech.com/pos_erp/get/charge_rates";
         $result_chg = file_get_contents($url_chg);
         $vars_chg = json_decode($result_chg, true);
 
@@ -104,7 +104,7 @@ class POSController extends Controller
             $opts[$o['id']] = $o['name'];
 
 
-        $url3="http://erp.cilanthropist.co/inventory/pos/get/tax_coverage";
+        $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
         $result3 = file_get_contents($url3);
         $vars3 = str_replace('"', '', $result3);
 
@@ -282,7 +282,7 @@ class POSController extends Controller
             if (trim($mode) == '' || $mode == null) { $mode = 'n-a'; }
             if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
 
-            file_get_contents("http://erp.cilanthropist.co/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest);
+            file_get_contents("http://erp.purltech.com/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest);
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
@@ -292,12 +292,12 @@ class POSController extends Controller
 
             foreach ($payments as $payment) {
                 // {trans_sys_id}/{payment_type}/{amount}
-                file_get_contents("http://erp.cilanthropist.co/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
+                file_get_contents("http://erp.purltech.com/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
             }
 
             foreach ($items as $item) {
                 // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
-                file_get_contents("http://erp.cilanthropist.co/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
+                file_get_contents("http://erp.purltech.com/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
             }
 
         }
