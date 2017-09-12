@@ -369,7 +369,7 @@
                             <div class="col-md-4">
                                 <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
                         
-                                {{ form.checkbox_pos_xs('card_w_interest', 'with_interest', 'With interest', true, '')}}
+                                
                             </div>
                         </div>
                     </div>
@@ -390,6 +390,7 @@
                                         <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                                             {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                                            {{ form.checkbox_pos('card_w_interest_indiv', 'with_interest_indiv', 'With interest', true, '')}}
                                             {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -824,7 +825,8 @@
                     </div>
                     <div class="modal-footer">
                         <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
-                        <a class="btn green default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Okay</a>
+                        <a class="btn default cc_go_back2" style="margin=0" href="javascript:void(0)">Go back to payment options</a>
+                        <a class="btn green default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Edit card details</a>
                     </div>
                 </form>
             </div>
@@ -839,6 +841,7 @@
                 <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                     {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
+                    {{ form.checkbox_pos('card_w_interest_indiv', 'with_interest_indiv', 'With interest', true, '')}}
                     {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -1066,9 +1069,11 @@ $(document).ready(function(){
             }
 
             if (parseFloat(data.expYear) < parseFloat(curr_yy)) {
+                //alert(parseFloat(parseFloat(data.expYear)+" "+parseFloat(curr_yy)));
                 $('#swipe_expired').modal('show');
                 return;
             } else if (parseFloat(data.expMonth) <= parseFloat(curr_mm) && parseFloat(data.expYear) <= parseFloat(curr_yy)) {
+                // alert(parseFloat(data.expMonth)+" "+parseFloat(curr_mm)+" "+parseFloat(data.expYear)+" "+parseFloat(curr_yy));
                 $('#swipe_expired').modal('show');
                 return;
             }
@@ -1544,49 +1549,90 @@ $(document).ready(function(){
 
     $(".cc_card_expiry").focusout(function() {
         var date = new Date();
+        var this_eleme = $(this);
+        // alert($(this).val().length);
         // alert(date.getMonth()+1);
         var curr_mm = date.getMonth()+1;
         var curr_yy = date.getFullYear().toString().substr(-2);
+        if ($(this).val().length == 7) {
+            var mm = $(this).val().substring(0, 2);
+            var yy = $(this).val().substring(5, 7);
+            // alert(mm+'/'+yy);
+            if (mm != '' && yy != '')
+            {
+                if (parseFloat(yy) < parseFloat(curr_yy)) {
+                    //$('#swipe_expired').modal('show');
+                    swal({
+                      title: "Transaction Frozen!",
+                      text: "The page will now reload",
+                      type: "success",
+                      showCancelButton: true,
+                      showConfirmButton: true,
+                      confirmButtonText: "Edit card details",
+                      cancelButtonText: "Go back to payment options",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                            // var row = this_eleme.closest('.cc_field');
+                            // var cc_num = row.find('.cc_card_number');
+                            // var cc_name = row.find('.cc_card_name');
+                            // var cc_type = row.find('.cc_card_type select');
+                            // var cc_cvv = row.find('.cc_card_cvv');
 
-        var mm = $(this).val().substring(0, 2);
-        var yy = $(this).val().substring(5, 7);
-        // alert(mm+'/'+yy);
-        if (mm != '' && yy != '')
-        {
-            if (parseFloat(yy) < parseFloat(curr_yy)) {
-                $('#swipe_expired').modal('show');
+                            // cc_cvv.val('');
+                            // cc_num.val('');
+                            // cc_name.val('');
+                            // this_eleme.val('');
+                            // row.find('.cc_card_type option:first').prop('selected',true);
+                        } else {
+                            clearCreditCardModal();
+                            $('#cc_modal').modal('hide');
+                            $('#swipe_expired').modal('hide');
+                            $('#checkout_modal').modal('show');
+                            computeBalanceDisplayCardMulti(0);
+                        }   
+                    });
+                    
+                    // alert(mm+'/'+yy);
+                    
+                } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
+                    swal({
+                      title: "Transaction Frozen!",
+                      text: "The page will now reload",
+                      type: "success",
+                      showCancelButton: true,
+                      showConfirmButton: true,
+                      confirmButtonText: "Edit card details",
+                      cancelButtonText: "Go back to payment options",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                            // var row = this_eleme.closest('.cc_field');
+                            // var cc_num = row.find('.cc_card_number');
+                            // var cc_name = row.find('.cc_card_name');
+                            // var cc_type = row.find('.cc_card_type select');
+                            // var cc_cvv = row.find('.cc_card_cvv');
+
+                            // cc_cvv.val('');
+                            // cc_num.val('');
+                            // cc_name.val('');
+                            // this_eleme.val('');
+                            // row.find('.cc_card_type option:first').prop('selected',true);
+                        } else {
+                            clearCreditCardModal();
+                            $('#cc_modal').modal('hide');
+                            $('#swipe_expired').modal('hide');
+                            $('#checkout_modal').modal('show');
+                            computeBalanceDisplayCardMulti(0);
+                        }   
+                    });
+                }
+            } 
+            else 
+            {
+                swal('Invalid expirty date','Please enter expiry date again', 'error');
                 $(this).val('');
-                // alert(mm+'/'+yy);
-                var row = $(this).closest('.cc_field');
-                var cc_num = row.find('.cc_card_number');
-                var cc_name = row.find('.cc_card_name');
-                var cc_type = row.find('.cc_card_type select');
-                var cc_cvv = row.find('.cc_card_cvv');
-
-                cc_cvv.val('');
-                cc_num.val('');
-                cc_name.val('');
-                row.find('.cc_card_type option:first').prop('selected',true);
-            } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
-                $('#swipe_expired').modal('show');
-                $(this).val('');
-                // alert(curr_mm+'/'+curr_yy+'   '+mm+'/'+yy);
-                var row = $(this).closest('.cc_field');
-                var cc_num = row.find('.cc_card_number');
-                var cc_name = row.find('.cc_card_name');
-                var cc_type = row.find('.cc_card_type select');
-                var cc_cvv = row.find('.cc_card_cvv');
-
-                cc_cvv.val('');
-                cc_num.val('');
-                cc_name.val('');
-                row.find('.cc_card_type option:first').prop('selected',true);
             }
-        } 
-        else 
-        {
-            swal('Invalid expirty date','Please enter expiry date again', 'error');
-            $(this).val('');
         }
     });
 
@@ -2061,12 +2107,22 @@ $(document).ready(function(){
         computeBalanceDisplayCardMulti(0);
     });
 
+    $(document).on("click",".cc_go_back2", function(e){
+        clearCreditCardModal();
+        $('#cc_modal').modal('hide');
+        $('#swipe_expired').modal('hide');
+        $('#checkout_modal').modal('show');
+        computeBalanceDisplayCardMulti(0);
+    });
+
     $(document).on("click",".check_go_back", function(e){
         clearCheckModal();
         $('#check_modal').modal('hide');
         $('#checkout_modal').modal('show');
         computeBalanceDisplayCheckMulti(0);
     });
+
+
 
     //Proceed
     $(document).on("click",".proceed_btn", function(e){
