@@ -1744,7 +1744,23 @@ $(document).ready(function(){
                 $('#customer_modal').modal('show');
             } else {
                 // toastr['error']('Balance of '+addCommas(parseFloat(balance))+' not paid', 'Transaction incomplete');
-                sweetAlert("Oops...", "Balance of "+addCommas(parseFloat(balance))+" not paid", "error");
+                // sweetAlert("Oops...", "Balance of "+addCommas(parseFloat(balance))+" not paid", "error");
+                swal({
+                      title: "Payment incomplete!",
+                      text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
+                      type: "error",
+                      showCancelButton: true,
+                      showConfirmButton: true,
+                      confirmButtonText: "Deposit Mode",
+                      cancelButtonText: "Go back to payment options",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                           
+                        } else {
+                            
+                        }   
+                    });
             }
         }
     });
