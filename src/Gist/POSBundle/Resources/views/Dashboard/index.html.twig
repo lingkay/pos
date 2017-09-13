@@ -390,7 +390,7 @@
                                         <div class="col-md-5">
                                             {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                                             {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
-                                            {{ form.checkbox_pos('card_w_interest_indiv', 'with_interest_indiv', 'With interest', true, '')}}
+                                            {{ form.group_selectx('Interest', 'interest_indiv', interest_opts, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -841,7 +841,7 @@
                 <div class="col-md-5">
                     {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
                     {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
-                    {{ form.checkbox_pos('card_w_interest_indiv', 'with_interest_indiv', 'With interest', true, '')}}
+                    {{ form.group_selectx('Interest', 'interest_indiv', interest_opts, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
                     {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
@@ -2070,6 +2070,8 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".add_card_btn", function(e){
+        // var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+        // alert(row_id);
         $("#cc_fields").children().clone(true,true).find("input").val("").end().appendTo('#cc_form');
         $('input[name=cc_card_number]').payment('formatCardNumber');
         $('input[name=cc_card_cvv]').payment('formatCardCVC');

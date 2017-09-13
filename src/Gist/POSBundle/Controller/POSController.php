@@ -65,6 +65,11 @@ class POSController extends Controller
             'female' => 'Female'
         );
 
+        $params['interest_opts'] = array(
+            'with' => 'with interest',
+            'without' => 'no interest'
+        );
+
         $params['marital_options'] = array(
             'single' => 'Single',
             'married' => 'Married',

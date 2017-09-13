@@ -659,6 +659,34 @@
 
 {% endmacro %}
 
+{% macro radio_set_pos_card(label, name, fields, value, disabled = false) %}
+{% import _self as form %}
+<div class="form-group">
+    <label class="col-md-5 control-label">{{ label }}</label>
+    <div class="col-md-6">
+        <div> 
+        {% for id,display in fields %}
+            {{ form.radio_card(name, id, display, value == id ? true : false, name, disabled) }}
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endmacro %}
+
+{% macro radio_card(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+<label class="radio">
+{% if group == null %}
+    {% set grp = "radio-group" %}
+{% else %}
+    {% set grp = group %}
+{% endif %}
+    <input type="radio" name="{{ grp }}" class="{{ grp }}" value="{{ value }}">
+    {{ display }}
+</label>
+{% endmacro %}
+
+
 {% macro radio_set_pos_white(label, name, fields, value, disabled = false) %}
 {% import _self as form %}
 <div class="form-group">
