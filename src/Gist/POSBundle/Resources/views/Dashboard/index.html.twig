@@ -1223,6 +1223,16 @@ $(document).ready(function(){
 
     $(document).on("click",".customer_clear_search_btn", function(e){
         clearCustomerFields();
+        $('.f_required').each(function() {
+            $(this).parent().parent().removeClass('has-error_pos');
+        });
+
+        $('.f_required_select').each(function() {
+            $(this).parent().parent().removeClass('has-error_pos');
+        });
+
+        $('#cform-cust_search_birthdate').parent().parent().removeClass('has-error_pos');
+
     });
 
     // CC
@@ -1309,7 +1319,16 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".customer_search_btn", function(e){
-        
+        // clearCustomerFields();
+        $('.f_required').each(function() {
+            $(this).parent().parent().removeClass('has-error_pos');
+        });
+
+        $('.f_required_select').each(function() {
+            $(this).parent().parent().removeClass('has-error_pos');
+        });
+
+        $('#cform-cust_search_birthdate').parent().parent().removeClass('has-error_pos');
 
         var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
         var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
