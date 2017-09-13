@@ -583,7 +583,7 @@
                                 {% if 'birthdate' in cust_required_fields %}
                                     {{ form.group_date_pos_white('Birthday*', 'cust_search_birthdate', '', 4,7, false, 'f_required_date') }}
                                 {% else %}
-                                    {{ form.group_date_pos_white('Birthday*', 'cust_search_birthdate', '', 4,7, false, '') }}
+                                    {{ form.group_date_pos_white('Birthday', 'cust_search_birthdate', '', 4,7, false, '') }}
                                 {% endif %}           
                             </div>
                         </div>
@@ -1367,11 +1367,12 @@ $(document).ready(function(){
             }
         });
 
-
-        if ($('#cform-cust_search_birthdate').val() == '') {
-            
-            complete_flag = false;
-        }
+        $('.f_required_date').each(function() {
+            if ($(this).val() == '') {
+                
+                complete_flag = false;
+            }
+        });
    
 
         if (complete_flag) {
@@ -1395,12 +1396,13 @@ $(document).ready(function(){
                 }   
             });
 
-
-            if ($('#cform-cust_search_birthdate').val() == '') {
-                $('#cform-cust_search_birthdate').parent().parent().addClass('has-error_pos');
-            } else {
-                $(this).parent().parent().removeClass('has-error_pos');
-            }
+            $('.f_required_date').each(function() {
+                if ($(this).val() == '') {
+                    $(this).parent().parent().addClass('has-error_pos');
+                } else {
+                    $(this).parent().parent().removeClass('has-error_pos');
+                }
+            });
 
         }
         
