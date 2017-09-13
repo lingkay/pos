@@ -14,6 +14,10 @@ gist_main_index:
     path:     /
     defaults: { _controller: GistPOSBundle:POS:landing }
 
+gist_pos_menu_index:
+    path:     /pos_menu
+    defaults: { _controller: GistPOSBundle:POS:posMenu }
+
 
 # POS AJAX
 gist_pos_get_frozen_transactions:

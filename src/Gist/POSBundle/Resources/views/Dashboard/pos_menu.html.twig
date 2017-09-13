@@ -1,0 +1,102 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% block content %}
+<div class="page-content">
+    <div class="row" style="padding-top: 10px;">
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="javascript:void(0)" style="text-decoration: none;" onclick="clock('IN')">
+            <img src="bundles/gisttemplate/assets/global/img/clock.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">Clock In/Out</span></div>
+        </a>
+        </div>
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="{{path('gist_pos_index')}}" class="pos_button" style="text-decoration: none;">
+            <img src="bundles/gisttemplate/assets/global/img/pos_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">POS</span></div>
+        </a>
+        </div>
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="javascript:void(0)" class="settings_btn" style="text-decoration: none;">
+            <img src="bundles/gisttemplate/assets/global/img/inventory.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">Inventory</span></div>
+        </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="{{path('gist_pos_settings')}}" class="settings_btn" style="text-decoration: none;">
+            <img src="bundles/gisttemplate/assets/global/img/settings.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">Settings</span></div>
+        </a>
+        </div>
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="javascript:void(0)" style="text-decoration: none;" onclick="clock('IN')">
+            <img src="bundles/gisttemplate/assets/global/img/reports.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">Reports</span></div>
+        </a>
+        </div>
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="{{path('gist_pos_index')}}" class="pos_button" style="text-decoration: none;">
+            <img src="bundles/gisttemplate/assets/global/img/transfer.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">Transfer Stock</span></div>
+        </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="{{path('gist_pos_settings')}}" class="settings_btn" style="text-decoration: none;">
+            <img src="bundles/gisttemplate/assets/global/img/commission.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;">Commission</span></div>
+        </a>
+        </div>
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="javascript:void(0)" style="text-decoration: none;" onclick="clock('IN')">
+            <img src="bundles/gisttemplate/assets/global/img/default1.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;"></span></div>
+        </a>
+        </div>
+        <div class="col-md-4" style="padding: 0px !important;">
+        <a href="{{path('gist_pos_index')}}" class="pos_button" style="text-decoration: none;">
+            <img src="bundles/gisttemplate/assets/global/img/default1.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 14px; color: black;"></span></div>
+        </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+
+
+function clock(type)
+{
+    var url = '{{ path("gist_main_clock_tap", {'type': 'type'}) }}'; 
+    url = url.replace("type", type);
+    $.getJSON(url, function(json){  
+       $.each(json, function(i, x) {
+            if (x.status == 'ok') {
+                swal('Clock '+type+' successful!','','success');
+                $('#pos_modal').modal('hide');
+            } else {
+                swal('Clock '+type+' not successful!','','error');
+            }
+        });
+    });
+}
+
+$(document).ready(function(){
+    ajaxGetProductCategories();
+
+    var dept = "{{app.user.getDepartment|escape('js')}}";
+    if (dept == 'Sales') {
+        $('#pos_modal').modal('show');
+    }
+
+    $(document).on("click",".sync_data", function(e){
+        var route = "{{ path('gist_main_sync_pos_data')|escape('js') }}";
+        $.getJSON(route, function(json){  
+           $.each(json, function(i, x) {
+                swal('POS Data Synced!','POS Transactions sent to ERP','success');
+            });
+        });
+    });
+
+    // $(document).on("click",".pos_button", function(e){
+    //     $('#pos_modal').modal('show');
+    // });
+});
+</script>
+{% endblock %}

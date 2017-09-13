@@ -129,6 +129,16 @@ class POSController extends Controller
         return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
     }
 
+    public function posMenuAction()
+    {
+        $this->title = 'Dashboard';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+
+        
+
+        return $this->render('GistPOSBundle:Dashboard:pos_menu.html.twig', $params);
+    }
+
     public function getFrozenTransactionsAction()
     {
         header("Access-Control-Allow-Origin: *");
