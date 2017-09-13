@@ -1318,6 +1318,14 @@ $(document).ready(function(){
         $('#customer_modal').modal('show');
     });
 
+    $('#cform-cust_search_id').keyup(function() {
+      var foo = $(this).val().split(" ").join(""); // remove hyphens
+      if (foo.length > 0) {
+        foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
+      }
+      $(this).val(foo);
+    });
+
     $(document).on("click",".customer_search_btn", function(e){
         // clearCustomerFields();
         $('.f_required').each(function() {
