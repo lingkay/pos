@@ -150,6 +150,7 @@ function ajaxSearchCustomer()
             field += '</tr>';
 
             $('#customers_list').prepend(field);
+            swal('No customer found!', '', 'error');
        }
     });
 }
