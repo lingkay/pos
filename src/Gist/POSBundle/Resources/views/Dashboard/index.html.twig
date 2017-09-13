@@ -1592,9 +1592,9 @@ $(document).ready(function(){
                 if (parseFloat(yy) < parseFloat(curr_yy)) {
                     //$('#swipe_expired').modal('show');
                     swal({
-                      title: "Transaction Frozen!",
-                      text: "The page will now reload",
-                      type: "success",
+                      title: "Card expired!",
+                      text: "",
+                      type: "error",
                       showCancelButton: true,
                       showConfirmButton: true,
                       confirmButtonText: "Edit card details",
@@ -1626,9 +1626,9 @@ $(document).ready(function(){
                     
                 } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
                     swal({
-                      title: "Transaction Frozen!",
-                      text: "The page will now reload",
-                      type: "success",
+                      title: "Card expired!",
+                      text: "",
+                      type: "error",
                       showCancelButton: true,
                       showConfirmButton: true,
                       confirmButtonText: "Edit card details",
