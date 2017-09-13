@@ -1364,13 +1364,9 @@ $(document).ready(function(){
                 swal('','You must enter atleast 7 digits to search by customer ID','error');
             }
             else {
-                var objDiv = document.getElementById("cust_formx");
-                objDiv.scrollTop = objDiv.scrollHeight;
                 ajaxSearchCustomer();
             }
         } else {
-            var objDiv = document.getElementById("cust_formx");
-            objDiv.scrollTop = objDiv.scrollHeight;
             ajaxSearchCustomer();
         }
 
@@ -1602,17 +1598,7 @@ $(document).ready(function(){
                     },
                     function(isConfirm){
                         if (isConfirm) {
-                            // var row = this_eleme.closest('.cc_field');
-                            // var cc_num = row.find('.cc_card_number');
-                            // var cc_name = row.find('.cc_card_name');
-                            // var cc_type = row.find('.cc_card_type select');
-                            // var cc_cvv = row.find('.cc_card_cvv');
 
-                            // cc_cvv.val('');
-                            // cc_num.val('');
-                            // cc_name.val('');
-                            // this_eleme.val('');
-                            // row.find('.cc_card_type option:first').prop('selected',true);
                         } else {
                             clearCreditCardModal();
                             $('#cc_modal').modal('hide');
@@ -1636,17 +1622,7 @@ $(document).ready(function(){
                     },
                     function(isConfirm){
                         if (isConfirm) {
-                            // var row = this_eleme.closest('.cc_field');
-                            // var cc_num = row.find('.cc_card_number');
-                            // var cc_name = row.find('.cc_card_name');
-                            // var cc_type = row.find('.cc_card_type select');
-                            // var cc_cvv = row.find('.cc_card_cvv');
 
-                            // cc_cvv.val('');
-                            // cc_num.val('');
-                            // cc_name.val('');
-                            // this_eleme.val('');
-                            // row.find('.cc_card_type option:first').prop('selected',true);
                         } else {
                             clearCreditCardModal();
                             $('#cc_modal').modal('hide');

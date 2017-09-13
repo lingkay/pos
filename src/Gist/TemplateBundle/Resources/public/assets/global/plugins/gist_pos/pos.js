@@ -151,6 +151,9 @@ function ajaxSearchCustomer()
 
             $('#customers_list').prepend(field);
             swal('No customer found!', '', 'error');
+       } else {
+            var objDiv = document.getElementById("cust_formx");
+            objDiv.scrollTop = objDiv.scrollHeight;
        }
     });
 }
