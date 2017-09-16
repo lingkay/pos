@@ -163,7 +163,7 @@ class POSController extends Controller
     // POS SAVING AND SENDING METHODS
 
     
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest)
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -178,6 +178,7 @@ class POSController extends Controller
         $transaction->setStatus($status);
         $transaction->setSyncedToErp('false');
         $transaction->setTransactionMode($transaction_mode);
+        $transaction->setExtraAmount($transaction_ea);
 
         $transaction->setTaxRate($tax_rate);
         $transaction->setOrigVatAmt($orig_vat_amt);
@@ -289,6 +290,7 @@ class POSController extends Controller
             $bulk_type = $transaction->getBulkDiscountType();
             $mode = $transaction->getTransactionMode();
             $cc_interest = $transaction->getTransactionCCInterest();
+            $ea = $transaction->getExtraAmount();
 
             if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n-a'; }
             if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n-a'; }
@@ -302,8 +304,9 @@ class POSController extends Controller
             if (trim($bulk_type) == '' || $bulk_type == null) { $bulk_type = 'n-a'; }
             if (trim($mode) == '' || $mode == null) { $mode = 'n-a'; }
             if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
+            if (trim($ea) == '' || $ea == null) { $ea = 'n-a'; }
 
-            file_get_contents("http://erp.purltech.com/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest);
+            file_get_contents("http://erp.purltech.com/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea);
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);

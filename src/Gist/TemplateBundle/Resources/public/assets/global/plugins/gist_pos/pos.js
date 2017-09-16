@@ -728,6 +728,7 @@ function computeExtraAmount()
     $('#cart_min_pricex').text(addCommas(cart_min_price));
     $('#cart_pricex').text(addCommas(cart_price));
     $('#ea_amt').text(extra_amt_disp);
+    $('#float_trans_ea').val(extra_amt);
 }
 
 function apply_indiv(x)
@@ -966,6 +967,7 @@ function freezeTransaction(is_final = false)
     var transaction_sys_id = $('#transaction_system_id').val();
     var transaction_disp_id = $('#transaction_display_id').val();
     var transaction_total = $('#float_trans_amount').val();
+    var transaction_ea = $('#float_trans_ea').val();
     var transaction_balance = $('#float_trans_balance').val();
     var transaction_mode = $('#string_trans_mode').val();
     var transaction_type = $('#string_trans_type').val();
@@ -988,7 +990,7 @@ function freezeTransaction(is_final = false)
     } 
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = "http://pos.purltech.com/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest;
+    var url = "http://pos.purltech.com/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea;
 
 
     $.getJSON(url, function(json){  

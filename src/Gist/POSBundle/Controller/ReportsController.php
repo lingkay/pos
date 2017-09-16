@@ -113,8 +113,8 @@ class ReportsController extends CrudController
             $grid->newColumn('ID', 'getID', 'id'),
             $grid->newColumn('Receipt Number', 'getTransDisplayId', 'trans_display_id'),
             $grid->newColumn('Location', 'getID', 'id'),
-            $grid->newColumn('EA', 'getID', 'id'),
-            $grid->newColumn('Type', 'getTransactionMode', 'mode'),
+            $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
+            $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
         );
     }
 

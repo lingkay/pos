@@ -99,6 +99,12 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $date_modified;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $location;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $generic_var1;
+
 
     public function __construct()
     {
@@ -146,6 +152,11 @@ class POSTransaction
     public function getTransactionMode()
     {
         return $this->transaction_mode;
+    }
+
+    public function getTransactionModeFormatted()
+    {
+        return ucfirst($this->transaction_mode);
     }
 
     public function setTransactionCCInterest($transaction_cc_interest)
@@ -741,5 +752,53 @@ class POSTransaction
     public function getDateModified()
     {
         return $this->date_modified;
+    }
+
+    /**
+     * Set location
+     *
+     * @param string $location
+     *
+     * @return POSTransaction
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Get location
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * Set genericVar1
+     *
+     * @param string $genericVar1
+     *
+     * @return POSTransaction
+     */
+    public function setGenericVar1($genericVar1)
+    {
+        $this->generic_var1 = $genericVar1;
+
+        return $this;
+    }
+
+    /**
+     * Get genericVar1
+     *
+     * @return string
+     */
+    public function getGenericVar1()
+    {
+        return $this->generic_var1;
     }
 }
