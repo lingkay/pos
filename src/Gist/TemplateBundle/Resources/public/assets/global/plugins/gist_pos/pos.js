@@ -728,7 +728,7 @@ function computeExtraAmount()
     $('#cart_min_pricex').text(addCommas(cart_min_price));
     $('#cart_pricex').text(addCommas(cart_price));
     $('#ea_amt').text(extra_amt_disp);
-    $('#float_trans_ea').val(extra_amt);
+    $('#float_trans_ea').val(extra_amt_disp);
 }
 
 function apply_indiv(x)
