@@ -170,7 +170,7 @@ class POSController extends Controller
         $transaction = new POSTransaction();
 
         $transaction->setId($id);
-        $transaction->setTransDisplayId($display_id);
+        //$transaction->setTransDisplayId($display_id);
         $transaction->setCustomerId($customer_id);
         $transaction->setTransactionBalance($balance);
         $transaction->setTransactionTotal($total);
@@ -192,6 +192,12 @@ class POSController extends Controller
         $transaction->setTransactionCCInterest($transaction_cc_interest);
 
 
+        $em->persist($transaction);
+        $em->flush();
+
+        //action after save
+        $new_display_id = strtoupper(substr($transaction_mode, 0,1)).'-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
+        $transaction->setTransDisplayId($new_display_id);
         $em->persist($transaction);
         $em->flush();
 

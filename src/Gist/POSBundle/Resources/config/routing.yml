@@ -60,3 +60,18 @@ gist_pos_settings_sync_users:
     path:     /settings/sync_users
     methods: [GET]
     defaults: { _controller: GistPOSBundle:Settings:syncUsers }
+
+# REPORTS
+gist_pos_reports:
+    path:     /reports
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Reports:index }
+
+gist_pos_reports_edit_form:
+    pattern: /report/{id}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Reports:editForm }
+gist_pos_reports_grid:
+    pattern: /reports/grid
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Reports:grid }

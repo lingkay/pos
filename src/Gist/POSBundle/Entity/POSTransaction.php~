@@ -38,6 +38,12 @@ class POSTransaction
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $transaction_type;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $transaction_mode;
+
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $transaction_cc_interest;
+
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $status;
 
@@ -75,7 +81,23 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $bulk_discount_type;
 
+    /** @ORM\OneToMany(targetEntity="POSTransactionItem", mappedBy="transaction") */
+    protected $items;
 
+    /** @ORM\OneToMany(targetEntity="POSTransactionPayment", mappedBy="transaction") */
+    protected $payments;
+
+    /**
+     * @ORM\OneToOne(targetEntity="POSTransaction")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
+     */
+    private $reference_transaction;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $extra_amount;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $date_modified;
 
 
     public function __construct()
@@ -90,6 +112,52 @@ class POSTransaction
         $this->dataHasGeneratedID($data);
         $this->dataTrackCreate($data);
         return $data;
+    }
+
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    public function getPayments()
+    {
+        return $this->payments;
+    }
+
+    public function getTotalPayments()
+    {
+        $total = 0;
+
+        foreach ($this->payments as $p) {
+            $total = $total + $p->getAmount();
+        }
+
+        return $total;
+    }
+    
+
+    public function setTransactionMode($transaction_mode)
+    {
+        $this->transaction_mode = $transaction_mode;
+
+        return $this;
+    }
+
+    public function getTransactionMode()
+    {
+        return $this->transaction_mode;
+    }
+
+    public function setTransactionCCInterest($transaction_cc_interest)
+    {
+        $this->transaction_cc_interest = $transaction_cc_interest;
+
+        return $this;
+    }
+
+    public function getTransactionCCInterest()
+    {
+        return $this->transaction_cc_interest;
     }
 
     /**
@@ -529,5 +597,101 @@ class POSTransaction
     public function getCartNewTotal()
     {
         return $this->cart_new_total;
+    }
+
+    /**
+     * Set bulkDiscountType
+     *
+     * @param string $bulkDiscountType
+     *
+     * @return POSTransaction
+     */
+    public function setBulkDiscountType($bulkDiscountType)
+    {
+        $this->bulk_discount_type = $bulkDiscountType;
+
+        return $this;
+    }
+
+    /**
+     * Get bulkDiscountType
+     *
+     * @return string
+     */
+    public function getBulkDiscountType()
+    {
+        return $this->bulk_discount_type;
+    }
+
+    /**
+     * Add item
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionItem $item
+     *
+     * @return POSTransaction
+     */
+    public function addItem($item)
+    {
+        $this->items[] = $item;
+
+        return $this;
+    }
+
+    /**
+     * Remove item
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionItem $item
+     */
+    public function removeItem($item)
+    {
+        $this->items->removeElement($item);
+    }
+
+    /**
+     * Add payment
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionPayment $payment
+     *
+     * @return POSTransaction
+     */
+    public function addPayment($payment)
+    {
+        $this->payments[] = $payment;
+
+        return $this;
+    }
+
+    /**
+     * Remove payment
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionPayment $payment
+     */
+    public function removePayment($payment)
+    {
+        $this->payments->removeElement($payment);
+    }
+
+    /**
+     * Set referenceTransaction
+     *
+     * @param \Gist\POSBundle\Entity\POSTransaction $referenceTransaction
+     *
+     * @return POSTransaction
+     */
+    public function setReferenceTransaction($referenceTransaction = null)
+    {
+        $this->reference_transaction = $referenceTransaction;
+
+        return $this;
+    }
+
+    /**
+     * Get referenceTransaction
+     *
+     * @return \Gist\POSBundle\Entity\POSTransaction
+     */
+    public function getReferenceTransaction()
+    {
+        return $this->reference_transaction;
     }
 }

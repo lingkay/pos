@@ -87,7 +87,17 @@ class POSTransaction
     /** @ORM\OneToMany(targetEntity="POSTransactionPayment", mappedBy="transaction") */
     protected $payments;
 
+    /**
+     * @ORM\OneToOne(targetEntity="POSTransaction")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
+     */
+    private $reference_transaction;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $extra_amount;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $date_modified;
 
 
     public function __construct()
@@ -611,5 +621,125 @@ class POSTransaction
     public function getBulkDiscountType()
     {
         return $this->bulk_discount_type;
+    }
+
+    /**
+     * Add item
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionItem $item
+     *
+     * @return POSTransaction
+     */
+    public function addItem($item)
+    {
+        $this->items[] = $item;
+
+        return $this;
+    }
+
+    /**
+     * Remove item
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionItem $item
+     */
+    public function removeItem($item)
+    {
+        $this->items->removeElement($item);
+    }
+
+    /**
+     * Add payment
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionPayment $payment
+     *
+     * @return POSTransaction
+     */
+    public function addPayment($payment)
+    {
+        $this->payments[] = $payment;
+
+        return $this;
+    }
+
+    /**
+     * Remove payment
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionPayment $payment
+     */
+    public function removePayment($payment)
+    {
+        $this->payments->removeElement($payment);
+    }
+
+    /**
+     * Set referenceTransaction
+     *
+     * @param \Gist\POSBundle\Entity\POSTransaction $referenceTransaction
+     *
+     * @return POSTransaction
+     */
+    public function setReferenceTransaction($referenceTransaction = null)
+    {
+        $this->reference_transaction = $referenceTransaction;
+
+        return $this;
+    }
+
+    /**
+     * Get referenceTransaction
+     *
+     * @return \Gist\POSBundle\Entity\POSTransaction
+     */
+    public function getReferenceTransaction()
+    {
+        return $this->reference_transaction;
+    }
+
+    /**
+     * Set extraAmount
+     *
+     * @param string $extraAmount
+     *
+     * @return POSTransaction
+     */
+    public function setExtraAmount($extraAmount)
+    {
+        $this->extra_amount = $extraAmount;
+
+        return $this;
+    }
+
+    /**
+     * Get extraAmount
+     *
+     * @return string
+     */
+    public function getExtraAmount()
+    {
+        return $this->extra_amount;
+    }
+
+    /**
+     * Set dateModified
+     *
+     * @param string $dateModified
+     *
+     * @return POSTransaction
+     */
+    public function setDateModified($dateModified)
+    {
+        $this->date_modified = $dateModified;
+
+        return $this;
+    }
+
+    /**
+     * Get dateModified
+     *
+     * @return string
+     */
+    public function getDateModified()
+    {
+        return $this->date_modified;
     }
 }
