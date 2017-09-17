@@ -397,4 +397,29 @@ class POSController extends Controller
         $this->addFlash('success', $this->title . ' quotation converted to sale '.$new_transaction->getTransDisplayId());
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
+
+    public function deleteTransactionAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+
+        $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
+        $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
+
+        foreach ($payments as $payment) {
+            // {trans_sys_id}/{payment_type}/{amount}
+            $em->remove($payment);
+        }
+
+        foreach ($items as $item) {
+            // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
+            $em->remove($item);
+        }
+
+        $em->remove($transaction);
+        $em->flush();
+
+        $this->addFlash('success', $this->title . ' transaction deleted ');
+        return $this->redirect($this->generateUrl('gist_pos_reports'));
+    }
 }

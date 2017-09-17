@@ -9,7 +9,7 @@
 
 {% if mode == 'frozen' %}
 <a href="{{ path(route_edit, { 'id': id }) }}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Continue transaction"><i class="fa fa-shopping-cart"></i></a>
-<a href="{{ path(route_edit, { 'id': id }) }}" class="btn default btn-xs red" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-times"></i></a>
+<a href="{{ path('gist_pos_delete_transaction', { 'id': id }) }}" class="btn default btn-xs red" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-times"></i></a>
 {% endif %}
 
 

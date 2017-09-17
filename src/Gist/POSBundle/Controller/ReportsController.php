@@ -144,7 +144,8 @@ class ReportsController extends CrudController
             'regular'=>'Regular',
             'quotation'=>'Quotation',
             'deposit'=>'Deposit',
-            'upsell'=>'Upsell'
+            'upsell'=>'Upsell',
+            'frozen'=>'Frozen'
         );
         $params['grid_cols'] = $gl->getColumns();
         // $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
@@ -203,93 +204,7 @@ class ReportsController extends CrudController
 
     }
 
-    public function syncUsersAction()
-    {
-        header("Access-Control-Allow-Origin: *");
-        $conf = $this->get('gist_configuration');
-        $em = $this->getDoctrine()->getManager();
-        $area_id = $conf->get('gist_sys_area_id');
 
-        $url="http://erp.purltech.com/pos_erp/get/users/".$area_id;
-        // $url="http://m55e.erp/pos_erp/get/users/".$area_id;
-        $result = file_get_contents($url);
-        $vars = json_decode($result, true);
-
-        foreach ($vars as $u) {
-            //check if user already saved
-            // echo $u['id']."<br>";
-
-            $user_exist = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id' => $u['id']));
-            if ($user_exist) {
-                //user found. update record
-                //$user_exist->setID($u['id']); 
-                $user_exist->setUsername($u['username']); 
-                //$user_exist->setUsernameCanonical($u['username_canonical']); 
-                $user_exist->setSalt($u['salt']); 
-                $user_exist->setEmail($u['email']); 
-                $user_exist->setPassword($u['password']); 
-                //$user_exist->setPlainPassword($u['plainPassword']); 
-                //$user_exist->setConfirmationToken($u['confirmationToken']); 
-                $user_exist->setEnabled($u['enabled']); 
-                $user_exist->setFirstName($u['first_name']); 
-                $user_exist->setMiddleName($u['middle_name']); 
-                $user_exist->setLastName($u['last_name']); 
-                $user_exist->setBrand($u['brand']); 
-                $user_exist->setDepartment($u['department']); 
-                $user_exist->setPosition($u['position']); 
-                $user_exist->setCommissionType($u['commission_type']); 
-                $user_exist->setContactNumber($u['contact_number']);
-                $em->persist($user_exist);
-
-            } else {
-                //user not found. create record
-                $user_new = new User;
-                $user_new->setERPID($u['id']); 
-                $user_new->setUsername($u['username']); 
-                //$user_new->setUsernameCanonical($u['username_canonical']); 
-                $user_new->setSalt($u['salt']); 
-                $user_new->setEmail($u['email']); 
-                $user_new->setPassword($u['password']); 
-                //$user_new->setPlainPassword($u['plainPassword']); 
-                //$user_new->setConfirmationToken($u['confirmationToken']); 
-                $user_new->setEnabled($u['enabled']); 
-                $user_new->setFirstName($u['first_name']); 
-                $user_new->setMiddleName($u['middle_name']); 
-                $user_new->setLastName($u['last_name']); 
-                $user_new->setBrand($u['brand']); 
-                $user_new->setDepartment($u['department']); 
-                $user_new->setPosition($u['position']); 
-                $user_new->setCommissionType($u['commission_type']); 
-                $user_new->setContactNumber($u['contact_number']);
-                $em->persist($user_new);
-
-            }
-        }
-
-        // die();`
-        try
-        {
-            $em->flush();
-        }
-        catch (UniqueConstraintViolationException $e) {
-            var_dump($e->getMessage());
-            die();
-        }
-        catch (ValidationException $e)
-        {
-            var_dump($e->getMessage());
-            die();
-        }
-        catch (DBALException $e)
-        {
-            var_dump($e->getMessage());
-            die();
-        }
-        
-
-        $list_opts[] = array('status'=>'ok');
-        return new JsonResponse($list_opts);
-    }
 
     public function gridSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
     {

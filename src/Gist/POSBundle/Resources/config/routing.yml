@@ -81,6 +81,11 @@ gist_pos_quote_to_sale:
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:quoteToSale }
 
+gist_pos_delete_transaction:
+    pattern: /reports/delete_transaction/{id}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:deleteTransaction }
+
 gist_pos_reports_grid_ajax:
     path:    /reports/ajax/{receipt_number}/{date_from}/{date_to}/{mode}
     defaults: { _controller: GistPOSBundle:Reports:gridSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null }
