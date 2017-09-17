@@ -122,6 +122,7 @@ class ReportsController extends CrudController
             $grid->newColumn('ID', 'getID', 'id'),
             $grid->newColumn('Receipt Number', 'getTransDisplayId', 'trans_display_id'),
             $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
+            $grid->newColumn('Transaction Date','getDateCreateFormatted','date_create'),
             $grid->newColumn('Location', 'getID', 'id'),
             $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
             $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
@@ -139,6 +140,12 @@ class ReportsController extends CrudController
         $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
         $params['users'] = $user_exist;
+        $params['modes'] = array(
+            'regular'=>'Regular',
+            'quotation'=>'Quotation',
+            'deposit'=>'Deposit',
+            'upsell'=>'Upsell'
+        );
         $params['grid_cols'] = $gl->getColumns();
         // $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
         // $result3 = file_get_contents($url3);
@@ -282,6 +289,54 @@ class ReportsController extends CrudController
 
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
+    }
+
+    public function gridSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
+    {
+        $this->hookPreAction();
+
+        $gloader = $this->setupGridLoader();
+
+        $gloader->setQBFilterGroup($this->filterSalesHistory($receipt_number,$date_from,$date_to, $mode));
+        $gres = $gloader->load();
+        $resp = new Response($gres->getJSON());
+        $resp->headers->set('Content-Type', 'application/json');
+
+        return $resp;
+    }
+
+    protected function filterSalesHistory($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
+    {
+        $grid = $this->get('gist_grid');
+        $fg = $grid->newFilterGroup();
+        $date = new DateTime();
+
+        $date_from = $date_from=='null'? new DateTime($date->format('Ym01')):new DateTime($date_from);
+        $date_to = $date_to=='null'? new DateTime($date->format('Ymt')):new DateTime($date_to);
+
+        $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create <= '".$date_to->format('Y-m-d')."')";
+
+        
+        if ($receipt_number != null and $receipt_number != 'null')
+        {
+            $qry[] = "(o.trans_display_id = '".$receipt_number."')";
+        }
+
+        if ($mode != null and $mode != 'null')
+        {
+            $qry[] = "(o.transaction_mode = '".$mode."')";
+        }
+
+        
+
+
+
+        if (!empty($qry))
+        {
+            $filter = implode(' AND ', $qry);
+        }
+
+        return $fg->where($filter);
     }
 
 }
