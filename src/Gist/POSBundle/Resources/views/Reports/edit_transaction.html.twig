@@ -46,7 +46,7 @@
                                 </thead>
                                 <tbody id="items_given_tbody">
                                 	{% if object.hasParent %}
-										{% for t in object.getReferenceTransaction.getItems|default('') %}
+										{% for i in object.getReferenceTransaction.getItems|default('') %}
 											<tr>
 		                                        <td><input type="text" name="rate_name[]" value="{{i.getName|default('')}}" class="form-control rate_name" readonly="true"></td>
 		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getOrigPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
