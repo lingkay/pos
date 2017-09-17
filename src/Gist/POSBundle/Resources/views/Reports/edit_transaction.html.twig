@@ -45,8 +45,8 @@
                                     </tr>
                                 </thead>
                                 <tbody id="items_given_tbody">
-                                	{% if transaction.hasParent %}
-										{% for t in transaction.getReferenceTransaction.getItems|default('') %}
+                                	{% if object.transaction.hasParent %}
+										{% for t in object.transaction.getReferenceTransaction.getItems|default('') %}
 											<tr>
 		                                        <td><input type="text" name="rate_name[]" value="{{i.getName|default('')}}" class="form-control rate_name" readonly="true"></td>
 		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getOrigPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
@@ -77,7 +77,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="items_given_tbody">
-                                	{% if transaction.hasParent %}
+                                	{% if object.transaction.hasParent %}
 	                                    {% for i in object.getReferenceTransaction.getPayments|default('') %}
 	                                      	<tr>
 		                                        <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
