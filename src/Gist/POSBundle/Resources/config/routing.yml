@@ -75,3 +75,8 @@ gist_pos_reports_grid:
     pattern: /reports/grid
     methods: [GET]
     defaults: { _controller: GistPOSBundle:Reports:grid }
+
+gist_pos_quote_to_sale:
+    pattern: /reports/quote_to_sale/{id}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:quoteToSale }

@@ -377,4 +377,24 @@ class POSController extends Controller
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
     }
+
+    public function quoteToSaleAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+
+        $new_transaction = clone $transaction;
+        $new_transaction->setReferenceTransaction($transaction);
+        $em->persist($new_transaction);
+        $em->flush();
+
+        $new_display_id = strtoupper('N').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
+        $new_transaction->setTransDisplayId($new_display_id);
+        $new_transaction->setTransactionMode('normal');
+        $em->persist($new_transaction);
+        $em->flush();
+
+        $this->addFlash('success', $this->title . ' quotation converted to sale '.$new_transaction->getTransDisplayId());
+        return $this->redirect($this->generateUrl('gist_pos_reports'));
+    }
 }

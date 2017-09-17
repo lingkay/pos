@@ -93,6 +93,11 @@ class POSTransaction
      */
     private $reference_transaction;
 
+    /**
+     * @ORM\OneToOne(targetEntity="POSTransaction", mappedBy="reference_transaction")
+     */
+    private $child_transaction;
+
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $extra_amount;
 
@@ -704,6 +709,25 @@ class POSTransaction
     public function getReferenceTransaction()
     {
         return $this->reference_transaction;
+    }
+
+    public function getReferenceTransactionDisplayID()
+    {
+        if ($this->reference_transaction != null) {
+            return $this->reference_transaction->getTransDisplayId();
+        }
+
+        return '-';
+        
+    }
+
+    public function hasChild()
+    {
+        if ($this->child_transaction == null) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

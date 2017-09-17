@@ -66,6 +66,7 @@ class ReportsController extends CrudController
         $em = $this->getDoctrine()->getManager();
         $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         $params = array(
+            'hasChild' => $obj->hasChild(),
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
             'route_edit' => $this->getRouteGen()->getEdit(),
@@ -105,6 +106,14 @@ class ReportsController extends CrudController
         return $this->render('GistPOSBundle:Reports:edit_transaction.html.twig', $params);
     }
 
+    // protected function getGridJoins()
+    // {
+    //     $grid = $this->get('gist_grid');
+    //     return array(
+    //         $grid->newJoin('s', 'reference_transaction', 'getReferenceTransaction'),
+    //     );
+    // }
+
     protected function getGridColumns()
     {
         $grid = $this->get('gist_grid');
@@ -112,6 +121,7 @@ class ReportsController extends CrudController
         return array(
             $grid->newColumn('ID', 'getID', 'id'),
             $grid->newColumn('Receipt Number', 'getTransDisplayId', 'trans_display_id'),
+            $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
             $grid->newColumn('Location', 'getID', 'id'),
             $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
             $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
