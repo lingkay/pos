@@ -730,6 +730,15 @@ class POSTransaction
         return true;
     }
 
+    public function hasParent()
+    {
+        if ($this->reference_transaction == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Set extraAmount
      *

@@ -50,12 +50,21 @@ div.container_logo {
 {% if transaction.getTransactionType|default('') == 'reg' or transaction.getTransactionType|default('') == 'bulk' %}
 <div style="width: 100%; height: 15px; vertical-align: middle; margin-bottom: 15px;font-size: 16px;">
 <table width="300">
-{% for t in transaction.getItems|default('') %}
-	<tr>
-		<td width="240">{{t.getName}}</td>
-		<td width="90" style="text-align: right; position: absolute;">P{{t.getOrigPrice|number_format(2,'.',',')}}</td>
-	</tr>
-{% endfor %}
+{% if transaction.hasParent %}
+	{% for t in transaction.getReferenceTransaction.getItems|default('') %}
+		<tr>
+			<td width="240">{{t.getName}}</td>
+			<td width="90" style="text-align: right; position: absolute;">P{{t.getOrigPrice|number_format(2,'.',',')}}</td>
+		</tr>
+	{% endfor %}
+{% else %}
+	{% for t in transaction.getItems|default('') %}
+		<tr>
+			<td width="240">{{t.getName}}</td>
+			<td width="90" style="text-align: right; position: absolute;">P{{t.getOrigPrice|number_format(2,'.',',')}}</td>
+		</tr>
+	{% endfor %}
+{% endif %}
 <tr>
 	<td width="240"><b>Subtotal</b></td>
 	<td width="90" style="text-align: right; position: absolute;"><b>P{{transaction.getCartOrigTotal|number_format(2,'.',',')}}</b></td>
@@ -65,16 +74,29 @@ div.container_logo {
 {% elseif transaction.getTransactionType|default('') == 'per' %}
 <div style="width: 100%; height: 15px; vertical-align: middle; margin-bottom: 15px;font-size: 16px;">
 <table width="300">
-{% for t in transaction.getItems|default('') %}
-	<tr>
-		<td width="240">{{t.getName}}</td>
-		<td width="90" style="text-align: right; position: absolute;">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="240" style="font-size: 14px;"><i>&nbsp;&nbsp;&nbsp;&nbsp;{{t.getDiscountTypeFormatted}} P{{t.getDiscountValue}}</i></td>
-		<td width="90" style="text-align: right; position: absolute;">P{{t.getAdjustedPrice|number_format(2,'.',',')}}</td>
-	</tr>
-{% endfor %}
+{% if transaction.hasParent %}
+	{% for t in transaction.getReferenceTransaction.getItems|default('') %}
+		<tr>
+			<td width="240">{{t.getName}}</td>
+			<td width="90" style="text-align: right; position: absolute;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="240" style="font-size: 14px;"><i>&nbsp;&nbsp;&nbsp;&nbsp;{{t.getDiscountTypeFormatted}} P{{t.getDiscountValue}}</i></td>
+			<td width="90" style="text-align: right; position: absolute;">P{{t.getAdjustedPrice|number_format(2,'.',',')}}</td>
+		</tr>
+	{% endfor %}
+{% else %}
+	{% for t in transaction.getItems|default('') %}
+		<tr>
+			<td width="240">{{t.getName}}</td>
+			<td width="90" style="text-align: right; position: absolute;">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="240" style="font-size: 14px;"><i>&nbsp;&nbsp;&nbsp;&nbsp;{{t.getDiscountTypeFormatted}} P{{t.getDiscountValue}}</i></td>
+			<td width="90" style="text-align: right; position: absolute;">P{{t.getAdjustedPrice|number_format(2,'.',',')}}</td>
+		</tr>
+	{% endfor %}
+{% endif %}
 <tr style="margin-top: 15px;">
 	<td width="240"><b>Subtotal</b></td>
 	<td width="90" style="text-align: right; position: absolute;"><b>P{{transaction.getCartNewTotal|number_format(2,'.',',')}}</b></td>
