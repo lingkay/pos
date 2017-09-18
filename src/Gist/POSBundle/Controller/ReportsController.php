@@ -242,10 +242,6 @@ class ReportsController extends CrudController
             $qry[] = "(o.transaction_mode = '".$mode."')";
         }
 
-        
-
-
-
         if (!empty($qry))
         {
             $filter = implode(' AND ', $qry);

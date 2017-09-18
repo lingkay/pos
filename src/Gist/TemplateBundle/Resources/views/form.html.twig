@@ -687,14 +687,14 @@
 {% endmacro %}
 
 
-{% macro radio_set_pos_white(label, name, fields, value, disabled = false) %}
+{% macro radio_set_pos_white(label, name, fields, value, disabled = false, class = '') %}
 {% import _self as form %}
 <div class="form-group">
     <label style="color: white !important;" class="col-md-4 control-label">{{ label }}</label>
     <div class="col-md-7">
         <div class="radio-list"> 
         {% for id,display in fields %}
-            {{ form.radio_white(name, id, display, value == id ? true : false, name, disabled) }}
+            {{ form.radio_white(name, id, display, value == id ? true : false, name, disabled, 'c', class) }}
         {% endfor %}
         </div>
     </div>
@@ -702,14 +702,14 @@
 
 {% endmacro %}
 
-{% macro radio_white(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+{% macro radio_white(name, value, display, checked, group, disabled = false, prefix = 'c',class) %}
 <label class="radio-inline">
 {% if group == null %}
     {% set grp = "radio-group" %}
 {% else %}
     {% set grp = group %}
 {% endif %}
-    <input  type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
+    <input  type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }} {{class}}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
     <span style="color: white !important;">{{ display }}</span>
 </label>
 {% endmacro %}

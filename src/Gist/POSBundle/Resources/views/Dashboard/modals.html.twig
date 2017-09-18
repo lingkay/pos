@@ -378,7 +378,13 @@
                                 {% endif %}
                             </div>
                             <div class="col-md-6" id="check_form">
-                                {{ form.radio_set_pos_white('Gender', 'cust_search_gender', gender_options, null, false) }}
+                                {% if 'gender' in cust_visible_fields %}
+                                    {% if 'gender' in cust_required_fields %}
+                                        {{ form.radio_set_pos_white('Gender', 'cust_search_gender', gender_options, null, false, 'f_required_gender') }}
+                                    {% else %}
+                                        {{ form.radio_set_pos_white('Gender', 'cust_search_gender', gender_options, null, false, '') }}
+                                    {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                         <div class="row form-horizontal form">
