@@ -96,6 +96,10 @@ class POSController extends Controller
         $result_req = file_get_contents($url_req);
         $vars_req = json_decode($result_req, true); 
 
+        $url_visible="http://erp.purltech.com/customer/fields/get_visible";
+        $result_visible = file_get_contents($url_visible);
+        $vars_visible = json_decode($result_visible, true); 
+
         $url2="http://erp.purltech.com/inventory/pos/get/terminal_operators";
         $result2 = file_get_contents($url2);
         $vars2 = json_decode($result2, true);
@@ -117,6 +121,7 @@ class POSController extends Controller
         // $params['tax_coverage'] = "excl";
 
         $params['cust_required_fields'] = $vars_req;
+        $params['cust_visible_fields'] = $vars_visible;
         $params['bank_options'] = $vars;
         $params['terminal_operators'] = $vars2;
         $params['charge_rates'] = $opts;
@@ -407,12 +412,10 @@ class POSController extends Controller
         $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
 
         foreach ($payments as $payment) {
-            // {trans_sys_id}/{payment_type}/{amount}
             $em->remove($payment);
         }
 
         foreach ($items as $item) {
-            // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
             $em->remove($item);
         }
 
