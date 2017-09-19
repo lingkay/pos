@@ -66,6 +66,7 @@ class ReportsController extends CrudController
         $em = $this->getDoctrine()->getManager();
         $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         $params = array(
+            'ea' => $obj->getExtraAmount(),
             'hasChild' => $obj->hasChild(),
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
