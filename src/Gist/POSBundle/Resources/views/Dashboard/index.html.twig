@@ -658,12 +658,14 @@ $(document).ready(function(){
             }
         });
 
-        $('.f_required_gender').each(function() {
-
-            if($('.f_required_gender').length <= 0){
+        if ($('.f_required_gender').length > 0) {
+            if($('.f_required_gender:checked').length <= 0){
                 complete_flag = false;
              }
-        });
+        }
+
+            
+    
 
         $('.f_required_date').each(function() {
             if ($(this).val() == '') {
