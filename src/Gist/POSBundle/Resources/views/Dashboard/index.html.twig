@@ -253,7 +253,7 @@ function appendPerItemFields()
 $(document).ready(function(){ 
 
     
-        
+    $('.switch_to_normal_class').hide();
         
     ajaxGetProductCategories();  
     ajaxGetVAT();
@@ -280,6 +280,10 @@ $(document).ready(function(){
     $(document).on("click",".freeze_btn", function(e){
         //THIS WILL INITIATE SAVING OF TRANSACTION
         freezeTransaction();
+    });
+
+    $(document).on("click",".switch_to_normal_class", function(e){
+        $(this).hide();
     });
 
     $(document).on("click",".swipe_card", function(e){
@@ -978,6 +982,14 @@ $(document).ready(function(){
         resetCustomerModal();
     });
 
+    $('#checkout_modal').on('shown.bs.modal', function () {
+        if ($('#string_trans_mode').val() == 'quotation') {
+            $('.switch_to_normal_class').show();
+        } else {
+            $('.switch_to_normal_class').hide();
+        }
+    });
+
     $(document).on('keyup', '.per_item_discount_amt', function () {
         var row = $(this).closest('tr');
         var srp = row.find('.srp').val();
@@ -1018,13 +1030,22 @@ $(document).ready(function(){
             $('#checkout_modal').modal('hide');
             $('#customer_modal').modal('show');
         } else {
-            if ($('#string_trans_mode').val() == "quotation") {
-                swal("Payment Complete!", "Enter customer information on the next form", "success")
-                $('#checkout_modal').modal('hide');
-                $('#customer_modal').modal('show');
-            } else {
+            // if ($('#string_trans_mode').val() == "quotation") {
+            //     swal("Payment Complete!", "Enter customer information on the next form", "success")
+            //     $('#checkout_modal').modal('hide');
+            //     $('#customer_modal').modal('show');
+            // } else {
                 // toastr['error']('Balance of '+addCommas(parseFloat(balance))+' not paid', 'Transaction incomplete');
                 // sweetAlert("Oops...", "Balance of "+addCommas(parseFloat(balance))+" not paid", "error");
+            if ($('#string_trans_mode').val() == "quotation") {
+                swal({
+                      title: "Payment incomplete!",
+                      text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
+                      type: "error",
+                      showConfirmButton: true,
+                      confirmButtonText: "Go back to payment options"
+                    });
+            } else {
                 swal({
                       title: "Payment incomplete!",
                       text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
@@ -1042,6 +1063,7 @@ $(document).ready(function(){
                         }   
                     });
             }
+            //}
         }
     });
 
