@@ -743,7 +743,7 @@ $(document).ready(function(){
         if (balance == 0 && trans_amt > 0) {
             swal("Cannot freeze transaction!", "Full payment already made", "error");
         } else {
-            loadFrozenTransactions();
+            //loadFrozenTransactions();
             $('#freeze_modal').modal('show');
         }
     });
