@@ -16,10 +16,10 @@
 		                        <a href="#tab_sales_history" data-toggle="tab">
 		                            Sales History </a>
 		                    </li>
-		                    <li>
+		                    {#<li>
 		                        <a href="#tab_sync_settings" data-toggle="tab">
 		                            Users</a>
-		                    </li>
+		                    </li>#}
 		                </ul>
 		                <!-- END MAIN TABS -->
 		                <div class="tab-content">
@@ -82,7 +82,7 @@ $(document).ready(function(){
             }
         },
         "aoColumnDefs": [
-            { "bSortable": false, "aTargets": [{{ grid_cols|length - 1}}] },
+            { "bSortable": false, "aTargets": [2,4,{{ grid_cols|length - 1}}] },
         ]
     });
 
@@ -128,6 +128,10 @@ $(document).ready(function(){
         }
     );
 
+  $('#clear_filter_button').click(function (){
+        $('#cform-receipt_number').val('');
+        $('#cform-transaction_mode').val([]);
+  });
 
   $('#filter_button').click(function (){
 

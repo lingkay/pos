@@ -51,13 +51,13 @@ class ReportsController extends CrudController
 
         // grid columns
         $gcols = $this->getGridColumns();
-
+                
         $gcols[] = $grid->newColumn('', 'getID', null, 'o', array($this, 'callbackGridx'), false, false);
 
         // add columns
         foreach ($gcols as $gc)
             $gloader->addColumn($gc);
-
+        
         return $gloader;
     }
 
