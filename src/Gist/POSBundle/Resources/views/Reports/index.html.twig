@@ -83,7 +83,17 @@ $(document).ready(function(){
         },
         "aoColumnDefs": [
             { "bSortable": false, "aTargets": [2,4,{{ grid_cols|length - 1}}] },
-        ]
+        ],
+        "bAutoWidth": false , 
+          "aoColumns" : [
+            { "sWidth": '5%' },
+            { "sWidth": '15%' },
+            { "sWidth": '15%' },
+            { "sWidth": '15%' },
+            { "sWidth": '15%' },
+            { "sWidth": '10%' },
+            { "sWidth": '15%' }
+          ]
     });
 
     $('#list_table_wrapper .dataTables_filter input').addClass("form-control input-small input-inline"); // modify table search input

@@ -51,13 +51,13 @@ class ReportsController extends CrudController
 
         // grid columns
         $gcols = $this->getGridColumns();
-                
+
         $gcols[] = $grid->newColumn('', 'getID', null, 'o', array($this, 'callbackGridx'), false, false);
 
         // add columns
         foreach ($gcols as $gc)
             $gloader->addColumn($gc);
-        
+
         return $gloader;
     }
 
@@ -124,7 +124,7 @@ class ReportsController extends CrudController
             $grid->newColumn('Receipt Number', 'getTransDisplayId', 'trans_display_id'),
             $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
             $grid->newColumn('Transaction Date','getDateCreateFormatted','date_create'),
-            $grid->newColumn('Location', 'getID', 'id'),
+            //$grid->newColumn('Location', 'null', 'null'),
             $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
             $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
         );
