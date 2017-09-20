@@ -399,7 +399,7 @@ class POSController extends Controller
         $em->persist($new_transaction);
         $em->flush();
 
-        $this->addFlash('success', $this->title . ' quotation converted to sale '.$new_transaction->getTransDisplayId());
+        $this->addFlash('success', 'Quotation converted to sale '.$new_transaction->getTransDisplayId());
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
 
