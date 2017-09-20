@@ -120,6 +120,20 @@
 </div>
 {% endmacro %}
 
+{% macro checkbox_pos2(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+<div id="xgroup-pdc" class="form-group">
+    <label class="col-md-5 control-label">{{ display }}</label>
+    <div class="col-md-6">
+        {% if group == null %}
+            {% set grp = name %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+            <input type="checkbox" id="" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro checkbox_pos_xs(name, value, display, checked, group, disabled = false, prefix = 'c') %}
 <div id="xgroup-pdc" class="form-group">
     <label class="col-md-6 control-label">{{ display }}</label>
@@ -501,6 +515,24 @@
 {% endif %}
 {% endmacro %}
 
+{% macro group_date_pos2(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+{% import _self as self %}
+{% if readonly %}
+    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+{% else %}
+<div class="form-group posgrp_{{name}}">
+    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class ="col-md-{{ body_size }}">
+        <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
+            <input id="" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+            <span class="input-group-btn">
+                <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}
 
 {% macro group_date_pos_white(label, name, value, label_size, body_size, readonly = false, class = '') %}
 {% import _self as self %}
