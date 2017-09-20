@@ -78,33 +78,84 @@ function ajaxGetProducts(cid)
 
 function ajaxSearchCustomer()
 {
+    var first_name = "%20"; 
+    if ($('#cform-cust_search_firstname').length) {
+        if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
+    }
+    var middle_name = "%20"; 
+    if ($('#cform-cust_search_middle_name').length) {
+        if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
+    }
+    var last_name = "%20"; 
+    if ($('#cform-cust_search_lastname').length) {
+        if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};
+    }
+    var email = "%20"; 
+    if ($('#cform-cust_search_email').length) {
+        if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};
+    }
+    var number = "%20"; 
+    if ($('#cform-cust_search_mobile').length) {
+        if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};
+    }
 
+    var customer_id = "%20"; 
+    if ($('#cform-cust_search_id').length) {
+        if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
+    }
+    var gender = "%20"; 
+    if ($('#cform-cust_search_gender').length) {
+        if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
+    }
+    var marital_status = "%20"; 
+    if ($('#cform-cust_search_marital').length) {
+        if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
+    }
+    var date_married = "%20"; 
+    if ($('#cform-cust_search_marriage_date').length) {
+        if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
+    }
+    var home_phone = "%20"; 
+    if ($('#cform-cust_search_home_phone').length) {
+        if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
+    }
+    var birthday = "%20"; 
+    if ($('#cform-cust_search_birthdate').length) {
+        if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
+    }
+    var address1 = "%20"; 
+    if ($('#cform-cust_search_address_1').length) {
+        if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
+    }
+    var address2 = "%20"; 
+    if ($('#cform-cust_search_address_2').length) {
+        if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
+    }
 
-    var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
-    var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
-    var last_name = "%20"; if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};//$('#cform-cust_search_lastname').val();
-    var email = "%20"; if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};//$('#cform-cust_search_email').val();
-    var number = "%20"; if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};//$('#cform-cust_search_mobile').val();
-
-    var customer_id = "%20"; if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
-    var gender = "%20"; if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
-    var marital_status = "%20"; if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
-    var date_married = "%20"; if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
-    var home_phone = "%20"; if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
-    var birthday = "%20"; if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
-    var address1 = "%20"; if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
-    var address2 = "%20"; if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
-
-    var city = "%20"; if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
-    var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
-    var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
-    var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_address_2').val()};
+    var city = "%20"; 
+    if ($('#cform-cust_search_city').length) {
+        if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
+    }
+    var state = "%20"; 
+    if ($('#cform-cust_search_state').length) {
+        if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
+    }
+    var country = "%20"; 
+    if ($('#cform-cust_search_country').length) {
+        if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
+    }
+    var zip = "%20"; 
+    if ($('#cform-cust_search_zip').length) {
+        if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_zip').val()};
+    }
+    var notes = "%20"; 
+    if ($('#cform-cust_search_notes').length) {
+        if($('#cform-cust_search_notes').val() != ''){notes = $('#cform-cust_search_notes').val()};
+    }
 
     $('#customers_list').empty();
     
-    // var url = "http://dev.gisterp2/inventory/pos/get/products/"+cid;
     var url = "http://erp.purltech.com/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
-
 
     url.replace('%2F','');
     $.getJSON(url, function(json){  
@@ -113,8 +164,6 @@ function ajaxSearchCustomer()
         count++;
         var name = cust.last_name + ', ' + cust.first_name;
 
-
-        
         $('.init_row_customer').remove();
         var field = '<tr class=\"row_cust_'+cust.id+'\">';    
             field += '<input type="hidden" class="first_name" value="'+cust.first_name+'">';
@@ -161,29 +210,80 @@ function ajaxSearchCustomer()
 function ajaxAddCustomer()
 {
 
-    var first_name = "%20"; if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
-    var middle_name = "%20"; if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
-    var last_name = "%20"; if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};//$('#cform-cust_search_lastname').val();
-    var email = "%20"; if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};//$('#cform-cust_search_email').val();
-    var number = "%20"; if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};//$('#cform-cust_search_mobile').val();
+    var first_name = "%20"; 
+    if ($('#cform-cust_search_firstname').length) {
+        if($('#cform-cust_search_firstname').val() != ''){first_name = $('#cform-cust_search_firstname').val()};
+    }
+    var middle_name = "%20"; 
+    if ($('#cform-cust_search_middle_name').length) {
+        if($('#cform-cust_search_middle_name').val() != ''){middle_name = $('#cform-cust_search_middle_name').val()};
+    }
+    var last_name = "%20"; 
+    if ($('#cform-cust_search_lastname').length) {
+        if($('#cform-cust_search_lastname').val() != ''){last_name = $('#cform-cust_search_lastname').val()};
+    }
+    var email = "%20"; 
+    if ($('#cform-cust_search_email').length) {
+        if($('#cform-cust_search_email').val() != ''){email = $('#cform-cust_search_email').val()};
+    }
+    var number = "%20"; 
+    if ($('#cform-cust_search_mobile').length) {
+        if($('#cform-cust_search_mobile').val() != ''){number = $('#cform-cust_search_mobile').val()};
+    }
 
-    var customer_id = "%20"; if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
-    var gender = "%20"; if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
-    var marital_status = "%20"; if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
-    var date_married = "%20"; if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
-    var home_phone = "%20"; if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
-    var birthday = "%20"; if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
-    var address1 = "%20"; if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
-    var address2 = "%20"; if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
+    var customer_id = "%20"; 
+    if ($('#cform-cust_search_id').length) {
+        if($('#cform-cust_search_id').val() != ''){customer_id = $('#cform-cust_search_id').val()};
+    }
+    var gender = "%20"; 
+    if ($('#cform-cust_search_gender').length) {
+        if($("input[name='cust_search_gender']").is(":checked")){gender = $("input[name='cust_search_gender']:checked").val()} ;
+    }
+    var marital_status = "%20"; 
+    if ($('#cform-cust_search_marital').length) {
+        if($('.cust_search_marital').val() != '' && $('.cust_search_marital').val() != 'undefined'){marital_status = $('.cust_search_marital').val()};
+    }
+    var date_married = "%20"; 
+    if ($('#cform-cust_search_marriage_date').length) {
+        if($('#cform-cust_search_marriage_date').val() != ''){date_married = $('#cform-cust_search_marriage_date').val()};
+    }
+    var home_phone = "%20"; 
+    if ($('#cform-cust_search_home_phone').length) {
+        if($('#cform-cust_search_home_phone').val() != ''){home_phone = $('#cform-cust_search_home_phone').val()};
+    }
+    var birthday = "%20"; 
+    if ($('#cform-cust_search_birthdate').length) {
+        if($('#cform-cust_search_birthdate').val() != ''){birthday = $('#cform-cust_search_birthdate').val()};
+    }
+    var address1 = "%20"; 
+    if ($('#cform-cust_search_address_1').length) {
+        if($('#cform-cust_search_address_1').val() != ''){address1 = $('#cform-cust_search_address_1').val()};
+    }
+    var address2 = "%20"; 
+    if ($('#cform-cust_search_address_2').length) {
+        if($('#cform-cust_search_address_2').val() != ''){address2 = $('#cform-cust_search_address_2').val()};
+    }
 
-    var city = "%20"; if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
-    var state = "%20"; if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
-    var country = "%20"; if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
-    var zip = "%20"; if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_zip').val()};
-    var notes = "%20"; if($('#cform-cust_search_notes').val() != ''){notes = $('#cform-cust_search_notes').val()};
-
-
-
+    var city = "%20"; 
+    if ($('#cform-cust_search_city').length) {
+        if($('#cform-cust_search_city').val() != ''){city = $('#cform-cust_search_city').val()};
+    }
+    var state = "%20"; 
+    if ($('#cform-cust_search_state').length) {
+        if($('#cform-cust_search_state').val() != ''){state = $('#cform-cust_search_state').val()};
+    }
+    var country = "%20"; 
+    if ($('#cform-cust_search_country').length) {
+        if($('#cform-cust_search_country').val() != ''){country = $('#cform-cust_search_country').val()};
+    }
+    var zip = "%20"; 
+    if ($('#cform-cust_search_zip').length) {
+        if($('#cform-cust_search_zip').val() != ''){zip = $('#cform-cust_search_zip').val()};
+    }
+    var notes = "%20"; 
+    if ($('#cform-cust_search_notes').length) {
+        if($('#cform-cust_search_notes').val() != ''){notes = $('#cform-cust_search_notes').val()};
+    }
 
     var url = "http://erp.purltech.com/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes;
 
@@ -311,8 +411,6 @@ function addToCart(product_name, srp, min_price, id)
                 computeCartRaw();
                 applyBulkAdjustment();
             }
-            // toastr['success'](product_name+' added to cart', 'Success');
-
             computeBalance();
     }
 
