@@ -227,6 +227,7 @@ class SettingsController extends CrudController
                 $customer->setCountry($u['country']);
                 $customer->setZip($u['zip']);
                 $customer->setNotes($u['notes']);
+                $customer->setDisplayID($u['display_id']);
                 $em->persist($customer);
 
             } else {
@@ -250,6 +251,7 @@ class SettingsController extends CrudController
                 $new_customer->setCountry($u['country']);
                 $new_customer->setZip($u['zip']);
                 $new_customer->setNotes($u['notes']);
+                $new_customer->setDisplayID($u['display_id']);
                 $em->persist($new_customer);
 
             }
