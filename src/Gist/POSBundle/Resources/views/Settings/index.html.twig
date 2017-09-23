@@ -20,6 +20,10 @@
 		                        <a href="#tab_sync_settings" data-toggle="tab">
 		                            Users</a>
 		                    </li>
+		                    <li>
+		                        <a href="#tab_customer_settings" data-toggle="tab">
+		                            Customers</a>
+		                    </li>
 		                </ul>
 		                <!-- END MAIN TABS -->
 		                <div class="tab-content">
@@ -28,6 +32,9 @@
 		                    </div>
 		                    <div class="tab-pane" id="tab_sync_settings">
 		                        {% include 'GistPOSBundle:Settings:user_settings.html.twig' %}
+		                    </div>
+		                    <div class="tab-pane" id="tab_customer_settings">
+		                        {% include 'GistPOSBundle:Settings:customer_settings.html.twig' %}
 		                    </div>
 		                </div>
 		            </div>
@@ -61,12 +68,33 @@ function syncUsers()
     });
 }
 
+function syncCustomers()
+{
+    var route = "{{ path('gist_pos_settings_sync_customers')|escape('js') }}";
+    $.getJSON(route, function(json){  
+       $.each(json, function(i, x) {
+            swal({
+              title: "Customers Data Updated!",
+              text: "The page will now reload",
+              type: "success",
+              confirmButtonColor: "green",
+              confirmButtonText: "Okay",
+            },
+            function(){
+            	location.reload();
+                
+            });
+
+        });
+    });
+}
+
 $(document).ready(function(){ 
 
 	$(document).on("click",".sync_users", function(e){
 		swal({
           title: "Proceed with action?",
-          text: "This will update all user records on this machine",	
+          text: "This will manually update all user records on this machine",	
           imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
           imageSize: '100x100',
           showConfirmButton: true,
@@ -76,6 +104,24 @@ $(document).ready(function(){
                 // alert('hello');
                 //location.reload();
             	syncUsers();
+        });
+		//update users here
+		// syncUsers();
+	});
+
+	$(document).on("click",".sync_customers", function(e){
+		swal({
+          title: "Proceed with action?",
+          text: "This will manually update all customer records on this machine",	
+          imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
+          imageSize: '100x100',
+          showConfirmButton: true,
+          showCancelButton: true
+        },
+        function(){
+                // alert('hello');
+                //location.reload();
+            	syncCustomers();
         });
 		//update users here
 		// syncUsers();

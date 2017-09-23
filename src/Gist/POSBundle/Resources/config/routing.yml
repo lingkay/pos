@@ -61,6 +61,11 @@ gist_pos_settings_sync_users:
     methods: [GET]
     defaults: { _controller: GistPOSBundle:Settings:syncUsers }
 
+gist_pos_settings_sync_customers:
+    path:     /settings/sync_customers
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Settings:syncCustomers }
+
 # REPORTS
 gist_pos_reports:
     path:     /reports

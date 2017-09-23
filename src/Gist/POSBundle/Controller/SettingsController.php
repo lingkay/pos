@@ -6,6 +6,7 @@ namespace Gist\POSBundle\Controller;
 use Gist\TemplateBundle\Model\CrudController;
 use Gist\POSBundle\Entity\POSTransaction;
 use Gist\POSBundle\Entity\POSTransactionItem;
+use Gist\POSBundle\Entity\POSCustomer;
 use Gist\POSBundle\Entity\POSClock;
 use Gist\UserBundle\Entity\User;
 use Gist\POSBundle\Entity\POSTransactionPayment;
@@ -41,8 +42,10 @@ class SettingsController extends CrudController
     	$this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
+        $customers = $em->getRepository('GistPOSBundle:POSCustomer')->findAll();
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
         $params['users'] = $user_exist;
+        $params['customers'] = $customers;
         // $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
         // $result3 = file_get_contents($url3);
         // $vars3 = str_replace('"', '', $result3);
@@ -158,6 +161,96 @@ class SettingsController extends CrudController
                 $user_new->setCommissionType($u['commission_type']); 
                 $user_new->setContactNumber($u['contact_number']);
                 $em->persist($user_new);
+
+            }
+        }
+
+        // die();`
+        try
+        {
+            $em->flush();
+        }
+        catch (UniqueConstraintViolationException $e) {
+            var_dump($e->getMessage());
+            die();
+        }
+        catch (ValidationException $e)
+        {
+            var_dump($e->getMessage());
+            die();
+        }
+        catch (DBALException $e)
+        {
+            var_dump($e->getMessage());
+            die();
+        }
+        
+
+        $list_opts[] = array('status'=>'ok');
+        return new JsonResponse($list_opts);
+    }
+
+    public function syncCustomersAction()
+    {
+        header("Access-Control-Allow-Origin: *");
+        //$conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
+        //$area_id = $conf->get('gist_sys_area_id');
+
+        $url="http://erp.purltech.com/customer/get/all";
+        // $url="http://m55e.erp/pos_erp/get/users/".$area_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        foreach ($vars as $u) {
+            //check if user already saved
+            // echo $u['id']."<br>";
+
+            $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id' => $u['id']));
+            if ($customer) {
+                //user found. update record
+                $customer->setFirstName($u['first_name']);
+                $customer->setLastName($u['last_name']);
+                $customer->setCEmailAddress($u['email']);
+                $customer->setMobileNumber($u['mobile_number']);
+                //$customer->setERPID($u['id']);
+                $customer->setMiddleName($u['middle_name']);
+                $customer->setGender($u['gender']);
+                $customer->setMaritalStatus($u['marital_status']);
+                $customer->setDateMarried($u['date_married']);
+                $customer->setHomePhone($u['home_phone']);
+                $customer->setBirthdate($u['birthdate']);
+                $customer->setAddress1($u['address1']);
+                $customer->setAddress2($u['address2']);
+                $customer->setCity($u['city']);
+                $customer->setState($u['state']);
+                $customer->setCountry($u['country']);
+                $customer->setZip($u['zip']);
+                $customer->setNotes($u['notes']);
+                $em->persist($customer);
+
+            } else {
+                //user not found. create record
+                $new_customer = new POSCustomer;
+                $new_customer->setFirstName($u['first_name']);
+                $new_customer->setLastName($u['last_name']);
+                $new_customer->setCEmailAddress($u['email']);
+                $new_customer->setMobileNumber($u['mobile_number']);
+                $new_customer->setERPID($u['id']);
+                $new_customer->setMiddleName($u['middle_name']);
+                $new_customer->setGender($u['gender']);
+                $new_customer->setMaritalStatus($u['marital_status']);
+                $new_customer->setDateMarried($u['date_married']);
+                $new_customer->setHomePhone($u['home_phone']);
+                $new_customer->setBirthdate($u['birthdate']);
+                $new_customer->setAddress1($u['address1']);
+                $new_customer->setAddress2($u['address2']);
+                $new_customer->setCity($u['city']);
+                $new_customer->setState($u['state']);
+                $new_customer->setCountry($u['country']);
+                $new_customer->setZip($u['zip']);
+                $new_customer->setNotes($u['notes']);
+                $em->persist($new_customer);
 
             }
         }
