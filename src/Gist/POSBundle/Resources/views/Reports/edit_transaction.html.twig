@@ -17,7 +17,8 @@
                             <h4 class="form-section">Information</h4>
                             <div class="row">
                                 <div class="col-md-6">
-                                    {{ form.group_text('Receipt Number', 'trans_code', object.getTransDisplayId|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Receipt Number', 'receipt_number', object.getTransDisplayId|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Cosnultant', 'consultant', object.getUserCreate.getDisplayName|default(''), 4, 5, true) }}
                                     {{ form.group_text('Customer', 'customer', object.getCustomerId|default(''), 4, 5, true) }}
                                     {{ form.group_text('Type', 'trans_type', object.getTransactionTypeFormatted|default(''), 4, 5, true) }}
                                     {{ form.group_text('Bulk Discount', 'bulk_discount', object.getBulkDiscountType|default(''), 4, 5, true) }}

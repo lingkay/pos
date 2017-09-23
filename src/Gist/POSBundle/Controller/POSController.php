@@ -196,6 +196,7 @@ class POSController extends Controller
         $transaction->setCartNewTotal($new_cart_total);
         $transaction->setBulkDiscountType($bulk_type);
         $transaction->setTransactionCCInterest($transaction_cc_interest);
+        $transaction->setUserCreate($this->getUser());
 
 
         $em->persist($transaction);
