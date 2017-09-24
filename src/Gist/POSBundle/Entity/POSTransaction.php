@@ -87,6 +87,10 @@ class POSTransaction
     /** @ORM\OneToMany(targetEntity="POSTransactionPayment", mappedBy="transaction") */
     protected $payments;
 
+    /** @ORM\OneToMany(targetEntity="POSTransactionSplit", mappedBy="transaction") */
+    protected $splits;
+
+
     /**
      * @ORM\OneToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
@@ -133,6 +137,11 @@ class POSTransaction
     public function getPayments()
     {
         return $this->payments;
+    }
+
+    public function getSplits()
+    {
+        return $this->splits;
     }
 
     public function getTotalPayments()
@@ -349,6 +358,22 @@ class POSTransaction
     public function getTransactionType()
     {
         return $this->transaction_type;
+    }
+
+    public function getTransactionTypeFormatted()
+    {
+        $ret_val = 'n/a';
+        if ($this->transaction_type == 'reg') {
+            $ret_val = 'Regular';
+        } elseif ($this->transaction_type == 'bulk') {
+            $ret_val = 'Bulk Discount';
+        } elseif ($this->transaction_type == 'per') {
+            $ret_val = 'Per-item Discount';
+        } else {
+            $ret_val = 'N/A';
+        }
+
+        return $ret_val;
     }
 
     /**
@@ -728,6 +753,15 @@ class POSTransaction
         }
 
         return true;
+    }
+
+    public function hasSplit()
+    {
+        if (count($this->splits) > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public function hasParent()
