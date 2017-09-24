@@ -143,6 +143,9 @@ class User extends BaseUser
 
     public function getDisplayName()
     {
+        if ($this->last_name == '' && $this->first_name == '') {
+            return 'N/A';
+        }
         return $this->last_name.', '.$this->first_name;
     }
 

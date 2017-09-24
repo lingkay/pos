@@ -6,6 +6,7 @@ namespace Gist\POSBundle\Controller;
 use Gist\TemplateBundle\Model\CrudController;
 use Gist\POSBundle\Entity\POSTransaction;
 use Gist\POSBundle\Entity\POSTransactionItem;
+use Gist\POSBundle\Entity\POSTransactionSplit;
 use Gist\POSBundle\Entity\POSClock;
 use Gist\UserBundle\Entity\User;
 use Gist\POSBundle\Entity\POSTransactionPayment;
@@ -68,6 +69,7 @@ class ReportsController extends CrudController
         $params = array(
             'ea' => $obj->getExtraAmount(),
             'hasChild' => $obj->hasChild(),
+            'hasSplit' => $obj->hasSplit(),
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
             'route_edit' => $this->getRouteGen()->getEdit(),
@@ -84,6 +86,13 @@ class ReportsController extends CrudController
         );
     }
 
+    protected function getCustomerName($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
+        return $obj->getLastName().', '.$obj->getFirstName().' '.$obj->getMiddleName();
+    }
+
     public function editFormAction($id)
     {
         $this->checkAccess($this->route_prefix . '.view');
@@ -97,6 +106,7 @@ class ReportsController extends CrudController
 
         $params = $this->getViewParams('Edit');
         $params['object'] = $obj;
+        $params['customer_name'] = $this->getCustomerName($obj->getCustomerId());
         $params['o_label'] = $this->getObjectLabel($obj);
 
         // check if we have access to form
@@ -105,6 +115,81 @@ class ReportsController extends CrudController
         $this->padFormParams($params, $obj);
 
         return $this->render('GistPOSBundle:Reports:edit_transaction.html.twig', $params);
+    }
+
+    public function splitFormAction($id)
+    {
+        $this->checkAccess($this->route_prefix . '.view');
+
+        $this->hookPreAction();
+        $em = $this->getDoctrine()->getManager();
+        $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+
+        $session = $this->getRequest()->getSession();
+        $session->set('csrf_token', md5(uniqid()));
+
+        $params = $this->getViewParams('Edit');
+        $params['object'] = $obj;
+        $params['customer_name'] = $this->getCustomerName($obj->getCustomerId());
+        $params['o_label'] = $this->getObjectLabel($obj);
+
+        $employee = $em->getRepository('GistUserBundle:User')->findAll();
+
+        foreach ($employee as $emp)
+        {
+            $emp_opts[$emp->getErpId()] = $emp->getDisplayName();
+        }
+        $params['emp_opts'] = $emp_opts;
+
+        // check if we have access to form
+        $params['readonly'] = !$this->getUser()->hasAccess($this->route_prefix . '.edit');
+
+        $this->padFormParams($params, $obj);
+
+        return $this->render('GistPOSBundle:Reports:split_transaction.html.twig', $params);
+    }
+
+    public function splitFormSubmitAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $data = $this->getRequest()->request->all();
+        $this->hookPreAction();
+        try
+        {
+            $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$id));
+
+            // echo "<pre>";
+            // var_dump($data);
+            // echo "</pre>";
+            // die();
+
+            foreach ($data['consultant_id'] as $key => $value) {
+                $split_entry = new POSTransactionSplit();
+                $consultant = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id'=>$value));
+
+                $split_entry->setConsultant($consultant);
+                $split_entry->setTransaction($transaction);
+                $split_entry->setAmount($data['amount_allocation'][$key]);
+                $split_entry->setPercent($data['percent_allocation'][$key]);
+                $em->persist($split_entry);
+
+            }
+            //die();
+            $em->flush();
+            return $this->redirect($this->generateUrl('gist_pos_reports_edit_form',array('id'=>$id)).$this->url_append);
+
+        }
+        catch (ValidationException $e)
+        {
+            error_log($e->getMessage());
+            return $this->addError($obj);
+        }
+        catch (DBALException $e)
+        {
+            error_log($e->getMessage());
+            return $this->addError($obj);
+        }
+
     }
 
     // protected function getGridJoins()

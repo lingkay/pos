@@ -1,0 +1,196 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form %}
+
+{% block content %}
+<div class="page-content">
+	<form method="post" class="form-horizontal" onsubmit="return checkForm()">
+		<div class="row" style="width: 100%;">
+			<div class="col-md-1"></div>
+        <div class="col-md-10">
+        	<h2 class="form-section">Split Transaction {{object.getTransDisplayId|default('')}}</h2>
+				<br>
+
+                <div class="portlet-body form">
+                    <!-- BEGIN FORM-->
+                    <form method="post" class="form-horizontal">
+                        <div class="form-body">
+                            <h4 class="form-section">Information</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.group_text('Receipt Number', 'receipt_number', object.getTransDisplayId|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Cosnultant', 'consultant', object.getUserCreate.getDisplayName|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Customer', 'customer', customer_name|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Bulk Discount', 'bulk_discount', object.getBulkDiscountType|default(''), 4, 5, true) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.group_text('Transaction Type', 'mode', object.getTransactionModeFormatted|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Mode', 'trans_type', object.getTransactionTypeFormatted|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Total', 'total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Discounted Total', 'discounted_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                </div>
+                            </div>                           
+                            <h4 class="form-section">Split <a href="javascript:void(0);" class="btn default btn-xs pull-right green" onclick="addConsultant()"><i class="fa fa-plus"></i> Add Consultant</a></h4>
+
+                            <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
+                                <thead>
+                                    <tr>
+                                        <th width="60%">Consultant</th>
+                                        <th width="15%">%</th>
+                                        <th width="15%">Amount</th>
+                                        <th width="10%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partition_entries">
+                                    <tr class="row_entry">
+                                        <input type="hidden" class="form-control" name="consultant_id[]" value="{{object.getUserCreate.getERPID}}">
+                                        <td><input type="text" class="form-control" name="consultant_name[]" value="{{object.getUserCreate.getDisplayName}}" readonly="true"></td>
+                                        
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="100.00">
+                                                <span class="input-group-addon" id="sizing-addon1">%</span>
+                                            </div>
+                                        </td>
+                                        <td><input type="number" max="999999" step="0.01" min="1" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTransactionTotal|number_format(2, '.', '')|default('')}}"></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td><p class="pull-right" style="vertical-align: middle;"><b>Total</b></p></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" max="100" step="0.01" min="1" class="form-control total_percent" name="total_percent" placeholder="" aria-describedby="sizing-addon1" value="100" readonly="true" id="total_percent">
+                                                <span class="input-group-addon" id="sizing-addon1">%</span>
+                                            </div>
+                                        </td>
+                                        <td><input type="text" name="total_amount" id="total_amount" readonly="true" class="form-control"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="form-actions fluid">
+                            <div class="col-md-9">
+								<button type="submit" class="btn default btn blue"><i class="fa fa-save"></i> Save</button>
+                                <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- END FORM-->
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</form>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function addConsultant() {
+            var field = '<tr class="row_entry">';
+                field += '<input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="">';
+                field += '        <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, "", 12, 12, false)|e("js") }}</td> ';       
+                field += '       <td>';
+                field +=  '  <div class="input-group">';
+                field +=  '  <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="0">';
+                field += '               <span class="input-group-addon" id="sizing-addon1">%</span>';
+                field += '           </div>';
+                field += '       </td>';
+                field +=  '<td><input type="number" max="999999" step="0.01" min="1" class="form-control amount_allocation" name="amount_allocation[]" value="0"></td>';
+                field += '       <td></td>';
+                field += '   </tr>';
+
+            $('#partition_entries').append(field);
+
+        }
+
+        function computeTotals() {
+            
+            var pct_total = 0;
+            var amt_total = 0;
+
+            $('.percent_allocation').each(function() {
+                pct_total += parseFloat($(this).val());
+            });
+
+            $('.amount_allocation').each(function() {
+                amt_total += parseFloat($(this).val());
+            });
+
+            //alert(pct_total.toFixed(2));
+
+            $('#total_percent').val(pct_total.toFixed(2));
+            $('#total_amount').val(amt_total.toFixed(2));
+        }
+
+        function checkForm(){
+            var form_valid = (document.getElementById('total_percent').value >= 0 && document.getElementById('total_percent').value <= 100);
+            if(!form_valid){
+                swal('Invalid split!','Please check each entry then try again', 'error');
+                return false;
+            }
+            return true;
+        }
+        $(document).ready(function() {
+            
+            var discount = "{{object.getTransactionTypeFormatted|default('')}}";
+            $('#cgroup-bulk_discount').hide();
+            $('#cgroup-discounted_total').hide();
+            if (discount == "Bulk Discount") {
+                $('#cgroup-bulk_discount').show();
+                $('#cgroup-discounted_total').show();
+            } else if(discount == 'Per-item Discount') {
+                $('#cgroup-discounted_total').show();
+            }
+
+            computeTotals();
+
+            $(document).on('change', '.consultant_selection', function()
+            {
+                var select_consultant_id = $(this).val();
+                var row = $(this).closest('.row_entry');
+                var hidden_id = row.find('.consultant_id');
+                hidden_id.val(select_consultant_id);
+            });
+            // $('.percent_allocation').on("change", function()
+            $(document).on('change', '.percent_allocation', function()
+            {
+                var transaction_total = "{{object.getTransactionTotal|default('0')}}";
+                var allocation = $(this).val();
+                if (allocation == '') {
+                    $(this).val('0');
+                    allocation = 0;
+                }
+                if (allocation > 100 || allocation < 0) {
+                    swal('Invalid allocation!','Please enter a value from 1 to 100', 'error');
+                    $(this).val('0');
+                    allocation = 0;
+                }
+                var row = $(this).closest('.row_entry');
+                var final = (allocation/100)*transaction_total;
+                var amount_allocation = row.find('.amount_allocation');
+                amount_allocation.val(final.toFixed(2));
+                computeTotals();
+            });
+
+            // $('.amount_allocation').on("change", function()
+            $(document).on('change', '.amount_allocation', function()
+            {
+                var transaction_total = "{{object.getTransactionTotal|default('0')}}";
+                var allocation = $(this).val();
+                if (allocation > transaction_total || allocation < 0) {
+                    swal('Invalid allocation!','Please enter a value from 1 to '+transaction_total+'', 'error');
+                    $(this).val('0');
+                    allocation = 0;
+                }
+                var row = $(this).closest('.row_entry');
+                var final = (allocation/transaction_total)*100;
+                var amount_allocation = row.find('.percent_allocation');
+                amount_allocation.val(final.toFixed(2));
+                computeTotals();
+            });
+        });
+    </script>
+{% endblock %}
