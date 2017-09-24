@@ -56,9 +56,15 @@
                     <a href="{{path('gist_pos_menu_index')}}">
                     <i class="fa fa-home"></i> Main Page </a>
                 </li>
+                {% if app.getUser.getUsername == 'admin' %}
+                    <li>
+                        <a href="{{path('gist_main_index')}}">
+                        <i class="fa fa-gear"></i> Admin Page </a>
+                    </li>
+                {% endif %}
                 <li>
                     <a href="/logout">
-                    <i class="fa fa-key"></i> Logout </a>
+                    <i class="fa fa-sign-out"></i> Logout </a>
                 </li>
             </ul>
         </li>

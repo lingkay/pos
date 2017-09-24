@@ -86,7 +86,6 @@ class POSController extends Controller
         }
 
 
-        
 
         $url="http://erp.purltech.com/inventory/pos/get/banks";
         $result = file_get_contents($url);
