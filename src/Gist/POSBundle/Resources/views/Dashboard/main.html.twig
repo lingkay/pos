@@ -11,7 +11,7 @@
     <div style="margin-top: 20px;">&nbsp;</div>
     <div class="row">
         <div class="col-md-3">
-        <a href="javascript:void(0)" style="text-decoration: none;">
+        <a href="{{path('gist_pos_reports')}}" style="text-decoration: none;">
             <img src="bundles/gisttemplate/assets/global/img/erp_logo.png" align="middle" style="display: block; margin: 0 auto; width: 150px;"><div style="display: table; margin: 0 auto;"><span style="font-size: 20px; color: black;">Reports</span></div>
         </a>
         </div>
@@ -43,7 +43,7 @@
                         <div class="row form-horizontal form">
                             <div class="col-md-3" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
                                 <a href="{{path('gist_pos_index')}}"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pos.png') }}"></a>
-                                <h4>Point-of-Sales</h4>
+                                <h4>Point-of-Sales Menu</h4>
                             </div>
                             <div class="col-md-3" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/inventory.png') }}"></a>
@@ -117,7 +117,8 @@ $(document).ready(function(){
 
     var dept = "{{app.user.getDepartment|escape('js')}}";
     if (dept == 'Sales') {
-        $('#pos_modal').modal('show');
+        var route = "{{ path('gist_pos_menu_index')|escape('js') }}";
+        $(location).attr('href',route);
     }
 
     $(document).on("click",".sync_data", function(e){

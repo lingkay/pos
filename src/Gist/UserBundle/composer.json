@@ -3,12 +3,12 @@
     "type": "symfony-bundle",
     "description": "Gist UserBundle",
     "keywords": ["Gist User Bundle"],
-    "homepage": "http://jankstudio.com",
+    "homepage": "http://gist.com",
     "license": "closed",
     "authors": [
         {
-            "name": "Kendrick Chan",
-            "email": "kc@jankstudio.com"
+            "name": "Gist",
+            "email": "test@gist.com"
         }
     ],
     "minimum-stability": "dev",

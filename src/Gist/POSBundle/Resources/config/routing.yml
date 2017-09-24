@@ -11,11 +11,11 @@ gist_main_clock_tap:
     defaults: { _controller: GistPOSBundle:POS:clock }
 
 gist_main_index:
-    path:     /
+    path:     /admin_menu
     defaults: { _controller: GistPOSBundle:POS:landing }
 
 gist_pos_menu_index:
-    path:     /pos_menu
+    path:     /
     defaults: { _controller: GistPOSBundle:POS:posMenu }
 
 
