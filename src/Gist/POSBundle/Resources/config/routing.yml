@@ -94,3 +94,13 @@ gist_pos_delete_transaction:
 gist_pos_reports_grid_ajax:
     path:    /reports/ajax/{receipt_number}/{date_from}/{date_to}/{mode}
     defaults: { _controller: GistPOSBundle:Reports:gridSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null }
+
+gist_pos_split_transaction_form:
+    pattern: /reports/split_transaction/{id}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Reports:splitForm }
+
+gist_pos_split_transaction_form_submit:
+    pattern: /reports/split_transaction/{id}
+    methods: [POST]
+    defaults: { _controller: GistPOSBundle:Reports:splitFormSubmit }
