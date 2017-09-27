@@ -42,8 +42,8 @@
                                 </thead>
                                 <tbody id="partition_entries">
                                     <tr class="row_entry">
-                                        <input type="hidden" class="form-control" name="consultant_id[]" value="{{object.getUserCreate.getERPID}}">
-                                        <td><input type="text" class="form-control" name="consultant_name[]" value="{{object.getUserCreate.getDisplayName}}" readonly="true"></td>
+                                        <input type="hidden" class="form-control" name="consultant_id[]" value="{{object.getUserCreate.getERPID|default('N/A')}}">
+                                        <td><input type="text" class="form-control" name="consultant_name[]" value="{{object.getUserCreate.getDisplayName|default('N/A')}}" readonly="true"></td>
                                         
                                         <td>
                                             <div class="input-group">
@@ -126,7 +126,7 @@
         }
 
         function checkForm(){
-            var form_valid = (document.getElementById('total_percent').value >= 0 && document.getElementById('total_percent').value <= 100);
+            var form_valid = (document.getElementById('total_percent').value == 100);
             if(!form_valid){
                 swal('Invalid split!','Please check each entry then try again', 'error');
                 return false;

@@ -107,7 +107,7 @@
                                 
                                     {% for i in object.getSplits|default('') %}
                                         <tr>
-                                            <td><input type="text" name="rate_name[]" value="{{i.getConsultant.getDisplayName|default('')}}" class="form-control rate_name" readonly="true"></td>
+                                            <td><input type="text" name="rate_name[]" value="{{i.getConsultant.getDisplayName|default('N/A')}}" class="form-control rate_name" readonly="true"></td>
                                             <td>
                                                 <div class="input-group">
                                                     <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="{{i.getPercent|default('')}}" readonly="true" style="text-align: right;">
