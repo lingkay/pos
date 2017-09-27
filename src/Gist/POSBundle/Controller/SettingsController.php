@@ -229,7 +229,9 @@ class SettingsController extends CrudController
                 $customer->setZip($u['zip']);
                 $customer->setNotes($u['notes']);
                 $customer->setDisplayID($u['display_id']);
-                $customer->setUserCreate($user);
+                if ($user != null) {
+                    $customer->setUserCreate($user);
+                }
                 $em->persist($customer);
 
             } else {
@@ -254,7 +256,9 @@ class SettingsController extends CrudController
                 $new_customer->setZip($u['zip']);
                 $new_customer->setNotes($u['notes']);
                 $new_customer->setDisplayID($u['display_id']);
-                $new_customer->setUserCreate($user);
+                if ($user != null) {
+                    $new_customer->setUserCreate($user);
+                }
                 $em->persist($new_customer);
 
             }
