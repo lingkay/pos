@@ -90,6 +90,9 @@ class ReportsController extends CrudController
     {
         $em = $this->getDoctrine()->getManager();
         $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
+        if (!$obj) {
+            return 'N/A';
+        }
         if ($obj) {
             return $obj->getLastName().', '.$obj->getFirstName().' '.$obj->getMiddleName();
         }
@@ -100,6 +103,9 @@ class ReportsController extends CrudController
     {
         $em = $this->getDoctrine()->getManager();
         $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
+        if (!$obj) {
+            return 'N/A';
+        }
         $creator = $obj->getUserCreate();
         if ($creator) {
             return $creator->getDisplayName();
