@@ -173,6 +173,11 @@ class POSTransaction
 
         return $total;
     }
+
+    public function getChange()
+    {
+        return abs($this->transaction_total - $this->getTotalPayments());
+    }
     
 
     public function setTransactionMode($transaction_mode)
