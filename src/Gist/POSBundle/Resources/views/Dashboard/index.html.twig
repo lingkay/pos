@@ -208,6 +208,8 @@ function freezeTransaction(is_final = false)
                     var orig_price = row.find('.srp').val();
                     var min_price = row.find('.min_price').val();
                     var product_name = row.find('.item_name').val();
+                    var barcode = row.find('.barcode').val();
+                    var item_code = row.find('.item_code').val();
                     var discount_type = '%20';
                     var discount_value = '%20';
                     var adjusted_price = '%20';
@@ -240,7 +242,7 @@ function freezeTransaction(is_final = false)
                     
 
 
-                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
+                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code;
 
 
                     $.getJSON(url2, function(json){  
@@ -292,16 +294,16 @@ function freezeTransaction(is_final = false)
                     var payment_type = $(this).find('.payment_type').val();
                     var amount = $(this).find('.payment_amt_float').val();
 
-                    var control_number = "%20"; if($('.control_number').val() != ''){control_number = $('.control_number').val()};
-                    var account_number = "%20"; if($('.account_number').val() != ''){account_number = $('.account_number').val()};
-                    var bank = "%20"; if($('.bank').val() != ''){bank = $('.bank').val()};
-                    var terminal_operator = "%20"; if($('.cc_terminal_opt').val() != ''){terminal_operator = $('.cc_terminal_opt').val()};
-                    var cc_interest = "%20"; if($('.cc_interest').val() != ''){cc_interest = $('.cc_interest').val()};
-                    var cc_terms = "%20"; if($('.cc_terms').val() != ''){cc_terms = $('.cc_terms').val()};
-                    var payee = "%20"; if($('.payee').val() != ''){payee = $('.payee').val()};
-                    var payor = "%20"; if($('.payor').val() != ''){payor = $('.payor').val()};
-                    var cc_expiry = "%20"; if($('.cc_expiry').val() != ''){cc_expiry = $('.cc_expiry').val()};
-                    var cc_cvv = "%20"; if($('.cc_cvv').val() != ''){cc_cvv = $('.cc_cvv').val()};
+                    var control_number = "%20"; if($(this).find('.control_number').val() != ''){control_number = $(this).find('.control_number').val()};
+                    var account_number = "%20"; if($(this).find('.account_number').val() != ''){account_number = $(this).find('.account_number').val()};
+                    var bank = "%20"; if($(this).find('.bank').val() != ''){bank = $(this).find('.bank').val()};
+                    var terminal_operator = "%20"; if($(this).find('.cc_terminal_opt').val() != ''){terminal_operator = $(this).find('.cc_terminal_opt').val()};
+                    var cc_interest = "%20"; if($(this).find('.cc_interest').val() != ''){cc_interest = $(this).find('.cc_interest').val()};
+                    var cc_terms = "%20"; if($(this).find('.cc_terms').val() != ''){cc_terms = $(this).find('.cc_terms').val()};
+                    var payee = "%20"; if($(this).find('.payee').val() != ''){payee = $(this).find('.payee').val()};
+                    var payor = "%20"; if($(this).find('.payor').val() != ''){payor = $(this).find('.payor').val()};
+                    var cc_expiry = "%20"; if($(this).find('.cc_expiry').val() != ''){cc_expiry = $(this).find('.cc_expiry').val()};
+                    var cc_cvv = "%20"; if($(this).find('.cc_cvv').val() != ''){cc_cvv = $(this).find('.cc_cvv').val()};
 
 
                     var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv;
@@ -1543,7 +1545,7 @@ $(document).ready(function(){
                 var cc_name = $(this).find('#cform-cc_card_name').val();
                 var payment_amt = $(this).find('#cform-cc_charge_amt').val(); 
                 var cc_bank = $(this).find('#form-cc_bank option:selected').text(); 
-                var cc_expiry = $(this).find('#cform-cc_card_expiry').val(); 
+                var cc_expiry = $(this).find('#cform-cc_card_expiry').val().replace(/\//g, '-');; 
                 var cc_name = $(this).find('#cform-cc_card_name').val(); 
 
                 var cc_type = $(this).find('#cform-form-cc_card_type option:selected').text();

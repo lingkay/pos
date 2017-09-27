@@ -384,6 +384,9 @@ class POSTransactionPayment
      */
     public function getCardTerms()
     {
+        if ($this->card_terms == 'null') {
+            return '';
+        }
         return $this->card_terms;
     }
 
@@ -432,6 +435,9 @@ class POSTransactionPayment
      */
     public function getCardTerminalOperator()
     {
+        if ($this->card_terminal_operator == 'null') {
+            return '';
+        }
         return $this->card_terminal_operator;
     }
 
@@ -528,6 +534,9 @@ class POSTransactionPayment
      */
     public function getInterest()
     {
+        if ($this->interest == 'null') {
+            return '';
+        }
         return $this->interest;
     }
 

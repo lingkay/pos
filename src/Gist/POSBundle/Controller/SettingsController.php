@@ -100,8 +100,10 @@ class SettingsController extends CrudController
         $conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
         $area_id = $conf->get('gist_sys_area_id');
+        // $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
+        // $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
 
-        $url="http://erp.purltech.com/pos_erp/get/users/".$area_id;
+        $url= $conf->get('gist_sys_erp_url')."/pos_erp/get/users/".$area_id;
         // $url="http://m55e.erp/pos_erp/get/users/".$area_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
@@ -188,8 +190,10 @@ class SettingsController extends CrudController
         //$conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
         //$area_id = $conf->get('gist_sys_area_id');
+        $conf = $this->get('gist_configuration');
 
-        $url="http://erp.purltech.com/customer/get/all";
+        $url= $conf->get('gist_sys_erp_url')."/customer/get/all";
+        // $url= $conf->get('gist_sys_erp_url')."/pos_erp/get/users/".$area_id;
         // $url="http://m55e.erp/pos_erp/get/users/".$area_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);

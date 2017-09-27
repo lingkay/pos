@@ -18,24 +18,26 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     {{ form.group_text('Receipt Number', 'receipt_number', object.getTransDisplayId|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Date', 'date', object.getDateCreateFormattedPOS|default(''), 4, 5, true) }}
                                     {{ form.group_text('Cosnultant', 'consultant', customer_creator|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Customer', 'customer', customer_name|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Mode', 'trans_type', object.getTransactionTypeFormatted|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Bulk Discount', 'bulk_discount', object.getBulkDiscountType|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Location', 'location', x|default('N/A'), 4, 5, true) }}
                                 </div>
                                 <div class="col-md-6">
-                                    {{ form.group_text('Transaction Type', 'mode', object.getTransactionModeFormatted|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Total', 'total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Discounted Total', 'discounted_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Balance', 'Balance', object.getTransactionBalance|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Customer Name', 'customer', customer.getNameFormatted|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Email', 'email', customer.getCEmailAddress|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Contact No', 'contact_no', customer.getMobileNumber|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Address', 'address', customer.getAddress1|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Birthdate', 'birthdate', customer.getBirthdate|default(''), 4, 5, true) }}
                                 </div>
                             </div>                           
                             <h4 class="form-section">Items</h4>
                             <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
                                 <thead>
                                     <tr>
-                                        <th width="40%">Item Name</th>
-                                        <th width="10%">SRP</th>
+                                        <th width="10%">Barcode</th>
+                                        <th width="30%">Item</th>
+                                        <th width="5%">Qty</th>
+                                        <th width="10%">Amount</th>
                                         <th width="10%">Discount Type</th>
                                         <th width="10%">Discount Value</th>
                                         <th width="10%">Adjusted Price</th>
@@ -45,8 +47,10 @@
                                 	{% if object.hasParent %}
 										{% for i in object.getReferenceTransaction.getItems|default('') %}
 											<tr>
-		                                        <td><input type="text" name="rate_name[]" value="{{i.getName|default('')}}" class="form-control rate_name" readonly="true"></td>
-		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getOrigPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                <td><input type="text" name="barcode[]" value="{{i.getBarcode|default('')}}" class="form-control barcode" readonly="true"></td>
+		                                        <td><input type="text" name="item_name[]" value="{{i.getName|default('')}}" class="form-control item_name" readonly="true"></td>
+		                                        <td><input type="text" class="form-control" readonly="true" name="qty" value="1"></td>
+                                                <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getOrigPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
 		                                        <td><input type="text" name="x" class="form-control" value="{{i.getDiscountTypeFormatted2|default('')}}"  readonly="true"></td>
 		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getDiscountValue|number_format(0, '.', ',')|default('')}}"  readonly="true"></td>
 		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAdjustedPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
@@ -55,51 +59,72 @@
 									{% else %}
 	                                    {% for i in object.getItems|default('') %}
 	                                      	<tr>
-		                                        <td><input type="text" name="rate_name[]" value="{{i.getName|default('')}}" class="form-control rate_name" readonly="true"></td>
-		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getOrigPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-		                                        <td><input type="text" name="x" class="form-control" value="{{i.getDiscountType|default('')}}"  readonly="true"></td>
-		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getDiscountValue|number_format(0, '.', ',')|default('')}}"  readonly="true"></td>
-		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAdjustedPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+		                                        <td><input type="text" name="barcode[]" value="{{i.getBarcode|default('')}}" class="form-control barcode" readonly="true"></td>
+                                                <td><input type="text" name="item_name[]" value="{{i.getName|default('')}}" class="form-control item_name" readonly="true"></td>
+                                                <td><input type="text" class="form-control" readonly="true" name="qty" value="1"></td>
+                                                <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getOrigPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                <td><input type="text" name="x" class="form-control" value="{{i.getDiscountTypeFormatted2|default('')}}"  readonly="true"></td>
+                                                <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getDiscountValue|number_format(0, '.', ',')|default('')}}"  readonly="true"></td>
+                                                <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAdjustedPrice|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
 	                                      	</tr>
 	                                    {% endfor %}
 	                                 {% endif %}
                                 </tbody>
                             </table>
-                            <h4 class="form-section">Payments</h4>
-                            <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
-                                <thead>
-                                    <tr>
-                                        <th width="20%">Type</th>
-                                        <th width="20%">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="items_given_tbody">
-                                	{% if object.hasParent %}
-	                                    {% for i in object.getReferenceTransaction.getPayments|default('') %}
-	                                      	<tr>
-		                                        <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
-		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-	                                      	</tr>
-	                                    {% endfor %}
-	                                {% else %}
-	                                	{% for i in object.getPayments|default('') %}
-	                                      	<tr>
-		                                        <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
-		                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-	                                      	</tr>
-	                                    {% endfor %}
-	                                {% endif %}
-                                    <tr>
-                                    <td colspan="2"><b class="pull-right">Total Payments</b><input type="text" name="x" class="form-control qty" style="text-align: right !important;" value="{{object.getTotalPayments|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="row" style="margin-top: 30px;">
+                                <div class="col-md-8">
+                                    <table class="table table-striped table-bordered table-hover" id="list_table">
+                                        <thead>
+                                            <tr>
+                                                <th width="20%">Method</th>
+                                                <th width="20%">Amount</th>
+                                                <th width="20%">Terms</th>
+                                                <th width="20%">Interest</th>
+                                                <th width="20%">Terminal Opt</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="items_given_tbody">
+                                            {% if object.hasParent %}
+                                                {% for i in object.getReferenceTransaction.getPayments|default('') %}
+                                                    <tr>
+                                                        <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerminalOperator|default('')}}"  readonly="true"></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for i in object.getPayments|default('') %}
+                                                    <tr>
+                                                        <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerminalOperator|default('')}}"  readonly="true"></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% endif %}
+                                            <tr>
+                                            <td colspan="5"><b class="pull-right">Total Payments</b><input type="text" name="x" class="form-control qty" style="text-align: right !important;" value="{{object.getTotalPayments|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Discount', 'discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Bulk Discount', 'bulk_discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('VAT', 'vat', object.getFinalVAT|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Grand Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                </div>
+                            </div>
                             <h4 class="form-section">Splits</h4>
                             <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
                                 <thead>
                                     <tr>
                                         <th width="40%">Consultant</th>
-                                        <th width="20%">%</th>
+                                        <th width="20%">Sales Commission Rate</th>
                                         <th width="20%">Amount</th>
                                     </tr>
                                 </thead>
@@ -120,9 +145,17 @@
                                
                                 </tbody>
                             </table>
+                            <h4 class="form-section">Percent of Sale</h4>
+                            <p>This transaction is {{object.getPercentOfSale|default('')}} of the total SRP</p>
                         </div>
                         <div class="form-actions fluid">
                             <div class="col-md-9">
+                                {% if object.getTransactionMode == 'normal' or object.getTransactionMode == 'upsell' %}
+                                <a href="{{ path('gist_pos_print_receipt', {'id': object.getID}) }}" target="_blank" class="btn default btn blue" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i> Re-print Receipt</a>
+                                {% if not object.hasSplit %}
+                                <a href="{{path('gist_pos_split_transaction_form', {'id':object.getID})}}" class="btn default btn blue" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i> Split</a>
+                                {% endif %}
+                                {% endif %}
                             	{% if object.getTransactionMode == 'quotation' and not object.hasChild %}
 								<a href="{{ path('gist_pos_quote_to_sale', { 'id': object.getID }) }}" class="btn default btn blue"><i class="fa fa-arrow-circle-right"></i> Proceed to Sale</a>
 								{% endif %}
@@ -151,12 +184,17 @@
         $(document).ready(function() {
             var discount = "{{object.getTransactionTypeFormatted|default('')}}";
             $('#cgroup-bulk_discount').hide();
-            $('#cgroup-discounted_total').hide();
+            $('#cgroup-discount').hide();
+            //$('#cgroup-discounted_total').hide();
             if (discount == "Bulk Discount") {
                 $('#cgroup-bulk_discount').show();
-                $('#cgroup-discounted_total').show();
+                //$('#cgroup-discounted_total').show();
             } else if(discount == 'Per-item Discount') {
-                $('#cgroup-discounted_total').show();
+                //$('#cgroup-discounted_total').show();
+                $('#cgroup-discount').show();
+            } else {
+                $('#cgroup-discount').show();
+                $('#cgroup-bulk_discount').show();
             }
         });
     </script>

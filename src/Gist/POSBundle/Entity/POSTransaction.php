@@ -129,6 +129,25 @@ class POSTransaction
         return $data;
     }
 
+    public function getDiscountAmount()
+    {
+        return ($this->transaction_total - $this->cart_orig_total);
+    }
+
+    public function getPercentOfSale()
+    {
+        return round((($this->transaction_total/$this->cart_orig_total)*100),2)."%";
+    }
+
+    public function getFinalVAT()
+    {
+        if ($this->transaction_type == 'per' || $this->transaction_type == 'bulk') {
+            return $this->new_vat_amt;
+        }
+
+        return $this->orig_vat_amt;
+    }
+
     public function getItems()
     {
         return $this->items;

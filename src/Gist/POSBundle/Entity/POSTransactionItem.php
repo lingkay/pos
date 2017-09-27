@@ -46,6 +46,12 @@ class POSTransactionItem
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $discount_value;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $barcode;
+
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $item_code;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
@@ -295,5 +301,53 @@ class POSTransactionItem
     public function getTransaction()
     {
         return $this->transaction;
+    }
+
+    /**
+     * Set barcode
+     *
+     * @param string $barcode
+     *
+     * @return POSTransactionItem
+     */
+    public function setBarcode($barcode)
+    {
+        $this->barcode = $barcode;
+
+        return $this;
+    }
+
+    /**
+     * Get barcode
+     *
+     * @return string
+     */
+    public function getBarcode()
+    {
+        return $this->barcode;
+    }
+
+    /**
+     * Set itemCode
+     *
+     * @param string $itemCode
+     *
+     * @return POSTransactionItem
+     */
+    public function setItemCode($itemCode)
+    {
+        $this->item_code = $itemCode;
+
+        return $this;
+    }
+
+    /**
+     * Get itemCode
+     *
+     * @return string
+     */
+    public function getItemCode()
+    {
+        return $this->item_code;
     }
 }

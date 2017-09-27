@@ -61,7 +61,7 @@ function ajaxGetProducts(cid)
         }
 
             $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
-                    <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+")\">\
+                    <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
                     <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
                         <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
                         <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
@@ -387,7 +387,7 @@ function ajaxGetVAT()
 }
 
 
-function addToCart(product_name, srp, min_price, id)
+function addToCart(product_name, srp, min_price, id, barcode, item_code)
 {
     var trans_type = $('#string_trans_type').val();
     if (trans_type == 'bulk') {
@@ -396,7 +396,9 @@ function addToCart(product_name, srp, min_price, id)
         $('.init_row_prods').remove();
         var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
         var field = '<tr class=\"row_prod_'+row_id+'\">';     
-            field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
+            field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
+            field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
+            field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
             field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
             field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
             field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';

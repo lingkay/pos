@@ -113,6 +113,17 @@ class ReportsController extends CrudController
         return 'N/A';
     }
 
+    protected function getCustomer($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
+        if (!$obj) {
+            return null;
+        }
+
+        return $obj;
+    }
+
     public function editFormAction($id)
     {
         $this->checkAccess($this->route_prefix . '.view');
@@ -128,6 +139,7 @@ class ReportsController extends CrudController
         $params['object'] = $obj;
         $params['customer_name'] = $this->getCustomerName($obj->getCustomerId());
         $params['customer_creator'] = $this->getCustomerCreator($obj->getCustomerId());
+        $params['customer'] = $this->getCustomer($obj->getCustomerId());
         $params['o_label'] = $this->getObjectLabel($obj);
 
         // check if we have access to form
@@ -152,6 +164,8 @@ class ReportsController extends CrudController
         $params = $this->getViewParams('Edit');
         $params['object'] = $obj;
         $params['customer_name'] = $this->getCustomerName($obj->getCustomerId());
+        $params['customer_creator'] = $this->getCustomerCreator($obj->getCustomerId());
+        $params['customer'] = $this->getCustomer($obj->getCustomerId());
         $params['o_label'] = $this->getObjectLabel($obj);
 
         $employee = $em->getRepository('GistUserBundle:User')->findAll();

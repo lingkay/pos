@@ -215,7 +215,7 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value)
+    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -245,6 +245,9 @@ class POSController extends Controller
         $transaction_item->setName($prod_name);
         $transaction_item->setDiscountType($discount_type);
         $transaction_item->setDiscountValue($discount_value);
+
+        $transaction_item->setBarcode($barcode);
+        $transaction_item->setItemCode($item_code);
 
         $em->persist($transaction_item);
         $em->flush();

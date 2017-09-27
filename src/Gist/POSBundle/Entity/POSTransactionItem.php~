@@ -35,7 +35,7 @@ class POSTransactionItem
     protected $minimum_price;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
-    protected $adjuested_price;
+    protected $adjusted_price;
 
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $name;
@@ -46,9 +46,15 @@ class POSTransactionItem
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $discount_value;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $barcode;
+
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $item_code;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
-     * @ORM\JoinColumn(name="transaction_id", referencedColumnName="trans_id")
+     * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
      */
     protected $transaction;
 
@@ -145,9 +151,9 @@ class POSTransactionItem
      *
      * @return POSTransactionItems
      */
-    public function setAdjuestedPrice($adjuestedPrice)
+    public function setAdjustedPrice($adjustedPrice)
     {
-        $this->adjuested_price = $adjuestedPrice;
+        $this->adjusted_price = $adjustedPrice;
 
         return $this;
     }
@@ -157,9 +163,9 @@ class POSTransactionItem
      *
      * @return string
      */
-    public function getAdjuestedPrice()
+    public function getAdjustedPrice()
     {
-        return $this->adjuested_price;
+        return $this->adjusted_price;
     }
 
     /**
@@ -210,6 +216,45 @@ class POSTransactionItem
         return $this->discount_type;
     }
 
+    public function getDiscountTypeFormatted2()
+    {
+        $type = $this->discount_type;
+        if ($type == 'discamt') {
+            $type = 'Discount Amount';
+        } elseif ($type == 'chg') {
+            $type = 'Change of price';
+        } elseif ($type == 'gift') {
+            $type = 'Gift';
+        } elseif ($type == 'disc') {
+            $type = 'Discount Percentage';
+        }
+
+        return $type;
+    }
+
+    public function getDiscountTypeFormatted()
+    {
+        $ret = '';
+        if ($this->discount_type == 'discamt')
+        {
+            $ret = 'Less ';
+        }
+        elseif ($this->discount_type == 'gift')
+        {
+            $ret = 'Gift ';
+        }
+        elseif ($this->discount_type == 'disc')
+        {
+            $ret = 'Less % ';
+        }
+        elseif ($this->discount_type == 'chg')
+        {
+            $ret = 'Change Price ';
+        }
+
+        return $ret;
+    }
+
     /**
      * Set discountValue
      *
@@ -241,7 +286,7 @@ class POSTransactionItem
      *
      * @return POSTransactionItems
      */
-    public function setTransaction(\Gist\POSBundle\Entity\POSTransactions $transaction = null)
+    public function setTransaction($transaction = null)
     {
         $this->transaction = $transaction;
 
