@@ -117,6 +117,9 @@
                                     {{ form.group_text('Bulk Discount', 'bulk_discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                     {{ form.group_text('VAT', 'vat', object.getFinalVAT|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                     {{ form.group_text('Grand Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    <hr style="border-top: dotted 2px;" />
+                                    {{ form.group_text('Change', 'change', object.getChange|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    <hr style="border-top: dotted 2px;" />
                                 </div>
                             </div>
                             <h4 class="form-section">Splits</h4>
@@ -146,7 +149,7 @@
                                 </tbody>
                             </table>
                             <h4 class="form-section">Percent of Sale</h4>
-                            <p>This transaction is {{object.getPercentOfSale|default('')}} of the total SRP</p>
+                            <p style="font-size: 20px;">This transaction is {{object.getPercentOfSale|default('')}} of the total SRP</p>
                         </div>
                         <div class="form-actions fluid">
                             <div class="col-md-9">
