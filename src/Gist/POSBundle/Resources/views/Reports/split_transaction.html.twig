@@ -43,19 +43,37 @@
                                     </tr>
                                 </thead>
                                 <tbody id="partition_entries">
-                                    <tr class="row_entry">
-                                        <input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="{{app.getUser.getERPID|default('N/A')}}">
-                                        <td><input type="text" class="form-control" name="consultant_name[]" value="{{app.getUser.getDisplayName|default('N/A')}}" readonly="true"></td>
-                                        
-                                        <td>
-                                            <div class="input-group">
-                                                <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="100.00">
-                                                <span class="input-group-addon" id="sizing-addon1">%</span>
-                                            </div>
-                                        </td>
-                                        <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTransactionTotal|number_format(2, '.', '')|default('')}}"></td>
-                                        <td></td>
-                                    </tr>
+                                    {% if object.hasSplit %}
+                                        {% for s in object.getSplits %}
+                                            <tr class="row_entry">
+                                                <input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="{{s.getConsultant.getERPID|default('N/A')}}">
+                                                <td><input type="text" class="form-control" name="consultant_name[]" value="{{s.getConsultant.getDisplayName|default('N/A')}}" readonly="true"></td>
+                                                
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="{{s.getPercent|default('')}}">
+                                                        <span class="input-group-addon" id="sizing-addon1">%</span>
+                                                    </div>
+                                                </td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{s.getAmount|default('')}}"></td>
+                                                <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr class="row_entry">
+                                            <input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="{{app.getUser.getERPID|default('N/A')}}">
+                                            <td><input type="text" class="form-control" name="consultant_name[]" value="{{app.getUser.getDisplayName|default('N/A')}}" readonly="true"></td>
+                                            
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="100.00">
+                                                    <span class="input-group-addon" id="sizing-addon1">%</span>
+                                                </div>
+                                            </td>
+                                            <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTransactionTotal|number_format(2, '.', '')|default('')}}"></td>
+                                            <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                        </tr>
+                                    {% endif %}
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -74,7 +92,8 @@
                         </div>
                         <div class="form-actions fluid">
                             <div class="col-md-9">
-								<button type="submit" class="btn default btn blue"><i class="fa fa-save"></i> Save</button>
+								<button type="submit" class="btn default btn blue"><i class="fa fa-save"></i> Save Split</button>
+                                <a href="{{ path('gist_pos_reports_edit_form', { 'id': object.getID|default('') }) }}" class="btn default btn  green-meadow"><i class="fa fa-eye"></i> View Transaction</a>
                                 <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
                             </div>
                         </div>
@@ -161,7 +180,11 @@
         $(document).ready(function() {
 
             $(document).on("click",".remove_row", function(e){
-
+                var table_rows = $('#partition_entries tr').length;
+                if (table_rows < 2) {
+                    swal('You must select at least one consultant!','', 'error');
+                    return false;
+                }
                 var tr = $(this).closest('tr');
                 tr.remove();
                 computeTotals();

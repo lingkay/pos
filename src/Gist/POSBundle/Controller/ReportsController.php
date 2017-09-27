@@ -193,10 +193,13 @@ class ReportsController extends CrudController
         {
             $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$id));
 
-            // echo "<pre>";
-            // var_dump($data);
-            // echo "</pre>";
-            // die();
+            //remove previous splits
+            if ($transaction->hasSplit()) {
+                foreach ($transaction->getSplits() as $split) {
+                    $em->remove($split);
+                }
+                $em->flush();
+            }
 
             foreach ($data['consultant_id'] as $key => $value) {
                 $split_entry = new POSTransactionSplit();
@@ -207,12 +210,11 @@ class ReportsController extends CrudController
                 $split_entry->setAmount($data['amount_allocation'][$key]);
                 $split_entry->setPercent($data['percent_allocation'][$key]);
                 $em->persist($split_entry);
-
             }
             //die();
             $em->flush();
-            $this->addFlash('success', 'Transaction split saved!');
-            return $this->redirect($this->generateUrl('gist_pos_reports_edit_form',array('id'=>$id)).$this->url_append);
+            $this->addFlash('success', 'Transaction split for '.$transaction->getTransDisplayId().' saved!');
+            return $this->redirect($this->generateUrl('gist_pos_split_transaction_form',array('id'=>$id)).$this->url_append);
 
         }
         catch (ValidationException $e)
