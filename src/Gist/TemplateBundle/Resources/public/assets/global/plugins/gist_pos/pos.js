@@ -284,8 +284,12 @@ function ajaxAddCustomer()
     if ($('#cform-cust_search_notes').length) {
         if($('#cform-cust_search_notes').val() != ''){notes = $('#cform-cust_search_notes').val()};
     }
+    var consultant_id = "%20"; 
+    if ($('#string_consultant_id').length) {
+        if($('#string_consultant_id').val() != ''){consultant_id = $('#string_consultant_id').val()};
+    }
 
-    var url = "http://erp.purltech.com/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes;
+    var url = "http://erp.purltech.com/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes+"/"+consultant_id;
 
     $.getJSON(url, function(json){  
         var count = 0;

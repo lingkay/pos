@@ -90,7 +90,21 @@ class ReportsController extends CrudController
     {
         $em = $this->getDoctrine()->getManager();
         $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
-        return $obj->getLastName().', '.$obj->getFirstName().' '.$obj->getMiddleName();
+        if ($obj) {
+            return $obj->getLastName().', '.$obj->getFirstName().' '.$obj->getMiddleName();
+        }
+        return 'N/A';
+    }
+
+    protected function getCustomerCreator($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
+        $creator = $obj->getUserCreate();
+        if ($creator) {
+            return $creator->getDisplayName();
+        }
+        return 'N/A';
     }
 
     public function editFormAction($id)
@@ -107,6 +121,7 @@ class ReportsController extends CrudController
         $params = $this->getViewParams('Edit');
         $params['object'] = $obj;
         $params['customer_name'] = $this->getCustomerName($obj->getCustomerId());
+        $params['customer_creator'] = $this->getCustomerCreator($obj->getCustomerId());
         $params['o_label'] = $this->getObjectLabel($obj);
 
         // check if we have access to form

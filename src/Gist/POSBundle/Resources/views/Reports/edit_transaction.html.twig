@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     {{ form.group_text('Receipt Number', 'receipt_number', object.getTransDisplayId|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Cosnultant', 'consultant', object.getUserCreate.getDisplayName|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Cosnultant', 'consultant', customer_creator|default(''), 4, 5, true) }}
                                     {{ form.group_text('Customer', 'customer', customer_name|default(''), 4, 5, true) }}
                                     {{ form.group_text('Mode', 'trans_type', object.getTransactionTypeFormatted|default(''), 4, 5, true) }}
                                     {{ form.group_text('Bulk Discount', 'bulk_discount', object.getBulkDiscountType|default(''), 4, 5, true) }}

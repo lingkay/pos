@@ -207,6 +207,7 @@ class SettingsController extends CrudController
             // echo $u['id']."<br>";
 
             $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id' => $u['id']));
+            $user = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id' => $u['created_by']));
             if ($customer) {
                 //user found. update record
                 $customer->setFirstName($u['first_name']);
@@ -228,6 +229,7 @@ class SettingsController extends CrudController
                 $customer->setZip($u['zip']);
                 $customer->setNotes($u['notes']);
                 $customer->setDisplayID($u['display_id']);
+                $customer->setUserCreate($user);
                 $em->persist($customer);
 
             } else {
@@ -252,6 +254,7 @@ class SettingsController extends CrudController
                 $new_customer->setZip($u['zip']);
                 $new_customer->setNotes($u['notes']);
                 $new_customer->setDisplayID($u['display_id']);
+                $new_customer->setUserCreate($user);
                 $em->persist($new_customer);
 
             }
