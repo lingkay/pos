@@ -167,6 +167,14 @@ class POSTransaction
     {
         $total = 0;
 
+        if ($this->hasParent()) {
+            foreach ($this->reference_transaction->payments as $p) {
+                $total = $total + $p->getAmount();
+            }
+
+            return $total;
+        }
+
         foreach ($this->payments as $p) {
             $total = $total + $p->getAmount();
         }
