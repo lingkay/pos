@@ -426,23 +426,31 @@ class POSController extends Controller
     public function deleteTransactionAction($id)
     {
         $em = $this->getDoctrine()->getManager();
+        $transaction_id = '';
+
+
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+        if ($transaction) {
+            $transaction_id = $transaction->getTransDisplayId();
+            $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
+            $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
 
-        $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
-        $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
+            foreach ($payments as $payment) {
+                $em->remove($payment);
+            }
 
-        foreach ($payments as $payment) {
-            $em->remove($payment);
+            foreach ($items as $item) {
+                $em->remove($item);
+            }
+
+            $em->remove($transaction);
+            $em->flush();
+
+            $this->addFlash('success', 'Transaction ' . $transaction_id . ' deleted!');
+            return $this->redirect($this->generateUrl('gist_pos_reports'));
         }
 
-        foreach ($items as $item) {
-            $em->remove($item);
-        }
-
-        $em->remove($transaction);
-        $em->flush();
-
-        $this->addFlash('success', $this->title . ' transaction deleted ');
+        $this->addFlash('success', 'Transaction not found!');
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
 }
