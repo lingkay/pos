@@ -81,6 +81,36 @@ function ajaxGetProducts(cid)
     });
 }
 
+function addToPayments(payment_type, amount, details = null, cc_number = null, cc_bank = null, cc_terminal_opt = null, cc_interest = null, cc_terms = null, account_number = null, payee = null, payor = null, expiry = null, cvv = null)
+{
+    $('.init_row_payment').remove();
+    //ADD CONDITION FOR 
+    var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+    var field = '<tr class=\"row_payment_'+row_id+'\">';     
+        field += '<input type=\"hidden\" name=\"control_number\" class=\"control_number\" value=\"'+cc_number+'\">';
+        field += '<input type=\"hidden\" name=\"account_number\" class=\"account_number\" value=\"'+account_number+'\">';
+        field += '<input type=\"hidden\" name=\"bank\" class=\"bank\" value=\"'+cc_bank+'\">';
+        field += '<input type=\"hidden\" name=\"cc_terminal_opt\" class=\"cc_terminal_opt\" value=\"'+cc_terminal_opt+'\">';
+        field += '<input type=\"hidden\" name=\"cc_interest\" class=\"cc_interest\" value=\"'+cc_interest+'\">';
+        field += '<input type=\"hidden\" name=\"cc_terms\" class=\"cc_terms\" value=\"'+cc_terms+'\">';
+        field += '<input type=\"hidden\" name=\"payee\" class=\"payee\" value=\"'+payee+'\">';
+        field += '<input type=\"hidden\" name=\"payor\" class=\"payor\" value=\"'+payor+'\">';
+        field += '<input type=\"hidden\" name=\"cc_expiry\" class=\"cc_expiry\" value=\"'+expiry+'\">';
+        field += '<input type=\"hidden\" name=\"cc_cvv\" class=\"cc_cvv\" value=\"'+cvv+'\">';
+        field += '<input type=\"hidden\" name=\"payment_details_array[]\" class=\"payment_details_array\" value=\"'+details+'\" >';
+        field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
+        field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
+        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="'+addCommas(amount)+'"></td>';  
+        field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>'; 
+        field += '</tr>';
+
+        $('#payments_list').prepend(field);
+        toastr['success']('Payment added', 'Success');
+        computeBalance();
+
+
+}
+
 function ajaxSearchCustomer()
 {
     var first_name = "%20"; 
@@ -194,7 +224,8 @@ function ajaxSearchCustomer()
             field += '<input type="hidden" class="notes" value="'+cust.notes+'">';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'"></td>';  
-            field += '<td><a href="javascript:void(0)" class="btn btn-xs default green use_customer_btn"><i class="fa fa-eye" aria-hidden="true"></i></a></td>'; 
+            field += '<td><a href="javascript:void(0)" class="btn btn-xs default green view_customer_btn"><i class="fa fa-eye" aria-hidden="true"></i></a></td>'; 
+            field += '<td><a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
             field += '</tr>';
 
             $('#customers_list').prepend(field);
@@ -1055,7 +1086,234 @@ function loadFrozenTransactions()
 
 }
 
+function freezeTransaction(is_final = false)
+{
+    var trans_saved = false;
+    var items_saved = false;
+    var payments_saved = false;
+    var count_cart_items = $('#cart_items tr').length;
+    var count_payments = $('#payments_table .init_row_payment').length;
+    var transaction_sys_id = $('#transaction_system_id').val();
+    var transaction_disp_id = $('#transaction_display_id').val();
+    var transaction_total = $('#float_trans_amount').val();
+    var transaction_ea = $('#float_trans_ea').val();
+    var transaction_balance = $('#float_trans_balance').val();
+    var transaction_mode = $('#string_trans_mode').val();
+    var transaction_type = $('#string_trans_type').val();
+    var bulk_type = $('#string_trans_bulk_type').val();
+    var transaction_tax_rate = $('#float_tax_rate').val();
+    var transaction_orig_vat_amt = $('#float_orig_tax_vat_amt').val();
+    var transaction_new_vat_amt = $('#float_new_tax_vat_amt').val();
+    var transaction_orig_vat_amt_net = $('#float_orig_tax_amt_net_vat').val();
+    var transaction_new_vat_amt_net = $('#float_new_tax_amt_net_vat').val();
+    var transaction_tax_coverage = $('#string_tax_coverage').val();
+    var transaction_cart_min_total = $('#float_cart_minimum_total').val();
+    var transaction_cart_orig_total = $('#float_cart_orig_price').val();
+    var transaction_cart_new_total = $('#float_cart_new_price').val();
+    var transaction_cc_interest = $('#string_trans_cc_interest').val();
 
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
+
+    var status = 'Frozen';
+    if (is_final) {
+        status = 'Paid';
+    } 
+    var customer_id = $('#transaction_customer_id').val();
+
+    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea;
+
+
+    $.getJSON(url, function(json){  
+        var count = 0;
+        $.each(json, function(i, trans) {
+            trans_saved = true;
+            $('#transaction_system_id').val(trans.new_id);
+            //save items
+            if (count_cart_items > 0) {
+                $('#cart_items tr').each(function() {
+                    var row = $(this).closest('tr');
+                    var product_id = row.find('.product_id').val();
+                    var orig_price = row.find('.srp').val();
+                    var min_price = row.find('.min_price').val();
+                    var product_name = row.find('.item_name').val();
+                    var barcode = row.find('.barcode').val();
+                    var item_code = row.find('.item_code').val();
+                    var discount_type = '%20';
+                    var discount_value = '%20';
+                    var adjusted_price = '%20';
+
+                    if (transaction_type == "per") {
+                        var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
+                        var per_item_discount_amt = row.find('.per_item_discount_amt').val();
+                        var adjusted_price_elem = row.find('.adjusted_price').val();
+
+                        if (indiv_disc_opt.length > 0) {
+                            discount_type = indiv_disc_opt;
+                        } else {
+                            discount_type = '%20';
+                        }
+
+                        if (per_item_discount_amt.length > 0) {
+                            discount_value = per_item_discount_amt;
+                        } else {
+                            discount_value = '%20';
+                        }
+
+                        if (adjusted_price_elem.length > 0) {
+                            adjusted_price = adjusted_price_elem;
+                        } else {
+                            adjusted_price = '%20';
+                        }
+                    }
+                        
+
+                    
+
+
+                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code;
+
+
+                    $.getJSON(url2, function(json){  
+                        var count = 0;
+                        $.each(json, function(i, items) {
+                            items_saved = true;
+                            
+                            
+                        });
+
+
+                    });
+                });
+            } else {
+                items_saved = true;
+
+                if (!is_final) {
+                    swal({
+                          title: "Transaction Frozen!",
+                          text: "The page will now reload",
+                          type: "success",
+                          timer: 2000,
+                          showConfirmButton: false,
+                        },
+                        function(){
+                                syncToERP();
+                                //location.reload();
+                            
+                        });
+                } else {
+                    swal({
+                          title: "Transaction Saved!",
+                          text: "Please wait for data sync",
+                          type: "success",
+                          timer: 2000,
+                            showConfirmButton: false,
+                        },
+                        function(){
+                            syncToERP();
+                            //location.reload();
+                            
+                        });
+                }
+            }
+
+            //save payments
+            if (count_payments == 0 && transaction_type != 'none') {
+                $('#payments_list tr').each(function() {
+                    var payment_type = $(this).find('.payment_type').val();
+                    var amount = $(this).find('.payment_amt_float').val();
+
+                    var control_number = "%20"; if($(this).find('.control_number').val() != ''){control_number = $(this).find('.control_number').val()};
+                    var account_number = "%20"; if($(this).find('.account_number').val() != ''){account_number = $(this).find('.account_number').val()};
+                    var bank = "%20"; if($(this).find('.bank').val() != ''){bank = $(this).find('.bank').val()};
+                    var terminal_operator = "%20"; if($(this).find('.cc_terminal_opt').val() != ''){terminal_operator = $(this).find('.cc_terminal_opt').val()};
+                    var cc_interest = "%20"; if($(this).find('.cc_interest').val() != ''){cc_interest = $(this).find('.cc_interest').val()};
+                    var cc_terms = "%20"; if($(this).find('.cc_terms').val() != ''){cc_terms = $(this).find('.cc_terms').val()};
+                    var payee = "%20"; if($(this).find('.payee').val() != ''){payee = $(this).find('.payee').val()};
+                    var payor = "%20"; if($(this).find('.payor').val() != ''){payor = $(this).find('.payor').val()};
+                    var cc_expiry = "%20"; if($(this).find('.cc_expiry').val() != ''){cc_expiry = $(this).find('.cc_expiry').val()};
+                    var cc_cvv = "%20"; if($(this).find('.cc_cvv').val() != ''){cc_cvv = $(this).find('.cc_cvv').val()};
+
+
+                    var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv;
+
+
+                    $.getJSON(url3, function(json){  
+                        var count = 0;
+                        $.each(json, function(i, payments) {
+                            //reload form
+                            if (trans_saved && items_saved) {
+                                if (!is_final) {
+                                    swal({
+                                          title: "Transaction Frozen!",
+                                          text: "The page will now reload",
+                                          type: "success",
+                                          timer: 2000,
+                                            showConfirmButton: false,
+                                        },
+                                        function(){
+                                                syncToERP();
+                                                //location.reload();
+                                            
+                                        });
+                                } else {
+                                    swal({
+                                          title: "Transaction Saved!",
+                                          text: "Please wait for data sync",
+                                          type: "success",
+                                          timer: 2000,
+                                            showConfirmButton: false,
+                                        },
+                                        function(){
+                                            syncToERP();
+                                            //location.reload();
+                                            
+                                        });
+                                }
+                            } else {
+                                // swal('Error encountered',transaction_disp_id+' not frozen (items)','error');
+                            }
+                        });
+
+                    });
+                });
+            } else {
+                payments_saved = true;
+
+                if (!is_final) {
+                    swal({
+                          title: "Transaction Frozen!",
+                          text: "The page will now reload",
+                          type: "success",
+                          timer: 2000,
+                            showConfirmButton: false,
+                        },
+                        function(){
+                                syncToERP();
+                                //location.reload();
+                            
+                        });
+                } else {
+                    swal({
+                          title: "Transaction Saved!",
+                          text: "Please wait for data sync",
+                          type: "success",
+                          timer: 2000,
+                        showConfirmButton: false,  
+                        },
+                        function(){
+                            syncToERP();
+                            //location.reload();
+                            
+                        });
+                }
+
+            }
+        });
+
+    });
+
+}
 
 
 
