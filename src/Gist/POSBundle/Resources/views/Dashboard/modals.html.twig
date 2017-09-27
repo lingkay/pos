@@ -297,7 +297,7 @@
                                     <h4 class="form-section">Check Details <a href="javascript:void(0)" class="btn btn-xs red remove_check pull-right"><i class="fa fa-remove"></i></a></h4>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 5, 6, false) }}
+                                            {{ form.group_selectx('Bank', 'check_bank', bank_options, '', 5, 6, '',false) }}
                                             {{ form.group_text_pos('Account Number', 'check_account_number', '', 5, 6, false) }}
                                             {{ form.group_text_pos('Check Number', 'check_number', '', 5, 6, false) }}
                                             {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
@@ -745,7 +745,7 @@
             <h4 class="form-section">Check Details <a href="javascript:void(0)" class="btn btn-xs red remove_check pull-right"><i class="fa fa-remove"></i></a></h4>
             <div class="row">
                 <div class="col-md-6">
-                    {{ form.group_selectx2('Bank', 'check_bank', bank_options, '', 5, 6, false) }}
+                    {{ form.group_selectx('Bank', 'check_bank', bank_options, '', 5, 6, '',false) }}
                     {{ form.group_text_pos('Account Number', 'check_account_number', '', 5, 6, false) }}
                     {{ form.group_text_pos('Check Number', 'check_number', '', 5, 6, false) }}
                     {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}

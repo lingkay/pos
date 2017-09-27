@@ -35,8 +35,8 @@ gist_pos_save_item:
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:saveTransactionItems }
 
-gist_pos_save_payment:
-    path:     /pos/save_payment/{trans_sys_id}/{payment_type}/{amount}
+gist_pos_save_payment: 
+    path:     /pos/save_payment/{trans_sys_id}/{payment_type}/{amount}/{control_number}/{bank}/{terminal_operator}/{interest}/{terms}/{account_number}/{payee}/{payor}/{expiry}/{cvv}
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:saveTransactionPayments }
 

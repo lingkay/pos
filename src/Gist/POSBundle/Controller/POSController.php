@@ -16,6 +16,7 @@ class POSController extends Controller
 {
     public function indexAction()
     {
+        $conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
     	$this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
@@ -85,25 +86,28 @@ class POSController extends Controller
             $params['next_sys_id'] = "1";
         }
 
+        $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
+        $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
 
 
-        $url="http://erp.purltech.com/inventory/pos/get/banks";
+
+        $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
-        $url_req="http://erp.purltech.com/customer/fields/get_req";
+        $url_req=$conf->get('gist_sys_erp_url')."/customer/fields/get_req";
         $result_req = file_get_contents($url_req);
         $vars_req = json_decode($result_req, true); 
 
-        $url_visible="http://erp.purltech.com/customer/fields/get_visible";
+        $url_visible=$conf->get('gist_sys_erp_url')."/customer/fields/get_visible";
         $result_visible = file_get_contents($url_visible);
         $vars_visible = json_decode($result_visible, true); 
 
-        $url2="http://erp.purltech.com/inventory/pos/get/terminal_operators";
+        $url2=$conf->get('gist_sys_erp_url')."/inventory/pos/get/terminal_operators";
         $result2 = file_get_contents($url2);
         $vars2 = json_decode($result2, true);
 
-        $url_chg="http://erp.purltech.com/pos_erp/get/charge_rates";
+        $url_chg=$conf->get('gist_sys_erp_url')."/pos_erp/get/charge_rates";
         $result_chg = file_get_contents($url_chg);
         $vars_chg = json_decode($result_chg, true);
 
@@ -112,7 +116,7 @@ class POSController extends Controller
             $opts[$o['id']] = $o['name'];
 
 
-        $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
+        $url3=$conf->get('gist_sys_erp_url')."/inventory/pos/get/tax_coverage";
         $result3 = file_get_contents($url3);
         $vars3 = str_replace('"', '', $result3);
 
@@ -249,7 +253,7 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount)
+    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -260,6 +264,18 @@ class POSController extends Controller
         $transaction_payment->setTransaction($transaction);
         $transaction_payment->setType($payment_type);
         $transaction_payment->setAmount($amount);
+
+        $transaction_payment->setControlNumber($control_number);
+        $transaction_payment->setBank($bank);
+        $transaction_payment->setCardTerminalOperator($terminal_operator);
+        $transaction_payment->setInterest($interest);
+        $transaction_payment->setCardTerms($terms);
+        $transaction_payment->setAccountNumber($account_number);
+        $transaction_payment->setPayee($payee);
+        $transaction_payment->setPayor($payor);
+        $transaction_payment->setCardExpiry($expiry);
+        $transaction_payment->setCardCvv($cvv);
+
 
         $em->persist($transaction_payment);
         $em->flush();
@@ -272,6 +288,7 @@ class POSController extends Controller
     // SYNC TO ERP POS DATA
     public function syncDataAction()
     {
+        $conf = $this->get('gist_configuration');
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
 
@@ -311,7 +328,7 @@ class POSController extends Controller
             if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
             if (trim($ea) == '' || $ea == null) { $ea = 'n-a'; }
 
-            file_get_contents("http://erp.purltech.com/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea);
+            file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea);
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
@@ -321,12 +338,12 @@ class POSController extends Controller
 
             foreach ($payments as $payment) {
                 // {trans_sys_id}/{payment_type}/{amount}
-                file_get_contents("http://erp.purltech.com/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
             }
 
             foreach ($items as $item) {
                 // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
-                file_get_contents("http://erp.purltech.com/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
             }
 
         }

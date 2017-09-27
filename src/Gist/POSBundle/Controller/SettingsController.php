@@ -44,20 +44,10 @@ class SettingsController extends CrudController
         $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
         $customers = $em->getRepository('GistPOSBundle:POSCustomer')->findAll();
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
+        $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
+        $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
         $params['users'] = $user_exist;
         $params['customers'] = $customers;
-        // $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
-        // $result3 = file_get_contents($url3);
-        // $vars3 = str_replace('"', '', $result3);
-        // $test = $em->getRepository('GistUserBundle:User')->findOneBy(array('id' => '1'));
-        // $params['test'] = $test;
-        // $params['tax_coverage'] = $vars3;
-        // // $params['tax_coverage'] = "excl";
-
-        // $params['cust_required_fields'] = $vars_req;
-        // $params['bank_options'] = $vars;
-        // $params['terminal_operators'] = $vars2;
-        // $params['charge_rates'] = $opts;
 
         return $this->render('GistPOSBundle:Settings:index.html.twig', $params);
     }
@@ -82,6 +72,8 @@ class SettingsController extends CrudController
         {
             
             $conf->set('gist_sys_area_id', $data['sys_area_id']);
+            $conf->set('gist_sys_pos_url', $data['sys_pos_url']);
+            $conf->set('gist_sys_erp_url', $data['sys_erp_url']);
             $em->flush(); 
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl('gist_pos_settings'));

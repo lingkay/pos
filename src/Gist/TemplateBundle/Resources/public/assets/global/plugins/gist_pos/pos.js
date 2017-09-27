@@ -1,10 +1,14 @@
 
 function ajaxGetProductCategories()
 {
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
+
+
     $( "#prod_cats" ).empty();
     $( "#prods" ).empty();
     $("#prod_cats").append("<div style=\"height: 10px;\">");
-    var url = "http://erp.purltech.com/inventory/pos/get/product_categories";
+    var url = url_erp+"/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
@@ -29,13 +33,14 @@ function ajaxGetProductCategories()
 
 function ajaxGetProducts(cid)
 {
-
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
     $( "#prods" ).empty();
     $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
     $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     $( "#prods" ).empty();
     
-    var url = "http://erp.purltech.com/inventory/pos/get/products/"+cid;
+    var url = url_erp+"/inventory/pos/get/products/"+cid;
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, item) {
@@ -154,8 +159,11 @@ function ajaxSearchCustomer()
     }
 
     $('#customers_list').empty();
+
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
     
-    var url = "http://erp.purltech.com/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
+    var url = url_erp+"/customer/pos/search/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+customer_id+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip;
 
     url.replace('%2F','');
     $.getJSON(url, function(json){  
@@ -289,7 +297,9 @@ function ajaxAddCustomer()
         if($('#string_consultant_id').val() != ''){consultant_id = $('#string_consultant_id').val()};
     }
 
-    var url = "http://erp.purltech.com/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes+"/"+consultant_id;
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
+    var url = url_erp+"/customer/pos/add/"+first_name+"/"+last_name+"/"+email+"/"+number+"/"+middle_name+"/"+gender+"/"+marital_status+"/"+date_married+"/"+home_phone+"/"+birthday+"/"+address1+"/"+address2+"/"+city+"/"+state+"/"+country+"/"+zip+"/"+notes+"/"+consultant_id;
 
     $.getJSON(url, function(json){  
         var count = 0;
@@ -367,7 +377,9 @@ function round(value, exp) {
 
 function ajaxGetVAT()
 {
-    var url = "http://erp.purltech.com/inventory/pos/get/vat";
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
+    var url = url_erp+"/inventory/pos/get/vat";
     var vat = 0;
     $.getJSON(url, function(json){  
         $('#float_tax_rate').val(json)
@@ -420,26 +432,7 @@ function addToCart(product_name, srp, min_price, id)
 
 }
 
-function addToPayments(payment_type, amount, details = null)
-{
-    $('.init_row_payment').remove();
-    var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-    var field = '<tr class=\"row_payment_'+row_id+'\">';     
-        // field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+row_id+'\" >';
-        // field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
-        field += '<input type=\"hidden\" name=\"payment_details_array[]\" class=\"payment_details_array\" value=\"'+details+'\" >';
-        field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
-        field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
-        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="'+addCommas(amount)+'"></td>';  
-        field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>'; 
-        field += '</tr>';
 
-        $('#payments_list').prepend(field);
-        toastr['success']('Payment added', 'Success');
-        computeBalance();
-
-
-}
 
 
 function computeBalance()
@@ -1040,7 +1033,9 @@ function revertOriginalPrices()
 function loadFrozenTransactions()
 {
     $('#frozen_list').empty();
-    var url = "http://pos.purltech.com/pos/get_frozen_transactions";
+    var url_pos = $('#url_pos').val();
+    var url_erp = $('#url_erp').val();
+    var url = url_pos+"/pos/get_frozen_transactions";
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, x) {
@@ -1058,219 +1053,7 @@ function loadFrozenTransactions()
 
 }
 
-function freezeTransaction(is_final = false)
-{
-    //vars
-    var trans_saved = false;
-    var items_saved = false;
-    var payments_saved = false;
-    var count_cart_items = $('#cart_items tr').length;
-    var count_payments = $('#payments_table .init_row_payment').length;
-    var transaction_sys_id = $('#transaction_system_id').val();
-    var transaction_disp_id = $('#transaction_display_id').val();
-    var transaction_total = $('#float_trans_amount').val();
-    var transaction_ea = $('#float_trans_ea').val();
-    var transaction_balance = $('#float_trans_balance').val();
-    var transaction_mode = $('#string_trans_mode').val();
-    var transaction_type = $('#string_trans_type').val();
-    var bulk_type = $('#string_trans_bulk_type').val();
-    var transaction_tax_rate = $('#float_tax_rate').val();
-    var transaction_orig_vat_amt = $('#float_orig_tax_vat_amt').val();
-    var transaction_new_vat_amt = $('#float_new_tax_vat_amt').val();
-    var transaction_orig_vat_amt_net = $('#float_orig_tax_amt_net_vat').val();
-    var transaction_new_vat_amt_net = $('#float_new_tax_amt_net_vat').val();
-    var transaction_tax_coverage = $('#string_tax_coverage').val();
-    var transaction_cart_min_total = $('#float_cart_minimum_total').val();
-    var transaction_cart_orig_total = $('#float_cart_orig_price').val();
-    var transaction_cart_new_total = $('#float_cart_new_price').val();
-    var transaction_cc_interest = $('#string_trans_cc_interest').val();
 
-
-    var status = 'Frozen';
-    if (is_final) {
-        status = 'Paid';
-    } 
-    var customer_id = $('#transaction_customer_id').val();
-
-    var url = "http://pos.purltech.com/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea;
-
-
-    $.getJSON(url, function(json){  
-        var count = 0;
-        $.each(json, function(i, trans) {
-            trans_saved = true;
-            $('#transaction_system_id').val(trans.new_id);
-            //save items
-            if (count_cart_items > 0) {
-                $('#cart_items tr').each(function() {
-                    var row = $(this).closest('tr');
-                    var product_id = row.find('.product_id').val();
-                    var orig_price = row.find('.srp').val();
-                    var min_price = row.find('.min_price').val();
-                    var product_name = row.find('.item_name').val();
-                    var discount_type = '%20';
-                    var discount_value = '%20';
-                    var adjusted_price = '%20';
-
-                    if (transaction_type == "per") {
-                        var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
-                        var per_item_discount_amt = row.find('.per_item_discount_amt').val();
-                        var adjusted_price_elem = row.find('.adjusted_price').val();
-
-                        if (indiv_disc_opt.length > 0) {
-                            discount_type = indiv_disc_opt;
-                        } else {
-                            discount_type = '%20';
-                        }
-
-                        if (per_item_discount_amt.length > 0) {
-                            discount_value = per_item_discount_amt;
-                        } else {
-                            discount_value = '%20';
-                        }
-
-                        if (adjusted_price_elem.length > 0) {
-                            adjusted_price = adjusted_price_elem;
-                        } else {
-                            adjusted_price = '%20';
-                        }
-                    }
-                        
-
-                    
-
-
-                    var url2 = "http://pos.purltech.com/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value;
-
-
-                    $.getJSON(url2, function(json){  
-                        var count = 0;
-                        $.each(json, function(i, items) {
-                            items_saved = true;
-                            
-                            
-                        });
-
-
-                    });
-                });
-            } else {
-                items_saved = true;
-
-                if (!is_final) {
-                    swal({
-                          title: "Transaction Frozen!",
-                          text: "The page will now reload",
-                          type: "success",
-                          timer: 2000,
-                          showConfirmButton: false,
-                        },
-                        function(){
-                                syncToERP();
-                                //location.reload();
-                            
-                        });
-                } else {
-                    swal({
-                          title: "Transaction Saved!",
-                          text: "Please wait for data sync",
-                          type: "success",
-                          timer: 2000,
-                            showConfirmButton: false,
-                        },
-                        function(){
-                            syncToERP();
-                            //location.reload();
-                            
-                        });
-                }
-            }
-
-            //save payments
-            if (count_payments == 0 && transaction_type != 'none') {
-                $('#payments_list tr').each(function() {
-                    var payment_type = $(this).find('.payment_type').val();
-                    var amount = $(this).find('.payment_amt_float').val();
-
-                    var url3 = "http://pos.purltech.com/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount;
-
-
-                    $.getJSON(url3, function(json){  
-                        var count = 0;
-                        $.each(json, function(i, payments) {
-                            //reload form
-                            if (trans_saved && items_saved) {
-                                if (!is_final) {
-                                    swal({
-                                          title: "Transaction Frozen!",
-                                          text: "The page will now reload",
-                                          type: "success",
-                                          timer: 2000,
-                                            showConfirmButton: false,
-                                        },
-                                        function(){
-                                                syncToERP();
-                                                //location.reload();
-                                            
-                                        });
-                                } else {
-                                    swal({
-                                          title: "Transaction Saved!",
-                                          text: "Please wait for data sync",
-                                          type: "success",
-                                          timer: 2000,
-                                            showConfirmButton: false,
-                                        },
-                                        function(){
-                                            syncToERP();
-                                            //location.reload();
-                                            
-                                        });
-                                }
-                            } else {
-                                // swal('Error encountered',transaction_disp_id+' not frozen (items)','error');
-                            }
-                        });
-
-                    });
-                });
-            } else {
-                payments_saved = true;
-
-                if (!is_final) {
-                    swal({
-                          title: "Transaction Frozen!",
-                          text: "The page will now reload",
-                          type: "success",
-                          timer: 2000,
-                            showConfirmButton: false,
-                        },
-                        function(){
-                                syncToERP();
-                                //location.reload();
-                            
-                        });
-                } else {
-                    swal({
-                          title: "Transaction Saved!",
-                          text: "Please wait for data sync",
-                          type: "success",
-                          timer: 2000,
-                        showConfirmButton: false,  
-                        },
-                        function(){
-                            syncToERP();
-                            //location.reload();
-                            
-                        });
-                }
-
-            }
-        });
-
-    });
-
-}
 
 
 

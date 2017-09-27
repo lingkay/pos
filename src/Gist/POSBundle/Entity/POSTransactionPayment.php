@@ -42,7 +42,7 @@ class POSTransactionPayment
     protected $trans_date;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $number;
+    protected $control_number;
 
     // CARD
     /** @ORM\Column(type="string", length=50, nullable=true) */
@@ -64,17 +64,20 @@ class POSTransactionPayment
     protected $card_class;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $interest;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $card_terminal_operator;
 
     // CHECK
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $check_account_number;
+    protected $account_number;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $check_payee;
+    protected $payee;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $check_payor;
+    protected $payor;
 
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
@@ -247,9 +250,9 @@ class POSTransactionPayment
      *
      * @return POSTransactionPayment
      */
-    public function setNumber($number)
+    public function setControlNumber($control_number)
     {
-        $this->number = $number;
+        $this->control_number = $control_number;
 
         return $this;
     }
@@ -259,9 +262,9 @@ class POSTransactionPayment
      *
      * @return string
      */
-    public function getNumber()
+    public function getControlNumber()
     {
-        return $this->number;
+        return $this->control_number;
     }
 
     /**
@@ -502,5 +505,101 @@ class POSTransactionPayment
     public function getCheckPayor()
     {
         return $this->check_payor;
+    }
+
+    /**
+     * Set interest
+     *
+     * @param string $interest
+     *
+     * @return POSTransactionPayment
+     */
+    public function setInterest($interest)
+    {
+        $this->interest = $interest;
+
+        return $this;
+    }
+
+    /**
+     * Get interest
+     *
+     * @return string
+     */
+    public function getInterest()
+    {
+        return $this->interest;
+    }
+
+    /**
+     * Set accountNumber
+     *
+     * @param string $accountNumber
+     *
+     * @return POSTransactionPayment
+     */
+    public function setAccountNumber($accountNumber)
+    {
+        $this->account_number = $accountNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get accountNumber
+     *
+     * @return string
+     */
+    public function getAccountNumber()
+    {
+        return $this->account_number;
+    }
+
+    /**
+     * Set payee
+     *
+     * @param string $payee
+     *
+     * @return POSTransactionPayment
+     */
+    public function setPayee($payee)
+    {
+        $this->payee = $payee;
+
+        return $this;
+    }
+
+    /**
+     * Get payee
+     *
+     * @return string
+     */
+    public function getPayee()
+    {
+        return $this->payee;
+    }
+
+    /**
+     * Set payor
+     *
+     * @param string $payor
+     *
+     * @return POSTransactionPayment
+     */
+    public function setPayor($payor)
+    {
+        $this->payor = $payor;
+
+        return $this;
+    }
+
+    /**
+     * Get payor
+     *
+     * @return string
+     */
+    public function getPayor()
+    {
+        return $this->payor;
     }
 }

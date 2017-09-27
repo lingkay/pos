@@ -3,6 +3,8 @@
         <!-- BEGIN FORM-->
         <div class="form-body">
             {{ form.group_text_orig('Area ID', 'sys_area_id', sys_area_id|default(''), 3, 6, false) }}
+            {{ form.group_text_orig('POS URL', 'sys_pos_url', sys_pos_url|default(''), 3, 6, false) }}
+            {{ form.group_text_orig('ERP URL', 'sys_erp_url', sys_erp_url|default(''), 3, 6, false) }}
             <div class="form-group">
                 <label class="col-md-3 control-label"></label>
                 <div class="col-md-6">

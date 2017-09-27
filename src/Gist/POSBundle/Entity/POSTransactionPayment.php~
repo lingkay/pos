@@ -42,7 +42,7 @@ class POSTransactionPayment
     protected $trans_date;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $number;
+    protected $control_number;
 
     // CARD
     /** @ORM\Column(type="string", length=50, nullable=true) */
@@ -64,17 +64,20 @@ class POSTransactionPayment
     protected $card_class;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $interest;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $card_terminal_operator;
 
     // CHECK
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $check_account_number;
+    protected $account_number;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $check_payee;
+    protected $payee;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
-    protected $check_payor;
+    protected $payor;
 
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
@@ -190,5 +193,317 @@ class POSTransactionPayment
     public function getTransaction()
     {
         return $this->transaction;
+    }
+
+    /**
+     * Set bank
+     *
+     * @param string $bank
+     *
+     * @return POSTransactionPayment
+     */
+    public function setBank($bank)
+    {
+        $this->bank = $bank;
+
+        return $this;
+    }
+
+    /**
+     * Get bank
+     *
+     * @return string
+     */
+    public function getBank()
+    {
+        return $this->bank;
+    }
+
+    /**
+     * Set transDate
+     *
+     * @param string $transDate
+     *
+     * @return POSTransactionPayment
+     */
+    public function setTransDate($transDate)
+    {
+        $this->trans_date = $transDate;
+
+        return $this;
+    }
+
+    /**
+     * Get transDate
+     *
+     * @return string
+     */
+    public function getTransDate()
+    {
+        return $this->trans_date;
+    }
+
+    /**
+     * Set number
+     *
+     * @param string $number
+     *
+     * @return POSTransactionPayment
+     */
+    public function setControlNumber($control_number)
+    {
+        $this->control_number = $control_number;
+
+        return $this;
+    }
+
+    /**
+     * Get number
+     *
+     * @return string
+     */
+    public function getControlNumber()
+    {
+        return $this->control_number;
+    }
+
+    /**
+     * Set cardType
+     *
+     * @param string $cardType
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardType($cardType)
+    {
+        $this->card_type = $cardType;
+
+        return $this;
+    }
+
+    /**
+     * Get cardType
+     *
+     * @return string
+     */
+    public function getCardType()
+    {
+        return $this->card_type;
+    }
+
+    /**
+     * Set cardName
+     *
+     * @param string $cardName
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardName($cardName)
+    {
+        $this->card_name = $cardName;
+
+        return $this;
+    }
+
+    /**
+     * Get cardName
+     *
+     * @return string
+     */
+    public function getCardName()
+    {
+        return $this->card_name;
+    }
+
+    /**
+     * Set cardExpiry
+     *
+     * @param string $cardExpiry
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardExpiry($cardExpiry)
+    {
+        $this->card_expiry = $cardExpiry;
+
+        return $this;
+    }
+
+    /**
+     * Get cardExpiry
+     *
+     * @return string
+     */
+    public function getCardExpiry()
+    {
+        return $this->card_expiry;
+    }
+
+    /**
+     * Set cardCvv
+     *
+     * @param string $cardCvv
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardCvv($cardCvv)
+    {
+        $this->card_cvv = $cardCvv;
+
+        return $this;
+    }
+
+    /**
+     * Get cardCvv
+     *
+     * @return string
+     */
+    public function getCardCvv()
+    {
+        return $this->card_cvv;
+    }
+
+    /**
+     * Set cardTerms
+     *
+     * @param string $cardTerms
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardTerms($cardTerms)
+    {
+        $this->card_terms = $cardTerms;
+
+        return $this;
+    }
+
+    /**
+     * Get cardTerms
+     *
+     * @return string
+     */
+    public function getCardTerms()
+    {
+        return $this->card_terms;
+    }
+
+    /**
+     * Set cardClass
+     *
+     * @param string $cardClass
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardClass($cardClass)
+    {
+        $this->card_class = $cardClass;
+
+        return $this;
+    }
+
+    /**
+     * Get cardClass
+     *
+     * @return string
+     */
+    public function getCardClass()
+    {
+        return $this->card_class;
+    }
+
+    /**
+     * Set cardTerminalOperator
+     *
+     * @param string $cardTerminalOperator
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCardTerminalOperator($cardTerminalOperator)
+    {
+        $this->card_terminal_operator = $cardTerminalOperator;
+
+        return $this;
+    }
+
+    /**
+     * Get cardTerminalOperator
+     *
+     * @return string
+     */
+    public function getCardTerminalOperator()
+    {
+        return $this->card_terminal_operator;
+    }
+
+    /**
+     * Set checkAccountNumber
+     *
+     * @param string $checkAccountNumber
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCheckAccountNumber($checkAccountNumber)
+    {
+        $this->check_account_number = $checkAccountNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get checkAccountNumber
+     *
+     * @return string
+     */
+    public function getCheckAccountNumber()
+    {
+        return $this->check_account_number;
+    }
+
+    /**
+     * Set checkPayee
+     *
+     * @param string $checkPayee
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCheckPayee($checkPayee)
+    {
+        $this->check_payee = $checkPayee;
+
+        return $this;
+    }
+
+    /**
+     * Get checkPayee
+     *
+     * @return string
+     */
+    public function getCheckPayee()
+    {
+        return $this->check_payee;
+    }
+
+    /**
+     * Set checkPayor
+     *
+     * @param string $checkPayor
+     *
+     * @return POSTransactionPayment
+     */
+    public function setCheckPayor($checkPayor)
+    {
+        $this->check_payor = $checkPayor;
+
+        return $this;
+    }
+
+    /**
+     * Get checkPayor
+     *
+     * @return string
+     */
+    public function getCheckPayor()
+    {
+        return $this->check_payor;
     }
 }
