@@ -211,6 +211,7 @@ class ReportsController extends CrudController
             }
             //die();
             $em->flush();
+            $this->addFlash('success', 'Transaction split saved!');
             return $this->redirect($this->generateUrl('gist_pos_reports_edit_form',array('id'=>$id)).$this->url_append);
 
         }

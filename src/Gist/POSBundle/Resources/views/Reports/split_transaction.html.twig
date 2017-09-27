@@ -114,11 +114,17 @@
             var amt_total = 0;
 
             $('.percent_allocation').each(function() {
-                pct_total += parseFloat($(this).val());
+                if ($(this).val() != '') {
+                    pct_total += parseFloat($(this).val());
+                }
+                
             });
 
             $('.amount_allocation').each(function() {
-                amt_total += parseFloat($(this).val());
+                if ($(this).val() != '') {
+                    amt_total += parseFloat($(this).val());
+                }
+                
             });
 
             //alert(pct_total.toFixed(2));
@@ -182,12 +188,12 @@
                 hidden_id.val(select_consultant_id);
             });
             // $('.percent_allocation').on("change", function()
-            $(document).on('change', '.percent_allocation', function()
+            $(document).on('keyup', '.percent_allocation', function()
             {
                 var transaction_total = "{{object.getTransactionTotal|default('0')}}";
                 var allocation = $(this).val();
                 if (allocation == '') {
-                    $(this).val('0');
+                    $(this).val('');
                     allocation = 0;
                 }
                 if (allocation > 100 || allocation < 0) {
@@ -203,13 +209,13 @@
             });
 
             // $('.amount_allocation').on("change", function()
-            $(document).on('change', '.amount_allocation', function()
+            $(document).on('keyup', '.amount_allocation', function()
             {
                 var transaction_total = "{{object.getTransactionTotal|default('0')}}";
                 var allocation = $(this).val();
                 if (allocation > transaction_total || allocation < 0) {
                     swal('Invalid allocation!','Please enter a value from 1 to '+transaction_total+'', 'error');
-                    $(this).val('0');
+                    $(this).val('');
                     allocation = 0;
                 }
                 var row = $(this).closest('.row_entry');
