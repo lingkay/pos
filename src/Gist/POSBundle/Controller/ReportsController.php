@@ -352,8 +352,9 @@ class ReportsController extends CrudController
 
         $date_from = $date_from=='null'? new DateTime($date->format('Ym01')):new DateTime($date_from);
         $date_to = $date_to=='null'? new DateTime($date->format('Ymt')):new DateTime($date_to);
+        $date_to = $date_to->modify('+1 day');
 
-        $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create <= '".$date_to->format('Y-m-d')."')";
+        $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
 
         
         if ($receipt_number != null and $receipt_number != 'null')
