@@ -243,15 +243,18 @@ $(document).ready(function(){
         // $('.customer_search_btn').hide();
         // $('.customer_clear_search_btn').hide();
         var row = $(this).closest('tr');
+        var balance = $('#float_trans_balance').val();
         $('#transaction_customer_id').val(row.find('.id').val());
-
-        swal("Success!", 'Customer selected!',"success");
         $('#customer_modal').modal('hide');
-        if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-            $('#final_modal').modal('show');
-        } else if ($('#string_trans_mode').val() == 'quotation') {
-            $('#final_modal2').modal('show');
+        swal("Success!", 'Customer selected!',"success");
+        if ($('#string_trans_type').val() != 'none' && balance <= 0) {
+            if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                $('#final_modal').modal('show');
+            } else if ($('#string_trans_mode').val() == 'quotation') {
+                $('#final_modal2').modal('show');
+            }
         }
+
         
 
     });
