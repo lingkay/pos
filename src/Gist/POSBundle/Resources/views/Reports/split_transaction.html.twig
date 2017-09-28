@@ -20,7 +20,7 @@
                                     {{ form.group_text('Receipt Number', 'receipt_number', object.getTransDisplayId|default(''), 4, 5, true) }}
                                     {{ form.group_text('Date', 'date', object.getDateCreateFormattedPOS|default(''), 4, 5, true) }}
                                     {{ form.group_text('Cosnultant', 'consultant', customer_creator|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Location', 'location', x|default('N/A'), 4, 5, true) }}
+                                    {{ form.group_text('Location', 'location', x|default('Default Location'), 4, 5, true) }}
                                     {{ form.group_text('Transaction Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                 </div>
                                 <div class="col-md-6">
