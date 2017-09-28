@@ -223,9 +223,9 @@ function ajaxSearchCustomer()
             field += '<input type="hidden" class="zip" value="'+cust.zip+'">';
             field += '<input type="hidden" class="notes" value="'+cust.notes+'">';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
-            field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'"></td>';  
-            field += '<td><a href="javascript:void(0)" class="btn btn-xs default green view_customer_btn"><i class="fa fa-eye" aria-hidden="true"></i></a></td>'; 
-            field += '<td><a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
+            field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'">';  
+            field += '<td><a href="javascript:void(0)" class="btn btn-xs default green view_customer_btn" data-toggle="tooltip" data-placement="bottom" title="View Customer"><i class="fa fa-eye" aria-hidden="true"></i></a>'; 
+            field += '<a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn" data-toggle="tooltip" data-placement="bottom" title="Select Customer"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
             field += '</tr>';
 
             $('#customers_list').prepend(field);
@@ -335,14 +335,23 @@ function ajaxAddCustomer()
     $.getJSON(url, function(json){  
         var count = 0;
        $.each(json, function(i, cust) {
-            swal("Success!", 'Customer added!',"success");
-            $('#transaction_customer_id').val(cust.new_customer_id);
-            $('#customer_modal').modal('hide');
-            
-            if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0) {
 
-                $('#final_modal').modal('show');
-            }
+
+            var route2 = url_pos+"/settings/sync_customers";
+            $.getJSON(route2, function(json2){  
+               $.each(json2, function(i, x) {
+                    swal("Success!", 'Customer added!',"success");
+                    $('#transaction_customer_id').val(cust.new_customer_id);
+                    $('#customer_modal').modal('hide');
+                    
+                    if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0) {
+
+                        $('#final_modal').modal('show');
+                    }
+                });
+            });
+
+            
         });
     });
     clearCustomerAdd();

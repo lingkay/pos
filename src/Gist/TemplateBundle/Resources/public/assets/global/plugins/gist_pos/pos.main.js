@@ -191,17 +191,11 @@ $(document).ready(function(){
         resetCustomerModal();
     });
 
-
-    $(document).on("click",".use_customer_btn", function(e){
+    $(document).on("click",".view_customer_btn", function(e){
         clearCustomerFields();
-        $('#customers_list').empty();
-        $('.customer_seach_main_div').hide();
-        $('.customer_search_btn').hide();
-        $('.customer_clear_search_btn').hide();
-        $('.add_customer').hide();
         $('.save_customer_button').hide();
         $('.customer_continue_btn').show();
-        $('.customer_search_again_btn').show();
+        // $('.customer_search_again_btn').show();
 
         var row = $(this).closest('tr');
         var opt = row.find('.marital_status').val();
@@ -239,11 +233,34 @@ $(document).ready(function(){
 
         var objDiv = document.getElementById("cust_formx");
         objDiv.scrollTop = 0;
+
+    });
+
+    $(document).on("click",".use_customer_btn", function(e){
+        // clearCustomerFields();
+        // $('#customers_list').empty();
+        // $('.customer_seach_main_div').hide();
+        // $('.customer_search_btn').hide();
+        // $('.customer_clear_search_btn').hide();
+        var row = $(this).closest('tr');
+        $('#transaction_customer_id').val(row.find('.id').val());
+
+        swal("Success!", 'Customer selected!',"success");
+        $('#customer_modal').modal('hide');
+        if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+            $('#final_modal').modal('show');
+        } else if ($('#string_trans_mode').val() == 'quotation') {
+            $('#final_modal2').modal('show');
+        }
+        
+
     });
 
 
     $(document).on("click",".customer_clear_search_btn", function(e){
         clearCustomerFields();
+        $('.save_customer_button').show();
+        $('.customer_continue_btn').hide();
         $('.f_required').each(function() {
             $(this).parent().parent().removeClass('has-error_pos');
         });
@@ -724,6 +741,7 @@ $(document).ready(function(){
     });
 
     $('#customer_modal').on('hidden.bs.modal', function () {
+
         $('.f_required').each(function() {
             $(this).parent().parent().removeClass('has-error_pos');
         });
@@ -731,7 +749,8 @@ $(document).ready(function(){
         $('.f_required_select').each(function() {
             $(this).parent().parent().removeClass('has-error_pos');
         });
-
+        $('.save_customer_button').show();
+        $('.customer_continue_btn').hide();
         $('#cform-cust_search_birthdate').parent().parent().removeClass('has-error_pos');
     });
 
@@ -785,7 +804,31 @@ $(document).ready(function(){
         if (balance <= 0) {
             swal("Payment Complete!", "Enter customer information on the next form", "success")
             $('#checkout_modal').modal('hide');
-            $('#customer_modal').modal('show');
+            if ($('#transaction_customer_id').val() == 0) {
+                $('#customer_modal').modal('show');
+            } else {
+                swal({
+                      title: "Customer already selected!",
+                      text: "",
+                      type: "success",
+                      showCancelButton: true,
+                      showConfirmButton: true,
+                      confirmButtonText: "Proceed",
+                      cancelButtonText: "Change customer",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                           if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                $('#final_modal').modal('show');
+                            } else if ($('#string_trans_mode').val() == 'quotation') {
+                                $('#final_modal2').modal('show');
+                            }
+                        } else {
+                            $('#customer_modal').modal('show');
+                        }   
+                    });
+            }
+            
         } else {
             // if ($('#string_trans_mode').val() == "quotation") {
             //     swal("Payment Complete!", "Enter customer information on the next form", "success")
