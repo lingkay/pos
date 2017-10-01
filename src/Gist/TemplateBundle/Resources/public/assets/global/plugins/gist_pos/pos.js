@@ -222,6 +222,7 @@ function ajaxSearchCustomer()
             field += '<input type="hidden" class="country" value="'+cust.country+'">';
             field += '<input type="hidden" class="zip" value="'+cust.zip+'">';
             field += '<input type="hidden" class="notes" value="'+cust.notes+'">';
+            field += '<input type="hidden" class="display_id" value="'+cust.display_id+'">';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'">';  
             field += '<td><a href="javascript:void(0)" class="btn btn-xs default green view_customer_btn" data-toggle="tooltip" data-placement="bottom" title="View Customer"><i class="fa fa-eye" aria-hidden="true"></i></a>'; 

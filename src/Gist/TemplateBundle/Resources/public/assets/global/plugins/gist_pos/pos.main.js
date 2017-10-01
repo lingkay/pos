@@ -245,6 +245,15 @@ $(document).ready(function(){
         var row = $(this).closest('tr');
         var balance = $('#float_trans_balance').val();
         $('#transaction_customer_id').val(row.find('.id').val());
+
+        var raw_disp_id = row.find('.display_id').val();
+        var foo = raw_disp_id.split(" ").join("");
+        if (foo.length > 0) {
+            foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
+        }
+
+        $('#transaction_customer_display_id').val(foo);
+        $('#transaction_customer_name').val(row.find('.last_name').val()+", "+row.find('.first_name').val());
         $('#customer_modal').modal('hide');
         swal("Success!", 'Customer selected!',"success");
         if ($('#string_trans_type').val() != 'none' && balance <= 0) {
@@ -360,7 +369,7 @@ $(document).ready(function(){
     });
 
     $('#cform-cust_search_id').on('input',function(e){
-            var foo = $(this).val().split(" ").join(""); // remove hyphens
+            var foo = $(this).val().split(" ").join("");
           if (foo.length > 0) {
             foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
           }
@@ -368,7 +377,7 @@ $(document).ready(function(){
     });
 
     $('#cform-cust_search_id').keyup(function() {
-      var foo = $(this).val().split(" ").join(""); // remove hyphens
+      var foo = $(this).val().split(" ").join("");
       if (foo.length > 0) {
         foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
       }
@@ -812,7 +821,7 @@ $(document).ready(function(){
             } else {
                 swal({
                       title: "Customer already selected!",
-                      text: "",
+                      text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
                       type: "success",
                       showCancelButton: true,
                       showConfirmButton: true,
