@@ -590,7 +590,7 @@ $(document).ready(function(){
             swal("Cannot change to quotation!", "Payment already made", "error");
         } else if ($('#string_trans_mode').val() == 'Deposit') {
             swal("Cannot change to quotation!", "Deposit mode active", "error");
-        }else {
+        } else {
             if ($('#string_trans_mode').val() == 'normal') {
                 $('#quotation_modal').modal('show');
             } else {
@@ -605,6 +605,8 @@ $(document).ready(function(){
 
         if (balance == 0 && trans_amt > 0) {
             swal("Cannot freeze transaction!", "Full payment already made", "error");
+        } else if ($('#string_trans_mode').val() == 'Deposit') {
+            swal("Cannot freeze transaction!", "Deposit mode active", "error");
         } else {
             //loadFrozenTransactions();
             $('#freeze_modal').modal('show');
