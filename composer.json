@@ -28,13 +28,17 @@
     },
     "scripts": {
         "post-install-cmd": [
+            "sudo chown -R www-data:www-data /home/gist_pos",
+            "sudo chmod -R 777 /home/gist_pos",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "php app/console assetic:dump",
-            "php app/console cache:clear"
+            "php app/console cache:clear",
+            "sudo chown -R www-data:www-data /home/gist_pos",
+            "sudo chmod -R 777 /home/gist_pos"
         ],
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
