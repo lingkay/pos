@@ -90,6 +90,24 @@ class POSTransaction
     /** @ORM\OneToMany(targetEntity="POSTransactionSplit", mappedBy="transaction") */
     protected $splits;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $deposit_vat_amt;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $deposit_amt_net_vat;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $balance_vat_amt;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $balance_amt_net_vat;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $balance;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $deposit_amount;
+
 
     /**
      * @ORM\OneToOne(targetEntity="POSTransaction")
@@ -899,5 +917,197 @@ class POSTransaction
     public function getGenericVar1()
     {
         return $this->generic_var1;
+    }
+
+    /**
+     * Set depositVatAmt
+     *
+     * @param string $depositVatAmt
+     *
+     * @return POSTransaction
+     */
+    public function setDepositVatAmt($depositVatAmt)
+    {
+        $this->deposit_vat_amt = $depositVatAmt;
+
+        return $this;
+    }
+
+    /**
+     * Get depositVatAmt
+     *
+     * @return string
+     */
+    public function getDepositVatAmt()
+    {
+        return $this->deposit_vat_amt;
+    }
+
+    /**
+     * Set depositAmtNetVat
+     *
+     * @param string $depositAmtNetVat
+     *
+     * @return POSTransaction
+     */
+    public function setDepositAmtNetVat($depositAmtNetVat)
+    {
+        $this->deposit_amt_net_vat = $depositAmtNetVat;
+
+        return $this;
+    }
+
+    /**
+     * Get depositAmtNetVat
+     *
+     * @return string
+     */
+    public function getDepositAmtNetVat()
+    {
+        return $this->deposit_amt_net_vat;
+    }
+
+    /**
+     * Set balanceVatAmt
+     *
+     * @param string $balanceVatAmt
+     *
+     * @return POSTransaction
+     */
+    public function setBalanceVatAmt($balanceVatAmt)
+    {
+        $this->balance_vat_amt = $balanceVatAmt;
+
+        return $this;
+    }
+
+    /**
+     * Get balanceVatAmt
+     *
+     * @return string
+     */
+    public function getBalanceVatAmt()
+    {
+        return $this->balance_vat_amt;
+    }
+
+    /**
+     * Set balanceAmtNetVat
+     *
+     * @param string $balanceAmtNetVat
+     *
+     * @return POSTransaction
+     */
+    public function setBalanceAmtNetVat($balanceAmtNetVat)
+    {
+        $this->balance_amt_net_vat = $balanceAmtNetVat;
+
+        return $this;
+    }
+
+    /**
+     * Get balanceAmtNetVat
+     *
+     * @return string
+     */
+    public function getBalanceAmtNetVat()
+    {
+        return $this->balance_amt_net_vat;
+    }
+
+    /**
+     * Set balance
+     *
+     * @param string $balance
+     *
+     * @return POSTransaction
+     */
+    public function setBalance($balance)
+    {
+        $this->balance = $balance;
+
+        return $this;
+    }
+
+    /**
+     * Get balance
+     *
+     * @return string
+     */
+    public function getBalance()
+    {
+        return $this->balance;
+    }
+
+    /**
+     * Set depositAmount
+     *
+     * @param string $depositAmount
+     *
+     * @return POSTransaction
+     */
+    public function setDepositAmount($depositAmount)
+    {
+        $this->deposit_amount = $depositAmount;
+
+        return $this;
+    }
+
+    /**
+     * Get depositAmount
+     *
+     * @return string
+     */
+    public function getDepositAmount()
+    {
+        return $this->deposit_amount;
+    }
+
+    /**
+     * Add split
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionSplit $split
+     *
+     * @return POSTransaction
+     */
+    public function addSplit(\Gist\POSBundle\Entity\POSTransactionSplit $split)
+    {
+        $this->splits[] = $split;
+
+        return $this;
+    }
+
+    /**
+     * Remove split
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionSplit $split
+     */
+    public function removeSplit(\Gist\POSBundle\Entity\POSTransactionSplit $split)
+    {
+        $this->splits->removeElement($split);
+    }
+
+    /**
+     * Set childTransaction
+     *
+     * @param \Gist\POSBundle\Entity\POSTransaction $childTransaction
+     *
+     * @return POSTransaction
+     */
+    public function setChildTransaction(\Gist\POSBundle\Entity\POSTransaction $childTransaction = null)
+    {
+        $this->child_transaction = $childTransaction;
+
+        return $this;
+    }
+
+    /**
+     * Get childTransaction
+     *
+     * @return \Gist\POSBundle\Entity\POSTransaction
+     */
+    public function getChildTransaction()
+    {
+        return $this->child_transaction;
     }
 }

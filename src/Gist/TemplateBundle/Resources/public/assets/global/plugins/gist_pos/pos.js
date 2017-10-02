@@ -436,7 +436,7 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
     } else {
         $('.init_row_prods').remove();
         var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-        var field = '<tr class=\"row_prod_'+row_id+'\" product_row>';     
+        var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';     
             field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
             field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
             field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
@@ -1128,6 +1128,13 @@ function freezeTransaction(is_final = false)
     var transaction_cart_new_total = $('#float_cart_new_price').val();
     var transaction_cc_interest = $('#string_trans_cc_interest').val();
 
+    var deposit_amount = $('#float_trans_deposit_amount').val();
+    var deposit_amt_net_vat = $('#float_deposit_tax_amt_net_vat').val();
+    var deposit_vat_amt = $('#float_deposit_tax_vat_amt').val();
+    var balance_amt_net_vat = $('#float_balance_tax_amt_net_vat').val();
+    var balance_vat_amt = $('#float_balance_tax_vat_amt').val();
+
+
     var url_pos = $('#url_pos').val();
     var url_erp = $('#url_erp').val();
 
@@ -1137,7 +1144,7 @@ function freezeTransaction(is_final = false)
     } 
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea;
+    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt;
 
 
     $.getJSON(url, function(json){  
@@ -1287,7 +1294,11 @@ function freezeTransaction(is_final = false)
                                         });
                                 }
                             } else {
-                                swal('Error encountered',transaction_disp_id+' not frozen (items)','error');
+                                if (!trans_saved) {
+                                    swal('Error encountered',transaction_disp_id+' not frozen (Transaction)','error');
+                                } else if (!items_saved) {
+                                    swal('Error encountered',transaction_disp_id+' not frozen (Items)','error');
+                                }
                             }
                         });
 

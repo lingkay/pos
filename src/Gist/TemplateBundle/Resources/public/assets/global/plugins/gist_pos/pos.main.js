@@ -12,12 +12,16 @@ function computeVATDeposit(total)
         vat_amt = total*tax_rate;
         amt_net_of_vat = total - vat_amt;
 
+        $('#float_deposit_tax_amt_net_vat').val(amt_net_of_vat);
+        $('#float_deposit_tax_vat_amt').val(vat_amt);
         $("#deposit_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
         $("#deposit_vat_amt").text(addCommas(round(vat_amt,2)));
     } else if (tax_coverage == 'excl') {
         vat_amt = total - (total/incl_divisor);
         amt_net_of_vat = total - vat_amt;
 
+        $('#float_deposit_tax_amt_net_vat').val(amt_net_of_vat);
+        $('#float_deposit_tax_vat_amt').val(vat_amt);
         $("#deposit_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
         $("#deposit_vat_amt").text(addCommas(round(vat_amt,2)));
     } else {
@@ -41,12 +45,16 @@ function computeVATBalance(total)
         vat_amt = total*tax_rate;
         amt_net_of_vat = total - vat_amt;
 
+        $('#float_balance_tax_vat_amt').val(vat_amt);
+        $('#float_balance_tax_amt_net_vat').val(amt_net_of_vat);
         $("#balance_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
         $("#balance_vat_amt").text(addCommas(round(vat_amt,2)));
     } else if (tax_coverage == 'excl') {
         vat_amt = total - (total/incl_divisor);
         amt_net_of_vat = total - vat_amt;
 
+        $('#float_balance_tax_vat_amt').val(vat_amt);
+        $('#float_balance_tax_amt_net_vat').val(amt_net_of_vat);
         $("#balance_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
         $("#balance_vat_amt").text(addCommas(round(vat_amt,2)));
     } else {
@@ -298,11 +306,6 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".use_customer_btn", function(e){
-        // clearCustomerFields();
-        // $('#customers_list').empty();
-        // $('.customer_seach_main_div').hide();
-        // $('.customer_search_btn').hide();
-        // $('.customer_clear_search_btn').hide();
         var row = $(this).closest('tr');
         var balance = $('#float_trans_balance').val();
         $('#transaction_customer_id').val(row.find('.id').val());
@@ -322,9 +325,14 @@ $(document).ready(function(){
                 $('#final_modal').modal('show');
             } else if ($('#string_trans_mode').val() == 'quotation') {
                 $('#final_modal2').modal('show');
+            } else if ($('#string_trans_mode').val() == 'Deposit') {
+                $('#final_modal2').modal('show');
             }
         }
 
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            $('#final_modal2').modal('show');
+        }
         
 
     });
@@ -972,6 +980,7 @@ $(document).ready(function(){
                             appendDepositItemFields();
                             computeVATDeposit(payment_total);
                             computeVATBalance(parseFloat(balance));
+                            $('#float_trans_deposit_amount').val(payment_total);
                             $('#string_trans_mode').val('Deposit');
                             $('.checkout_btn').hide();
                             $('.proceed_deposit').show();

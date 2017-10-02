@@ -171,7 +171,7 @@ class POSController extends Controller
     // POS SAVING AND SENDING METHODS
 
     
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea)
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -187,6 +187,13 @@ class POSController extends Controller
         $transaction->setSyncedToErp('false');
         $transaction->setTransactionMode($transaction_mode);
         $transaction->setExtraAmount($transaction_ea);
+
+        $transaction->setDepositVatAmt($deposit_vat_amt);
+        $transaction->setDepositAmtNetVat($deposit_vat_amt);
+        $transaction->setBalanceVatAmt($balance_vat_amt);
+        $transaction->setBalanceAmtNetVat($balance_amt_net_vat);
+        $transaction->setBalance($balance);
+        $transaction->setDepositAmount($deposit_amount);
 
         $transaction->setTaxRate($tax_rate);
         $transaction->setOrigVatAmt($orig_vat_amt);

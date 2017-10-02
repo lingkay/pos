@@ -87,11 +87,38 @@ class POSTransaction
     /** @ORM\OneToMany(targetEntity="POSTransactionPayment", mappedBy="transaction") */
     protected $payments;
 
+    /** @ORM\OneToMany(targetEntity="POSTransactionSplit", mappedBy="transaction") */
+    protected $splits;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $deposit_vat_amt;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $deposit_amt_net_vat;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $balance_vat_amt;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $balance_amt_net_vat;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $balance;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $deposit_amount;
+
+
     /**
      * @ORM\OneToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
      */
     private $reference_transaction;
+
+    /**
+     * @ORM\OneToOne(targetEntity="POSTransaction", mappedBy="reference_transaction")
+     */
+    private $child_transaction;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $extra_amount;
@@ -120,6 +147,25 @@ class POSTransaction
         return $data;
     }
 
+    public function getDiscountAmount()
+    {
+        return ($this->transaction_total - $this->cart_orig_total);
+    }
+
+    public function getPercentOfSale()
+    {
+        return round((($this->transaction_total/$this->cart_orig_total)*100),2)."%";
+    }
+
+    public function getFinalVAT()
+    {
+        if ($this->transaction_type == 'per' || $this->transaction_type == 'bulk') {
+            return $this->new_vat_amt;
+        }
+
+        return $this->orig_vat_amt;
+    }
+
     public function getItems()
     {
         return $this->items;
@@ -130,15 +176,33 @@ class POSTransaction
         return $this->payments;
     }
 
+    public function getSplits()
+    {
+        return $this->splits;
+    }
+
     public function getTotalPayments()
     {
         $total = 0;
+
+        if ($this->hasParent()) {
+            foreach ($this->reference_transaction->payments as $p) {
+                $total = $total + $p->getAmount();
+            }
+
+            return $total;
+        }
 
         foreach ($this->payments as $p) {
             $total = $total + $p->getAmount();
         }
 
         return $total;
+    }
+
+    public function getChange()
+    {
+        return abs($this->transaction_total - $this->getTotalPayments());
     }
     
 
@@ -344,6 +408,22 @@ class POSTransaction
     public function getTransactionType()
     {
         return $this->transaction_type;
+    }
+
+    public function getTransactionTypeFormatted()
+    {
+        $ret_val = 'n/a';
+        if ($this->transaction_type == 'reg') {
+            $ret_val = 'Regular';
+        } elseif ($this->transaction_type == 'bulk') {
+            $ret_val = 'Bulk Discount';
+        } elseif ($this->transaction_type == 'per') {
+            $ret_val = 'Per-item Discount';
+        } else {
+            $ret_val = 'N/A';
+        }
+
+        return $ret_val;
     }
 
     /**
@@ -704,6 +784,43 @@ class POSTransaction
     public function getReferenceTransaction()
     {
         return $this->reference_transaction;
+    }
+
+    public function getReferenceTransactionDisplayID()
+    {
+        if ($this->reference_transaction != null) {
+            return $this->reference_transaction->getTransDisplayId();
+        }
+
+        return '-';
+        
+    }
+
+    public function hasChild()
+    {
+        if ($this->child_transaction == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function hasSplit()
+    {
+        if (count($this->splits) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function hasParent()
+    {
+        if ($this->reference_transaction == null) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -12,6 +12,7 @@
 <!-- TRANSACTION VARS -->
 <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
 <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
+<input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
 <input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
 <input type="hidden" id="float_trans_ea" name="transaction_balance" value="0">
 <input type="hidden" id="string_trans_type" value="none">
@@ -35,6 +36,11 @@
 <input type="hidden" id="string_tax_coverage" value="{{tax_coverage|default('none')}}">
 <input type="hidden" id="float_orig_excl_total" value="0">
 <input type="hidden" id="float_new_excl_total" value="0">
+
+<input type="hidden" id="float_deposit_tax_vat_amt" value="0">
+<input type="hidden" id="float_balance_tax_vat_amt" value="0">
+<input type="hidden" id="float_deposit_tax_amt_net_vat" value="0">
+<input type="hidden" id="float_balance_tax_amt_net_vat" value="0">
 <!-- END TAX VARS -->
 <!-- OLD VARS -->
 <input type="hidden" id="session_vat" name="session_vat" value="0">
@@ -286,17 +292,21 @@ function appendDepositItemFields()
 $(document).ready(function(){ 
 
     $(document).on("click",".check_issued", function(e){
-        var cart_minimum_total = $('#float_cart_minimum_total').val();
+        var deposit_amount = parseFloat($('#float_trans_deposit_amount').val());
         var selected_min_total = 0;
-        $('.check_issued').each(function() {
+        $('.check_issued:checkbox:checked').each(function() {
             var row = $(this).closest('.product_row');
-            var min_price = row.find('.min_price');
+            var min_price = row.find('.min_price')
+            min_price = min_price.val();
             selected_min_total += parseFloat(min_price);
         });
 
-
         if($(this).is(':checked')) {
-            //alert("checked");
+            if (selected_min_total > deposit_amount) {
+                $(this).prop('checked', false); 
+                $(this).removeAttr('checked');
+                swal('Cannot issue item!','','error');
+            }
         }
     });
 });
