@@ -7,7 +7,6 @@ function computeVATDeposit(total)
     var incl_divisor = tax_rate + 1;
     total = parseFloat(total);
 
-    alert(total+' '+tax_rate);
     $('.totals_deposit_amt').text(addCommas(total));
 
     if (tax_coverage == 'incl') {
@@ -599,24 +598,7 @@ $(document).ready(function(){
         }
     });
 
-    $(document).on("click",".quotation_continue_btn", function(e){
-        if ($('#string_trans_mode').val() == 'normal') {
-            $('#string_trans_mode').val('quotation');
-            $('#pos_mode').text('Quotation');
-            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
-            // toastr['success']('Quotation mode enabled.', 'POS Mode Changed');
-            swal("POS Mode Changed", "Quotation mode enabled!", "success")
-            $('#quotation_modal').modal('hide');
-        } else {
-            $('#string_trans_mode').val('normal');
-            $('#pos_mode').text('Normal');
-            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
-            // toastr['success']('Quotation mode disabled.', 'POS Mode Changed');
-            swal("POS Mode Changed", "Quotation mode disabled!", "success")
-            $('#rev_quotation_modal').modal('hide');
-        }
-        
-    });
+    
     
 
     
@@ -911,7 +893,10 @@ $(document).ready(function(){
 
         if (balance <= 0) {
             swal("Payment Complete!", "Enter customer information on the next form", "success");
-            $('#string_trans_mode').val('normal');
+            if ($('#string_trans_mode').val() == 'Deposit') {
+                $('#string_trans_mode').val('normal');
+            }
+            
             $('#checkout_modal').modal('hide');
             if ($('#transaction_customer_id').val() == 0) {
                 $('#customer_modal').modal('show');

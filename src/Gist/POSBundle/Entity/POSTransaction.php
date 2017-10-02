@@ -204,7 +204,7 @@ class POSTransaction
         $total = 0;
 
         if ($this->hasParent()) {
-            foreach ($this->reference_transaction->payments as $p) {
+            foreach ($this->reference_transaction->getPayments() as $p) {
                 $total = $total + $p->getAmount();
             }
 

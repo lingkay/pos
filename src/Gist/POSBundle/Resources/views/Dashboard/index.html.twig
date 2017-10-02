@@ -25,6 +25,7 @@
 <input type="hidden" id="transaction_customer_name" name="transaction_customer_name" value="null">
 <input type="hidden" id="transaction_system_id" name="transaction_system_id" value="{{next_sys_id|default(0)}}">
 <input type="hidden" id="transaction_display_id" name="transaction_display_id" value="{{next_id|default(0)}}">
+<input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
 <!-- END TRANSACTION VARS -->
 <!-- TAX VARS -->
@@ -106,9 +107,9 @@
                                         {% if transaction_object.hasItems|default(false) %}
                                             {% for item in transaction_object.getItems|default(null) %}
                                                 <tr class="product_row existing"> 
-                                                    <input type="hidden" name="product_id[]" class="product_id" value="" >
-                                                    <input type="hidden" name="barcode[]" class="barcode" value="" >
-                                                    <input type="hidden" name="item_code[]" class="item_code" value="" >
+                                                    <input type="hidden" name="product_id[]" class="product_id" value="{{item.getID}}" >
+                                                    <input type="hidden" name="barcode[]" class="barcode" value="{{item.getBarcode}}" >
+                                                    <input type="hidden" name="item_code[]" class="item_code" value="{{item.getItemCode}}" >
                                                     <input type="hidden" name="min_price[]" class="min_price" value="{{item.getMinimumPrice}}" >
                                                     <input type="hidden" name="srp[]" class="srp" value="{{item.getOrigPrice}}" >
                                                     <input type="hidden" name="product_amt[]" class="product_amt" value="{{item.getOrigPrice}}" >
@@ -216,9 +217,11 @@ function finalModalAction(opt)
 
 function syncToERP()
 {
-    var route = "{{ path('gist_main_sync_pos_data')|escape('js') }}";
+
+    var route = "{{ path('gist_main_sync_pos_data')|e('js') }}";
     $.getJSON(route, function(json){  
        $.each(json, function(i, x) {
+                alert('here');
             swal({
               title: "POS Data Synced!",
               text: "",
@@ -367,6 +370,25 @@ $(document).ready(function(){
                 swal('Cannot issue item!','','error');
             }
         }
+    });
+
+    $(document).on("click",".quotation_continue_btn", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            $('#string_trans_mode').val('quotation');
+            $('#pos_mode').text('Quotation');
+            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
+            // toastr['success']('Quotation mode enabled.', 'POS Mode Changed');
+            swal("POS Mode Changed", "Quotation mode enabled!", "success")
+            $('#quotation_modal').modal('hide');
+        } else {
+            $('#string_trans_mode').val('normal');
+            $('#pos_mode').text('Normal');
+            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
+            // toastr['success']('Quotation mode disabled.', 'POS Mode Changed');
+            swal("POS Mode Changed", "Quotation mode disabled!", "success")
+            $('#rev_quotation_modal').modal('hide');
+        }
+        
     });
 });
 </script>

@@ -107,7 +107,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="payments_list">
-                                            {% if transaction_object.hasPayments %}
+                                            {% if transaction_object.hasPayments|default(null) %}
                                                 {% for p in transaction_object.getPayments %}
                                                     <tr class="row_payment_{{p.getID}}">     
                                                     <input type="hidden" name="control_number" class="control_number" value="{{p.getControlNumber|default('')}}">
