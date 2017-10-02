@@ -107,9 +107,31 @@
                                             </tr>
                                         </thead>
                                         <tbody id="payments_list">
-                                            <tr class="init_row_payment">
-                                                <td colspan="3"><p>No payments added</p></td>
-                                            </tr>
+                                            {% if transaction_object.hasPayments %}
+                                                {% for p in transaction_object.getPayments %}
+                                                    <tr class="row_payment_{{p.getID}}">     
+                                                    <input type="hidden" name="control_number" class="control_number" value="{{p.getControlNumber|default('')}}">
+                                                    <input type="hidden" name="account_number" class="account_number" value="{{p.getAccountNumber|default('')}}">
+                                                    <input type="hidden" name="bank" class="bank" value="{{p.getBank|default('')}}">
+                                                    <input type="hidden" name="cc_terminal_opt" class="cc_terminal_opt" value="{{p.getCardTerminalOperator|default('')}}">
+                                                    <input type="hidden" name="cc_interest" class="cc_interest" value="{{p.getInterest|default('')}}">
+                                                    <input type="hidden" name="cc_terms" class="cc_terms" value="{{p.getCardTerms|default('')}}">
+                                                    <input type="hidden" name="payee" class="payee" value="{{p.getPayee|default('')}}">
+                                                    <input type="hidden" name="payor" class="payor" value="{{p.getPayor|default('')}}">
+                                                    <input type="hidden" name="cc_expiry" class="cc_expiry" value="{{p.getCardExpiry|default('')}}">
+                                                    <input type="hidden" name="cc_cvv" class="cc_cvv" value="{{p.getCardCvv|default('')}}">
+                                                    <input type="hidden" name="payment_details_array[]" class="payment_details_array" value="null" >
+                                                    <input type="hidden" name="payment_amt_float[]" class="payment_amt_float" value="{{p.amount|default('')}}" >
+                                                    <td><input type="text" style="font-size: 12px !important;" name="payment_type[]" value="{{p.getType|default('')}}" readonly="true" class="form-control payment_type"></td>
+                                                    <td><input type="text" style="font-size: 10px !important;" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="{{p.amount|number_format(2)|default('')}}"></td>  
+                                                    <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
+                                                    </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr class="init_row_payment">
+                                                    <td colspan="3"><p>No payments added</p></td>
+                                                </tr>
+                                            {% endif %}
                                         </tbody>
                                     </table>
                                 </div>

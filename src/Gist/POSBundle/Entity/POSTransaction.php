@@ -157,6 +157,24 @@ class POSTransaction
         return round((($this->transaction_total/$this->cart_orig_total)*100),2)."%";
     }
 
+    public function hasItems()
+    {
+        if (count($this->items) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function hasPayments()
+    {
+        if (count($this->payments) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getFinalVAT()
     {
         if ($this->transaction_type == 'per' || $this->transaction_type == 'bulk') {

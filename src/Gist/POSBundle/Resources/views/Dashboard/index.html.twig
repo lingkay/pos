@@ -13,12 +13,12 @@
 <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
 <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
 <input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
-<input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
+<input type="hidden" id="float_trans_balance" name="transaction_balance" value="{{transaction_object.getBalance|default(0)}}">
 <input type="hidden" id="float_trans_ea" name="transaction_balance" value="0">
-<input type="hidden" id="string_trans_type" value="none">
+<input type="hidden" id="string_trans_type" value="{{transaction_object.getTransactionType|default('none')}}">
 <input type="hidden" id="string_trans_main_type" value="Normal">
 <input type="hidden" id="string_trans_bulk_type" value="none">
-<input type="hidden" id="string_trans_mode" value="normal">
+<input type="hidden" id="string_trans_mode" value="{{transaction_object.getTransactionMode|default('normal')}}">
 <input type="hidden" id="string_trans_cc_interest" value="true">
 <input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="0">
 <input type="hidden" id="transaction_customer_display_id" name="transaction_customer_display_id" value="0">
@@ -28,7 +28,7 @@
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
 <!-- END TRANSACTION VARS -->
 <!-- TAX VARS -->
-<input type="hidden" id="float_tax_rate" value="0">
+<input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">
 <input type="hidden" id="float_orig_tax_vat_amt" value="0">
 <input type="hidden" id="float_new_tax_vat_amt" value="0">
 <input type="hidden" id="float_orig_tax_amt_net_vat" value="0">
@@ -103,9 +103,25 @@
                                         </tr>
                                     </thead>
                                     <tbody id="cart_items">
-                                        <tr class="init_row_prods">
-                                            <td colspan="3" class="xrow"><p>No items added</p></td>
-                                        </tr>
+                                        {% if transaction_object.hasItems|default(false) %}
+                                            {% for item in transaction_object.getItems|default(null) %}
+                                                <tr class="product_row existing"> 
+                                                    <input type="hidden" name="product_id[]" class="product_id" value="" >
+                                                    <input type="hidden" name="barcode[]" class="barcode" value="" >
+                                                    <input type="hidden" name="item_code[]" class="item_code" value="" >
+                                                    <input type="hidden" name="min_price[]" class="min_price" value="{{item.getMinimumPrice}}" >
+                                                    <input type="hidden" name="srp[]" class="srp" value="{{item.getOrigPrice}}" >
+                                                    <input type="hidden" name="product_amt[]" class="product_amt" value="{{item.getOrigPrice}}" >
+                                                    <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control item_name"></td>
+                                                    <td><input type="text" style="font-size: 10px !important;" name="display_price[]" class="form-control display_price" readonly="true" value="{{item.getOrigPrice}}"></td>  
+                                                    <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr class="init_row_prods">
+                                                <td colspan="3" class="xrow"><p>No items added</p></td>
+                                            </tr>
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>
@@ -172,6 +188,7 @@
 
 {% endblock %}
 {% block js %}
+<script src="{{ asset('bundles/gisttemplate/assets/global/plugins/gist_pos/pos.main.js') }}"></script>
 <script type="text/javascript">
 function finalModalAction(opt)
 {
@@ -291,6 +308,48 @@ function appendDepositItemFields()
 
 $(document).ready(function(){ 
 
+    //for loading transactions/unfreeze/continue
+    var hasItems = "{{transaction_object.hasItems|default(false)}}";
+    var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
+    var trans_type = $('#string_trans_type').val();
+    var trans_mode = $('#string_trans_mode').val();
+    var balance = $('#float_trans_balance').val();
+    if (hasItems == true) {
+        computeCartRaw();
+        computeCartMinimum();
+        computeBalance();
+        if (trans_type == 'per') {
+            $('#string_trans_type').val('per');
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.checkout_btn').show();
+            appendPerItemColumns();
+            appendPerItemFields();
+            $('#transaction_type_modal').modal('hide');
+            $('.updated_totals_row').show();
+            $('.clear_discount').show();
+            
+            computeCartIndiv();
+            computeVATIndiv();
+        }
+
+        if (trans_mode == 'Deposit') {
+            $('.deposit_amount_totals_row').show();
+            $('.balance_totals_row').show();
+            appendDepositItemColumns();
+            appendDepositItemFields();
+            computeVATDeposit(payment_total);
+            computeVATBalance(parseFloat(balance));
+            $('#float_trans_deposit_amount').val(payment_total);
+            $('#string_trans_mode').val('Deposit');
+            $('.checkout_btn').show();
+            $('.proceed_deposit').show();
+            $('.next_step_btn').hide();
+        }
+
+        
+    }
+
     $(document).on("click",".check_issued", function(e){
         var deposit_amount = parseFloat($('#float_trans_deposit_amount').val());
         var selected_min_total = 0;
@@ -311,5 +370,4 @@ $(document).ready(function(){
     });
 });
 </script>
-<script src="{{ asset('bundles/gisttemplate/assets/global/plugins/gist_pos/pos.main.js') }}"></script>
 {% endblock %}

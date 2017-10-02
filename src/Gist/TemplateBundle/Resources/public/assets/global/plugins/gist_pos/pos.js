@@ -416,16 +416,7 @@ function round(value, exp) {
   return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
 }
 
-function ajaxGetVAT()
-{
-    var url_pos = $('#url_pos').val();
-    var url_erp = $('#url_erp').val();
-    var url = url_erp+"/inventory/pos/get/vat";
-    var vat = 0;
-    $.getJSON(url, function(json){  
-        $('#float_tax_rate').val(json)
-    });
-}
+
 
 
 function addToCart(product_name, srp, min_price, id, barcode, item_code)

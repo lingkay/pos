@@ -5,7 +5,9 @@ function computeVATDeposit(total)
     var vat_amt = 0;
     var amt_net_of_vat = 0;
     var incl_divisor = tax_rate + 1;
+    total = parseFloat(total);
 
+    alert(total+' '+tax_rate);
     $('.totals_deposit_amt').text(addCommas(total));
 
     if (tax_coverage == 'incl') {
@@ -71,7 +73,6 @@ $(document).ready(function(){
     $('.switch_to_normal_class').hide();
         
     ajaxGetProductCategories();  
-    ajaxGetVAT();
     toastr.options = {
       "closeButton": false,
       "debug": false,
@@ -430,7 +431,7 @@ $(document).ready(function(){
                 computeBalance();    
             }
         }
-        
+
         return false;
     });
 
@@ -909,7 +910,8 @@ $(document).ready(function(){
         });
 
         if (balance <= 0) {
-            swal("Payment Complete!", "Enter customer information on the next form", "success")
+            swal("Payment Complete!", "Enter customer information on the next form", "success");
+            $('#string_trans_mode').val('normal');
             $('#checkout_modal').modal('hide');
             if ($('#transaction_customer_id').val() == 0) {
                 $('#customer_modal').modal('show');
@@ -971,7 +973,6 @@ $(document).ready(function(){
                             computeVATBalance(parseFloat(balance));
                             $('#float_trans_deposit_amount').val(payment_total);
                             $('#string_trans_mode').val('Deposit');
-                            $('.checkout_btn').hide();
                             $('.proceed_deposit').show();
                             $('#checkout_modal').modal('hide');
                             swal.close();

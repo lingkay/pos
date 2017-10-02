@@ -134,12 +134,16 @@ class POSController extends Controller
             $opts[$o['id']] = $o['name'];
 
 
-        $url3=$conf->get('gist_sys_erp_url')."/inventory/pos/get/tax_coverage";
-        $result3 = file_get_contents($url3);
-        $vars3 = str_replace('"', '', $result3);
+        $url_tax_coverage=$conf->get('gist_sys_erp_url')."/inventory/pos/get/tax_coverage";
+        $result_tax_coverage = file_get_contents($url_tax_coverage);
+        $var_tax_coverage = str_replace('"', '', $result_tax_coverage);
 
-        $params['tax_coverage'] = $vars3;
-        // $params['tax_coverage'] = "excl";
+        $url_tax_rate=$conf->get('gist_sys_erp_url')."/inventory/pos/get/vat";
+        $result_tax_rate = file_get_contents($url_tax_rate);
+        $var_tax_rate = str_replace('"', '', $result_tax_rate);
+
+        $params['tax_coverage'] = $var_tax_coverage;
+        $params['tax_rate'] = $var_tax_rate;
 
         $params['cust_required_fields'] = $vars_req;
         $params['cust_visible_fields'] = $vars_visible;
