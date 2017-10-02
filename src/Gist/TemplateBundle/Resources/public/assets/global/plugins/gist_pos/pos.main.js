@@ -430,7 +430,6 @@ $(document).ready(function(){
                 computeBalance();    
             }
         }
-            
         
         return false;
     });
@@ -498,8 +497,6 @@ $(document).ready(function(){
         } else {
             ajaxSearchCustomer();
         }
-
-        
     });
 
     $(document).on("click",".save_customer_button", function(e){
@@ -525,16 +522,12 @@ $(document).ready(function(){
              }
         }
 
-            
-    
-
         $('.f_required_date').each(function() {
             if ($(this).val() == '') {
                 
                 complete_flag = false;
             }
         });
-   
 
         if (complete_flag) {
             ajaxAddCustomer();
@@ -567,14 +560,6 @@ $(document).ready(function(){
 
         }
         
-
-        // var last_name = $('#cust_search_lastname').val();
-        // var first_name = $('#cust_search_firstname').val();
-        // if ($('#cform-cust_search_lastname').val() != '' &&  $('#cform-cust_search_firstname').val() != '') {
-            
-        // } else {
-        //     swal("Missing fields!", "Please enter atleast a first and last name", "error");   
-        // }
     });
 
     $(document).on("click",".add_customer", function(e){

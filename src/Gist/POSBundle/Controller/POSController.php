@@ -16,11 +16,29 @@ class POSController extends Controller
 {
     public function indexAction()
     {
-        $conf = $this->get('gist_configuration');
-        $em = $this->getDoctrine()->getManager();
     	$this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
+        $params = $this->padFormParams($params);
 
+        return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+    }
+
+    public function indexLoadAction($transaction_display_id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $this->title = 'Dashboard Loaded';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $params = $this->padFormParams($params);
+        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('trans_display_id' => $transaction_display_id));
+        $params['transaction_object'] = $transaction_object;
+
+        return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+    }
+
+    protected function padFormParams(&$params, $object = null)
+    {
+        $conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
         $params['indiv_options'] = array(
             'gift' => 'Gift/Free',
             'discamt' => 'Discount Amount',
@@ -128,8 +146,7 @@ class POSController extends Controller
         $params['bank_options'] = $vars;
         $params['terminal_operators'] = $vars2;
         $params['charge_rates'] = $opts;
-
-        return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+        return $params;
     }
 
     public function landingAction()
