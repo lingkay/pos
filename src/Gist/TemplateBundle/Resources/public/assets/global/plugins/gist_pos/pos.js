@@ -661,6 +661,8 @@ function computeCartBulk(sale_price)
 }
 
 
+
+
 function computeVATRaw(total)
 {
     var tax_rate = parseFloat($('#float_tax_rate').val())/100;

@@ -1,9 +1,51 @@
+function computeVATDeposit(total)
+{
+    var tax_rate = parseFloat($('#float_tax_rate').val())/100;
+    var tax_coverage = $('#string_tax_coverage').val();
+    var vat_amt = 0;
+    var amt_net_of_vat = 0;
+    var incl_divisor = tax_rate + 1;
+
+    $('.totals_deposit_amt').text(addCommas(total));
+
+    if (tax_coverage == 'incl') {
+        vat_amt = total*tax_rate;
+        amt_net_of_vat = total - vat_amt;
+
+        // $('#float_new_tax_vat_amt').val(round(vat_amt,2));
+        // $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
+        // $('#float_orig_tax_vat_amt').val(round(vat_amt,2));
+        // $('#float_orig_tax_amt_net_vat').val(round(amt_net_of_vat,2));
+        // $("#initial_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        // $("#initial_vat_amt").text(addCommas(round(vat_amt,2)));
+        $("#deposit_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        $("#deposit_vat_amt").text(addCommas(round(vat_amt,2)));
+    } else if (tax_coverage == 'excl') {
+        vat_amt = total - (total/incl_divisor);
+        amt_net_of_vat = total - vat_amt;
+
+        // $('#float_new_tax_vat_amt').val(round(vat_amt,2));
+        // $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
+        // $('#float_orig_tax_vat_amt').val(round(vat_amt,2));
+        // $('#float_orig_tax_amt_net_vat').val(round(amt_net_of_vat,2));
+        // $("#initial_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        // $("#initial_vat_amt").text(addCommas(round(vat_amt,2)));
+        $("#deposit_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        $("#deposit_vat_amt").text(addCommas(round(vat_amt,2)));
+    } else {
+        // $("#cart_new_amt_vat").text("No vat set in ERP");
+        // $("#cart_new_vat").text("No vat set in ERP");
+    }
+
+
+}
+
 $(document).ready(function(){ 
 
     $('#cform-cust_search_id').attr('maxlength','11');
     $('.switch_to_normal_class').hide();
         
-    ajaxGetProductCategories();  
+    ajaxGetProductCategorifes();  
     ajaxGetVAT();
     toastr.options = {
       "closeButton": false,
@@ -316,6 +358,8 @@ $(document).ready(function(){
 
     // CLEAN
     $('.updated_totals_row').hide();
+    $('.deposit_amount_totals_row').hide();
+    $('.balance_totals_row').hide();
 
     $(document).on("click",".remove_row", function(e){
         var trans_type = $('#string_trans_type').val();
@@ -813,6 +857,12 @@ $(document).ready(function(){
 
     $(document).on("click",".finish_btn", function(e){
         var balance = $('#float_trans_balance').val();
+        var payment_total = 0;
+        //THIS IS NOT DOING CORRECTLY
+        $('.payment_amt').each(function() {
+            payment_total += parseFloat($(this).val());
+        });
+
         if (balance <= 0) {
             swal("Payment Complete!", "Enter customer information on the next form", "success")
             $('#checkout_modal').modal('hide');
@@ -842,13 +892,6 @@ $(document).ready(function(){
             }
             
         } else {
-            // if ($('#string_trans_mode').val() == "quotation") {
-            //     swal("Payment Complete!", "Enter customer information on the next form", "success")
-            //     $('#checkout_modal').modal('hide');
-            //     $('#customer_modal').modal('show');
-            // } else {
-                // toastr['error']('Balance of '+addCommas(parseFloat(balance))+' not paid', 'Transaction incomplete');
-                // sweetAlert("Oops...", "Balance of "+addCommas(parseFloat(balance))+" not paid", "error");
             if ($('#string_trans_mode').val() == "quotation") {
                 swal({
                       title: "Payment incomplete!",
@@ -869,7 +912,20 @@ $(document).ready(function(){
                     },
                     function(isConfirm){
                         if (isConfirm) {
-                           
+                            // 1 add two rows on vats table
+                            // 2 add checkboxes on cart items
+
+                            // 1
+                            $('.deposit_amount_totals_row').show();
+                            $('.balance_totals_row').show();
+
+                            // 2
+                            appendDepositItemColumns();
+                            appendDepositItemFields();
+                            computeVATDeposit(payment_total);
+                            $('#checkout_modal').modal('hide');
+                            swal.close();
+
                         } else {
                             
                         }   
