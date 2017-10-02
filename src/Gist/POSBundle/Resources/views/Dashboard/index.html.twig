@@ -87,7 +87,7 @@
                 <div class="portlet-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <div style="overflow:scroll; overflow-x: hidden; height: 220px;">
+                            <div style="overflow:scroll; overflow-x: hidden; height: 240px;">
                                 <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="cart_table">
                                     <thead>
                                         <tr>
@@ -109,6 +109,7 @@
                                     <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
                                     <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                                     <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout</a>
+                                    <a href="javascript:void(0)" class="btn proceed_deposit" style="background-color: green; color: #ffffff;">Proceed Deposit</a>
                                     <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
                                     <a href="" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
                                     <br>
@@ -271,10 +272,34 @@ function appendDepositItemColumns()
 
 function appendDepositItemFields()
 {
+    
     $('#cart_table').find('tr').each(function(){
-        $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+        if ($(this).children('td').length < 4) {
+            $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+        }
     });
+    
 }
+
+    
+
+$(document).ready(function(){ 
+
+    $(document).on("click",".check_issued", function(e){
+        var cart_minimum_total = $('#float_cart_minimum_total').val();
+        var selected_min_total = 0;
+        $('.check_issued').each(function() {
+            var row = $(this).closest('.product_row');
+            var min_price = row.find('.min_price');
+            selected_min_total += parseFloat(min_price);
+        });
+
+
+        if($(this).is(':checked')) {
+            //alert("checked");
+        }
+    });
+});
 </script>
 <script src="{{ asset('bundles/gisttemplate/assets/global/plugins/gist_pos/pos.main.js') }}"></script>
 {% endblock %}

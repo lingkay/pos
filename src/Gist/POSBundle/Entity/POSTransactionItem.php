@@ -58,6 +58,9 @@ class POSTransactionItem
      */
     protected $transaction;
 
+    /** @ORM\Column(type="boolean", nullable=true) */
+    protected $issued;
+
     public function __construct()
     {
         $this->initTrackCreate();
@@ -349,5 +352,29 @@ class POSTransactionItem
     public function getItemCode()
     {
         return $this->item_code;
+    }
+
+    /**
+     * Set issued
+     *
+     * @param boolean $issued
+     *
+     * @return POSTransactionItem
+     */
+    public function setIssued($issued)
+    {
+        $this->issued = $issued;
+
+        return $this;
+    }
+
+    /**
+     * Get issued
+     *
+     * @return boolean
+     */
+    public function getIssued()
+    {
+        return $this->issued;
     }
 }

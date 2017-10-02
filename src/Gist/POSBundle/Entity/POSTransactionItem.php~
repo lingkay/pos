@@ -58,6 +58,9 @@ class POSTransactionItem
      */
     protected $transaction;
 
+    /** @ORM\Column(type="boolean", nullable=true) */
+    protected $issued;
+
     public function __construct()
     {
         $this->initTrackCreate();
@@ -301,5 +304,53 @@ class POSTransactionItem
     public function getTransaction()
     {
         return $this->transaction;
+    }
+
+    /**
+     * Set barcode
+     *
+     * @param string $barcode
+     *
+     * @return POSTransactionItem
+     */
+    public function setBarcode($barcode)
+    {
+        $this->barcode = $barcode;
+
+        return $this;
+    }
+
+    /**
+     * Get barcode
+     *
+     * @return string
+     */
+    public function getBarcode()
+    {
+        return $this->barcode;
+    }
+
+    /**
+     * Set itemCode
+     *
+     * @param string $itemCode
+     *
+     * @return POSTransactionItem
+     */
+    public function setItemCode($itemCode)
+    {
+        $this->item_code = $itemCode;
+
+        return $this;
+    }
+
+    /**
+     * Get itemCode
+     *
+     * @return string
+     */
+    public function getItemCode()
+    {
+        return $this->item_code;
     }
 }

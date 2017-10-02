@@ -436,7 +436,7 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
     } else {
         $('.init_row_prods').remove();
         var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-        var field = '<tr class=\"row_prod_'+row_id+'\">';     
+        var field = '<tr class=\"row_prod_'+row_id+'\" product_row>';     
             field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
             field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
             field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
@@ -452,6 +452,10 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
             // if there is already a discount type applied
             if($('#string_trans_type').val() == 'per') {
                 appendPerItemFields();
+            }
+
+            if ($('#string_trans_mode').val() == 'Deposit') {
+                appendDepositItemFields();
             }
 
             //count number of products in cart
@@ -1283,7 +1287,7 @@ function freezeTransaction(is_final = false)
                                         });
                                 }
                             } else {
-                                // swal('Error encountered',transaction_disp_id+' not frozen (items)','error');
+                                swal('Error encountered',transaction_disp_id+' not frozen (items)','error');
                             }
                         });
 

@@ -12,40 +12,57 @@ function computeVATDeposit(total)
         vat_amt = total*tax_rate;
         amt_net_of_vat = total - vat_amt;
 
-        // $('#float_new_tax_vat_amt').val(round(vat_amt,2));
-        // $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
-        // $('#float_orig_tax_vat_amt').val(round(vat_amt,2));
-        // $('#float_orig_tax_amt_net_vat').val(round(amt_net_of_vat,2));
-        // $("#initial_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
-        // $("#initial_vat_amt").text(addCommas(round(vat_amt,2)));
         $("#deposit_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
         $("#deposit_vat_amt").text(addCommas(round(vat_amt,2)));
     } else if (tax_coverage == 'excl') {
         vat_amt = total - (total/incl_divisor);
         amt_net_of_vat = total - vat_amt;
 
-        // $('#float_new_tax_vat_amt').val(round(vat_amt,2));
-        // $('#float_new_tax_amt_net_vat').val(round(amt_net_of_vat,2));
-        // $('#float_orig_tax_vat_amt').val(round(vat_amt,2));
-        // $('#float_orig_tax_amt_net_vat').val(round(amt_net_of_vat,2));
-        // $("#initial_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
-        // $("#initial_vat_amt").text(addCommas(round(vat_amt,2)));
         $("#deposit_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
         $("#deposit_vat_amt").text(addCommas(round(vat_amt,2)));
     } else {
-        // $("#cart_new_amt_vat").text("No vat set in ERP");
-        // $("#cart_new_vat").text("No vat set in ERP");
+
     }
 
 
 }
+
+function computeVATBalance(total)
+{
+    var tax_rate = parseFloat($('#float_tax_rate').val())/100;
+    var tax_coverage = $('#string_tax_coverage').val();
+    var vat_amt = 0;
+    var amt_net_of_vat = 0;
+    var incl_divisor = tax_rate + 1;
+
+    $('.totals_balance').text(addCommas(total));
+
+    if (tax_coverage == 'incl') {
+        vat_amt = total*tax_rate;
+        amt_net_of_vat = total - vat_amt;
+
+        $("#balance_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        $("#balance_vat_amt").text(addCommas(round(vat_amt,2)));
+    } else if (tax_coverage == 'excl') {
+        vat_amt = total - (total/incl_divisor);
+        amt_net_of_vat = total - vat_amt;
+
+        $("#balance_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        $("#balance_vat_amt").text(addCommas(round(vat_amt,2)));
+    } else {
+
+    }
+
+
+}
+
 
 $(document).ready(function(){ 
 
     $('#cform-cust_search_id').attr('maxlength','11');
     $('.switch_to_normal_class').hide();
         
-    ajaxGetProductCategorifes();  
+    ajaxGetProductCategories();  
     ajaxGetVAT();
     toastr.options = {
       "closeButton": false,
@@ -64,6 +81,8 @@ $(document).ready(function(){
       "showMethod": "fadeIn",
       "hideMethod": "fadeOut"
     }
+
+
 
     $('.posgrp_check_date').hide();
 
@@ -855,11 +874,40 @@ $(document).ready(function(){
 
     });
 
+    $(document).on("click",".proceed_deposit", function(e){
+        if ($('#transaction_customer_id').val() == 0) {
+            $('#customer_modal').modal('show');
+        } else {
+            swal({
+                  title: "Customer already selected!",
+                  text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                  type: "success",
+                  showCancelButton: true,
+                  showConfirmButton: true,
+                  confirmButtonText: "Proceed",
+                  cancelButtonText: "Change customer",
+                },
+                function(isConfirm){
+                    if (isConfirm) {
+                       if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                            $('#final_modal').modal('show');
+                        } else if ($('#string_trans_mode').val() == 'quotation') {
+                            $('#final_modal2').modal('show');
+                        }
+                    } else {
+                        $('#customer_modal').modal('show');
+                    }   
+                });
+        }
+    });
+
+
+
     $(document).on("click",".finish_btn", function(e){
         var balance = $('#float_trans_balance').val();
         var payment_total = 0;
         //THIS IS NOT DOING CORRECTLY
-        $('.payment_amt').each(function() {
+        $('.payment_amt_float').each(function() {
             payment_total += parseFloat($(this).val());
         });
 
@@ -892,7 +940,7 @@ $(document).ready(function(){
             }
             
         } else {
-            if ($('#string_trans_mode').val() == "quotation") {
+            if ($('#string_trans_mode').val() == "quotation" || payment_total == 0) {
                 swal({
                       title: "Payment incomplete!",
                       text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
@@ -923,6 +971,10 @@ $(document).ready(function(){
                             appendDepositItemColumns();
                             appendDepositItemFields();
                             computeVATDeposit(payment_total);
+                            computeVATBalance(parseFloat(balance));
+                            $('#string_trans_mode').val('Deposit');
+                            $('.checkout_btn').hide();
+                            $('.proceed_deposit').show();
                             $('#checkout_modal').modal('hide');
                             swal.close();
 
@@ -1265,6 +1317,7 @@ $(document).ready(function(){
     $('.bulk_adj').hide();
     $('.clear_discount').hide();
     $('.checkout_btn').hide();
+    $('.proceed_deposit').hide();
     $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
