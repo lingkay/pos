@@ -222,7 +222,7 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code)
+    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -242,6 +242,11 @@ class POSController extends Controller
             $discount_value = '0';
         }
 
+        if ($is_issued == 'true') {
+            $transaction_item->setIssued(true);
+        } else {
+            $transaction_item->setIssued(false);
+        }
 
         
         $transaction_item->setTransaction($transaction);

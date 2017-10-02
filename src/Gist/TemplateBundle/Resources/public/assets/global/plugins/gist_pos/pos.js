@@ -1165,6 +1165,7 @@ function freezeTransaction(is_final = false)
                     var discount_type = '%20';
                     var discount_value = '%20';
                     var adjusted_price = '%20';
+                    var is_issued = 'true';
 
                     if (transaction_type == "per") {
                         var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
@@ -1189,12 +1190,18 @@ function freezeTransaction(is_final = false)
                             adjusted_price = '%20';
                         }
                     }
-                        
-
+                    
+                    if (transaction_mode == 'Deposit') {
+                        if (row.find('.check_issued').is(':checked')) {
+                            is_issued = 'true';
+                        } else {
+                            is_issued = 'false';
+                        }
+                    }
                     
 
 
-                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code;
+                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code+"/"+is_issued;
 
 
                     $.getJSON(url2, function(json){  
