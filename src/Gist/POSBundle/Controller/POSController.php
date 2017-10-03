@@ -20,6 +20,18 @@ class POSController extends Controller
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
         $params['customer'] = null;
+        $params['restrict'] = 'false';
+
+        return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+    }
+
+    public function indexInvalidAction()
+    {
+        $this->title = 'Dashboard';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $params = $this->padFormParams($params);
+        $params['customer'] = null;
+        $params['restrict'] = 'true';
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
@@ -33,9 +45,19 @@ class POSController extends Controller
         $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('trans_display_id' => $transaction_display_id));
         $params['transaction_object'] = null;
         $params['customer'] = null;
+        $params['restrict'] = 'false';
 
+        
 
         if ($transaction_object) {
+            
+            if ($transaction_object->hasChild()) {
+            return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
+            }
+
+            if ($transaction_object->getTransactionMode() != 'frozen' && $transaction_object->getTransactionMode() != 'Deposit') {
+                return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
+            }
             $params['transaction_object'] = $transaction_object;
             $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
         }

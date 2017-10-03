@@ -422,6 +422,21 @@ function applyBulkAdjustmentOnLoad()
 
 $(document).ready(function(){ 
 
+    var restrict = "{{restrict}}";
+    if (restrict == 'true') {
+        swal({
+              title: "Cannot load transaction!",
+              text: "The trasaction you are trying to access is not valid for reloading",
+              type: "error",
+              confirmButtonColor: "green",
+              confirmButtonText: "Okay",
+            },
+            function(){
+                location.replace('/pos');
+                
+            });
+    }
+
     //for loading transactions/unfreeze/continue
     var hasItems = "{{transaction_object.hasItems|default(false)}}";
     var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");

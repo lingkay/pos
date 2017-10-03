@@ -165,7 +165,8 @@
         }
 
         function checkForm(){
-            var form_valid = (document.getElementById('total_percent').value == 100);
+            var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+            var form_valid = (document.getElementById('total_percent').value == 100 && document.getElementById('total_amount').value == transaction_total);
             if(!form_valid){
                 swal('Invalid split!','Please check each entry then try again', 'error');
                 return false;
@@ -213,7 +214,7 @@
                 hidden_id.val(select_consultant_id);
             });
             // $('.percent_allocation').on("change", function()
-            $(document).on('keyup', '.percent_allocation', function()
+            $(document).on('keyup change', '.percent_allocation', function()
             {
                 var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
                 var allocation = parseFloat($(this).val());
@@ -234,7 +235,7 @@
             });
 
             // $('.amount_allocation').on("change", function()
-            $(document).on('keyup', '.amount_allocation', function()
+            $(document).on('keyup change', '.amount_allocation', function()
             {
                 var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
                 var allocation = parseFloat($(this).val());
