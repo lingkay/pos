@@ -27,6 +27,7 @@
 <input type="hidden" id="transaction_system_id" name="transaction_system_id" value="{{next_sys_id|default(0)}}">
 <input type="hidden" id="transaction_display_id" name="transaction_display_id" value="{{next_id|default(0)}}">
 <input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
+<input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
 <!-- END TRANSACTION VARS -->
 <!-- TAX VARS -->
@@ -443,6 +444,9 @@ $(document).ready(function(){
     var trans_type = $('#string_trans_type').val();
     var trans_mode = $('#string_trans_mode').val();
     var balance = $('#float_trans_balance').val();
+    var ref_trans = $('#transaction_reference_sys_disp_id').val();
+    $('#footer_customer').text($('#transaction_customer_name').val());
+    $('#ref_trans').text(ref_trans);
     if (hasItems == true) {
         $('.clear_discount').hide();
         computeCartRaw();

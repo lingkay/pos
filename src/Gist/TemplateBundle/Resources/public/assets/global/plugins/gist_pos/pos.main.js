@@ -316,9 +316,10 @@ $(document).ready(function(){
         if (foo.length > 0) {
             foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
         }
-
+        var name_fmtd = row.find('.last_name').val()+", "+row.find('.first_name').val();
         $('#transaction_customer_display_id').val(foo);
-        $('#transaction_customer_name').val(row.find('.last_name').val()+", "+row.find('.first_name').val());
+        $('#transaction_customer_name').val(name_fmtd);
+        $('#footer_customer').text(name_fmtd);
         $('#customer_modal').modal('hide');
         swal("Success!", 'Customer selected!',"success");
         if ($('#string_trans_type').val() != 'none' && balance <= 0) {

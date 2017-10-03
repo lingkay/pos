@@ -31,7 +31,12 @@
                                     {{ form.group_text('Birthdate', 'birthdate', customer.getBirthdate|default(''), 4, 5, true) }}
                                 </div>
                             </div>                           
-                            <h4 class="form-section">Split <a href="javascript:void(0);" class="btn default btn-xs pull-right green" onclick="addConsultant()"><i class="fa fa-plus"></i> Add Consultant</a></h4>
+                            <h4 class="form-section">Split 
+                                {% if object.getTransactionMode|default('none') != 'Deposit' and object.getTransactionMode|default('none') != 'frozen' %}
+                                    <a href="javascript:void(0);" class="btn default btn-xs pull-right green" onclick="addConsultant()"><i class="fa fa-plus"></i> Add Consultant</a>
+                                {% endif %}
+
+                            </h4>
 
                             <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
                                 <thead>
@@ -92,9 +97,15 @@
                         </div>
                         <div class="form-actions fluid">
                             <div class="col-md-9">
-								<button type="submit" class="btn default btn blue"><i class="fa fa-save"></i> Save Split</button>
-                                <a href="{{ path('gist_pos_reports_edit_form', { 'id': object.getID|default('') }) }}" class="btn default btn  green-meadow"><i class="fa fa-eye"></i> View Transaction</a>
-                                <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
+                                {% if object.getTransactionMode|default('none') == 'Deposit' or object.getTransactionMode|default('none') == 'frozen' %}
+                                    <button type="submit" class="btn default btn blue" disabled="true"><i class="fa fa-save"></i> Save Split</button>
+                                    <a href="{{ path('gist_pos_reports_edit_form', { 'id': object.getID|default('') }) }}" class="btn default btn  green-meadow"><i class="fa fa-eye"></i> View Transaction</a>
+                                    <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
+                                {% else %}
+    								<button type="submit" class="btn default btn blue"><i class="fa fa-save"></i> Save Split</button>
+                                    <a href="{{ path('gist_pos_reports_edit_form', { 'id': object.getID|default('') }) }}" class="btn default btn  green-meadow"><i class="fa fa-eye"></i> View Transaction</a>
+                                    <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
+                                {% endif %}
                             </div>
                         </div>
                     </form>

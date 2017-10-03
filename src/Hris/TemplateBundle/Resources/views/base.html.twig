@@ -152,7 +152,7 @@
     </div>
     {% if tax_coverage|default('') != '' %}
     <div class="page-footer-inner right pull-right" style="color: white !important;">
-            <b>Mode: <span id="pos_mode">Normal</span></b>{#TxC: <span id="x">{{tax_coverage|default('N/A')}}</span> CP: <span id="cart_pricex"></span> CMP: <span id="cart_min_pricex"></span>#}&nbsp;<b>|</b>&nbsp;<b>E.A.: <span id="ea_amt">0</span></b>&nbsp;<b>|</b>&nbsp;<b>Status: Connected</b>
+            <b>Referecnce: <a href="{{ path('gist_pos_reports_edit_form', { 'id': transaction_object.getID|default(0) }) }}" target="_blank" style="text-decoration: none; color: white;"><span id="ref_trans">N/A</span></a></b>&nbsp;<b>|</b>&nbsp;<b>Customer: <span id="footer_customer">N/A</span></b>&nbsp;<b>|</b>&nbsp;<b>Mode: <span id="pos_mode">Normal</span></b>&nbsp;<b>|</b>&nbsp;<b>E.A.: <span id="ea_amt">0</span></b>&nbsp;<b>|</b>&nbsp;<b>Status: Connected</b>
         </div>
     {% endif %}
 </div>
