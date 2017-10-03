@@ -70,6 +70,8 @@ $(document).ready(function(){
 
     $('#cform-cust_search_id').attr('maxlength','11');
     $('.switch_to_normal_class').hide();
+
+
         
     ajaxGetProductCategories();  
     toastr.options = {
@@ -95,7 +97,6 @@ $(document).ready(function(){
     $('.posgrp_check_date').hide();
 
     $(document).on("click",".freeze_btn", function(e){
-        //THIS WILL INITIATE SAVING OF TRANSACTION
         $('#string_trans_mode').val('frozen');
         freezeTransaction();
     });
@@ -388,13 +389,49 @@ $(document).ready(function(){
     $('.deposit_amount_totals_row').hide();
     $('.balance_totals_row').hide();
 
+    $(document).on("click",".false_remove_row", function(e){
+        sweetAlert("Can't remove item!", "Item already issued", "error");
+    });
+
     $(document).on("click",".remove_row", function(e){
         var trans_type = $('#string_trans_type').val();
+        var trans_mode = $('#string_trans_mode').val();
         var trans_amt = $('#float_trans_amount').val();
         var balance = $('#float_trans_balance').val();
 
         if (balance < trans_amt) {
-            sweetAlert("Can't remove item!", "Payment already made", "error");
+            if (trans_mode == 'Deposit') {
+                e.preventDefault();            
+                var tr = $(this).closest('tr');
+                tr.remove();
+
+                var rowCount = $('#cart_table tr').length-1;
+                $('.cart_items_count').text(rowCount.toString());
+
+                if (rowCount == 0) {
+                    var field = '<tr class=\"init_row_prods\">';     
+                    field += '<td colspan=\"3\" class=\"xrow\"><p>No items added</p></td>';
+                    field += '</tr>';
+
+                    $('#cart_items').prepend(field);
+                }
+
+                if($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
+                    computeCartRaw();
+                } else if($('#string_trans_type').val() == 'per') {
+                    // alert('remove indiv');
+                    computeCartRaw();
+                    computeCartIndiv();
+                } else if($('#string_trans_type').val() == 'bulk') {
+                    computeCartRaw();
+                    applyBulkAdjustment();
+                } else {
+                    computeCartRaw();
+                }
+                computeBalance();    
+            } else {
+                sweetAlert("Can't remove item!", "Payment already made", "error");
+            }
         } else {
             if (trans_type == 'bulk') {
                 sweetAlert("Can't remove item!", "Reset transaction type to remove item/s", "error");
@@ -858,7 +895,27 @@ $(document).ready(function(){
         if ($('#transaction_customer_id').val() == 0) {
             $('#customer_modal').modal('show');
         } else {
-            swal({
+            if ($('#transaction_reference_sys_id').val() != '0') {
+                swal({
+                  title: "Customer already selected!",
+                  text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                  type: "success",
+                  showConfirmButton: true,
+                  confirmButtonText: "Proceed",
+                },
+                function(isConfirm){
+                    if (isConfirm) {
+                       if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                            $('#final_modal').modal('show');
+                        } else if ($('#string_trans_mode').val() == 'quotation') {
+                            $('#final_modal2').modal('show');
+                        } else {
+                            $('#final_modal2').modal('show');
+                        }
+                    }
+                });
+            } else {
+                swal({
                   title: "Customer already selected!",
                   text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
                   type: "success",
@@ -873,11 +930,14 @@ $(document).ready(function(){
                             $('#final_modal').modal('show');
                         } else if ($('#string_trans_mode').val() == 'quotation') {
                             $('#final_modal2').modal('show');
+                        } else {
+                            $('#final_modal2').modal('show');
                         }
                     } else {
                         $('#customer_modal').modal('show');
                     }   
                 });
+            }
         }
     });
 
@@ -886,7 +946,6 @@ $(document).ready(function(){
     $(document).on("click",".finish_btn", function(e){
         var balance = $('#float_trans_balance').val();
         var payment_total = 0;
-        //THIS IS NOT DOING CORRECTLY
         $('.payment_amt_float').each(function() {
             payment_total += parseFloat($(this).val());
         });
@@ -901,14 +960,13 @@ $(document).ready(function(){
             if ($('#transaction_customer_id').val() == 0) {
                 $('#customer_modal').modal('show');
             } else {
-                swal({
+                if ($('#transaction_reference_sys_id').val() != '0') {
+                    swal({
                       title: "Customer already selected!",
                       text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
                       type: "success",
-                      showCancelButton: true,
                       showConfirmButton: true,
                       confirmButtonText: "Proceed",
-                      cancelButtonText: "Change customer",
                     },
                     function(isConfirm){
                         if (isConfirm) {
@@ -916,11 +974,35 @@ $(document).ready(function(){
                                 $('#final_modal').modal('show');
                             } else if ($('#string_trans_mode').val() == 'quotation') {
                                 $('#final_modal2').modal('show');
+                            } else {
+                                $('#final_modal2').modal('show');
                             }
-                        } else {
-                            $('#customer_modal').modal('show');
-                        }   
+                        }
                     });
+                } else {
+                    swal({
+                          title: "Customer already selected!",
+                          text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                          type: "success",
+                          showCancelButton: true,
+                          showConfirmButton: true,
+                          confirmButtonText: "Proceed",
+                          cancelButtonText: "Change customer",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+                               if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                    $('#final_modal').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'quotation') {
+                                    $('#final_modal2').modal('show');
+                                } else {
+                                    $('#final_modal2').modal('show');
+                                }
+                            } else {
+                                $('#customer_modal').modal('show');
+                            }   
+                        });
+                }
             }
             
         } else {

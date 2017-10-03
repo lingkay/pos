@@ -203,7 +203,7 @@ class POSTransaction
     {
         $total = 0;
 
-        if ($this->hasParent()) {
+        if ($this->hasParent() && !$this->hasPayments()) {
             foreach ($this->reference_transaction->getPayments() as $p) {
                 $total = $total + $p->getAmount();
             }
@@ -220,7 +220,13 @@ class POSTransaction
 
     public function getChange()
     {
-        return abs($this->transaction_total - $this->getTotalPayments());
+        $change = $this->getTotalPayments() - $this->transaction_total;
+        if ($change > 0) {
+            return $change;
+        }
+
+        return 0;
+        
     }
     
 

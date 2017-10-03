@@ -144,6 +144,19 @@
 </div>
 {% endmacro %}
 
+{% macro checkbox_issued_item_checked(name, value, display, checked, group, disabled = false, prefix = 'c') %}
+<div id="cgroup-issued" class="form-group">
+    <div class="col-md-6">
+        {% if group == null %}
+            {% set grp = name %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+            <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" checked="checked" readonly="true" onclick="return false;"}}>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro checkbox_pos2(name, value, display, checked, group, disabled = false, prefix = 'c') %}
 <div id="xgroup-pdc" class="form-group">
     <label class="col-md-5 control-label">{{ display }}</label>

@@ -106,7 +106,8 @@
                                     <tbody id="cart_items">
                                         {% if transaction_object.hasItems|default(false) %}
                                             {% for item in transaction_object.getItems|default(null) %}
-                                                <tr class="product_row existing"> 
+                                                <tr class="product_row existing_product"> 
+                                                    <input type="hidden" name="is_issued[]" class="is_issued" value="{{item.getIssued|default(0)}}" >
                                                     <input type="hidden" name="product_id[]" class="product_id" value="{{item.getID}}" >
                                                     <input type="hidden" name="barcode[]" class="barcode" value="{{item.getBarcode}}" >
                                                     <input type="hidden" name="item_code[]" class="item_code" value="{{item.getItemCode}}" >
@@ -115,7 +116,11 @@
                                                     <input type="hidden" name="product_amt[]" class="product_amt" value="{{item.getOrigPrice}}" >
                                                     <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control item_name"></td>
                                                     <td><input type="text" style="font-size: 10px !important;" name="display_price[]" class="form-control display_price" readonly="true" value="{{item.getOrigPrice}}"></td>  
-                                                    <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
+                                                    {% if item.getIssued|default(false) %}
+                                                        <td ><a href="javascript:void(0)" class="btn btn-xs default red false_remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
+                                                    {% else %}
+                                                        <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
+                                                    {% endif %}
                                                 </tr>
                                             {% endfor %}
                                         {% else %}
@@ -220,7 +225,6 @@ function syncToERP()
 
     var route = "{{ path('gist_main_sync_pos_data') }}";
     $.getJSON(route, function(json){  
-        alert('here');
        $.each(json, function(i, x) {
                 
             swal({
@@ -288,13 +292,22 @@ function appendPerItemFields()
 
 function appendDepositItemColumns()
 {
+    var proceed = true;
     $('#cart_table').find('tr').each(function(){
-        $(this).find('th').eq(0).before('<th>Issue</th>');
+        if ($(this).children('th').length > 4) {
+            proceed = false;
+        }
     });
 
-    var ths = $('th');
-    var element = ths.eq(0);
-    element.width(10);
+    if (proceed) {
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(0).before('<th>Issue</th>');
+        });
+
+        var ths = $('th');
+        var element = ths.eq(0);
+        element.width(10);
+    }
 }
 
 function appendDepositItemFields()
@@ -302,7 +315,13 @@ function appendDepositItemFields()
     
     $('#cart_table').find('tr').each(function(){
         if ($(this).children('td').length < 4) {
-            $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+            var issued = $(this).find('.is_issued').val();
+            // issued = issued.find('.is_issued').val();
+            if (issued == '1') {
+                $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+            } else {
+                $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+            }
         }
     });
     

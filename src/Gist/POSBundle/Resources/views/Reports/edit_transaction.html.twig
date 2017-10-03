@@ -44,7 +44,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="items_given_tbody">
-                                	{% if object.hasParent %}
+                                	{% if object.hasParent and not object.hasItems %}
 										{% for i in object.getReferenceTransaction.getItems|default('') %}
 											<tr>
                                                 <td><input type="text" name="barcode[]" value="{{i.getBarcode|default('')}}" class="form-control barcode" readonly="true"></td>
@@ -84,7 +84,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="items_given_tbody">
-                                            {% if object.hasParent %}
+                                            {% if object.hasParent and not object.hasPayments %}
                                                 {% for i in object.getReferenceTransaction.getPayments|default('') %}
                                                     <tr>
                                                         <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
@@ -119,6 +119,7 @@
                                     {{ form.group_text('Grand Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                     <hr style="border-top: dotted 2px;" />
                                     {{ form.group_text('Change', 'change', object.getChange|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Balance', 'balance', object.getBalance|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                     <hr style="border-top: dotted 2px;" />
                                 </div>
                             </div>
