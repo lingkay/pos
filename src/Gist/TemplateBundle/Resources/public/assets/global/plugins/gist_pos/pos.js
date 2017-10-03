@@ -852,7 +852,7 @@ function computeExtraAmount()
     var cart_price = 0;
     cart_min_price = parseInt($("#float_cart_minimum_total").val());
 
-    if ($('#string_trans_type').val() == 'none') {
+    if ($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
         cart_price = parseInt($("#float_cart_orig_price").val());
     } else {
         cart_price = parseInt($("#float_cart_new_price").val());
