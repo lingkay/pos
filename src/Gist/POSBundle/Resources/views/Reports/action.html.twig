@@ -12,7 +12,7 @@
 <a href="{{ path('gist_pos_quote_to_sale', { 'id': id }) }}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Proceed to sale"><i class="fa fa-arrow-circle-right"></i></a>
 {% endif %}
 
-{% if mode == 'frozen' %}
+{% if mode == 'frozen' and not hasChild %}
 <a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Continue transaction"><i class="fa fa-shopping-cart"></i></a>
 <a href="{{ path('gist_pos_delete_transaction', { 'id': id }) }}" class="btn default btn-xs red" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-times"></i></a>
 {% endif %}
