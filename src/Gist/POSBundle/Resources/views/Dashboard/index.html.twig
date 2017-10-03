@@ -121,6 +121,7 @@
                                         {% if transaction_object.hasItems|default(false) %}
                                             {% for item in transaction_object.getItems|default(null) %}
                                                 <tr class="product_row existing_product"> 
+                                                    
                                                     <input type="hidden" name="is_issued[]" class="is_issued" value="{{item.getIssued|default(0)}}" >
                                                     <input type="hidden" name="issued_on[]" class="issued_on" value="{{item.getItemIssuedOn|default('0')}}" >
                                                     <input type="hidden" name="product_id[]" class="product_id" value="{{item.getID}}" >

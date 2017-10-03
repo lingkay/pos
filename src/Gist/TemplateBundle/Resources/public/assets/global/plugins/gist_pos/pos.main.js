@@ -98,6 +98,7 @@ $(document).ready(function(){
 
     $(document).on("click",".freeze_btn", function(e){
         $('#string_trans_mode').val('frozen');
+        $('#freeze_modal').modal('hide');
         freezeTransaction();
     });
 

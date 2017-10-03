@@ -1203,6 +1203,10 @@ function freezeTransaction(is_final = false)
                             is_issued = 'false';
                         }
                     }
+
+                    if (transaction_mode == 'frozen') {
+                        is_issued = 'false';
+                    }
                     
 
 
