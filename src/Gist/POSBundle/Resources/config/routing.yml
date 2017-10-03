@@ -3,11 +3,12 @@ gist_pos_index:
     defaults: { _controller: GistPOSBundle:POS:index }
 
 gist_pos_index_load:
-    path:     /pos/{transaction_display_id}
+    path:     /pos/load/{transaction_display_id}
     defaults: { _controller: GistPOSBundle:POS:indexLoad }
 
 gist_main_sync_pos_data:
     path:     /pos/sync_data
+    methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:syncData }
 
 gist_main_clock_tap:

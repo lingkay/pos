@@ -1215,7 +1215,7 @@ function freezeTransaction(is_final = false)
                           title: "Transaction Frozen!",
                           text: "The page will now reload",
                           type: "success",
-                          timer: 2000,
+                          timer: 4000,
                           showConfirmButton: false,
                         },
                         function(){
@@ -1228,7 +1228,7 @@ function freezeTransaction(is_final = false)
                           title: "Transaction Saved!",
                           text: "Please wait for data sync",
                           type: "success",
-                          timer: 2000,
+                          timer: 4000,
                             showConfirmButton: false,
                         },
                         function(){
@@ -1270,7 +1270,7 @@ function freezeTransaction(is_final = false)
                                           title: "Transaction Frozen!",
                                           text: "The page will now reload",
                                           type: "success",
-                                          timer: 2000,
+                                          timer: 5000,
                                             showConfirmButton: false,
                                         },
                                         function(){
@@ -1283,7 +1283,7 @@ function freezeTransaction(is_final = false)
                                           title: "Transaction Saved!",
                                           text: "Please wait for data sync",
                                           type: "success",
-                                          timer: 2000,
+                                          timer: 5000,
                                             showConfirmButton: false,
                                         },
                                         function(){

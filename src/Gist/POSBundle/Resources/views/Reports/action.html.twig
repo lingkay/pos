@@ -19,9 +19,7 @@
 
 
 {% if mode == 'Deposit' %}
-<a href="javascript:void(0)" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Complete transaction"><i class="fa fa-shopping-cart"></i></a>
-
-
+<a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Complete transaction"><i class="fa fa-shopping-cart"></i></a>
 {% endif %}
 
 {% if (ea != '0' and ea != '') and mode == 'normal' %}

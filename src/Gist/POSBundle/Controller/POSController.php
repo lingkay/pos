@@ -19,6 +19,7 @@ class POSController extends Controller
     	$this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
+        $params['customer'] = null;
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
@@ -30,7 +31,15 @@ class POSController extends Controller
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
         $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('trans_display_id' => $transaction_display_id));
-        $params['transaction_object'] = $transaction_object;
+        $params['transaction_object'] = null;
+        $params['customer'] = null;
+
+
+        if ($transaction_object) {
+            $params['transaction_object'] = $transaction_object;
+            $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
+        }
+        
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
@@ -150,7 +159,20 @@ class POSController extends Controller
         $params['bank_options'] = $vars;
         $params['terminal_operators'] = $vars2;
         $params['charge_rates'] = $opts;
+
+        
         return $params;
+    }
+
+    protected function getCustomer($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $obj = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$id));
+        if (!$obj) {
+            return null;
+        }
+
+        return $obj;
     }
 
     public function landingAction()
@@ -390,9 +412,7 @@ class POSController extends Controller
         }
 
         $em->flush();
-
         
-
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
     }
