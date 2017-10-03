@@ -488,6 +488,7 @@ function computeBalance()
     balance = transaction_amount - payments;
     $('#float_trans_balance').val(balance);
     $('.co_balance').text(addCommas(balance));
+    $('.co_balance_static').text(addCommas(balance));
     $('.co_balance_disp').text(addCommas(balance));
 
     if ($('#string_trans_type').val() == 'none') {
