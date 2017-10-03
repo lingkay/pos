@@ -273,7 +273,7 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued)
+    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued, $issued_on)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -299,6 +299,13 @@ class POSController extends Controller
             $transaction_item->setIssued(false);
         }
 
+        if ($issued_on == 'this') {
+            $transaction_item->setItemIssuedOn($transaction->getID());
+        } elseif ($issued_on != '0') {
+            $transaction_item->setItemIssuedOn($issued_on);
+        }
+        
+
         
         $transaction_item->setTransaction($transaction);
         $transaction_item->setProductId($prod_id);
@@ -319,7 +326,7 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
-    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv)
+    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv, $issued_on)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -342,6 +349,11 @@ class POSController extends Controller
         $transaction_payment->setCardExpiry($expiry);
         $transaction_payment->setCardCvv($cvv);
 
+        if ($issued_on == '0') {
+            $transaction_payment->setPaymentIssuedOn($transaction->getID());
+        } elseif ($issued_on != '0') {
+            $transaction_payment->setPaymentIssuedOn($issued_on);
+        }
 
         $em->persist($transaction_payment);
         $em->flush();

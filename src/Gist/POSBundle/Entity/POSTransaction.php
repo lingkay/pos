@@ -1069,6 +1069,14 @@ class POSTransaction
         return $this->balance;
     }
 
+    public function getBalanceDisplay()
+    {
+        if ($this->balance < 0) {
+            return 0;
+        }
+        return $this->balance;
+    }
+
     /**
      * Set depositAmount
      *

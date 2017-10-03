@@ -90,6 +90,7 @@ function addToPayments(payment_type, amount, details = null, cc_number = null, c
         field += '<input type=\"hidden\" name=\"control_number\" class=\"control_number\" value=\"'+cc_number+'\">';
         field += '<input type=\"hidden\" name=\"account_number\" class=\"account_number\" value=\"'+account_number+'\">';
         field += '<input type=\"hidden\" name=\"bank\" class=\"bank\" value=\"'+cc_bank+'\">';
+        field += '<input type=\"hidden\" name=\"payment_issued_on\" class=\"payment_issued_on\" value=\"0\">';
         field += '<input type=\"hidden\" name=\"cc_terminal_opt\" class=\"cc_terminal_opt\" value=\"'+cc_terminal_opt+'\">';
         field += '<input type=\"hidden\" name=\"cc_interest\" class=\"cc_interest\" value=\"'+cc_interest+'\">';
         field += '<input type=\"hidden\" name=\"cc_terms\" class=\"cc_terms\" value=\"'+cc_terms+'\">';
@@ -429,6 +430,7 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
         var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
         var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';     
             field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
+            field += '<input type=\"hidden\" name=\"issued_on[]\" class=\"issued_on\" value=\"0\" >';
             field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
             field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
             field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
@@ -497,6 +499,8 @@ function computeBalance()
     } else {
 
     }
+
+    computeVATBalance(balance);
 }
 
 function computeBalanceDisplay(amt)
@@ -600,6 +604,7 @@ function computeCartRaw()
     // compute taxes and vat
     computeVATRaw(sale_price);
 
+
     // compute minimum
     computeCartMinimum();
 }
@@ -649,7 +654,6 @@ function computeCartBulk(sale_price)
     $('#float_trans_amount').val(sale_price);
     // compute taxes and vat
     computeVATIndiv(sale_price);
-
     // compute minimum
     computeCartMinimum();
 
@@ -1165,6 +1169,7 @@ function freezeTransaction(is_final = false)
                     var discount_value = '%20';
                     var adjusted_price = '%20';
                     var is_issued = 'true';
+                    var issued_on = row.find('.issued_on').val();
 
                     if (transaction_type == "per") {
                         var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
@@ -1200,7 +1205,7 @@ function freezeTransaction(is_final = false)
                     
 
 
-                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code+"/"+is_issued;
+                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code+"/"+is_issued+"/"+issued_on;
 
 
                     $.getJSON(url2, function(json){  
@@ -1251,6 +1256,7 @@ function freezeTransaction(is_final = false)
                 $('#payments_list tr').each(function() {
                     var payment_type = $(this).find('.payment_type').val();
                     var amount = $(this).find('.payment_amt_float').val();
+                    var payment_issued_on = $(this).find('.payment_issued_on').val();
 
                     var control_number = "%20"; if($(this).find('.control_number').val() != ''){control_number = $(this).find('.control_number').val()};
                     var account_number = "%20"; if($(this).find('.account_number').val() != ''){account_number = $(this).find('.account_number').val()};
@@ -1264,7 +1270,7 @@ function freezeTransaction(is_final = false)
                     var cc_cvv = "%20"; if($(this).find('.cc_cvv').val() != ''){cc_cvv = $(this).find('.cc_cvv').val()};
 
 
-                    var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv;
+                    var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv+"/"+payment_issued_on;
 
 
                     $.getJSON(url3, function(json){  
@@ -1301,9 +1307,10 @@ function freezeTransaction(is_final = false)
                                 }
                             } else {
                                 if (!trans_saved) {
-                                    swal('Error encountered',transaction_disp_id+' not frozen (Transaction)','error');
+                                    //race
+                                    //swal('Error encountered',transaction_disp_id+' not frozen (Transaction)','error');
                                 } else if (!items_saved) {
-                                    swal('Error encountered',transaction_disp_id+' not frozen (Items)','error');
+                                    //swal('Error encountered',transaction_disp_id+' not frozen (Items)','error');
                                 }
                             }
                         });

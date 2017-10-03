@@ -119,7 +119,7 @@
                                     {{ form.group_text('Grand Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                     <hr style="border-top: dotted 2px;" />
                                     {{ form.group_text('Change', 'change', object.getChange|number_format(2, '.', ',')|default(''), 4, 5, true) }}
-                                    {{ form.group_text('Balance', 'balance', object.getBalance|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Balance', 'balance', object.getBalanceDisplay|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                     <hr style="border-top: dotted 2px;" />
                                 </div>
                             </div>

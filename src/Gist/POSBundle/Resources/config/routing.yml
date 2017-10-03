@@ -36,12 +36,12 @@ gist_pos_save_transaction:
     defaults: { _controller: GistPOSBundle:POS:saveTransaction }
 
 gist_pos_save_item:
-    path:     /pos/save_item/{trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}/{barcode}/{item_code}/{is_issued}
+    path:     /pos/save_item/{trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}/{barcode}/{item_code}/{is_issued}/{issued_on}
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:saveTransactionItems }
 
 gist_pos_save_payment: 
-    path:     /pos/save_payment/{trans_sys_id}/{payment_type}/{amount}/{control_number}/{bank}/{terminal_operator}/{interest}/{terms}/{account_number}/{payee}/{payor}/{expiry}/{cvv}
+    path:     /pos/save_payment/{trans_sys_id}/{payment_type}/{amount}/{control_number}/{bank}/{terminal_operator}/{interest}/{terms}/{account_number}/{payee}/{payor}/{expiry}/{cvv}/{issued_on}
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:saveTransactionPayments }
 

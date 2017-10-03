@@ -892,52 +892,130 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".proceed_deposit", function(e){
-        if ($('#transaction_customer_id').val() == 0) {
-            $('#customer_modal').modal('show');
-        } else {
-            if ($('#transaction_reference_sys_id').val() != '0') {
-                swal({
-                  title: "Customer already selected!",
-                  text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                  type: "success",
-                  showConfirmButton: true,
-                  confirmButtonText: "Proceed",
-                },
-                function(isConfirm){
-                    if (isConfirm) {
-                       if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                            $('#final_modal').modal('show');
-                        } else if ($('#string_trans_mode').val() == 'quotation') {
-                            $('#final_modal2').modal('show');
-                        } else {
-                            $('#final_modal2').modal('show');
-                        }
+        var balance = $('#float_trans_balance').val();
+        var prev_balance = $('#transaction_prev_balance').val();
+
+        if (balance <= 0) {
+
+            if ($('#string_trans_mode').val() == 'Deposit') {
+                $('#string_trans_mode').val('normal');
+                $('.check_issued:checkbox').each(function() {
+                    $(this).prop('checked', true); 
+                    $(this).attr('checked');
+                    var rowx = $(this).closest('.product_row');
+                    var issued_on = rowx.find('.issued_on').val();
+                    if (issued_on == '0') {
+                        issued_on.val('this');
                     }
                 });
-            } else {
-                swal({
-                  title: "Customer already selected!",
-                  text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                  type: "success",
-                  showCancelButton: true,
-                  showConfirmButton: true,
-                  confirmButtonText: "Proceed",
-                  cancelButtonText: "Change customer",
-                },
-                function(isConfirm){
-                    if (isConfirm) {
-                       if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                            $('#final_modal').modal('show');
-                        } else if ($('#string_trans_mode').val() == 'quotation') {
-                            $('#final_modal2').modal('show');
-                        } else {
-                            $('#final_modal2').modal('show');
-                        }
-                    } else {
-                        $('#customer_modal').modal('show');
-                    }   
-                });
             }
+
+            if ($('#transaction_customer_id').val() == 0) {
+                $('#customer_modal').modal('show');
+            } else {
+                if ($('#transaction_reference_sys_id').val() != '0') {
+                    swal({
+                      title: "Deposit transaction completed!",
+                      text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                      type: "success",
+                      showConfirmButton: true,
+                      confirmButtonText: "Proceed",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                           if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                $('#final_modal').modal('show');
+                            } else if ($('#string_trans_mode').val() == 'quotation') {
+                                $('#final_modal2').modal('show');
+                            } else {
+                                $('#final_modal2').modal('show');
+                            }
+                        }
+                    });
+                } else {
+                    swal({
+                      title: "Customer already selected!",
+                      text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                      type: "success",
+                      showCancelButton: true,
+                      showConfirmButton: true,
+                      confirmButtonText: "Proceed",
+                      cancelButtonText: "Change customer",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                           if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                $('#final_modal').modal('show');
+                            } else if ($('#string_trans_mode').val() == 'quotation') {
+                                $('#final_modal2').modal('show');
+                            } else {
+                                $('#final_modal2').modal('show');
+                            }
+                        } else {
+                            $('#customer_modal').modal('show');
+                        }   
+                    });
+                }
+            }
+
+            return 0;
+        }
+
+        var number_of_items_to_issue = $('.check_issued:checkbox:checked').length;
+        if (number_of_items_to_issue > 0) {
+            if (balance == prev_balance) {
+                swal('Cannot proceed to deposit!','Add payment/s or remove item/s','error');
+            } else {
+                if ($('#transaction_customer_id').val() == 0) {
+                    $('#customer_modal').modal('show');
+                } else {
+                    if ($('#transaction_reference_sys_id').val() != '0') {
+                        swal({
+                          title: "Customer already selected!",
+                          text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                          type: "success",
+                          showConfirmButton: true,
+                          confirmButtonText: "Proceed",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+                               if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                    $('#final_modal').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'quotation') {
+                                    $('#final_modal2').modal('show');
+                                } else {
+                                    $('#final_modal2').modal('show');
+                                }
+                            }
+                        });
+                    } else {
+                        swal({
+                          title: "Customer already selected!",
+                          text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                          type: "success",
+                          showCancelButton: true,
+                          showConfirmButton: true,
+                          confirmButtonText: "Proceed",
+                          cancelButtonText: "Change customer",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+                               if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                    $('#final_modal').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'quotation') {
+                                    $('#final_modal2').modal('show');
+                                } else {
+                                    $('#final_modal2').modal('show');
+                                }
+                            } else {
+                                $('#customer_modal').modal('show');
+                            }   
+                        });
+                    }
+                }
+            }
+        } else {
+            swal('Cannot proceed to deposit!','Select at least one item to issue','error');
         }
     });
 
@@ -954,6 +1032,15 @@ $(document).ready(function(){
             swal("Payment Complete!", "Enter customer information on the next form", "success");
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
+                $('.check_issued:checkbox').each(function() {
+                    $(this).prop('checked', true); 
+                    $(this).attr('checked');
+                    var rowx = $(this).closest('.product_row');
+                    var issued_on = rowx.find('.issued_on').val();
+                    if (issued_on == '0') {
+                        rowx.find('.issued_on').val('this');
+                    }
+                });
             }
             
             $('#checkout_modal').modal('hide');
@@ -963,7 +1050,7 @@ $(document).ready(function(){
                 if ($('#transaction_reference_sys_id').val() != '0') {
                     swal({
                       title: "Customer already selected!",
-                      text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                      text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
                       type: "success",
                       showConfirmButton: true,
                       confirmButtonText: "Proceed",
