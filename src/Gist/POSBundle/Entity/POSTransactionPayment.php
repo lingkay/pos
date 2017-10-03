@@ -79,6 +79,9 @@ class POSTransactionPayment
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $payor;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $payment_issued_on;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
@@ -610,5 +613,29 @@ class POSTransactionPayment
     public function getPayor()
     {
         return $this->payor;
+    }
+
+    /**
+     * Set paymentIssuedOn
+     *
+     * @param string $paymentIssuedOn
+     *
+     * @return POSTransactionPayment
+     */
+    public function setPaymentIssuedOn($paymentIssuedOn)
+    {
+        $this->payment_issued_on = $paymentIssuedOn;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentIssuedOn
+     *
+     * @return string
+     */
+    public function getPaymentIssuedOn()
+    {
+        return $this->payment_issued_on;
     }
 }

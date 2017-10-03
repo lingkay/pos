@@ -52,6 +52,9 @@ class POSTransactionItem
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $item_code;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $item_issued_on;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
@@ -376,5 +379,29 @@ class POSTransactionItem
     public function getIssued()
     {
         return $this->issued;
+    }
+
+    /**
+     * Set itemIssuedOn
+     *
+     * @param string $itemIssuedOn
+     *
+     * @return POSTransactionItem
+     */
+    public function setItemIssuedOn($itemIssuedOn)
+    {
+        $this->item_issued_on = $itemIssuedOn;
+
+        return $this;
+    }
+
+    /**
+     * Get itemIssuedOn
+     *
+     * @return string
+     */
+    public function getItemIssuedOn()
+    {
+        return $this->item_issued_on;
     }
 }

@@ -81,6 +81,12 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $bulk_discount_type;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $selected_bulk_discount_type;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $selected_bulk_discount_amount;
+
     /** @ORM\OneToMany(targetEntity="POSTransactionItem", mappedBy="transaction") */
     protected $items;
 
@@ -1133,5 +1139,53 @@ class POSTransaction
     public function getChildTransaction()
     {
         return $this->child_transaction;
+    }
+
+    /**
+     * Set selectedBulkDiscountType
+     *
+     * @param string $selectedBulkDiscountType
+     *
+     * @return POSTransaction
+     */
+    public function setSelectedBulkDiscountType($selectedBulkDiscountType)
+    {
+        $this->selected_bulk_discount_type = $selectedBulkDiscountType;
+
+        return $this;
+    }
+
+    /**
+     * Get selectedBulkDiscountType
+     *
+     * @return string
+     */
+    public function getSelectedBulkDiscountType()
+    {
+        return $this->selected_bulk_discount_type;
+    }
+
+    /**
+     * Set selectedBulkDiscountAmount
+     *
+     * @param string $selectedBulkDiscountAmount
+     *
+     * @return POSTransaction
+     */
+    public function setSelectedBulkDiscountAmount($selectedBulkDiscountAmount)
+    {
+        $this->selected_bulk_discount_amount = $selectedBulkDiscountAmount;
+
+        return $this;
+    }
+
+    /**
+     * Get selectedBulkDiscountAmount
+     *
+     * @return string
+     */
+    public function getSelectedBulkDiscountAmount()
+    {
+        return $this->selected_bulk_discount_amount;
     }
 }

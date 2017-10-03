@@ -81,6 +81,12 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $bulk_discount_type;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $selected_bulk_discount_type;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $selected_bulk_discount_amount;
+
     /** @ORM\OneToMany(targetEntity="POSTransactionItem", mappedBy="transaction") */
     protected $items;
 
@@ -157,6 +163,24 @@ class POSTransaction
         return round((($this->transaction_total/$this->cart_orig_total)*100),2)."%";
     }
 
+    public function hasItems()
+    {
+        if (count($this->items) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function hasPayments()
+    {
+        if (count($this->payments) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getFinalVAT()
     {
         if ($this->transaction_type == 'per' || $this->transaction_type == 'bulk') {
@@ -185,8 +209,8 @@ class POSTransaction
     {
         $total = 0;
 
-        if ($this->hasParent()) {
-            foreach ($this->reference_transaction->payments as $p) {
+        if ($this->hasParent() && !$this->hasPayments()) {
+            foreach ($this->reference_transaction->getPayments() as $p) {
                 $total = $total + $p->getAmount();
             }
 
@@ -202,7 +226,13 @@ class POSTransaction
 
     public function getChange()
     {
-        return abs($this->transaction_total - $this->getTotalPayments());
+        $change = $this->getTotalPayments() - $this->transaction_total;
+        if ($change > 0) {
+            return $change;
+        }
+
+        return 0;
+        
     }
     
 
@@ -917,5 +947,221 @@ class POSTransaction
     public function getGenericVar1()
     {
         return $this->generic_var1;
+    }
+
+    /**
+     * Set depositVatAmt
+     *
+     * @param string $depositVatAmt
+     *
+     * @return POSTransaction
+     */
+    public function setDepositVatAmt($depositVatAmt)
+    {
+        $this->deposit_vat_amt = $depositVatAmt;
+
+        return $this;
+    }
+
+    /**
+     * Get depositVatAmt
+     *
+     * @return string
+     */
+    public function getDepositVatAmt()
+    {
+        return $this->deposit_vat_amt;
+    }
+
+    /**
+     * Set depositAmtNetVat
+     *
+     * @param string $depositAmtNetVat
+     *
+     * @return POSTransaction
+     */
+    public function setDepositAmtNetVat($depositAmtNetVat)
+    {
+        $this->deposit_amt_net_vat = $depositAmtNetVat;
+
+        return $this;
+    }
+
+    /**
+     * Get depositAmtNetVat
+     *
+     * @return string
+     */
+    public function getDepositAmtNetVat()
+    {
+        return $this->deposit_amt_net_vat;
+    }
+
+    /**
+     * Set balanceVatAmt
+     *
+     * @param string $balanceVatAmt
+     *
+     * @return POSTransaction
+     */
+    public function setBalanceVatAmt($balanceVatAmt)
+    {
+        $this->balance_vat_amt = $balanceVatAmt;
+
+        return $this;
+    }
+
+    /**
+     * Get balanceVatAmt
+     *
+     * @return string
+     */
+    public function getBalanceVatAmt()
+    {
+        return $this->balance_vat_amt;
+    }
+
+    /**
+     * Set balanceAmtNetVat
+     *
+     * @param string $balanceAmtNetVat
+     *
+     * @return POSTransaction
+     */
+    public function setBalanceAmtNetVat($balanceAmtNetVat)
+    {
+        $this->balance_amt_net_vat = $balanceAmtNetVat;
+
+        return $this;
+    }
+
+    /**
+     * Get balanceAmtNetVat
+     *
+     * @return string
+     */
+    public function getBalanceAmtNetVat()
+    {
+        return $this->balance_amt_net_vat;
+    }
+
+    /**
+     * Set balance
+     *
+     * @param string $balance
+     *
+     * @return POSTransaction
+     */
+    public function setBalance($balance)
+    {
+        $this->balance = $balance;
+
+        return $this;
+    }
+
+    /**
+     * Get balance
+     *
+     * @return string
+     */
+    public function getBalance()
+    {
+        return $this->balance;
+    }
+
+    /**
+     * Set depositAmount
+     *
+     * @param string $depositAmount
+     *
+     * @return POSTransaction
+     */
+    public function setDepositAmount($depositAmount)
+    {
+        $this->deposit_amount = $depositAmount;
+
+        return $this;
+    }
+
+    /**
+     * Get depositAmount
+     *
+     * @return string
+     */
+    public function getDepositAmount()
+    {
+        return $this->deposit_amount;
+    }
+
+    /**
+     * Add split
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionSplit $split
+     *
+     * @return POSTransaction
+     */
+    public function addSplit(\Gist\POSBundle\Entity\POSTransactionSplit $split)
+    {
+        $this->splits[] = $split;
+
+        return $this;
+    }
+
+    /**
+     * Remove split
+     *
+     * @param \Gist\POSBundle\Entity\POSTransactionSplit $split
+     */
+    public function removeSplit(\Gist\POSBundle\Entity\POSTransactionSplit $split)
+    {
+        $this->splits->removeElement($split);
+    }
+
+    /**
+     * Set childTransaction
+     *
+     * @param \Gist\POSBundle\Entity\POSTransaction $childTransaction
+     *
+     * @return POSTransaction
+     */
+    public function setChildTransaction(\Gist\POSBundle\Entity\POSTransaction $childTransaction = null)
+    {
+        $this->child_transaction = $childTransaction;
+
+        return $this;
+    }
+
+    /**
+     * Get childTransaction
+     *
+     * @return \Gist\POSBundle\Entity\POSTransaction
+     */
+    public function getChildTransaction()
+    {
+        return $this->child_transaction;
+    }
+
+    /**
+     * Set selectedBulkDiscountType
+     *
+     * @param string $selectedBulkDiscountType
+     *
+     * @return POSTransaction
+     */
+    public function setSelectedBulkDiscountType($selectedBulkDiscountType)
+    {
+        $this->selected_bulk_discount_type = $selectedBulkDiscountType;
+
+        return $this;
+    }
+
+    /**
+     * Get selectedBulkDiscountType
+     *
+     * @return string
+     */
+    public function getSelectedBulkDiscountType()
+    {
+        return $this->selected_bulk_discount_type;
     }
 }

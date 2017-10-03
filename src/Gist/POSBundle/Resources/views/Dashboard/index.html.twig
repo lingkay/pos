@@ -51,7 +51,8 @@
 <input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
 <input type="hidden" id="transaction_balance" name="transaction_balance" value="0">
 <input type="hidden" id="reg_trans_flag" name="reg_trans_flag" value="0">
-<input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="">
+<input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
+<input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
 <input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
 <!-- END OLD VARS -->
 <div class="page-content">
@@ -161,7 +162,7 @@
                                     <a href="/pos" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
                                     <br>
                                     <br>
-                                    <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">None</span></b></h4>
+                                    <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
                                     <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
                                 </div>
                             </div>
@@ -303,7 +304,6 @@ function appendPerItemFields()
                 var srp = $(this).find('.srp').val();
                 var ap = $(this).find('.adjusted_price');
                 ap.val(srp);
-                //computeCart();
             }
         });
     }
@@ -360,7 +360,63 @@ function appendDepositItemFields()
     
 }
 
-    
+function applyBulkAdjustmentOnLoad()
+{   
+    var bulk_adj_opt = $('#bulk_opt_sel').val();
+    if (bulk_adj_opt != '') {
+        if (bulk_adj_opt == 'bgift') {
+            computeCartBulk(0);
+            $('#string_trans_bulk_type').val('Gift');
+            $('#applied_bulk_discount').text('Gift');
+            $('#bulk_opt_amt').val('0');
+            computeCartBulk(parseFloat('0.00'));
+        } else if (bulk_adj_opt == 'bdiscamt') {
+            var new_cart_total = $('#float_cart_orig_price').val() - $('#bulk_opt_amt').val();
+            if (new_cart_total >= 0) {
+                $('#applied_bulk_discount').text('Less Php '+$('#bulk_opt_amt').val()+'');
+                $('#customer_savings').text(addCommas(parseFloat($('#bulk_opt_amt').val())));
+                $('#string_trans_bulk_type').val('Less Php '+$('#bulk_opt_amt').val()+'');
+                computeCartBulk(new_cart_total);
+            } else {
+                toastr['error']('Invalid discount amount.', 'Error');
+            }
+        } else if (bulk_adj_opt == 'bdisc') {
+            var new_cart_total = $('#float_cart_orig_price').val() - ($('#float_cart_orig_price').val() * ($('#bulk_opt_amt').val()/100));
+            var savings = $('#float_cart_orig_price').val() * ($('#bulk_opt_amt').val()/100);
+            if (new_cart_total >= 0) {
+                computeCartBulk(new_cart_total);
+                $('#applied_bulk_discount').text('Less '+$('#bulk_opt_amt').val()+' percent off');
+                $('#string_trans_bulk_type').val('Less '+$('#bulk_opt_amt').val()+' percent off');
+                $('#customer_savings').text(addCommas(parseFloat(savings)));
+            } else {
+                toastr['error']('Invalid discount.', 'Error');
+            }
+        } else if (bulk_adj_opt == 'bamt') {
+            var savings = $('#float_cart_orig_price').val() - $('#bulk_opt_amt').val();
+            // alert(savings);
+            computeCartBulk(parseFloat($('#bulk_opt_amt').val()));
+            $('#applied_bulk_discount').text('Change Amount');
+            $('#string_trans_bulk_type').val('Change Amount to pay to: Php ' + $('#bulk_opt_amt').val());
+            $('#customer_savings').text(addCommas(parseFloat(savings)));
+        } else {
+            $('#string_trans_bulk_type').val('none');
+            $('#bulk_opt_amt').val('0');
+            $('.display_price').each(function() {
+                if ($(this).val() == "0" || $(this).val() == "0.00") {
+                    //revert prices only if bulk discount came from gift
+                    var row = $(this).closest('tr');
+                    var srp = row.find('.srp').val();
+                    $(this).val(srp);
+                }
+            });
+            $('#applied_bulk_discount').text('');
+            computeCartBulk(0);
+        }
+    } else {
+        $('#string_trans_bulk_type').val('none');
+    }
+    computeBalance();
+}    
 
 $(document).ready(function(){ 
 
@@ -389,6 +445,21 @@ $(document).ready(function(){
             
             computeCartIndiv();
             computeVATIndiv();
+        } else if (trans_type == 'bulk') {
+            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
+            $('#string_trans_type').val('bulk');
+            $('.updated_totals_row').show();
+
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.bulk_adj').show();
+            $('#proc').show();
+            // $('#transaction_type_modal').modal('hide');
+            // $('#bulk_adjustment').modal('show');
+            // $('.bulk_discount_h4').show();
+            applyBulkAdjustmentOnLoad();
+            $('.checkout_btn').show();
+            // $('.clear_discount').show();
         }
 
         if (trans_mode == 'Deposit') {

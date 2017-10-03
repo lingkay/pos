@@ -908,6 +908,7 @@ function applyBulkAdjustment()
             computeCartBulk(0);
             $('#string_trans_bulk_type').val('Gift');
             $('#applied_bulk_discount').text('Gift');
+            $('#bulk_opt_amt').val('0');
             computeCartBulk(parseFloat('0.00'));
         } else if (bulk_adj_opt == 'bdiscamt') {
             var new_cart_total = $('#float_cart_orig_price').val() - $('#cform-discount_amount').val();
@@ -915,6 +916,7 @@ function applyBulkAdjustment()
                 $('#applied_bulk_discount').text('Less Php '+$('#cform-discount_amount').val()+'');
                 $('#customer_savings').text(addCommas(parseFloat($('#cform-discount_amount').val())));
                 $('#string_trans_bulk_type').val('Less Php '+$('#cform-discount_amount').val()+'');
+                $('#bulk_opt_amt').val($('#cform-discount_amount').val());
                 computeCartBulk(new_cart_total);
             } else {
                 toastr['error']('Invalid discount amount.', 'Error');
@@ -927,6 +929,7 @@ function applyBulkAdjustment()
                 $('#applied_bulk_discount').text('Less '+$('#cform-discount_pct').val()+' percent off');
                 $('#string_trans_bulk_type').val('Less '+$('#cform-discount_pct').val()+' percent off');
                 $('#customer_savings').text(addCommas(parseFloat(savings)));
+                $('#bulk_opt_amt').val($('#cform-discount_pct').val());
             } else {
                 toastr['error']('Invalid discount.', 'Error');
             }
@@ -937,8 +940,10 @@ function applyBulkAdjustment()
             $('#applied_bulk_discount').text('Change Amount');
             $('#string_trans_bulk_type').val('Change Amount to pay to: Php ' + $('#cform-new_total').val());
             $('#customer_savings').text(addCommas(parseFloat(savings)));
+            $('#bulk_opt_amt').val($('#cform-new_total').val());
         } else {
             $('#string_trans_bulk_type').val('none');
+            $('#bulk_opt_amt').val('0');
             $('.display_price').each(function() {
                 if ($(this).val() == "0" || $(this).val() == "0.00") {
                     //revert prices only if bulk discount came from gift
@@ -1002,6 +1007,7 @@ function updateBulkForm(opt)
         $('#cform-new_total').val('');
         $('#cgroup-new_total').hide();
     } else {
+        $('#bulk_opt_amt').val('0');
         $('#bulk_opt_sel').val('na');
         cancelBulkAdjustment();
     }
@@ -1066,7 +1072,6 @@ function revertOriginalPrices()
         }
         
     });
-    computeCart();
     computeCartMinimum();
 }
 
@@ -1108,6 +1113,8 @@ function freezeTransaction(is_final = false)
     var transaction_mode = $('#string_trans_mode').val();
     var transaction_type = $('#string_trans_type').val();
     var bulk_type = $('#string_trans_bulk_type').val();
+    var sel_bulk_type = $('#bulk_opt_sel').val();
+    var sel_bulk_amount = $('#bulk_opt_amt').val();
     var transaction_tax_rate = $('#float_tax_rate').val();
     var transaction_orig_vat_amt = $('#float_orig_tax_vat_amt').val();
     var transaction_new_vat_amt = $('#float_new_tax_vat_amt').val();
@@ -1136,7 +1143,7 @@ function freezeTransaction(is_final = false)
     } 
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id;
+    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount;
 
 
     $.getJSON(url, function(json){  

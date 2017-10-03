@@ -214,7 +214,7 @@ class POSController extends Controller
     // POS SAVING AND SENDING METHODS
 
     
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id)
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -235,6 +235,9 @@ class POSController extends Controller
         $transaction->setSyncedToErp('false');
         $transaction->setTransactionMode($transaction_mode);
         $transaction->setExtraAmount($transaction_ea);
+
+        $transaction->setSelectedBulkDiscountType($selected_bulk_discount_type);
+        $transaction->setSelectedBulkDiscountAmount($selected_bulk_discount_amount);
 
         $transaction->setDepositVatAmt($deposit_vat_amt);
         $transaction->setDepositAmtNetVat($deposit_vat_amt);

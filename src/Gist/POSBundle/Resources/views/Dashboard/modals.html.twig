@@ -26,9 +26,9 @@
                             </div>
                             <div style="margin-bottom: 25px;">&nbsp;</div>
                             {{ form.group_text('Selected Bulk Discount', 'selected_bulk', 'None', 4, 5, true) }}
-                            {{ form.group_text('New Price', 'new_total', '', 4, 5, false) }}
-                            {{ form.group_text('Less Amount', 'discount_amount', '', 4, 5, false) }}
-                            {{ form.group_text('Less %', 'discount_pct', '', 4, 5, false) }}
+                            {{ form.group_text('New Price', 'new_total', transaction_object.getSelectedBulkDiscountAmount|default(0), 4, 5, false) }}
+                            {{ form.group_text('Less Amount', 'discount_amount', transaction_object.getSelectedBulkDiscountAmount|default(0), 4, 5, false) }}
+                            {{ form.group_text('Less %', 'discount_pct', transaction_object.getSelectedBulkDiscountAmount|default(0), 4, 5, false) }}
                         </div>
                     </div>
                     <div class="modal-footer">

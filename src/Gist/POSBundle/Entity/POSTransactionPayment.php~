@@ -79,6 +79,9 @@ class POSTransactionPayment
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $payor;
 
+    /** @ORM\Column(type="string", length=150, nullable=true) */
+    protected $payment_issued_on;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="transaction_id", referencedColumnName="id")
@@ -384,6 +387,9 @@ class POSTransactionPayment
      */
     public function getCardTerms()
     {
+        if ($this->card_terms == 'null') {
+            return '';
+        }
         return $this->card_terms;
     }
 
@@ -432,6 +438,9 @@ class POSTransactionPayment
      */
     public function getCardTerminalOperator()
     {
+        if ($this->card_terminal_operator == 'null') {
+            return '';
+        }
         return $this->card_terminal_operator;
     }
 
@@ -505,5 +514,104 @@ class POSTransactionPayment
     public function getCheckPayor()
     {
         return $this->check_payor;
+    }
+
+    /**
+     * Set interest
+     *
+     * @param string $interest
+     *
+     * @return POSTransactionPayment
+     */
+    public function setInterest($interest)
+    {
+        $this->interest = $interest;
+
+        return $this;
+    }
+
+    /**
+     * Get interest
+     *
+     * @return string
+     */
+    public function getInterest()
+    {
+        if ($this->interest == 'null') {
+            return '';
+        }
+        return $this->interest;
+    }
+
+    /**
+     * Set accountNumber
+     *
+     * @param string $accountNumber
+     *
+     * @return POSTransactionPayment
+     */
+    public function setAccountNumber($accountNumber)
+    {
+        $this->account_number = $accountNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get accountNumber
+     *
+     * @return string
+     */
+    public function getAccountNumber()
+    {
+        return $this->account_number;
+    }
+
+    /**
+     * Set payee
+     *
+     * @param string $payee
+     *
+     * @return POSTransactionPayment
+     */
+    public function setPayee($payee)
+    {
+        $this->payee = $payee;
+
+        return $this;
+    }
+
+    /**
+     * Get payee
+     *
+     * @return string
+     */
+    public function getPayee()
+    {
+        return $this->payee;
+    }
+
+    /**
+     * Set payor
+     *
+     * @param string $payor
+     *
+     * @return POSTransactionPayment
+     */
+    public function setPayor($payor)
+    {
+        $this->payor = $payor;
+
+        return $this;
+    }
+
+    /**
+     * Get payor
+     *
+     * @return string
+     */
+    public function getPayor()
+    {
+        return $this->payor;
     }
 }
