@@ -67,7 +67,7 @@
                                     {% else %}
                                         <tr class="row_entry">
                                             <input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="{{app.getUser.getERPID|default('N/A')}}">
-                                            <td><input type="text" class="form-control" name="consultant_name[]" value="{{app.getUser.getDisplayName|default('N/A')}}" readonly="true"></td>
+                                            <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, app.getUser.getERPID, 12, 12, false) }}</td>
                                             
                                             <td>
                                                 <div class="input-group">
@@ -120,9 +120,23 @@
 
 {% block js %}
     <script>
+    function autoCompute() {
+        var table_rows = parseInt($('#partition_entries tr').length);
+        var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+        var indiv_amount = transaction_total/table_rows;
+        var percent = (indiv_amount/transaction_total)*100;
+
+        $('.percent_allocation').each(function () {
+            $(this).val(percent.toFixed(2));
+        });
+
+        $('.amount_allocation').each(function () {
+            $(this).val(indiv_amount.toFixed(2));
+        });
+    }
         function addConsultant() {
             var field = '<tr class="row_entry">';
-                field += '<input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="">';
+                field += '<input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="none">';
                 field += '        <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, "", 12, 12, false)|e("js") }}</td> ';       
                 field += '       <td>';
                 field +=  '  <div class="input-group">';
@@ -135,18 +149,7 @@
                 field += '   </tr>';
 
             $('#partition_entries').append(field);
-            var table_rows = parseInt($('#partition_entries tr').length);
-            var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
-            var indiv_amount = transaction_total/table_rows;
-            var percent = (indiv_amount/transaction_total)*100;
-
-            $('.percent_allocation').each(function () {
-                $(this).val(percent.toFixed(2));
-            });
-
-            $('.amount_allocation').each(function () {
-                $(this).val(indiv_amount.toFixed(2));
-            });
+           autoCompute();
 
         }
 
@@ -194,8 +197,20 @@
                 contents[tdContent] = true;
             });    
 
+            var inv_cons = false;
+            $(".consultant_id").each(function() {
+                if ($(this).val() == 'none') {
+                    inv_cons = true;
+                }
+            });
+
+            if (inv_cons) {
+                swal('Invalid consultant in field!','', 'error');
+                return false;
+            }
+
             if (duplicates) {
-                swal('Invalid split!','Duplicate consultant found', 'error');
+                swal('Duplicate consultant found!','', 'error');
                 return false;
             }
 
@@ -211,6 +226,8 @@
                 }
                 var tr = $(this).closest('tr');
                 tr.remove();
+                
+                autoCompute();
                 computeTotals();
                 return false;
             });
