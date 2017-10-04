@@ -79,7 +79,7 @@
                                                 <th width="20%">Amount</th>
                                                 <th width="20%">Terms</th>
                                                 <th width="20%">Interest</th>
-                                                <th width="20%">Terminal Bank</th>
+                                                <th width="20%">Bank</th>
                                             </tr>
                                         </thead>
                                         <tbody id="items_given_tbody">
@@ -90,7 +90,7 @@
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerminalOperator|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
                                                     </tr>
                                                 {% endfor %}
                                             {% else %}
@@ -100,7 +100,7 @@
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerminalOperator|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
                                                     </tr>
                                                 {% endfor %}
                                             {% endif %}
