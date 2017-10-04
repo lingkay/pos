@@ -356,6 +356,9 @@ function ajaxAddCustomer()
             
         });
     });
+    //here
+    var name_fmtd = last_name+", "+first_name;
+    $('#footer_customer').text(name_fmtd);
     clearCustomerAdd();
 }
 

@@ -1128,7 +1128,7 @@ $(document).ready(function(){
                             computeVATDeposit(payment_total);
                             computeVATBalance(parseFloat(balance));
                             $('.clear_discount').hide();
-                            $('.checkout_btn').hide();
+                            // $('.checkout_btn').hide();
                             $('#float_trans_deposit_amount').val(payment_total);
                             $('#string_trans_mode').val('Deposit');
                             $('.proceed_deposit').show();
