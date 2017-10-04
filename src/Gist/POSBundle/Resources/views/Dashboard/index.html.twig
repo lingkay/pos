@@ -467,6 +467,7 @@ $(document).ready(function(){
             
             computeCartIndiv();
             computeVATIndiv();
+            computeBalance();
         } else if (trans_type == 'bulk') {
             var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
             $('#string_trans_type').val('bulk');
