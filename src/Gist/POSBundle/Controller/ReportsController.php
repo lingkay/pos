@@ -266,7 +266,7 @@ class ReportsController extends CrudController
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
         $params['users'] = $user_exist;
         $params['modes'] = array(
-            'regular'=>'Regular',
+            'normal'=>'Normal',
             'quotation'=>'Quotation',
             'deposit'=>'Deposit',
             'upsell'=>'Upsell',
