@@ -623,6 +623,19 @@ $(document).ready(function(){
         }   
     });
 
+    $(document).on("click",".cp_deposit", function(e){
+
+        if ($('#string_trans_mode').val() == 'quotation') {
+            swal("Cannot change to quotation!", "Quotation mode active", "error");
+        } else {
+            if ($('#string_trans_mode').val() == 'normal') {
+                $('#deposit_modal').modal('show');
+            } else {
+                $('#rev_deposit_modal').modal('show');
+            }
+        }   
+    });
+
     $(document).on("click",".cp_freeze", function(e){
         var trans_amt = $('#float_trans_amount').val();
         var balance = $('#float_trans_balance').val();
