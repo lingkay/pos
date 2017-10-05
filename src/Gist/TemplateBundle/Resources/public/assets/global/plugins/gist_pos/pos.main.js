@@ -637,15 +637,9 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".cp_freeze", function(e){
-        var trans_amt = $('#float_trans_amount').val();
-        var balance = $('#float_trans_balance').val();
-
-        if (balance == 0 && trans_amt > 0) {
-            swal("Cannot freeze transaction!", "Full payment already made", "error");
-        } else if ($('#string_trans_mode').val() == 'Deposit') {
+        if ($('#string_trans_mode').val() == 'Deposit') {
             swal("Cannot freeze transaction!", "Deposit mode active", "error");
         } else {
-            //loadFrozenTransactions();
             $('#freeze_modal').modal('show');
         }
     });

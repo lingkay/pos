@@ -531,13 +531,13 @@ $(document).ready(function(){
             $('#string_trans_mode').val('quotation');
             $('#pos_mode').text('Quotation');
             $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
-            swal("POS Mode Changed", "Quotation mode enabled!", "success")
+            swal("POS Mode Changed", "Quotation mode enabled!", "success");
             $('#quotation_modal').modal('hide');
         } else {
             $('#string_trans_mode').val('normal');
             $('#pos_mode').text('Normal');
             $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
-            swal("POS Mode Changed", "Quotation mode disabled!", "success")
+            swal("POS Mode Changed", "Quotation mode disabled!", "success");
             $('#rev_quotation_modal').modal('hide');
         }
         
@@ -547,15 +547,21 @@ $(document).ready(function(){
     $(document).on("click",".deposit_continue_btn", function(e){
         if ($('#string_trans_mode').val() == 'normal') {
             $('#string_trans_mode').val('Deposit');
+            $('.deposit_icon_img').each(function() {
+                $(this).attr('data-original-title',"Disable deposit mode");
+            });
             $('#pos_mode').text('Deposit');
             $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
-            swal("POS Mode Changed", "Deposit mode enabled!", "success")
+            swal("POS Mode Changed", "Deposit mode enabled!", "success");
             $('#deposit_modal').modal('hide');
         } else {
             $('#string_trans_mode').val('normal');
             $('#pos_mode').text('Normal');
+            $('.deposit_icon_img').each(function() {
+                $(this).attr('data-original-title',"Deposit");
+            });
             $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}");
-            swal("POS Mode Changed", "Deposit mode disabled!", "success")
+            swal("POS Mode Changed", "Deposit mode disabled!", "success");
             $('#rev_deposit_modal').modal('hide');
         }
         
