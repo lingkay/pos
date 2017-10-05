@@ -246,12 +246,24 @@ class ReportsController extends CrudController
         return array(
             $grid->newColumn('ID', 'getID', 'id'),
             $grid->newColumn('Receipt Number', 'getTransDisplayId', 'trans_display_id'),
-            $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
+            // $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
+            $grid->newColumn('Reference', 'getID', 'id','o',array($this,'formatReferenceLink')),
             $grid->newColumn('Transaction Date','getDateCreateFormattedPOS','date_create'),
             //$grid->newColumn('Location', 'null', 'null'),
             $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
             $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
         );
+    }
+
+    public function formatReferenceLink($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $router = $this->get('router');
+        $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+        if($obj->getReferenceTransaction() != null)
+            return "<a style=\"text-decoration: none;\" href=\"".$router->generate('gist_pos_reports_edit_form', array('id' => $obj->getReferenceTransaction()->getID()))."\">".$obj->getReferenceTransactionDisplayID()."</a>";
+        else 
+            return "-";
     }
 
     public function indexAction()
