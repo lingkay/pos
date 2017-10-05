@@ -1110,6 +1110,19 @@ $(document).ready(function(){
                       showConfirmButton: true,
                       confirmButtonText: "Go back to payment options"
                     });
+            } else if ($('#string_trans_mode').val() == "Deposit") { 
+                $('.deposit_amount_totals_row').show();
+                $('.balance_totals_row').show();
+                appendDepositItemColumns();
+                appendDepositItemFields();
+                computeVATDeposit(payment_total);
+                computeVATBalance(parseFloat(balance));
+                $('.clear_discount').hide();
+                $('#float_trans_deposit_amount').val(payment_total);
+                $('#string_trans_mode').val('Deposit');
+                $('.proceed_deposit').show();
+                $('#checkout_modal').modal('hide');
+                $('#deposit_prompt_modal').modal('show');
             } else {
                 swal({
                       title: "Payment incomplete!",
