@@ -79,7 +79,10 @@ class POSTransactionPayment
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $payor;
 
-    /** @ORM\Column(type="string", length=150, nullable=true) */
+    /**
+     * @ORM\ManyToOne(targetEntity="POSTransaction")
+     * @ORM\JoinColumn(name="payment_issued_on", referencedColumnName="id")
+     */
     protected $payment_issued_on;
 
     /**

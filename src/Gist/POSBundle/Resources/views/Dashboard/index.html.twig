@@ -222,8 +222,8 @@
 <script type="text/javascript">
 function finalModalAction(opt)
 {
+    $('#final_modal').modal('hide');
     if (opt == 'save') {
-        $('#final_modal').modal('hide');
         freezeTransaction(true);
     } else {
         freezeTransaction(true);

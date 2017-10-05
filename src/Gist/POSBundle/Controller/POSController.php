@@ -321,11 +321,6 @@ class POSController extends Controller
             $transaction_item->setIssued(false);
         }
 
-        if ($issued_on == 'this') {
-            $transaction_item->setItemIssuedOn($transaction->getID());
-        } elseif ($issued_on != '0') {
-            $transaction_item->setItemIssuedOn($issued_on);
-        }
         
 
         
@@ -340,6 +335,16 @@ class POSController extends Controller
 
         $transaction_item->setBarcode($barcode);
         $transaction_item->setItemCode($item_code);
+
+        $em->persist($transaction_item);
+        $em->flush();
+
+        if ($issued_on == 'this') {
+            $transaction_item->setItemIssuedOn($transaction);
+        } elseif ($issued_on != '0') {
+            $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$issued_on]);
+            $transaction_item->setItemIssuedOn($ref_transaction);
+        }
 
         $em->persist($transaction_item);
         $em->flush();
@@ -371,10 +376,14 @@ class POSController extends Controller
         $transaction_payment->setCardExpiry($expiry);
         $transaction_payment->setCardCvv($cvv);
 
+        $em->persist($transaction_payment);
+        $em->flush();
+
         if ($issued_on == '0') {
-            $transaction_payment->setPaymentIssuedOn($transaction->getID());
+            $transaction_payment->setPaymentIssuedOn($transaction);
         } elseif ($issued_on != '0') {
-            $transaction_payment->setPaymentIssuedOn($issued_on);
+            $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$issued_on]);
+            $transaction_payment->setPaymentIssuedOn($ref_transaction);
         }
 
         $em->persist($transaction_payment);

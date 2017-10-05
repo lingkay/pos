@@ -52,7 +52,10 @@ class POSTransactionItem
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $item_code;
 
-    /** @ORM\Column(type="string", length=150, nullable=true) */
+    /**
+     * @ORM\ManyToOne(targetEntity="POSTransaction")
+     * @ORM\JoinColumn(name="item_issued_on", referencedColumnName="id")
+     */
     protected $item_issued_on;
 
     /**
