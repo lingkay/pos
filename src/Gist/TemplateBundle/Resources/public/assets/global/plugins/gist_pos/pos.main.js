@@ -329,12 +329,12 @@ $(document).ready(function(){
             } else if ($('#string_trans_mode').val() == 'quotation') {
                 $('#final_modal2').modal('show');
             } else if ($('#string_trans_mode').val() == 'Deposit') {
-                $('#final_modal2').modal('show');
+                $('#final_modal').modal('show');
             }
         }
 
         if ($('#string_trans_mode').val() == 'Deposit') {
-            $('#final_modal2').modal('show');
+            $('#final_modal').modal('show');
         }
         
 
