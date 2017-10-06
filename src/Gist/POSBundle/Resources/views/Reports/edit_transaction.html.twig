@@ -181,7 +181,7 @@
                         </div>
                         <div class="form-actions fluid">
                             <div class="col-md-9">
-                                {% if object.getTransactionMode == 'normal' or object.getTransactionMode == 'upsell' %}
+                                {% if object.getTransactionMode == 'normal' or object.getTransactionMode == 'upsell' or object.getTransactionMode == 'Deposit' %}
                                 <a href="{{ path('gist_pos_print_receipt', {'id': object.getID}) }}" target="_blank" class="btn default btn blue" title="Re-print Receipt"><i class="fa fa-print"></i> Re-print Receipt</a>
                                 <a href="{{path('gist_pos_split_transaction_form', {'id':object.getID})}}" class="btn default btn blue" title="Split"><i class="fa fa-scissors"></i> Split</a>
                                 {% endif %}

@@ -905,7 +905,6 @@ $(document).ready(function(){
         var prev_balance = $('#transaction_prev_balance').val();
 
         if (balance <= 0) {
-
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
                 $('.check_issued:checkbox').each(function() {
@@ -936,6 +935,8 @@ $(document).ready(function(){
                                 $('#final_modal').modal('show');
                             } else if ($('#string_trans_mode').val() == 'quotation') {
                                 $('#final_modal2').modal('show');
+                            } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                $('#final_modal').modal('show');
                             } else {
                                 $('#final_modal2').modal('show');
                             }
@@ -951,12 +952,15 @@ $(document).ready(function(){
                       confirmButtonText: "Proceed",
                       cancelButtonText: "Change customer",
                     },
+
                     function(isConfirm){
                         if (isConfirm) {
                            if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
                                 $('#final_modal').modal('show');
                             } else if ($('#string_trans_mode').val() == 'quotation') {
                                 $('#final_modal2').modal('show');
+                            } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                $('#final_modal').modal('show');
                             } else {
                                 $('#final_modal2').modal('show');
                             }
@@ -992,6 +996,8 @@ $(document).ready(function(){
                                     $('#final_modal').modal('show');
                                 } else if ($('#string_trans_mode').val() == 'quotation') {
                                     $('#final_modal2').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                    $('#final_modal').modal('show');
                                 } else {
                                     $('#final_modal2').modal('show');
                                 }
@@ -1013,6 +1019,8 @@ $(document).ready(function(){
                                     $('#final_modal').modal('show');
                                 } else if ($('#string_trans_mode').val() == 'quotation') {
                                     $('#final_modal2').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                    $('#final_modal').modal('show');
                                 } else {
                                     $('#final_modal2').modal('show');
                                 }
@@ -1070,6 +1078,8 @@ $(document).ready(function(){
                                 $('#final_modal').modal('show');
                             } else if ($('#string_trans_mode').val() == 'quotation') {
                                 $('#final_modal2').modal('show');
+                            } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                $('#final_modal').modal('show');
                             } else {
                                 $('#final_modal2').modal('show');
                             }
@@ -1091,6 +1101,8 @@ $(document).ready(function(){
                                     $('#final_modal').modal('show');
                                 } else if ($('#string_trans_mode').val() == 'quotation') {
                                     $('#final_modal2').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                    $('#final_modal').modal('show');
                                 } else {
                                     $('#final_modal2').modal('show');
                                 }

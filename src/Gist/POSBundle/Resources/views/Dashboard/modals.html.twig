@@ -113,7 +113,7 @@
                                                     <input type="hidden" name="control_number" class="control_number" value="{{p.getControlNumber|default('')}}">
                                                     <input type="hidden" name="account_number" class="account_number" value="{{p.getAccountNumber|default('')}}">
                                                     <input type="hidden" name="bank" class="bank" value="{{p.getBank|default('')}}">
-                                                    <input type="hidden" name="payment_issued_on" class="payment_issued_on" value="{{p.getPaymentIssuedOn|default('0')}}">
+                                                    <input type="hidden" name="payment_issued_on" class="payment_issued_on" value="{{p.getPaymentIssuedOn.getID|default('0')}}">
                                                     <input type="hidden" name="cc_terminal_opt" class="cc_terminal_opt" value="{{p.getCardTerminalOperator|default('')}}">
                                                     <input type="hidden" name="cc_interest" class="cc_interest" value="{{p.getInterest|default('')}}">
                                                     <input type="hidden" name="cc_terms" class="cc_terms" value="{{p.getCardTerms|default('')}}">

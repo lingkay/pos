@@ -123,7 +123,7 @@
                                                 <tr class="product_row existing_product"> 
                                                     
                                                     <input type="hidden" name="is_issued[]" class="is_issued" value="{{item.getIssued|default(0)}}" >
-                                                    <input type="hidden" name="issued_on[]" class="issued_on" value="{{item.getItemIssuedOn|default('0')}}" >
+                                                    <input type="hidden" name="issued_on[]" class="issued_on" value="{{item.getItemIssuedOn.getID|default('0')}}" >
                                                     <input type="hidden" name="product_id[]" class="product_id" value="{{item.getID}}" >
                                                     <input type="hidden" name="barcode[]" class="barcode" value="{{item.getBarcode}}" >
                                                     <input type="hidden" name="item_code[]" class="item_code" value="{{item.getItemCode}}" >
