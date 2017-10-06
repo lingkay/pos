@@ -149,7 +149,7 @@
                                             {% endfor %}
                                         {% else %}
                                             <tr class="init_row_prods">
-                                                <td colspan="3" class="xrow"><p>No items added</p></td>
+                                                <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
                                             </tr>
                                         {% endif %}
                                     </tbody>
@@ -297,19 +297,36 @@ function appendPerItemColumns()
 function appendPerItemFields()
 {
     if ($('#string_trans_type').val() == "per") {
-        $('#cart_table').find('tr').each(function(){
-            if ($(this).children('td').length < 6) {
-                $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
-                    {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
-                $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
-                    <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-                $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            $('#cart_table').find('tr').each(function(){
+                if ($(this).children('td').length < 7) {
+                    $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
+                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                    $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                        <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                    $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
 
-                var srp = $(this).find('.srp').val();
-                var ap = $(this).find('.adjusted_price');
-                ap.val(srp);
-            }
-        });
+                    var srp = $(this).find('.srp').val();
+                    var ap = $(this).find('.adjusted_price');
+                    ap.val(srp);
+                }
+            });
+        } else {
+            $('#cart_table').find('tr').each(function(){
+                if ($(this).children('td').length < 6) {
+                    $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
+                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                    $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                        <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                    $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
+
+                    var srp = $(this).find('.srp').val();
+                    var ap = $(this).find('.adjusted_price');
+                    ap.val(srp);
+                }
+            });
+        }
+            
     }
 }
 
@@ -339,18 +356,9 @@ function appendDepositItemColumns()
 
 function appendDepositItemFields()
 {
-    
-    $('#cart_table').find('tr').each(function(){
-        if ($(this).children('td').length < 4) {
-            var issued = $(this).find('.is_issued').val();
-            // issued = issued.find('.is_issued').val();
-            if (issued == '1') {
-                $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
-            } else {
-                $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
-            }
-        } else {
-            if ($('#string_trans_type').val() == 'per') {
+    if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('td').length < 4) {
                 var issued = $(this).find('.is_issued').val();
                 // issued = issued.find('.is_issued').val();
                 if (issued == '1') {
@@ -358,10 +366,32 @@ function appendDepositItemFields()
                 } else {
                     $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
                 }
-            }   
+            } else {
+                if ($('#string_trans_type').val() == 'per') {
+                    if ($(this).children('td').length < 7) {
+                        var issued = $(this).find('.is_issued').val();
+                        // issued = issued.find('.is_issued').val();
+                        if (issued == '1') {
+                            $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+                        } else {
+                            $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+                        }
+                    }
+                }   
+            }
+        });
+    } else {
+        if ($('#string_trans_type').val() == 'per') {
+            $('.xrow').each(function() {
+                $(this).attr('colspan','7');
+            });
+        } else {
+            $('.xrow').each(function() {
+                $(this).attr('colspan','4');
+            });
         }
-    });
-    
+            
+    }
 }
 
 function applyBulkAdjustmentOnLoad()
@@ -554,6 +584,8 @@ $(document).ready(function(){
             $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
             swal("POS Mode Changed", "Deposit mode enabled!", "success");
             $('#deposit_modal').modal('hide');
+            appendDepositItemColumns();
+            appendDepositItemFields();
         } else {
             $('#string_trans_mode').val('normal');
             $('#pos_mode').text('Normal');
@@ -563,6 +595,31 @@ $(document).ready(function(){
             $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}");
             swal("POS Mode Changed", "Deposit mode disabled!", "success");
             $('#rev_deposit_modal').modal('hide');
+
+            $('#cart_table').find('tr').each(function(){
+                if ($('#string_trans_type').val() == 'per') {
+                    if ($(this).children('th').length > 6) {
+                        $(this).find('th').eq(0).remove();
+                    }
+
+                    if ($(this).children('td').length > 6) {
+                        $(this).find('td').eq(0).remove();
+                    }
+                } else {
+                    if ($(this).children('th').length > 3) {
+                        $(this).find('th').eq(0).remove();
+                    }
+
+                    if ($(this).children('td').length > 3) {
+                        $(this).find('td').eq(0).remove();
+                    }
+                }
+                
+            });
+
+            $('.xrow').each(function() {
+                $(this).attr('colspan',3);
+            });
         }
         
     });

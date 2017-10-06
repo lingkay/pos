@@ -411,10 +411,15 @@ $(document).ready(function(){
                 $('.cart_items_count').text(rowCount.toString());
 
                 if (rowCount == 0) {
-                    var field = '<tr class=\"init_row_prods\">';     
-                    field += '<td colspan=\"3\" class=\"xrow\"><p>No items added</p></td>';
-                    field += '</tr>';
-
+                    if (trans_type == 'per') {
+                        var field = '<tr class=\"init_row_prods\">';     
+                        field += '<td colspan=\"7\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
+                        field += '</tr>';
+                    } else {
+                        var field = '<tr class=\"init_row_prods\">';     
+                        field += '<td colspan=\"4\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
+                        field += '</tr>';
+                    }
                     $('#cart_items').prepend(field);
                 }
 
@@ -447,9 +452,27 @@ $(document).ready(function(){
                 $('.cart_items_count').text(rowCount.toString());
 
                 if (rowCount == 0) {
-                    var field = '<tr class=\"init_row_prods\">';     
-                    field += '<td colspan=\"3\" class=\"xrow\"><p>No items added</p></td>';
-                    field += '</tr>';
+                    if (trans_mode == 'Deposit') {
+                        if (trans_type == 'per') {
+                            var field = '<tr class=\"init_row_prods\">';     
+                            field += '<td colspan=\"7\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
+                            field += '</tr>';
+                        } else {
+                            var field = '<tr class=\"init_row_prods\">';     
+                            field += '<td colspan=\"4\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
+                            field += '</tr>';
+                        }
+                    } else {
+                        if (trans_type == 'per') {
+                            var field = '<tr class=\"init_row_prods\">';     
+                            field += '<td colspan=\"6\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
+                            field += '</tr>';
+                        } else {
+                            var field = '<tr class=\"init_row_prods\">';     
+                            field += '<td colspan=\"3\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
+                            field += '</tr>';
+                        }
+                    }
 
                     $('#cart_items').prepend(field);
                 }
