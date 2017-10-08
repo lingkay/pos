@@ -220,6 +220,70 @@
 {% block js %}
 <script src="{{ asset('bundles/gisttemplate/assets/global/plugins/gist_pos/pos.main.js') }}"></script>
 <script type="text/javascript">
+
+//for pos.js
+function revertDiscounts()
+{
+    if ($('#string_trans_mode').val() == 'Deposit') {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('th').length > 5) {
+                $(this).find('th').eq(3).remove();
+                $(this).find('th').eq(3).remove();
+                $(this).find('th').eq(3).remove();
+            }
+
+            if ($(this).children('td').length > 5) {
+                $(this).find('td').eq(3).remove();
+                $(this).find('td').eq(3).remove();
+                $(this).find('td').eq(3).remove();
+            }
+        });
+    } else {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('th').length > 5) {
+                $(this).find('th').eq(2).remove();
+                $(this).find('th').eq(2).remove();
+                $(this).find('th').eq(2).remove();
+            }
+
+            if ($(this).children('td').length > 5) {
+                $(this).find('td').eq(2).remove();
+                $(this).find('td').eq(2).remove();
+                $(this).find('td').eq(2).remove();
+            }
+        });
+    }
+
+    var float_orig_price = parseFloat($('#float_cart_orig_price').val());
+    $('#string_trans_type').val('none');
+    $('.updated_totals_row').hide();
+    $('.checkout_btn').hide();
+    $('.bulk_adj').hide();
+    $('#customer_savings').text("0.00");
+    $('.next_step_btn').show();
+    $('.clear_discount').hide();
+    $('.initial_cart_price').text(addCommas(float_orig_price));
+    $('#float_cart_new_price').val($('#float_cart_orig_price').val());
+
+
+
+    // $('.cart_price_h3').css({'color': 'black'});
+    $('#cgroup-new_total').hide();
+    $('#cform-new_total').val('');
+    $('#cform-discount_amount').val('');
+    $('#cgroup-discount_amount').hide();
+    $('#cform-discount_pct').val('');
+    $('#cgroup-discount_pct').hide();
+    // $('.cart_price').text(addCommas($('#float_cart_orig_price').val()));
+    
+    computeCartRaw();
+    $('.orig_totals_row').hide();
+    $('.orig_price_h3').hide();
+    $('.bulk_discount_h4').hide();
+    $('#applied_bulk_discount').text('');
+}
+
+//end for pos.js
 function finalModalAction(opt)
 {
     $('#final_modal').modal('hide');
@@ -270,28 +334,53 @@ function syncToERP()
 
 function appendPerItemColumns()
 {
-    $('#cart_table').find('tr').each(function(){
-        $(this).find('th').eq(1).after('<th>Discount Type</th>');
-    });
+    if ($('#string_trans_mode').val() == 'Deposit') {
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(2).after('<th>Discount Type</th>');
+        });
 
-    $('#cart_table').find('tr').each(function(){
-        $(this).find('th').eq(2).after('<th>Value</th>');
-    });
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(3).after('<th>Value</th>');
+        });
 
-    $('#cart_table').find('tr').each(function(){
-        $(this).find('th').eq(3).after('<th>Adjusted Price</th>');
-    });
-    var ths = $('th');
-    var element = ths.eq(0);
-    element.width(100);
-    var element2 = ths.eq(1);
-    element2.width(70);
-    var element2 = ths.eq(2);
-    element2.width(80);
-    var element2 = ths.eq(3);
-    element2.width(70);
-    var element2 = ths.eq(4);
-    element2.width(70);
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(4).after('<th>Adjusted Price</th>');
+        });
+        var ths = $('th');
+        var element = ths.eq(1);
+        element.width(100);
+        var element2 = ths.eq(2);
+        element2.width(70);
+        var element2 = ths.eq(3);
+        element2.width(80);
+        var element2 = ths.eq(4);
+        element2.width(70);
+        var element2 = ths.eq(5);
+        element2.width(70);
+    } else {
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(1).after('<th>Discount Type</th>');
+        });
+
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(2).after('<th>Value</th>');
+        });
+
+        $('#cart_table').find('tr').each(function(){
+            $(this).find('th').eq(3).after('<th>Adjusted Price</th>');
+        });
+        var ths = $('th');
+        var element = ths.eq(0);
+        element.width(100);
+        var element2 = ths.eq(1);
+        element2.width(70);
+        var element2 = ths.eq(2);
+        element2.width(80);
+        var element2 = ths.eq(3);
+        element2.width(70);
+        var element2 = ths.eq(4);
+        element2.width(70);
+    }
 }
 
 function appendPerItemFields()
@@ -299,12 +388,12 @@ function appendPerItemFields()
     if ($('#string_trans_type').val() == "per") {
         if ($('#string_trans_mode').val() == 'Deposit') {
             $('#cart_table').find('tr').each(function(){
-                if ($(this).children('td').length < 7) {
-                    $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
-                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                if ($(this).children('td').length < 5) {
                     $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                    $(this).find('td').eq(3).after("<td style=\"font-size: 10px !important;\">\
                         <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-                    $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
+                    $(this).find('td').eq(4).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
 
                     var srp = $(this).find('.srp').val();
                     var ap = $(this).find('.adjusted_price');
@@ -313,7 +402,7 @@ function appendPerItemFields()
             });
         } else {
             $('#cart_table').find('tr').each(function(){
-                if ($(this).children('td').length < 6) {
+                if ($(this).children('td').length < 5) {
                     $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
                         {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
                     $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
@@ -334,11 +423,17 @@ function appendDepositItemColumns()
 {
     var proceed = true;
     $('#cart_table').find('tr').each(function(){
-        if ($(this).children('th').length >= 4) {
-            if ($('#string_trans_type').val() == 'per') {
-                proceed = true;
-            } else {
+        if ($('#string_trans_type').val() == 'per') {
+            if ($(this).children('th').length == 7) {
                 proceed = false;
+            } else {
+                proceed = true;
+            }
+        } else {
+            if ($(this).children('th').length == 3) {
+                proceed = false;
+            } else {
+                proceed = true;
             }
         }
     });
@@ -360,7 +455,6 @@ function appendDepositItemFields()
         $('#cart_table').find('tr').each(function(){
             if ($(this).children('td').length < 4) {
                 var issued = $(this).find('.is_issued').val();
-                // issued = issued.find('.is_issued').val();
                 if (issued == '1') {
                     $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
                 } else {
@@ -524,6 +618,7 @@ $(document).ready(function(){
             computeVATBalance(parseFloat(balance));
             $('#float_trans_deposit_amount').val(payment_total);
             $('#string_trans_mode').val('Deposit');
+            $('#pos_mode').text('Deposit');
             $('.checkout_btn').show();
             $('.proceed_deposit').show();
             $('.next_step_btn').hide();
@@ -531,6 +626,30 @@ $(document).ready(function(){
 
         
     }
+
+    $(document).on("click",".gcp_deposit", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot revert to normal mode!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot revert to normal mode!','This is a resumed transaction', 'error');
+        }
+    });
+
+    $(document).on("click",".gcp_quotation", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot change to quotation!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot change to quotation!','This is a resumed transaction', 'error');
+        }
+    });
+
+    $(document).on("click",".gcp_freeze", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot freeze quotation!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot freeze quotation!','This is a resumed transaction', 'error');
+        }
+    });
 
     $(document).on("click",".check_issued", function(e){
         var deposit_amount = parseFloat($('#float_trans_deposit_amount').val());

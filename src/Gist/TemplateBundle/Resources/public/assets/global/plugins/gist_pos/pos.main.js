@@ -1148,8 +1148,6 @@ $(document).ready(function(){
             } else if ($('#string_trans_mode').val() == "Deposit") { 
                 $('.deposit_amount_totals_row').show();
                 $('.balance_totals_row').show();
-                appendDepositItemColumns();
-                appendDepositItemFields();
                 computeVATDeposit(payment_total);
                 computeVATBalance(parseFloat(balance));
                 $('.clear_discount').hide();
@@ -1190,7 +1188,11 @@ $(document).ready(function(){
                             $('#checkout_modal').modal('hide');
                             $('#deposit_prompt_modal').modal('show');
 
-
+                            $('.deposit_icon_img').each(function() {
+                                $(this).attr('data-original-title',"Disable deposit mode");
+                            });
+                            $('#pos_mode').text('Deposit');
+                            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
 
                         } else {
                             
