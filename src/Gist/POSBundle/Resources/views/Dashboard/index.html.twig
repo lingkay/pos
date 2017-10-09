@@ -21,7 +21,7 @@
 <input type="hidden" id="string_trans_bulk_type" value="none">
 <input type="hidden" id="string_trans_mode" value="{{transaction_object.getTransactionMode|default('normal')}}">
 <input type="hidden" id="string_trans_cc_interest" value="true">
-<input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="{{customer.getID|default('0')}}">
+<input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="{{customer.getERPID|default('0')}}">
 <input type="hidden" id="transaction_customer_display_id" name="transaction_customer_display_id" value="{{customer.getDisplayID|default('0')}}">
 <input type="hidden" id="transaction_customer_name" name="transaction_customer_name" value="{{customer.getNameFormatted|default('0')}}">
 <input type="hidden" id="transaction_system_id" name="transaction_system_id" value="{{next_sys_id|default(0)}}">
