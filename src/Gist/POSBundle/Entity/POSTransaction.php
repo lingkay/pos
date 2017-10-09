@@ -233,7 +233,7 @@ class POSTransaction
             foreach ($this->getItems() as $p) {
                 if ($p->getItemIssuedOn()) {
                     if ($this->id == $p->getItemIssuedOn()->getID()) {
-                        if ($this->transaction_mode == 'per') {
+                        if ($this->transaction_type == 'per') {
                             $total = $total + $p->getAdjustedPrice();
                         } else {
                             $total = $total + $p->getOrigPrice();
