@@ -627,6 +627,16 @@ $(document).ready(function(){
         
     }
 
+
+
+    $(document).on("click",".x_remove_payment_row", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot remove payment!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot remove payment!','This is a resumed transaction', 'error');
+        }
+    });
+
     $(document).on("click",".gcp_deposit", function(e){
         if ($('#string_trans_mode').val() == 'Deposit') {
             swal('Cannot revert to normal mode!','This is a resumed deposit transaction', 'error');
