@@ -192,11 +192,14 @@
                                 <a href="{{ path('gist_pos_print_receipt', {'id': object.getID}) }}" target="_blank" class="btn default btn blue" title="Re-print Receipt"><i class="fa fa-print"></i> Re-print Receipt</a>
                                 <a href="{{path('gist_pos_split_transaction_form', {'id':object.getID})}}" class="btn default btn blue" title="Split"><i class="fa fa-scissors"></i> Split</a>
                                 {% endif %}
+                                {% if object.getTransactionMode == 'Deposit' and not object.hasChild %}
+                                <a href="{{ path('gist_pos_index_load', {'transaction_display_id':object.getTransDisplayId})}}" class="btn default btn blue"><i class="fa fa-shopping-cart"></i> Complete Transaction</a>
+                                {% endif %}
                             	{% if object.getTransactionMode == 'quotation' and not object.hasChild %}
 								<a href="{{ path('gist_pos_quote_to_sale', { 'id': object.getID }) }}" class="btn default btn blue"><i class="fa fa-arrow-circle-right"></i> Proceed to Sale</a>
 								{% endif %}
                                 {% if object.getTransactionMode == 'frozen' %}
-                                <a href="javascript:void(0)" class="btn default btn blue"><i class="fa fa-shopping-cart"></i> Continue transaction</a>
+                                <a href="{{ path('gist_pos_index_load', {'transaction_display_id':object.getTransDisplayId})}}" class="btn default btn blue"><i class="fa fa-shopping-cart"></i> Continue transaction</a>
                                 <a href="{{ path('gist_pos_delete_transaction', { 'id': object.getID }) }}" class="btn default btn red" title="Delete"><i class="fa fa-times"></i> Delete</a>
                                 {% endif %}
                                 {% if (object.getExtraAmount != '0' and object.getExtraAmount != '') and object.getTransactionMode == 'normal' %}
