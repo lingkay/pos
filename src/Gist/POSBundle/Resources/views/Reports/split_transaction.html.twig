@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="page-content">
-	<form method="post" class="form-horizontal" onsubmit="return checkForm()">
+	<form method="post" class="form-horizontal" onsubmit="return checkForm();">
 		<div class="row" style="width: 100%;">
 			<div class="col-md-1"></div>
         <div class="col-md-10">
@@ -12,7 +12,7 @@
 
                 <div class="portlet-body form">
                     <!-- BEGIN FORM-->
-                    <form method="post" class="form-horizontal">
+
                         <div class="form-body">
                             <h4 class="form-section">Information</h4>
                             <div class="row">
@@ -21,7 +21,11 @@
                                     {{ form.group_text('Date', 'date', object.getDateCreateFormattedPOS|default(''), 4, 5, true) }}
                                     {{ form.group_text('Cosnultant', 'consultant', customer_creator|default(''), 4, 5, true) }}
                                     {{ form.group_text('Location', 'location', x|default('Default Location'), 4, 5, true) }}
-                                    {{ form.group_text('Transaction Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
+                                        {{ form.group_text('Deposit Transaction Total', 'grand_total', object.getAmountIssued|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {% else %}
+                                        {{ form.group_text('Transaction Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-6">
                                     {{ form.group_text('Customer Name', 'customer', customer.getNameFormatted|default(''), 4, 5, true) }}
@@ -32,7 +36,7 @@
                                 </div>
                             </div>                           
                             <h4 class="form-section">Split 
-                                {% if object.getTransactionMode|default('none') != 'Deposit' and object.getTransactionMode|default('none') != 'frozen' %}
+                                {% if object.getTransactionMode|default('none') != 'frozen' %}
                                     <a href="javascript:void(0);" class="btn default btn-xs pull-right green" onclick="addConsultant()"><i class="fa fa-plus"></i> Add Consultant</a>
                                 {% endif %}
 
@@ -51,9 +55,8 @@
                                     {% if object.hasSplit %}
                                         {% for s in object.getSplits %}
                                             <tr class="row_entry">
-                                                <input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="{{s.getConsultant.getERPID|default('N/A')}}">
-                                                <td><input type="text" class="form-control" name="consultant_name[]" value="{{s.getConsultant.getDisplayName|default('N/A')}}" readonly="true"></td>
-                                                
+                                                <input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="{{s.getConsultant.getERPID|default('none')}}">
+                                                <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, s.getConsultant.getERPID|default('none'), 12, 12, false) }}</td>                             
                                                 <td>
                                                     <div class="input-group">
                                                         <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="{{s.getPercent|default('')}}">
@@ -75,7 +78,11 @@
                                                     <span class="input-group-addon" id="sizing-addon1">%</span>
                                                 </div>
                                             </td>
-                                            <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTransactionTotal|number_format(2, '.', '')|default('')}}"></td>
+                                            {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getAmountIssued|number_format(2, '.', '')|default('')}}"></td>
+                                            {% else %}
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTransactionTotal|number_format(2, '.', '')|default('')}}"></td>
+                                            {% endif %}
                                             <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
                                         </tr>
                                     {% endif %}
@@ -94,10 +101,13 @@
                                     </tr>
                                 </tfoot>
                             </table>
+                            {% if object.getTransactionMode == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
+                            <i>Split amount is based on amount of issued items</i>
+                            {% endif %}
                         </div>
                         <div class="form-actions fluid">
                             <div class="col-md-9">
-                                {% if object.getTransactionMode|default('none') == 'Deposit' or object.getTransactionMode|default('none') == 'frozen' %}
+                                {% if object.getTransactionMode|default('none') == 'frozen' %}
                                     <button type="submit" class="btn default btn blue" disabled="true"><i class="fa fa-save"></i> Save Split</button>
                                     <a href="{{ path('gist_pos_reports_edit_form', { 'id': object.getID|default('') }) }}" class="btn default btn  green-meadow"><i class="fa fa-eye"></i> View Transaction</a>
                                     <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
@@ -108,7 +118,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </form>
+                    
                     <!-- END FORM-->
             </div>
         </div>
@@ -122,7 +132,15 @@
     <script>
     function autoCompute() {
         var table_rows = parseInt($('#partition_entries tr').length);
-        var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+        var mode = "{{object.getTransactionMode|default('')}}";
+        var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
+        var transaction_total = 0;
+        if (mode == 'Deposit' || ref_mode == 'Deposit') {
+            transaction_total = parseFloat("{{object.getAmountIssued|default('0')}}");
+        } else {
+            transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+        }
+        
         var indiv_amount = transaction_total/table_rows;
         var percent = (indiv_amount/transaction_total)*100;
 
@@ -179,16 +197,12 @@
         }
 
         function checkForm(){
-            var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
-            var form_valid = (document.getElementById('total_percent').value == 100 && document.getElementById('total_amount').value == transaction_total);
-            if(!form_valid){
-                swal('Invalid split!','Please check each entry then try again', 'error');
-                return false;
-            }
 
-            //check for duplicate
-            var contents = {},
-            duplicates = false;
+            
+
+
+            var contents = {};
+            var duplicates = false;
             $(".consultant_id").each(function() {
                 var tdContent = $(this).val();
                 if (contents[tdContent]) {
@@ -214,9 +228,35 @@
                 return false;
             }
 
-            return true;
+            
+            //var form_valid = (document.getElementById('total_percent').value == 100 && document.getElementById('total_amount').value == transaction_total);
+            if ($('#total_percent').val() != '100.00'){
+                swal('Invalid split!','Please check percentages', 'error');
+                return false;
+            }
+
+            if ($('#total_amount').val() != transaction_total){
+                swal('Invalid split!','Please check amounts', 'error');
+                return false;
+            }
+
+            if (!inv_cons && !duplicates) {
+                return true;
+            } else {
+                return false;
+            }
+            
         }
+
         $(document).ready(function() {
+            var mode = "{{object.getTransactionMode|default('')}}";
+            var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
+            var transaction_total = 0;
+            if (mode == 'Deposit' || ref_mode == 'Deposit') {
+                transaction_total = parseFloat("{{object.getAmountIssued|default('0')}}");
+            } else {
+                transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+            }
 
             $(document).on("click",".remove_row", function(e){
                 var table_rows = $('#partition_entries tr').length;
@@ -244,7 +284,6 @@
             // $('.percent_allocation').on("change", function()
             $(document).on('keyup change', '.percent_allocation', function()
             {
-                var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
                 var allocation = parseFloat($(this).val());
                 if (allocation == '') {
                     $(this).val('');
@@ -265,7 +304,6 @@
             // $('.amount_allocation').on("change", function()
             $(document).on('keyup change', '.amount_allocation', function()
             {
-                var transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
                 var allocation = parseFloat($(this).val());
                 if (allocation > transaction_total) {
                     swal('Invalid allocation!','Please enter a value from 1 to '+transaction_total+'', 'error');

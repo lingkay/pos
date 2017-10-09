@@ -224,6 +224,28 @@ class POSTransaction
         return $total;
     }
 
+
+    public function getAmountIssued()
+    {
+        $total = 0;
+
+        if ($this->hasItems()) {
+            foreach ($this->getItems() as $p) {
+                if ($p->getItemIssuedOn()) {
+                    if ($this->id == $p->getItemIssuedOn()->getID()) {
+                        if ($this->transaction_mode == 'per') {
+                            $total = $total + $p->getAdjustedPrice();
+                        } else {
+                            $total = $total + $p->getOrigPrice();
+                        }
+                    }    
+                }
+            }
+        }
+
+        return $total;
+    }
+
     public function getChange()
     {
         $change = $this->getTotalPayments() - $this->transaction_total;
