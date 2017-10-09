@@ -8,6 +8,9 @@
 			<div class="col-md-1"></div>
         <div class="col-md-10">
         	<h2 class="form-section">Details for Transaction {{object.getTransDisplayId|default('')}}</h2>
+            {% if object.hasParent|default(false) %}
+                <h4>Reference Transaction: <a href="{{ path('gist_pos_reports_edit_form', { 'id': object.getReferenceTransaction.getID|default('') }) }}" style="text-decoration: none;">{{object.getReferenceTransaction.getTransDisplayId|default('')}}</a></h4>
+            {% endif %}
 				<br>
                 <div class="portlet-body form">
                     <!-- BEGIN FORM-->
@@ -50,7 +53,11 @@
 										{% for i in object.getReferenceTransaction.getItems|default('') %}
 											<tr>
                                                 {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                                    <td><input type="text" name="getItemIssuedOn[]" value="{{i.getItemIssuedOn.getTransDisplayId|default('')}}" class="form-control" readonly="true"></td>
+                                                    {% if i.getItemIssuedOn|default(null) is not null %}
+                                                        <td style="text-align: center;"><a href="{{ path('gist_pos_reports_edit_form', { 'id': i.getItemIssuedOn.getID|default('0') }) }}" class="btn default blue-madison" data-toggle="tooltip" data-placement="left" title="View" style="width: 100%;">{{i.getItemIssuedOn.getTransDisplayId|default('')}}</a></td>
+                                                    {% else %}
+                                                        <td style="text-align: center; vertical-align: middle;"><i>Not yet issued</i></td>
+                                                    {% endif %}
                                                 {% endif %}
                                                 <td><input type="text" name="barcode[]" value="{{i.getBarcode|default('')}}" class="form-control barcode" readonly="true"></td>
 		                                        <td><input type="text" name="item_name[]" value="{{i.getName|default('')}}" class="form-control item_name" readonly="true"></td>
@@ -65,7 +72,11 @@
 	                                    {% for i in object.getItems|default('') %}
 	                                      	<tr>
                                                 {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                                    <td><input type="text" name="getItemIssuedOn[]" value="{{i.getItemIssuedOn.getTransDisplayId|default('')}}" class="form-control" readonly="true"></td>
+                                                    {% if i.getItemIssuedOn|default(null) is not null %}
+                                                        <td style="text-align: center;"><a href="{{ path('gist_pos_reports_edit_form', { 'id': i.getItemIssuedOn.getID|default('0') }) }}" class="btn default blue-madison" data-toggle="tooltip" data-placement="left" title="View" style="width: 100%;">{{i.getItemIssuedOn.getTransDisplayId|default('')}}</a></td>
+                                                    {% else %}
+                                                        <td style="text-align: center; vertical-align: middle;"><i>Not yet issued</i></td>
+                                                    {% endif %}
                                                 {% endif %}
 		                                        <td><input type="text" name="barcode[]" value="{{i.getBarcode|default('')}}" class="form-control barcode" readonly="true"></td>
                                                 <td><input type="text" name="item_name[]" value="{{i.getName|default('')}}" class="form-control item_name" readonly="true"></td>
@@ -99,7 +110,11 @@
                                                 {% for i in object.getReferenceTransaction.getPayments|default('') %}
                                                     <tr>
                                                         {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                                            <td><input type="text" name="getPaymentIssuedOn[]" value="{{i.getPaymentIssuedOn.getTransDisplayId|default('')}}" class="form-control" readonly="true"></td>
+                                                            {% if i.getPaymentIssuedOn|default(null) is not null %}
+                                                                <td style="text-align: center;"><a href="{{ path('gist_pos_reports_edit_form', { 'id': i.getPaymentIssuedOn.getID|default('0') }) }}" class="btn default blue-madison" data-toggle="tooltip" data-placement="left" title="View" style="width: 100%;">{{i.getPaymentIssuedOn.getTransDisplayId|default('')}}</a></td>
+                                                            {% else %}
+                                                                <td style="text-align: center;"></td>
+                                                            {% endif %}
                                                         {% endif %}
                                                         <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
@@ -112,7 +127,11 @@
                                                 {% for i in object.getPayments|default('') %}
                                                     <tr>
                                                         {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                                            <td><input type="text" name="getPaymentIssuedOn[]" value="{{i.getPaymentIssuedOn.getTransDisplayId|default('')}}" class="form-control" readonly="true"></td>
+                                                            {% if i.getPaymentIssuedOn|default(null) is not null %}
+                                                                <td style="text-align: center;"><a href="{{ path('gist_pos_reports_edit_form', { 'id': i.getPaymentIssuedOn.getID|default('0') }) }}" class="btn default blue-madison" data-toggle="tooltip" data-placement="left" title="View" style="width: 100%;">{{i.getPaymentIssuedOn.getTransDisplayId|default('')}}</a></td>
+                                                            {% else %}
+                                                                <td style="text-align: center;"></td>
+                                                            {% endif %}
                                                         {% endif %}
                                                         <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
