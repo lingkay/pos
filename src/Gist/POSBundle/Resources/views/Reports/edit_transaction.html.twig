@@ -103,9 +103,9 @@
                                                         {% endif %}
                                                         <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
                                                     </tr>
                                                 {% endfor %}
                                             {% else %}
@@ -116,9 +116,9 @@
                                                         {% endif %}
                                                         <td><input type="text" name="rate_name[]" value="{{i.getType|default('')}}" class="form-control rate_name" readonly="true"></td>
                                                         <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{i.getAmount|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
-                                                        <td><input type="text" style="text-align: right !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getCardTerms|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
+                                                        <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
                                                     </tr>
                                                 {% endfor %}
                                             {% endif %}
