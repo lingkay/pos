@@ -222,6 +222,10 @@ class POSTransactionPayment
      */
     public function getBank()
     {
+        if ($this->bank == null || $this->bank == 'null') {
+            return '';
+        }
+        
         return $this->bank;
     }
 
