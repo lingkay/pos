@@ -28,7 +28,7 @@ class PdfManager
             $this->pdf->pdf->setDisplayMode('real');
             break;
         case 'pos_receipt':
-            $this->pdf = $this->pdf_container->create('P',array(280,100), 'en', true, 'UTF-8', array(2, 2, 2, 2));
+            $this->pdf = $this->pdf_container->create('P',array(350,100), 'en', true, 'UTF-8', array(2, 2, 2, 2));
             $this->pdf->pdf->setDisplayMode('real');
             break;
         case 'page' :
