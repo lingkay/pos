@@ -276,7 +276,11 @@ class POSController extends Controller
         $transaction->setTaxCoverage($tax_coverage);
         $transaction->setCartMin($cart_min);
         $transaction->setCartOrigTotal($orig_cart_total);
-        $transaction->setCartNewTotal($new_cart_total);
+        if ($new_cart_total == '0' && $type == 'per') {
+            $transaction->setCartNewTotal($orig_cart_total);
+        } else {
+            $transaction->setCartNewTotal($new_cart_total);
+        }
         $transaction->setBulkDiscountType($bulk_type);
         $transaction->setTransactionCCInterest($transaction_cc_interest);
         $transaction->setUserCreate($this->getUser());
