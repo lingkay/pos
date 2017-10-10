@@ -449,6 +449,11 @@ function appendDepositItemColumns()
     }
 }
 
+function changeDepositTopNavIcon() 
+{
+    $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
+}
+
 function appendDepositItemFields()
 {
     if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
@@ -725,6 +730,7 @@ $(document).ready(function(){
             $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}");
             swal("POS Mode Changed", "Deposit mode disabled!", "success");
             $('#rev_deposit_modal').modal('hide');
+            $('.proceed_deposit').hide();
 
             $('#cart_table').find('tr').each(function(){
                 if ($('#string_trans_type').val() == 'per') {

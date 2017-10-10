@@ -1192,7 +1192,7 @@ $(document).ready(function(){
                                 $(this).attr('data-original-title',"Disable deposit mode");
                             });
                             $('#pos_mode').text('Deposit');
-                            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
+                            changeDepositTopNavIcon();
 
                         } else {
                             
