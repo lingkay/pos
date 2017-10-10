@@ -144,6 +144,8 @@ $(document).ready(function(){
         $('#cform-transaction_mode').val([]);
   });
 
+
+
   $('#filter_button').click(function (){
 
         var date_to = $('#cform-date_to').val();
@@ -174,6 +176,11 @@ $(document).ready(function(){
         // path = generatePath();
         dTable.fnReloadAjax(pathx);
     });
+
+    var mode = "{{mode|default('')}}";
+    if (mode != '') {
+        $('#filter_button').trigger('click');
+    }
     
 });
 </script>

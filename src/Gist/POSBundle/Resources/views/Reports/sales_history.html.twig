@@ -8,7 +8,7 @@
                         {{ form.group_text('Receipt Number', 'receipt_number', '', 4, 7, false) }}
                     </div>
                     <div class="col-md-6">
-                        {{ form.group_selectx('Type', 'transaction_mode', modes, '', 4, 7, false) }}
+                        {{ form.group_selectx('Type', 'transaction_mode', modes, mode|default(''), 4, 7, false) }}
                         <div class="form-group">
                             <label class="col-md-4 control-label"></label>
                             <div class="col-md-7">

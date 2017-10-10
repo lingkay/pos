@@ -81,6 +81,11 @@ gist_pos_reports:
     methods: [GET]
     defaults: { _controller: GistPOSBundle:Reports:index }
 
+gist_pos_reports_auto_search:
+    path:     /reports/auto_search/{mode}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Reports:indexAutoSearch }
+
 gist_pos_reports_edit_form:
     pattern: /report/{id}
     methods: [GET]

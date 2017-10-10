@@ -708,9 +708,18 @@ $(document).ready(function(){
         
     });
 
+    $(document).on("click",".proceed_dep_modal", function(e){
+        $('#deposit_conf_modal').modal('hide');
+        $('#deposit_modal').modal('show');
+    });
+
+    $(document).on("click",".deposit_complete_btn", function(e){
+        location.replace('/reports/auto_search/deposit');
+    });
 
     $(document).on("click",".deposit_continue_btn", function(e){
         if ($('#string_trans_mode').val() == 'normal') {
+            //open another modal
             $('#string_trans_mode').val('Deposit');
             $('.deposit_icon_img').each(function() {
                 $(this).attr('data-original-title',"Disable deposit mode");

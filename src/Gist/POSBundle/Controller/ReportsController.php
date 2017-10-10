@@ -285,18 +285,36 @@ class ReportsController extends CrudController
             'frozen'=>'Frozen'
         );
         $params['grid_cols'] = $gl->getColumns();
-        // $url3="http://erp.purltech.com/inventory/pos/get/tax_coverage";
-        // $result3 = file_get_contents($url3);
-        // $vars3 = str_replace('"', '', $result3);
-        $params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
-        // $params['test'] = $test;
-        // $params['tax_coverage'] = $vars3;
-        // // $params['tax_coverage'] = "excl";
 
-        // $params['cust_required_fields'] = $vars_req;
-        // $params['bank_options'] = $vars;
-        // $params['terminal_operators'] = $vars2;
-        // $params['charge_rates'] = $opts;
+        //$params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
+
+
+        return $this->render('GistPOSBundle:Reports:index.html.twig', $params);
+    }
+
+    public function indexAutoSearchAction($mode)
+    {
+        $conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
+        $this->title = 'Dashboard';
+        $gl = $this->setupGridLoader();
+
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
+        $params['sys_area_id'] = $conf->get('gist_sys_area_id');
+        $params['users'] = $user_exist;
+        $params['modes'] = array(
+            'normal'=>'Normal',
+            'quotation'=>'Quotation',
+            'deposit'=>'Deposit',
+            'upsell'=>'Upsell',
+            'frozen'=>'Frozen'
+        );
+        $params['grid_cols'] = $gl->getColumns();
+        $params['mode'] = $mode;
+
+        //$params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
+
 
         return $this->render('GistPOSBundle:Reports:index.html.twig', $params);
     }

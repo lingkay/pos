@@ -652,7 +652,7 @@ $(document).ready(function(){
             swal("Cannot change to quotation!", "Quotation mode active", "error");
         } else {
             if ($('#string_trans_mode').val() == 'normal') {
-                $('#deposit_modal').modal('show');
+                $('#deposit_conf_modal').modal('show');
             } else {
                 $('#rev_deposit_modal').modal('show');
             }
