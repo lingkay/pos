@@ -1069,6 +1069,7 @@ $(document).ready(function(){
         });
 
         if (balance <= 0) {
+            $('#string_trans_mode').val('normal');
             swal("Payment Complete!", "Enter customer information on the next form", "success");
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
