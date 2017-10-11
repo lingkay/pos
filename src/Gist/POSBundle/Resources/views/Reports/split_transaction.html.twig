@@ -276,10 +276,39 @@
 
             $(document).on('change', '.consultant_selection', function()
             {
+                
+
+
+
                 var select_consultant_id = $(this).val();
                 var row = $(this).closest('.row_entry');
                 var hidden_id = row.find('.consultant_id');
                 hidden_id.val(select_consultant_id);
+
+                var contents = {};
+                var duplicates = false;
+                $(".consultant_id").each(function() {
+                    var tdContent = $(this).val();
+                    if (contents[tdContent]) {
+                        duplicates = true;
+                    }
+                    contents[tdContent] = true;
+                }); 
+
+                if (duplicates && $(this).val() != 'none') {
+                    swal('Consultant '+$(this).find("option:selected").text()+' already selected!','', 'error');
+
+                    $(this).val('none').prop('selected', true);
+                    var select_consultant_id = $(this).val();
+                    var row = $(this).closest('.row_entry');
+                    var hidden_id = row.find('.consultant_id');
+                    hidden_id.val(select_consultant_id);
+
+                    return false;
+                }
+
+                
+
             });
             // $('.percent_allocation').on("change", function()
             $(document).on('keyup change', '.percent_allocation', function()
