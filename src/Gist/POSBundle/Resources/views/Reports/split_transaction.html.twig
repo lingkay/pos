@@ -144,8 +144,11 @@
         var indiv_amount = transaction_total/table_rows;
         var percent = (indiv_amount/transaction_total)*100;
 
+        var new_percent = parseFloat(percent, 10);
+        // var fina_percent = new_percent.toFixed(2);
+
         $('.percent_allocation').each(function () {
-            $(this).val(percent.toFixed(2));
+            $(this).val(new_percent.toFixed(2));
         });
 
         $('.amount_allocation').each(function () {
@@ -153,6 +156,18 @@
         });
     }
         function addConsultant() {
+            var matches = 0;
+            $(":input.consultant_id").each(function(i, val) {
+              if ($(this).val() == 'none') {
+                matches++;
+              }
+            });
+
+            if (matches > 0) {
+                swal('Empty consultant field!', 'Select a consultant before adding a new one', 'error');
+                return false;
+            }
+
             var field = '<tr class="row_entry">';
                 field += '<input type="hidden" class="form-control consultant_id" name="consultant_id[]" value="none">';
                 field += '        <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, "", 12, 12, false)|e("js") }}</td> ';       
@@ -168,6 +183,7 @@
 
             $('#partition_entries').append(field);
            autoCompute();
+           computeAutoTotals();
 
         }
 
@@ -190,9 +206,42 @@
                 
             });
 
+
+            var final_pct_total = parseFloat(pct_total, 10);
+
+
             //alert(pct_total.toFixed(2));
 
-            $('#total_percent').val(pct_total.toFixed(2));
+            $('#total_percent').val(final_pct_total.toFixed(2));
+            $('#total_amount').val(amt_total.toFixed(2));
+        }
+
+        function computeAutoTotals() {
+            
+            var pct_total = 0;
+            var amt_total = 0;
+
+            $('.percent_allocation').each(function() {
+                if ($(this).val() != '') {
+                    pct_total += parseFloat($(this).val());
+                }
+                
+            });
+
+            $('.amount_allocation').each(function() {
+                if ($(this).val() != '') {
+                    amt_total += parseFloat($(this).val());
+                }
+                
+            });
+
+            pct_total = Math.round(pct_total);
+            var final_pct_total = parseFloat(pct_total, 10);
+
+
+            //alert(pct_total.toFixed(2));
+
+            $('#total_percent').val(final_pct_total.toFixed(2));
             $('#total_amount').val(amt_total.toFixed(2));
         }
 
@@ -268,7 +317,7 @@
                 tr.remove();
                 
                 autoCompute();
-                computeTotals();
+                computeAutoTotals();
                 return false;
             });
 
@@ -276,10 +325,6 @@
 
             $(document).on('change', '.consultant_selection', function()
             {
-                
-
-
-
                 var select_consultant_id = $(this).val();
                 var row = $(this).closest('.row_entry');
                 var hidden_id = row.find('.consultant_id');
