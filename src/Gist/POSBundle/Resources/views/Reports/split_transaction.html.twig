@@ -192,9 +192,14 @@
             var pct_total = 0;
             var amt_total = 0;
 
+            var arr = [];
+            i = 0;
+
+
             $('.percent_allocation').each(function() {
                 if ($(this).val() != '') {
                     pct_total += parseFloat($(this).val());
+                    arr[i++] = $(this).val();
                 }
                 
             });
@@ -206,8 +211,16 @@
                 
             });
 
+            if (!!arr.reduce(function(a, b){ return (a === b) ? a : NaN; })) {
+                pct_total = Math.round(pct_total);
+                amt_total = Math.round(amt_total);
+                var final_pct_total = parseFloat(pct_total, 10);
+            } else {
+                var final_pct_total = parseFloat(pct_total, 10);
+            }
 
-            var final_pct_total = parseFloat(pct_total, 10);
+
+            
 
 
             //alert(pct_total.toFixed(2));
@@ -235,6 +248,7 @@
                 
             });
 
+            amt_total = Math.round(amt_total);
             pct_total = Math.round(pct_total);
             var final_pct_total = parseFloat(pct_total, 10);
 
