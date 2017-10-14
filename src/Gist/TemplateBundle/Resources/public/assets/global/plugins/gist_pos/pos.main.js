@@ -321,6 +321,7 @@ $(document).ready(function(){
         $('#transaction_customer_display_id').val(foo);
         $('#transaction_customer_name').val(name_fmtd);
         $('#footer_customer').text(name_fmtd);
+        $('#header_customer').text(name_fmtd);
         $('#customer_modal').modal('hide');
         swal("Success!", 'Customer selected!',"success");
         if ($('#string_trans_type').val() != 'none' && balance <= 0) {

@@ -55,7 +55,11 @@
 <div class="top-menu">
     <ul class="nav navbar-nav">
 <!-- BEGIN NOTIFICATION DROPDOWN -->
-            
+        {% if tax_coverage|default('') != '' %}
+            <li  style="display: block; position: relative;">
+                <p style="display: block; position: relative; margin-top: 14px; color: white;" class="top_customer_label">Customer: <span id="header_customer">N/A</span></p>
+            </li>    
+        {% endif %}
         <li class="dropdown dropdown-user">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
             {% if app.user.getEmployee != null and app.user.getEmployee.getProfile.getUpload != null %}
