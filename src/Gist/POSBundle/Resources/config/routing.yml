@@ -49,6 +49,11 @@ gist_pos_save_payment:
     methods: [GET]
     defaults: { _controller: GistPOSBundle:POS:saveTransactionPayments }
 
+gist_pos_save_default_split: 
+    path:     /pos/save_def_split/{trans_sys_id}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:POS:generateDefaultSplit }
+
 gist_pos_print_receipt:
     path:    /pos/print_receipt/{id}
     methods: [GET]

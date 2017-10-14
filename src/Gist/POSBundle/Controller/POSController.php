@@ -8,6 +8,7 @@ use Gist\POSBundle\Entity\POSTransaction;
 use Gist\POSBundle\Entity\POSTransactionItem;
 use Gist\POSBundle\Entity\POSClock;
 use Gist\POSBundle\Entity\POSTransactionPayment;
+use Gist\POSBundle\Entity\POSTransactionSplit;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
@@ -295,7 +296,39 @@ class POSController extends Controller
         $em->persist($transaction);
         $em->flush();
 
+       
+
         $list_opts[] = array('status'=>$transaction->getStatus(),'new_id'=>$transaction->getID());
+        return new JsonResponse($list_opts);
+    }
+
+    public function generateDefaultSplitAction($trans_sys_id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$trans_sys_id));
+         if ($transaction->getTransactionMode() != 'frozen' && $transaction->getTransactionMode() != 'quotation') {
+            //add default split
+            $split_trans_total = 0;
+            $ref = $transaction->getReferenceTransaction() ? $transaction->getReferenceTransaction() : null;
+            if ($transaction->getTransactionMode() == 'Deposit' || $ref == 'Deposit') {
+                $split_trans_total = $transaction->getAmountIssued();
+            } else {
+                $split_trans_total = $transaction->getTransactionTotal();
+            }
+
+            $split_entry = new POSTransactionSplit();
+            //$consultant = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id'=>$value));
+
+            $split_entry->setConsultant($this->getUser());
+            $split_entry->setTransaction($transaction);
+            $split_entry->setAmount($split_trans_total);
+            $split_entry->setPercent('100.00');
+            $em->persist($split_entry);
+            
+            //die();
+            $em->flush();   
+        }
+        $list_opts[] = array('status'=>'saved');
         return new JsonResponse($list_opts);
     }
 

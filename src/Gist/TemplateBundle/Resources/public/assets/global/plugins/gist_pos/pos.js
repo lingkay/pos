@@ -1111,13 +1111,14 @@ function freezeTransaction(is_final = false)
     var customer_id = $('#transaction_customer_id').val();
 
     var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount;
-
+    var x_new_id = '';
 
     $.getJSON(url, function(json){  
         var count = 0;
         $.each(json, function(i, trans) {
             trans_saved = true;
             $('#transaction_system_id').val(trans.new_id);
+            x_new_id = trans.new_id;
             //save items
             if (count_cart_items > 0) {
                 $('#cart_items tr').each(function() {
@@ -1238,8 +1239,7 @@ function freezeTransaction(is_final = false)
 
 
                     var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv+"/"+payment_issued_on;
-
-
+                    
                     $.getJSON(url3, function(json){  
                         var count = 0;
                         $.each(json, function(i, payments) {
@@ -1319,6 +1319,23 @@ function freezeTransaction(is_final = false)
         });
 
     });
+
+
+    setTimeout(
+    function() 
+    {
+        var url_def_split = url_pos+"/pos/save_def_split/"+$('#transaction_system_id').val();
+        // 
+        $.getJSON(url_def_split, function(json){  
+            $.each(json, function(i, resp) {
+                if (resp.status == 'saved') {
+                    
+                }
+            });
+
+        });
+        //
+    }, 3000); 
 
 }
 
