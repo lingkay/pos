@@ -670,15 +670,31 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".check_issued", function(e){
+
         var deposit_amount = parseFloat($('#float_trans_deposit_amount').val());
         var selected_min_total = 0;
+        var items_to_issue = 0;
         var rowx = $(this).closest('.product_row');
         $('.check_issued:checkbox:checked').each(function() {
             var row = $(this).closest('.product_row');
             var min_price = row.find('.min_price');
             min_price = min_price.val();
+            items_to_issue++;
             selected_min_total += parseFloat(min_price);
         });
+
+        //count number of items
+        var rowCount = $('#cart_table tr').length-1;
+        //prevent selecting all when there is still balance
+        var balance = $('#float_trans_balance').val();
+        if ((items_to_issue == rowCount) && balance != '0') {
+            $(this).prop('checked', false); 
+            $(this).removeAttr('checked');
+            swal('Cannot issue all items!','','error');
+            return false;
+        }
+
+        
 
         if($(this).is(':checked')) {
             if (selected_min_total > deposit_amount) {

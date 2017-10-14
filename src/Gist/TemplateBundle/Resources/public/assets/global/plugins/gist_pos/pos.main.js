@@ -1070,7 +1070,7 @@ $(document).ready(function(){
         });
 
         if (balance <= 0) {
-            $('#string_trans_mode').val('normal');
+            
             swal("Payment Complete!", "Enter customer information on the next form", "success");
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
@@ -1084,6 +1084,8 @@ $(document).ready(function(){
                     }
                 });
             }
+
+            $('#string_trans_mode').val('normal');
             
             $('#checkout_modal').modal('hide');
             if ($('#transaction_customer_id').val() == 0) {
