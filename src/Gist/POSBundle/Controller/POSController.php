@@ -174,8 +174,13 @@ class POSController extends Controller
         $result_tax_rate = file_get_contents($url_tax_rate);
         $var_tax_rate = str_replace('"', '', $result_tax_rate);
 
+        $url_min_dep=$conf->get('gist_sys_erp_url')."/inventory/pos/get/deposit_minimum";
+        $result_min_dep = file_get_contents($url_min_dep);
+        $var_min_deposit = str_replace('"', '', $result_min_dep);
+
         $params['tax_coverage'] = $var_tax_coverage;
         $params['tax_rate'] = $var_tax_rate;
+        $params['min_deposit_pct'] = $var_min_deposit;
 
         $params['cust_required_fields'] = $vars_req;
         $params['cust_visible_fields'] = $vars_visible;

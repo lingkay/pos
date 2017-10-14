@@ -29,6 +29,7 @@
 <input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
 <input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
+<input type="hidden" id="minimum_deposit_percent" name="minimum_deposit_percent" value="{{min_deposit_pct|default('null')}}">
 <!-- END TRANSACTION VARS -->
 <!-- TAX VARS -->
 <input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">
