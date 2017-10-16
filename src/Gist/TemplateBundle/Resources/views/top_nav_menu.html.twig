@@ -56,8 +56,8 @@
     <ul class="nav navbar-nav">
 <!-- BEGIN NOTIFICATION DROPDOWN -->
         {% if tax_coverage|default('') != '' %}
-            <li  style="display: block; position: relative;">
-                <p style="display: block; position: relative; margin-top: 14px; color: white;" class="top_customer_label">Customer: <span id="header_customer">N/A</span></p>
+            <li  style="display: block; position: relative; overflow-wrap: break-word;">
+                <p style="display: block; position: relative; margin-top: 16px; color: white; font-size: 10px;" class="top_customer_label">Customer: <span id="header_customer">N/A</span></p>
             </li>    
         {% endif %}
         <li class="dropdown dropdown-user">
