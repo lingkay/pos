@@ -21,7 +21,7 @@
                                     {{ form.group_text('Date', 'date', object.getDateCreateFormattedPOS|default(''), 4, 5, true) }}
                                     {{ form.group_text('Cosnultant', 'consultant', customer_creator|default(''), 4, 5, true) }}
                                     {{ form.group_text('Location', 'location', x|default('Default Location'), 4, 5, true) }}
-                                    {{ form.group_text('Received Amount', 'grand_total', object.getTotalPayments|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                    {{ form.group_text('Received Amount', 'grand_total', object.getPaymentIssued|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                 </div>
                                 <div class="col-md-6">
                                     {{ form.group_text('Customer Name', 'customer', customer.getNameFormatted|default(''), 4, 5, true) }}
@@ -75,9 +75,9 @@
                                                 </div>
                                             </td>
                                             {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTotalPayments|number_format(2, '.', '')|default('')}}"></td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getPaymentIssued|number_format(2, '.', '')|default('')}}"></td>
                                             {% else %}
-                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTotalPayments|number_format(2, '.', '')|default('')}}"></td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getPaymentIssued|number_format(2, '.', '')|default('')}}"></td>
                                             {% endif %}
                                             <td ><a href="javascript:void(0)" class="btn btn-xs default red rem_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
                                         </tr>
@@ -132,9 +132,9 @@
         var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
         var transaction_total = 0;
         if (mode == 'Deposit' || ref_mode == 'Deposit') {
-            transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
+            transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
         } else {
-            transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
+            transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
         }
         
         var indiv_amount = transaction_total/table_rows;
@@ -297,9 +297,9 @@
             var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
             var transaction_total = 0;
             if (mode == 'Deposit' || ref_mode == 'Deposit') {
-                transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
+                transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
             } else {
-                transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
+                transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
             }
 
             $(document).on("click",".rem_row", function(e){

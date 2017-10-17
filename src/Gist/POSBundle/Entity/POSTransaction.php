@@ -224,6 +224,29 @@ class POSTransaction
         return $total;
     }
 
+    public function getPaymentIssued()
+    {
+        $total = 0;
+
+        // if ($this->hasParent() && !$this->hasPayments()) {
+        //     foreach ($this->reference_transaction->getPayments() as $p) {
+        //         if ($this->id == $p->getPaymentIssuedOn()->getID()) {
+        //             $total = $total + $p->getAmount();
+        //         }
+        //     }
+
+        //     return $total;
+        // }
+
+        foreach ($this->payments as $p) {
+            if ($this->id == $p->getPaymentIssuedOn()->getID()) {
+                $total = $total + $p->getAmount();
+            }
+        }
+
+        return $total;
+    }
+
 
     public function getAmountIssued()
     {
