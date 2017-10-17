@@ -927,6 +927,18 @@ $(document).ready(function(){
     $(document).on("click",".proceed_deposit", function(e){
         var balance = $('#float_trans_balance').val();
         var prev_balance = $('#transaction_prev_balance').val();
+        var payment_total = 0;
+        $('.payment_amt_float').each(function() {
+            payment_total += parseFloat($(this).val());
+        });
+        var trans_amount = parseFloat($('#float_trans_amount').val());
+        var min_deposit_pct = parseFloat($('#minimum_deposit_percent').val());
+        var min_trans_amount = trans_amount*(min_deposit_pct/100);
+
+        if (payment_total <= min_trans_amount) {
+            swal('Deposited amount below minimum!','Add more payment to proceed','error');
+            return false;
+        }
 
         if (balance <= 0) {
             if ($('#string_trans_mode').val() == 'Deposit') {
