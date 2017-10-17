@@ -315,11 +315,20 @@ class POSController extends Controller
             //add default split
             $split_trans_total = 0;
             $ref = $transaction->getReferenceTransaction() ? $transaction->getReferenceTransaction() : null;
-            if ($transaction->getTransactionMode() == 'Deposit' || $ref->getTransactionMode() == 'Deposit') {
-                $split_trans_total = $transaction->getAmountIssued();
+            if ($ref != null) {
+                if ($transaction->getTransactionMode() == 'Deposit' || $ref->getTransactionMode() == 'Deposit') {
+                    $split_trans_total = $transaction->getAmountIssued();
+                } else {
+                    $split_trans_total = $transaction->getTransactionTotal();
+                }
             } else {
-                $split_trans_total = $transaction->getTransactionTotal();
+                if ($transaction->getTransactionMode() == 'Deposit') {
+                    $split_trans_total = $transaction->getAmountIssued();
+                } else {
+                    $split_trans_total = $transaction->getTransactionTotal();
+                }
             }
+                
 
             $split_entry = new POSTransactionSplit();
             //$consultant = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id'=>$value));
