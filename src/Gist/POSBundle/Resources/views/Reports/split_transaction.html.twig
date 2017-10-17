@@ -63,7 +63,7 @@
                                                         <span class="input-group-addon" id="sizing-addon1">%</span>
                                                     </div>
                                                 </td>
-                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{s.getAmount|number_format(2, '.', ',')|default('')}}"></td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{s.getAmount|number_format(2, '.', '')|default('')}}"></td>
                                                 <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
                                             </tr>
                                         {% endfor %}
