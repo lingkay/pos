@@ -317,15 +317,15 @@ class POSController extends Controller
             $ref = $transaction->getReferenceTransaction() ? $transaction->getReferenceTransaction() : null;
             if ($ref != null) {
                 if ($transaction->getTransactionMode() == 'Deposit' || $ref->getTransactionMode() == 'Deposit') {
-                    $split_trans_total = $transaction->getAmountIssued();
+                    $split_trans_total = $transaction->getTotalPayments();
                 } else {
-                    $split_trans_total = $transaction->getTransactionTotal();
+                    $split_trans_total = $transaction->getTotalPayments();
                 }
             } else {
                 if ($transaction->getTransactionMode() == 'Deposit') {
-                    $split_trans_total = $transaction->getAmountIssued();
+                    $split_trans_total = $transaction->getTotalPayments();
                 } else {
-                    $split_trans_total = $transaction->getTransactionTotal();
+                    $split_trans_total = $transaction->getTotalPayments();
                 }
             }
                 
