@@ -21,11 +21,7 @@
                                     {{ form.group_text('Date', 'date', object.getDateCreateFormattedPOS|default(''), 4, 5, true) }}
                                     {{ form.group_text('Cosnultant', 'consultant', customer_creator|default(''), 4, 5, true) }}
                                     {{ form.group_text('Location', 'location', x|default('Default Location'), 4, 5, true) }}
-                                    {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                        {{ form.group_text('Deposit Transaction Total', 'grand_total', object.getAmountIssued|number_format(2, '.', ',')|default(''), 4, 5, true) }}
-                                    {% else %}
-                                        {{ form.group_text('Transaction Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
-                                    {% endif %}
+                                    {{ form.group_text('Received Amount', 'grand_total', object.getTotalPayments|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                 </div>
                                 <div class="col-md-6">
                                     {{ form.group_text('Customer Name', 'customer', customer.getNameFormatted|default(''), 4, 5, true) }}
@@ -64,7 +60,7 @@
                                                     </div>
                                                 </td>
                                                 <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{s.getAmount|number_format(2, '.', '')|default('')}}"></td>
-                                                <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                                <td ><a href="javascript:void(0)" class="btn btn-xs default red rem_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
                                             </tr>
                                         {% endfor %}
                                     {% else %}
@@ -79,11 +75,11 @@
                                                 </div>
                                             </td>
                                             {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
-                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getAmountIssued|number_format(2, '.', '')|default('')}}"></td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTotalPayments|number_format(2, '.', '')|default('')}}"></td>
                                             {% else %}
-                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTransactionTotal|number_format(2, '.', '')|default('')}}"></td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{object.getTotalPayments|number_format(2, '.', '')|default('')}}"></td>
                                             {% endif %}
-                                            <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                            <td ><a href="javascript:void(0)" class="btn btn-xs default red rem_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
                                         </tr>
                                     {% endif %}
                                 </tbody>
@@ -136,9 +132,9 @@
         var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
         var transaction_total = 0;
         if (mode == 'Deposit' || ref_mode == 'Deposit') {
-            transaction_total = parseFloat("{{object.getAmountIssued|default('0')}}");
+            transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
         } else {
-            transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+            transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
         }
         
         var indiv_amount = transaction_total/table_rows;
@@ -178,7 +174,7 @@
                 field += '           </div>';
                 field += '       </td>';
                 field +=  '<td><input type="number" max="999999" step="0.01"class="form-control amount_allocation" name="amount_allocation[]" value="0"></td>';
-                field += '       <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
+                field += '       <td ><a href="javascript:void(0)" class="btn btn-xs default red rem_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
                 field += '   </tr>';
 
             $('#partition_entries').append(field);
@@ -219,12 +215,6 @@
                 var final_pct_total = parseFloat(pct_total, 10);
             }
 
-
-            
-
-
-            //alert(pct_total.toFixed(2));
-
             $('#total_percent').val(final_pct_total.toFixed(2));
             $('#total_amount').val(amt_total.toFixed(2));
         }
@@ -252,18 +242,11 @@
             pct_total = Math.round(pct_total);
             var final_pct_total = parseFloat(pct_total, 10);
 
-
-            //alert(pct_total.toFixed(2));
-
             $('#total_percent').val(final_pct_total.toFixed(2));
             $('#total_amount').val(amt_total.toFixed(2));
         }
 
         function checkForm(){
-
-            
-
-
             var contents = {};
             var duplicates = false;
             $(".consultant_id").each(function() {
@@ -291,8 +274,6 @@
                 return false;
             }
 
-            
-            //var form_valid = (document.getElementById('total_percent').value == 100 && document.getElementById('total_amount').value == transaction_total);
             if ($('#total_percent').val() != '100.00'){
                 swal('Invalid split!','Please check percentages', 'error');
                 return false;
@@ -316,23 +297,24 @@
             var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
             var transaction_total = 0;
             if (mode == 'Deposit' || ref_mode == 'Deposit') {
-                transaction_total = parseFloat("{{object.getAmountIssued|default('0')}}");
+                transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
             } else {
-                transaction_total = parseFloat("{{object.getTransactionTotal|default('0')}}");
+                transaction_total = parseFloat("{{object.getTotalPayments|default('0')}}");
             }
 
-            $(document).on("click",".remove_row", function(e){
-                var table_rows = $('#partition_entries tr').length;
-                if (table_rows < 2) {
+            $(document).on("click",".rem_row", function(e){
+                var table_rows = parseInt($('#partition_entries tr').length);
+                if (table_rows <= 1) {
                     swal('You must select at least one consultant!','', 'error');
+                    return 0;
+                } else {
+                   var tr = $(this).closest('tr');
+                    tr.remove();
+                    
+                    autoCompute();
+                    computeAutoTotals();
                     return false;
                 }
-                var tr = $(this).closest('tr');
-                tr.remove();
-                
-                autoCompute();
-                computeAutoTotals();
-                return false;
             });
 
             computeTotals();
@@ -366,8 +348,6 @@
                     return false;
                 }
 
-                
-
             });
             // $('.percent_allocation').on("change", function()
             $(document).on('keyup change', '.percent_allocation', function()
@@ -389,7 +369,6 @@
                 computeTotals();
             });
 
-            // $('.amount_allocation').on("change", function()
             $(document).on('keyup change', '.amount_allocation', function()
             {
                 var allocation = parseFloat($(this).val());
