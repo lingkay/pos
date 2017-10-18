@@ -1,4 +1,65 @@
 
+function revertDiscounts()
+{
+    if ($('#string_trans_mode').val() == 'Deposit') {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('th').length > 5) {
+                $(this).find('th').eq(3).remove();
+                $(this).find('th').eq(3).remove();
+                $(this).find('th').eq(3).remove();
+            }
+
+            if ($(this).children('td').length > 5) {
+                $(this).find('td').eq(3).remove();
+                $(this).find('td').eq(3).remove();
+                $(this).find('td').eq(3).remove();
+            }
+        });
+    } else {
+        $('#cart_table').find('tr').each(function(){
+            if ($(this).children('th').length > 5) {
+                $(this).find('th').eq(2).remove();
+                $(this).find('th').eq(2).remove();
+                $(this).find('th').eq(2).remove();
+            }
+
+            if ($(this).children('td').length > 5) {
+                $(this).find('td').eq(2).remove();
+                $(this).find('td').eq(2).remove();
+                $(this).find('td').eq(2).remove();
+            }
+        });
+    }
+
+    var float_orig_price = parseFloat($('#float_cart_orig_price').val());
+    $('#string_trans_type').val('none');
+    $('.updated_totals_row').hide();
+    $('.checkout_btn').hide();
+    $('.bulk_adj').hide();
+    $('#customer_savings').text("0.00");
+    $('.next_step_btn').show();
+    $('.clear_discount').hide();
+    $('.initial_cart_price').text(addCommas(float_orig_price));
+    $('#float_cart_new_price').val($('#float_cart_orig_price').val());
+
+
+
+    // $('.cart_price_h3').css({'color': 'black'});
+    $('#cgroup-new_total').hide();
+    $('#cform-new_total').val('');
+    $('#cform-discount_amount').val('');
+    $('#cgroup-discount_amount').hide();
+    $('#cform-discount_pct').val('');
+    $('#cgroup-discount_pct').hide();
+    // $('.cart_price').text(addCommas($('#float_cart_orig_price').val()));
+    
+    computeCartRaw();
+    $('.orig_totals_row').hide();
+    $('.orig_price_h3').hide();
+    $('.bulk_discount_h4').hide();
+    $('#applied_bulk_discount').text('');
+}
+
 function ajaxGetProductCategories()
 {
     var url_pos = $('#url_pos').val();

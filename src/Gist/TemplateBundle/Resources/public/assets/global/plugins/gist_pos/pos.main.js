@@ -1,3 +1,68 @@
+
+
+function applyBulkAdjustmentOnLoad()
+{   
+    var bulk_adj_opt = $('#bulk_opt_sel').val();
+    if (bulk_adj_opt != '') {
+        if (bulk_adj_opt == 'bgift') {
+            computeCartBulk(0);
+            $('#string_trans_bulk_type').val('Gift');
+            $('#applied_bulk_discount').text('Gift');
+            $('#bulk_opt_amt').val('0');
+            computeCartBulk(parseFloat('0.00'));
+        } else if (bulk_adj_opt == 'bdiscamt') {
+            var new_cart_total = $('#float_cart_orig_price').val() - $('#bulk_opt_amt').val();
+            if (new_cart_total >= 0) {
+                $('#applied_bulk_discount').text('Less Php '+$('#bulk_opt_amt').val()+'');
+                $('#customer_savings').text(addCommas(parseFloat($('#bulk_opt_amt').val())));
+                $('#string_trans_bulk_type').val('Less Php '+$('#bulk_opt_amt').val()+'');
+                computeCartBulk(new_cart_total);
+            } else {
+                toastr['error']('Invalid discount amount.', 'Error');
+            }
+        } else if (bulk_adj_opt == 'bdisc') {
+            var new_cart_total = $('#float_cart_orig_price').val() - ($('#float_cart_orig_price').val() * ($('#bulk_opt_amt').val()/100));
+            var savings = $('#float_cart_orig_price').val() * ($('#bulk_opt_amt').val()/100);
+            if (new_cart_total >= 0) {
+                computeCartBulk(new_cart_total);
+                $('#applied_bulk_discount').text('Less '+$('#bulk_opt_amt').val()+' percent off');
+                $('#string_trans_bulk_type').val('Less '+$('#bulk_opt_amt').val()+' percent off');
+                $('#customer_savings').text(addCommas(parseFloat(savings)));
+            } else {
+                toastr['error']('Invalid discount.', 'Error');
+            }
+        } else if (bulk_adj_opt == 'bamt') {
+            var savings = $('#float_cart_orig_price').val() - $('#bulk_opt_amt').val();
+            // alert(savings);
+            computeCartBulk(parseFloat($('#bulk_opt_amt').val()));
+            $('#applied_bulk_discount').text('Change Amount');
+            $('#string_trans_bulk_type').val('Change Amount to pay to: Php ' + $('#bulk_opt_amt').val());
+            $('#customer_savings').text(addCommas(parseFloat(savings)));
+        } else {
+            $('#string_trans_bulk_type').val('none');
+            $('#bulk_opt_amt').val('0');
+            $('.display_price').each(function() {
+                if ($(this).val() == "0" || $(this).val() == "0.00") {
+                    //revert prices only if bulk discount came from gift
+                    var row = $(this).closest('tr');
+                    var srp = row.find('.srp').val();
+                    $(this).val(srp);
+                }
+            });
+            $('#applied_bulk_discount').text('');
+            computeCartBulk(0);
+        }
+    } else {
+        $('#string_trans_bulk_type').val('none');
+    }
+    computeBalance();
+}
+
+function changeDepositTopNavIcon() 
+{
+    $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
+}
+
 function computeVATDeposit(total)
 {
     var tax_rate = parseFloat($('#float_tax_rate').val())/100;
@@ -28,8 +93,6 @@ function computeVATDeposit(total)
     } else {
 
     }
-
-
 }
 
 function computeVATBalance(total)
@@ -61,8 +124,6 @@ function computeVATBalance(total)
     } else {
 
     }
-
-
 }
 
 
@@ -71,8 +132,81 @@ $(document).ready(function(){
     $('#cform-cust_search_id').attr('maxlength','11');
     $('.switch_to_normal_class').hide();
 
+    // 
+    var restrict = "{{restrict}}";
+    if (restrict == 'true') {
+        swal({
+              title: "Cannot load transaction!",
+              text: "The trasaction you are trying to access is not valid for reloading",
+              type: "error",
+              confirmButtonColor: "green",
+              confirmButtonText: "Okay",
+            },
+            function(){
+                location.replace('/pos');
+                
+            });
+    }
+
+
+    var hasItems = "{{transaction_object.hasItems|default(false)}}";
+    var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
+    var trans_type = $('#string_trans_type').val();
+    var trans_mode = $('#string_trans_mode').val();
+    var balance = $('#float_trans_balance').val();
+    var ref_trans = $('#transaction_reference_sys_disp_id').val();
+    $('#footer_customer').text($('#transaction_customer_name').val());
+    $('#header_customer').text($('#transaction_customer_name').val());
+    $('#ref_trans').text(ref_trans);
+    if (hasItems == true) {
+        $('.clear_discount').hide();
+        computeCartRaw();
+        computeCartMinimum();
+        computeBalance();
+        if (trans_type == 'per') {
+            $('#string_trans_type').val('per');
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.checkout_btn').show();
+            $('#transaction_type_modal').modal('hide');
+            $('.updated_totals_row').show();
+            $('.clear_discount').show();
+            
+            computeCartIndiv();
+            computeVATIndiv();
+            computeBalance();
+        } else if (trans_type == 'bulk') {
+            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
+            $('#string_trans_type').val('bulk');
+            $('.updated_totals_row').show();
+
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.bulk_adj').show();
+            $('#proc').show();
+            applyBulkAdjustmentOnLoad();
+            $('.checkout_btn').show();
+        }
+
+        if (trans_mode == 'Deposit') {
+            $('.deposit_amount_totals_row').show();
+            $('.balance_totals_row').show();
+            appendDepositItemColumns();
+            appendDepositItemFields();
+            computeVATDeposit(payment_total);
+            computeVATBalance(parseFloat(balance));
+            $('#float_trans_deposit_amount').val(payment_total);
+            $('#string_trans_mode').val('Deposit');
+            $('#pos_mode').text('Deposit');
+            $('.checkout_btn').show();
+            $('.proceed_deposit').show();
+            $('.next_step_btn').hide();
+            $('.clear_discount').hide();
+        }
 
         
+    }    
+    // 
     ajaxGetProductCategories();  
     toastr.options = {
       "closeButton": false,
@@ -92,6 +226,158 @@ $(document).ready(function(){
       "hideMethod": "fadeOut"
     }
 
+
+    $(document).on("click",".x_remove_payment_row", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot remove payment!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot remove payment!','This is a resumed transaction', 'error');
+        }
+    });
+
+    $(document).on("click",".gcp_deposit", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot revert to normal mode!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot revert to normal mode!','This is a resumed transaction', 'error');
+        }
+    });
+
+    $(document).on("click",".gcp_quotation", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot change to quotation!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot change to quotation!','This is a resumed transaction', 'error');
+        }
+    });
+
+    $(document).on("click",".gcp_freeze", function(e){
+        if ($('#string_trans_mode').val() == 'Deposit') {
+            swal('Cannot freeze quotation!','This is a resumed deposit transaction', 'error');
+        } else {
+            swal('Cannot freeze quotation!','This is a resumed transaction', 'error');
+        }
+    });
+
+    $(document).on("click",".proceed_dep_modal", function(e){
+        $('#deposit_conf_modal').modal('hide');
+        $('#deposit_modal').modal('show');
+    });
+
+    $(document).on("click",".deposit_complete_btn", function(e){
+        location.replace('/reports/auto_search/deposit');
+    });
+
+    $(document).on("click",".quotation_continue_btn", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            $('#string_trans_mode').val('quotation');
+            $('#pos_mode').text('Quotation');
+            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
+            swal("POS Mode Changed", "Quotation mode enabled!", "success");
+            $('#quotation_modal').modal('hide');
+        } else {
+            $('#string_trans_mode').val('normal');
+            $('#pos_mode').text('Normal');
+            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
+            swal("POS Mode Changed", "Quotation mode disabled!", "success");
+            $('#rev_quotation_modal').modal('hide');
+        }
+        
+    });
+
+    
+
+    $(document).on("click",".deposit_continue_btn", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            //open another modal
+            $('#string_trans_mode').val('Deposit');
+            $('.deposit_icon_img').each(function() {
+                $(this).attr('data-original-title',"Disable deposit mode");
+            });
+            $('#pos_mode').text('Deposit');
+            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
+            swal("POS Mode Changed", "Deposit mode enabled!", "success");
+            $('#deposit_modal').modal('hide');
+            appendDepositItemColumns();
+            appendDepositItemFields();
+        } else {
+            $('#string_trans_mode').val('normal');
+            $('#pos_mode').text('Normal');
+            $('.deposit_icon_img').each(function() {
+                $(this).attr('data-original-title',"Deposit");
+            });
+            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}");
+            swal("POS Mode Changed", "Deposit mode disabled!", "success");
+            $('#rev_deposit_modal').modal('hide');
+            $('.proceed_deposit').hide();
+
+            $('#cart_table').find('tr').each(function(){
+                if ($('#string_trans_type').val() == 'per') {
+                    if ($(this).children('th').length > 6) {
+                        $(this).find('th').eq(0).remove();
+                    }
+
+                    if ($(this).children('td').length > 6) {
+                        $(this).find('td').eq(0).remove();
+                    }
+                } else {
+                    if ($(this).children('th').length > 3) {
+                        $(this).find('th').eq(0).remove();
+                    }
+
+                    if ($(this).children('td').length > 3) {
+                        $(this).find('td').eq(0).remove();
+                    }
+                }
+                
+            });
+
+            $('.xrow').each(function() {
+                $(this).attr('colspan',3);
+            });
+        }
+        
+    });
+
+    $(document).on("click",".check_issued", function(e){
+
+        var deposit_amount = parseFloat($('#float_trans_deposit_amount').val());
+        var selected_min_total = 0;
+        var items_to_issue = 0;
+        var rowx = $(this).closest('.product_row');
+        $('.check_issued:checkbox:checked').each(function() {
+            var row = $(this).closest('.product_row');
+            var min_price = row.find('.min_price');
+            min_price = min_price.val();
+            items_to_issue++;
+            selected_min_total += parseFloat(min_price);
+        });
+
+        //count number of items
+        var rowCount = $('#cart_table tr').length-1;
+        //prevent selecting all when there is still balance
+        var balance = $('#float_trans_balance').val();
+        if ((items_to_issue == rowCount) && balance != '0') {
+            $(this).prop('checked', false); 
+            $(this).removeAttr('checked');
+            swal('Cannot issue all items!','','error');
+            return false;
+        }
+
+        
+
+        if($(this).is(':checked')) {
+            if (selected_min_total > deposit_amount) {
+                $(this).prop('checked', false); 
+                $(this).removeAttr('checked');
+                swal('Cannot issue item!','','error');
+            } else {
+                rowx.find('.issued_on').val('this');
+            }
+        } else {
+            rowx.find('.issued_on').val('0');
+        }
+    });
 
 
     $('.posgrp_check_date').hide();
@@ -204,9 +490,6 @@ $(document).ready(function(){
     $(document).on("click",".check_is_pdc", function(e){
         var row = $(this).closest('.check_field');
         var opt = row.find('.posgrp_check_date');
-        //TO REMOVE CHECK
-        //var opt = row.find('#uniform-cform-check_is_pdc > span');
-        //opt.removeClass('checked');
 
         if ($(this).val() == 0) {
             $(this).val(1);
@@ -215,10 +498,6 @@ $(document).ready(function(){
             $(this).val(0);
             opt.hide();
         }
-
-        //alert($(this).val());
-        
-        
     });
 
 
@@ -266,7 +545,6 @@ $(document).ready(function(){
         clearCustomerFields();
         $('.save_customer_button').hide();
         $('.customer_continue_btn').show();
-        // $('.customer_search_again_btn').show();
 
         var row = $(this).closest('tr');
         var opt = row.find('.marital_status').val();
@@ -337,8 +615,6 @@ $(document).ready(function(){
         if ($('#string_trans_mode').val() == 'Deposit') {
             $('#final_modal').modal('show');
         }
-        
-
     });
 
 
@@ -358,16 +634,11 @@ $(document).ready(function(){
 
     });
 
-    // CC
-
-
-
-    /* Fancy restrictive input formatting via jQuery.payment library*/
     $('input[name=cc_card_number]').payment('formatCardNumber');
     $('input[name=cc_card_cvv]').payment('formatCardCVC');
     $('input[name=cc_card_expiry').payment('formatCardExpiry');
 
-    /* Form validation using Stripe client-side validation helpers */
+
     jQuery.validator.addMethod("cc_card_number", function(value, element) {
         return this.optional(element) || Stripe.card.validateCardNumber(value);
     }, "Please specify a valid credit card number.");
@@ -383,11 +654,6 @@ $(document).ready(function(){
     }, "Invalid CVC.");
 
 
-    // END CC
-
-
-
-    // CLEAN
     $('.updated_totals_row').hide();
     $('.deposit_amount_totals_row').hide();
     $('.balance_totals_row').hide();
@@ -668,11 +934,6 @@ $(document).ready(function(){
         }
     });
 
-    
-    
-
-    
-
 
     $(document).on("click",".next_step_btn", function(e){
         if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
@@ -702,10 +963,6 @@ $(document).ready(function(){
         }
     });
 
-    // $("#cform-discount_pct").keyup(function() {
-    //     $("#cform-discount_pct").val(this.value.match(/[0-9]*/));
-    // });
-
     $(document).on('keydown', '#cform-discount_pct', function (event) {
         if (event.shiftKey == true) {
             event.preventDefault();
@@ -722,15 +979,8 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
 
     });
-
-
-
-    // $("#cform-discount_amount").keyup(function() {
-    //     $("#cform-discount_amount").val(this.value.match(/[0-9]*/));
-    // });
 
     $(document).on('keydown', '#cform-discount_amount', function (event) {
         if (event.shiftKey == true) {
@@ -748,25 +998,20 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
 
     });
 
     $(".cc_card_expiry").focusout(function() {
         var date = new Date();
         var this_eleme = $(this);
-        // alert($(this).val().length);
-        // alert(date.getMonth()+1);
         var curr_mm = date.getMonth()+1;
         var curr_yy = date.getFullYear().toString().substr(-2);
         if ($(this).val().length == 7) {
             var mm = $(this).val().substring(0, 2);
             var yy = $(this).val().substring(5, 7);
-            // alert(mm+'/'+yy);
             if (mm != '' && yy != '')
             {
                 if (parseFloat(yy) < parseFloat(curr_yy)) {
-                    //$('#swipe_expired').modal('show');
                     swal({
                       title: "Card expired!",
                       text: "",
@@ -788,7 +1033,6 @@ $(document).ready(function(){
                         }   
                     });
                     
-                    // alert(mm+'/'+yy);
                     
                 } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
                     swal({
@@ -837,7 +1081,6 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
 
     });
 
@@ -861,7 +1104,6 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
 
     });
 
@@ -1006,7 +1248,6 @@ $(document).ready(function(){
                     });
                 }
             }
-
             return 0;
         }
 
@@ -1071,8 +1312,6 @@ $(document).ready(function(){
             swal('Cannot proceed to deposit!','Select at least one item to issue','error');
         }
     });
-
-
 
     $(document).on("click",".finish_btn", function(e){
         var balance = $('#float_trans_balance').val();
@@ -1148,7 +1387,7 @@ $(document).ready(function(){
                             } else {
                                 $('#customer_modal').modal('show');
                             }   
-                        });
+                    });
                 }
             }
             
@@ -1184,20 +1423,14 @@ $(document).ready(function(){
                     },
                     function(isConfirm){
                         if (isConfirm) {
-                            // 1 add two rows on vats table
-                            // 2 add checkboxes on cart items
-
-                            // 1
+                            // THIS WILL TRIGGER DEPOSIT MODE FROM CHECKOUT
                             $('.deposit_amount_totals_row').show();
                             $('.balance_totals_row').show();
-
-                            // 2
                             appendDepositItemColumns();
                             appendDepositItemFields();
                             computeVATDeposit(payment_total);
                             computeVATBalance(parseFloat(balance));
                             $('.clear_discount').hide();
-                            // $('.checkout_btn').hide();
                             $('#float_trans_deposit_amount').val(payment_total);
                             $('#string_trans_mode').val('Deposit');
                             $('.proceed_deposit').show();
@@ -1213,9 +1446,8 @@ $(document).ready(function(){
                         } else {
                             
                         }   
-                    });
+                });
             }
-            //}
         }
     });
 
@@ -1253,8 +1485,6 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
-
     });
 
     $(document).on('keydown', '.cc_charge_amt', function (event) {
@@ -1273,8 +1503,6 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
-
     });
 
     $(document).on('keydown', '.check_amount', function (event) {
@@ -1293,8 +1521,6 @@ $(document).ready(function(){
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
             event.preventDefault(); 
-        //if a decimal has been added, disable the "."-button
-
     });
 
     $(document).on('keyup', '.cc_charge_amt', function (event) {
@@ -1306,7 +1532,6 @@ $(document).ready(function(){
     });
 
     $(document).on('keyup', '#cform-cash_received_amt', function () {
-        // $(this).val(this.value.match(/[0-9]*/));
         if ($(this).val() != '') {
             var amt_to_pay = $('#float_trans_balance').val();
             var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
@@ -1324,8 +1549,6 @@ $(document).ready(function(){
             $('#cash_chg_amt').text("0.00");
             computeBalanceDisplay(0);
         }
-        
-
     });
 
     $(document).on("click",".numeric_key", function(e){
@@ -1361,11 +1584,8 @@ $(document).ready(function(){
                 }
             }
         }
-
         computeBalanceDisplay($('#cform-cash_received_amt').val());
     });
-
-    
 
     $(window).keydown(function(event){
         if(event.keyCode == 13) {
@@ -1509,8 +1729,6 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".add_card_btn", function(e){
-        // var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-        // alert(row_id);
         $("#cc_fields").children().clone(true,true).find("input").val("").end().appendTo('#cc_form');
         $('input[name=cc_card_number]').payment('formatCardNumber');
         $('input[name=cc_card_cvv]').payment('formatCardCVC');
@@ -1560,10 +1778,6 @@ $(document).ready(function(){
     $('#cgroup-new_price').hide();
     hideBulkAmounts();
 
-
-
-
-
     $(document).on("click",".co_cash_payment", function(e){
         $('#checkout_modal').modal('hide');
         $('#cash_modal').modal('show');
@@ -1579,7 +1793,6 @@ $(document).ready(function(){
         $('#check_modal').modal('show');
     });
 
-    
     $(document).on("click",".cash_go_back", function(e){
         $('#cform-cash_received_amt').val('');
         $('#cash_modal').modal('hide');
@@ -1609,9 +1822,6 @@ $(document).ready(function(){
         computeBalanceDisplayCheckMulti(0);
     });
 
-
-
-    //Proceed
     $(document).on("click",".proceed_btn", function(e){
         proceedToTransaction();
     });

@@ -2,7 +2,6 @@
 
 namespace Gist\POSBundle\Controller;
 
-// use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Gist\TemplateBundle\Model\BaseController as Controller;
 use Gist\POSBundle\Entity\POSTransaction;
 use Gist\POSBundle\Entity\POSTransactionItem;
@@ -15,6 +14,9 @@ use DateTime;
 
 class POSController extends Controller
 {
+    /**
+     * Show the POS page
+     */
     public function indexAction()
     {
     	$this->title = 'Dashboard';
@@ -26,6 +28,9 @@ class POSController extends Controller
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
 
+    /**
+     * Show the POS page with invalid transaction message
+     */
     public function indexInvalidAction()
     {
         $this->title = 'Dashboard';
@@ -37,6 +42,9 @@ class POSController extends Controller
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
 
+    /**
+     * Show the POS page with a loaded transaction
+     */
     public function indexLoadAction($transaction_display_id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -47,8 +55,6 @@ class POSController extends Controller
         $params['transaction_object'] = null;
         $params['customer'] = null;
         $params['restrict'] = 'false';
-
-        
 
         if ($transaction_object) {
             
@@ -62,11 +68,13 @@ class POSController extends Controller
             $params['transaction_object'] = $transaction_object;
             $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
         }
-        
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
 
+    /**
+     * Generate parameters
+     */
     protected function padFormParams(&$params, $object = null)
     {
         $conf = $this->get('gist_configuration');
@@ -78,7 +86,6 @@ class POSController extends Controller
             'chg' => 'Change of Price'
         );
 
-        // arsers: ["visa", "amex", "mastercard", "discover", "generic"],
         $params['card_types'] = array(
             'visa'=>'Visa',
             'amex'=>'AMEX',
@@ -139,8 +146,6 @@ class POSController extends Controller
         $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
         $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
 
-
-
         $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/banks";
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
@@ -188,10 +193,12 @@ class POSController extends Controller
         $params['terminal_operators'] = $vars2;
         $params['charge_rates'] = $opts;
 
-        
         return $params;
     }
 
+    /**
+     * Get customer object
+     */
     protected function getCustomer($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -203,26 +210,29 @@ class POSController extends Controller
         return $obj;
     }
 
+    /**
+     * Show the landing page
+     */
     public function landingAction()
     {
     	$this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
-
-        
-
         return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
     }
 
+    /**
+     * Show the POS menu
+     */
     public function posMenuAction()
     {
         $this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
-
-        
-
         return $this->render('GistPOSBundle:Dashboard:pos_menu.html.twig', $params);
     }
 
+    /**
+     * Returns list of frozen transactions
+     */
     public function getFrozenTransactionsAction()
     {
         header("Access-Control-Allow-Origin: *");
@@ -238,10 +248,10 @@ class POSController extends Controller
         return new JsonResponse($transactions);
     }
 
-
-    // POS SAVING AND SENDING METHODS
-
-    
+    /**
+     * Saving of POS transaction
+     * (AJAX)
+     */
     public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount)
     {
         header("Access-Control-Allow-Origin: *");
@@ -253,8 +263,6 @@ class POSController extends Controller
             $transaction->setReferenceTransaction($ref_transaction);
         }
 
-        //$transaction->setId($id);
-        //$transaction->setTransDisplayId($display_id);
         $transaction->setCustomerId($customer_id);
         $transaction->setTransactionBalance($balance);
         $transaction->setTransactionTotal($total);
@@ -291,28 +299,28 @@ class POSController extends Controller
         $transaction->setTransactionCCInterest($transaction_cc_interest);
         $transaction->setUserCreate($this->getUser());
 
-
         $em->persist($transaction);
         $em->flush();
 
-        //action after save
         $new_display_id = strtoupper(substr($transaction_mode, 0,1)).'-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
         $transaction->setTransDisplayId($new_display_id);
         $em->persist($transaction);
         $em->flush();
 
-       
-
         $list_opts[] = array('status'=>$transaction->getStatus(),'new_id'=>$transaction->getID());
         return new JsonResponse($list_opts);
     }
 
+    /**
+     * Generate default split
+     * (AJAX)
+     */
     public function generateDefaultSplitAction($trans_sys_id)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$trans_sys_id));
          if ($transaction->getTransactionMode() != 'frozen' && $transaction->getTransactionMode() != 'quotation') {
-            //add default split
+
             $split_trans_total = 0;
             $ref = $transaction->getReferenceTransaction() ? $transaction->getReferenceTransaction() : null;
             if ($ref != null) {
@@ -329,23 +337,23 @@ class POSController extends Controller
                 }
             }
                 
-
             $split_entry = new POSTransactionSplit();
-            //$consultant = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id'=>$value));
-
             $split_entry->setConsultant($this->getUser());
             $split_entry->setTransaction($transaction);
             $split_entry->setAmount($split_trans_total);
             $split_entry->setPercent('100.00');
             $em->persist($split_entry);
             
-            //die();
             $em->flush();   
         }
         $list_opts[] = array('status'=>'saved');
         return new JsonResponse($list_opts);
     }
 
+    /**
+     * Save transction items
+     * (AJAX)
+     */
     public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued, $issued_on)
     {
         header("Access-Control-Allow-Origin: *");
@@ -371,9 +379,6 @@ class POSController extends Controller
         } else {
             $transaction_item->setIssued(false);
         }
-
-        
-
         
         $transaction_item->setTransaction($transaction);
         $transaction_item->setProductId($prod_id);
@@ -383,7 +388,6 @@ class POSController extends Controller
         $transaction_item->setName($prod_name);
         $transaction_item->setDiscountType($discount_type);
         $transaction_item->setDiscountValue($discount_value);
-
         $transaction_item->setBarcode($barcode);
         $transaction_item->setItemCode($item_code);
 
@@ -404,6 +408,10 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
+    /**
+     * Save transaction payments
+     * (AJAX)
+     */
     public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv, $issued_on)
     {
         header("Access-Control-Allow-Origin: *");
@@ -411,11 +419,9 @@ class POSController extends Controller
         $transaction_payment = new POSTransactionPayment();
 
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($trans_sys_id);
-        
         $transaction_payment->setTransaction($transaction);
         $transaction_payment->setType($payment_type);
         $transaction_payment->setAmount($amount);
-
         $transaction_payment->setControlNumber($control_number);
         $transaction_payment->setBank($bank);
         $transaction_payment->setCardTerminalOperator($terminal_operator);
@@ -444,20 +450,16 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
-
-    // SYNC TO ERP POS DATA
+    /**
+     * Send POS transactions to ERP
+     */
     public function syncDataAction()
     {
         $conf = $this->get('gist_configuration');
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
 
-        //send transactions
         $transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('synced_to_erp'=>'false'));
-        
-        //send items (loop transactions then loop items)
-        //send payments (loop transactions then loop payments)
-        
 
         foreach ($transactions as $transaction) {
             $tax_rate = $transaction->getTaxRate();
@@ -497,12 +499,10 @@ class POSController extends Controller
             $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
 
             foreach ($payments as $payment) {
-                // {trans_sys_id}/{payment_type}/{amount}
                 file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
             }
 
             foreach ($items as $item) {
-                // {trans_sys_id}/{prod_id}/{prod_name}/{orig_price}/{min_price}/{adjusted_price}/{discount_type}/{discount_value}
                 file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
             }
 
@@ -514,34 +514,32 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
+    /**
+     * Print transaction receipt
+     */
     public function printReceiptAction($id)
     {
         $data = $this->getRequest()->request->all();
-
-
         
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         
-
-        // $this->hookPreAction();
         $params['transaction'] = $transaction;
         $params['total_sales'] = $transaction->getTransactionTotal();
         $params['change'] = $transaction->getTransactionTotal() - $transaction->getTransactionBalance();
 
-      
         $twig = 'GistPOSBundle:POS:receipt.html.twig';
-
         $pdf = $this->get('gist_pdf');
         $pdf->newPdf('pos_receipt');
-
-        // // debug
-        // return $this->render($twig, $params);
 
         $html = $this->render($twig, $params);
         return $pdf->printPdf($html->getContent());
     }
 
+    /**
+     * Top Nav clock
+     * (transfer to dashboard controller)
+     */
     public function clockAction($type)
     {
         $em = $this->getDoctrine()->getManager();
@@ -558,6 +556,9 @@ class POSController extends Controller
         return new JsonResponse($list_opts);
     }
 
+    /**
+     * Generates normal transaction from quotation
+     */
     public function quoteToSaleAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -578,6 +579,10 @@ class POSController extends Controller
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
 
+    /**
+     * Deletes a transaction
+     * (must not delete, use tagging instead)
+     */
     public function deleteTransactionAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -609,3 +614,4 @@ class POSController extends Controller
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
 }
+
