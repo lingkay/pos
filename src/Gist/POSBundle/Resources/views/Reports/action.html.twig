@@ -26,6 +26,6 @@
 {% endif %}
 
 {% if (ea != '0' and ea != '') and mode == 'normal' %}
-<a href="javascript:void(0)" class="btn default btn-xs green" data-toggle="tooltip" data-placement="bottom" title="Upsell"><i class="fa fa-chevron-circle-up"></i></a>
+<a href="{{ path('gist_pos_index_load_upsell', {'ea':ea})}}" class="btn default btn-xs green" data-toggle="tooltip" data-placement="bottom" title="Upsell"><i class="fa fa-chevron-circle-up"></i></a>
 {% endif %}
 

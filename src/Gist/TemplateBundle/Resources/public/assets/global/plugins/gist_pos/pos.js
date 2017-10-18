@@ -854,17 +854,28 @@ function computeCartMinimum()
         total = total + parseFloat($(this).val());
     });
 
+    
+
+    if ($('#string_trans_mode').val() == 'normal') {
+        var additional_ea = $('#transaction_parent_ea').val();
+        additional_ea = additional_ea.replace(/-/g, "");
+    } else {
+        var additional_ea = '0';
+    }
+
+    var orig = parseFloat($('#float_cart_orig_price').val()) + parseInt(additional_ea);
+    var new_total = parseFloat($('#float_cart_new_price').val()) + parseInt(additional_ea);
+
     $("#float_cart_minimum_total").val(total);
 
     if ($('#string_trans_type').val() == 'none') {
-        if (total > $('#float_cart_orig_price').val()) {
+        if (total > orig) {
             $('.updated_price_h3').css({'color': 'red'});
         } else {
             $('.updated_price_h3').css({'color': 'black'});
         }
     } else {
-        console.log('here @ com min: ' + $('#float_cart_new_price').val())
-        if (total > $('#float_cart_new_price').val()) {
+        if (total > new_total) {
             $('.updated_price_h3').css({'color': 'red'});
         } else {
             $('.updated_price_h3').css({'color': 'black'});
@@ -874,25 +885,7 @@ function computeCartMinimum()
     computeExtraAmount();
 }
 
-function computeExtraAmount()
-{
-    var cart_min_price = 0;
-    var cart_price = 0;
-    cart_min_price = parseInt($("#float_cart_minimum_total").val());
 
-    if ($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
-        cart_price = parseInt($("#float_cart_orig_price").val());
-    } else {
-        cart_price = parseInt($("#float_cart_new_price").val());
-    }
-    
-    var extra_amt = cart_price - cart_min_price;
-    var extra_amt_disp = addDashes(extra_amt.toString());
-    $('#cart_min_pricex').text(addCommas(cart_min_price));
-    $('#cart_pricex').text(addCommas(cart_price));
-    $('#ea_amt').text(extra_amt_disp);
-    $('#float_trans_ea').val(extra_amt_disp);
-}
 
 function apply_indiv(x)
 {

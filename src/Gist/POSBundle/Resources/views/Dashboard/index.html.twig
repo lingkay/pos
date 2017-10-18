@@ -28,6 +28,7 @@
 <input type="hidden" id="transaction_display_id" name="transaction_display_id" value="{{next_id|default(0)}}">
 <input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
 <input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
+<input type="hidden" id="transaction_parent_ea" name="transaction_parent_ea" value="{{ea|default(0)}}">
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
 <input type="hidden" id="minimum_deposit_percent" name="minimum_deposit_percent" value="{{min_deposit_pct|default('null')}}">
 <!-- END TRANSACTION VARS -->
@@ -415,6 +416,85 @@ function syncToERP()
         });
     });
 }
+
+$(document).ready(function() {
+    computeExtraAmount();
+
+    
+    var restrict = "{{restrict}}";
+    if (restrict == 'true') {
+        swal({
+              title: "Cannot load transaction!",
+              text: "The trasaction you are trying to access is not valid for reloading",
+              type: "error",
+              confirmButtonColor: "green",
+              confirmButtonText: "Okay",
+            },
+            function(){
+                location.replace('/pos');
+                
+            });
+    }
+
+
+    var hasItems = "{{transaction_object.hasItems|default(false)}}";
+    var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
+    var trans_type = $('#string_trans_type').val();
+    var trans_mode = $('#string_trans_mode').val();
+    var balance = $('#float_trans_balance').val();
+    var ref_trans = $('#transaction_reference_sys_disp_id').val();
+    $('#footer_customer').text($('#transaction_customer_name').val());
+    $('#header_customer').text($('#transaction_customer_name').val());
+    $('#ref_trans').text(ref_trans);
+    if (hasItems == true) {
+        $('.clear_discount').hide();
+        computeCartRaw();
+        computeCartMinimum();
+        computeBalance();
+        if (trans_type == 'per') {
+            $('#string_trans_type').val('per');
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.checkout_btn').show();
+            $('#transaction_type_modal').modal('hide');
+            $('.updated_totals_row').show();
+            $('.clear_discount').show();
+            
+            computeCartIndiv();
+            computeVATIndiv();
+            computeBalance();
+        } else if (trans_type == 'bulk') {
+            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
+            $('#string_trans_type').val('bulk');
+            $('.updated_totals_row').show();
+
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.bulk_adj').show();
+            $('#proc').show();
+            applyBulkAdjustmentOnLoad();
+            $('.checkout_btn').show();
+        }
+
+        if (trans_mode == 'Deposit') {
+            $('.deposit_amount_totals_row').show();
+            $('.balance_totals_row').show();
+            appendDepositItemColumns();
+            appendDepositItemFields();
+            computeVATDeposit(payment_total);
+            computeVATBalance(parseFloat(balance));
+            $('#float_trans_deposit_amount').val(payment_total);
+            $('#string_trans_mode').val('Deposit');
+            $('#pos_mode').text('Deposit');
+            $('.checkout_btn').show();
+            $('.proceed_deposit').show();
+            $('.next_step_btn').hide();
+            $('.clear_discount').hide();
+        }
+
+        
+    }    
+});
 </script>
 {% endblock %}
  

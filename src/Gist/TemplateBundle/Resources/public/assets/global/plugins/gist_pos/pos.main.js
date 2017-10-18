@@ -1,4 +1,29 @@
+function computeExtraAmount()
+{
+    var cart_min_price = 0;
+    var cart_price = 0;
+    cart_min_price = parseInt($("#float_cart_minimum_total").val());
 
+    if ($('#string_trans_mode').val() == 'normal') {
+        var additional_ea = $('#transaction_parent_ea').val();
+        additional_ea = additional_ea.replace(/-/g, "");
+    } else {
+        var additional_ea = '0';
+    }
+
+    if ($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
+        cart_price = parseInt($("#float_cart_orig_price").val());
+    } else {
+        cart_price = parseInt($("#float_cart_new_price").val());
+    }
+    
+    var extra_amt = (cart_price - cart_min_price) + parseInt(additional_ea);
+    var extra_amt_disp = addDashes(extra_amt.toString());
+    $('#cart_min_pricex').text(addCommas(cart_min_price));
+    $('#cart_pricex').text(addCommas(cart_price));
+    $('#ea_amt').text(extra_amt_disp);
+    $('#float_trans_ea').val(extra_amt_disp);
+}
 
 function applyBulkAdjustmentOnLoad()
 {   
@@ -133,79 +158,7 @@ $(document).ready(function(){
     $('.switch_to_normal_class').hide();
 
     // 
-    var restrict = "{{restrict}}";
-    if (restrict == 'true') {
-        swal({
-              title: "Cannot load transaction!",
-              text: "The trasaction you are trying to access is not valid for reloading",
-              type: "error",
-              confirmButtonColor: "green",
-              confirmButtonText: "Okay",
-            },
-            function(){
-                location.replace('/pos');
-                
-            });
-    }
-
-
-    var hasItems = "{{transaction_object.hasItems|default(false)}}";
-    var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
-    var trans_type = $('#string_trans_type').val();
-    var trans_mode = $('#string_trans_mode').val();
-    var balance = $('#float_trans_balance').val();
-    var ref_trans = $('#transaction_reference_sys_disp_id').val();
-    $('#footer_customer').text($('#transaction_customer_name').val());
-    $('#header_customer').text($('#transaction_customer_name').val());
-    $('#ref_trans').text(ref_trans);
-    if (hasItems == true) {
-        $('.clear_discount').hide();
-        computeCartRaw();
-        computeCartMinimum();
-        computeBalance();
-        if (trans_type == 'per') {
-            $('#string_trans_type').val('per');
-            $('.next_step_btn').hide();
-            $('.savings_h4').show();
-            $('.checkout_btn').show();
-            $('#transaction_type_modal').modal('hide');
-            $('.updated_totals_row').show();
-            $('.clear_discount').show();
-            
-            computeCartIndiv();
-            computeVATIndiv();
-            computeBalance();
-        } else if (trans_type == 'bulk') {
-            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
-            $('#string_trans_type').val('bulk');
-            $('.updated_totals_row').show();
-
-            $('.next_step_btn').hide();
-            $('.savings_h4').show();
-            $('.bulk_adj').show();
-            $('#proc').show();
-            applyBulkAdjustmentOnLoad();
-            $('.checkout_btn').show();
-        }
-
-        if (trans_mode == 'Deposit') {
-            $('.deposit_amount_totals_row').show();
-            $('.balance_totals_row').show();
-            appendDepositItemColumns();
-            appendDepositItemFields();
-            computeVATDeposit(payment_total);
-            computeVATBalance(parseFloat(balance));
-            $('#float_trans_deposit_amount').val(payment_total);
-            $('#string_trans_mode').val('Deposit');
-            $('#pos_mode').text('Deposit');
-            $('.checkout_btn').show();
-            $('.proceed_deposit').show();
-            $('.next_step_btn').hide();
-            $('.clear_discount').hide();
-        }
-
-        
-    }    
+    
     // 
     ajaxGetProductCategories();  
     toastr.options = {

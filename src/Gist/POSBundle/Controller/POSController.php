@@ -62,12 +62,30 @@ class POSController extends Controller
             return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
             }
 
-            if ($transaction_object->getTransactionMode() != 'frozen' && $transaction_object->getTransactionMode() != 'Deposit') {
+            if ($transaction_object->getTransactionMode() != 'frozen' && $transaction_object->getTransactionMode() != 'Deposit' && $transaction_object->getTransactionMode() != 'normal') {
                 return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
             }
             $params['transaction_object'] = $transaction_object;
             $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
         }
+
+        return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+    }
+
+    /**
+     * Show the POS page upsell mode
+     */
+    public function indexLoadUpsellAction($ea)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $this->title = 'Dashboard Loaded';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $params = $this->padFormParams($params);
+        $params['transaction_object'] = null;
+        $params['customer'] = null;
+        $params['restrict'] = 'false';
+
+        $params['ea'] = $ea;
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }

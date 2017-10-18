@@ -72,6 +72,7 @@ class ReportsController extends CrudController
             'hasSplit' => $obj->hasSplit(),
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
+            'ea' => $obj->getExtraAmount(),
             'transaction_display_id' => $obj->getTransDisplayId(),
             'route_edit' => $this->getRouteGen()->getEdit(),
             'route_delete' => $this->getRouteGen()->getDelete(),

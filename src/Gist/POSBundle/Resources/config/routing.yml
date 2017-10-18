@@ -10,6 +10,10 @@ gist_pos_index_load:
     path:     /pos/load/{transaction_display_id}
     defaults: { _controller: GistPOSBundle:POS:indexLoad }
 
+gist_pos_index_load_upsell:
+    path:     /pos/load/upsell/{ea}
+    defaults: { _controller: GistPOSBundle:POS:indexLoadUpsell }
+
 gist_main_sync_pos_data:
     path:     /pos/sync_data
     methods: [GET]
