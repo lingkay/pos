@@ -20,6 +20,7 @@
 <input type="hidden" id="string_trans_main_type" value="Normal">
 <input type="hidden" id="string_trans_bulk_type" value="none">
 <input type="hidden" id="string_trans_mode" value="{{transaction_object.getTransactionMode|default('normal')}}">
+<input type="hidden" id="flag_upsell" value="{{flag_upsell|default('normal')}}">
 <input type="hidden" id="string_trans_cc_interest" value="true">
 <input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="{{customer.getERPID|default('0')}}">
 <input type="hidden" id="transaction_customer_display_id" name="transaction_customer_display_id" value="{{customer.getDisplayID|default('0')}}">
@@ -29,6 +30,7 @@
 <input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
 <input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
 <input type="hidden" id="transaction_parent_ea" name="transaction_parent_ea" value="{{ea|default(0)}}">
+<input type="hidden" id="transaction_upsell_parent" name="transaction_upsell_parent" value="{{upsell_parent|default(0)}}">
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
 <input type="hidden" id="minimum_deposit_percent" name="minimum_deposit_percent" value="{{min_deposit_pct|default('null')}}">
 <!-- END TRANSACTION VARS -->
@@ -420,7 +422,7 @@ function syncToERP()
 $(document).ready(function() {
     computeExtraAmount();
 
-    
+
     var restrict = "{{restrict}}";
     if (restrict == 'true') {
         swal({

@@ -73,6 +73,7 @@ class ReportsController extends CrudController
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
             'ea' => $obj->getExtraAmount(),
+            'upsell_parent' => $obj->getID(),
             'transaction_display_id' => $obj->getTransDisplayId(),
             'route_edit' => $this->getRouteGen()->getEdit(),
             'route_delete' => $this->getRouteGen()->getDelete(),

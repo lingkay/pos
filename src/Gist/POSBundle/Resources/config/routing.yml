@@ -11,7 +11,7 @@ gist_pos_index_load:
     defaults: { _controller: GistPOSBundle:POS:indexLoad }
 
 gist_pos_index_load_upsell:
-    path:     /pos/load/upsell/{ea}
+    path:     /pos/load/upsell/{ea}/{upsell_parent}
     defaults: { _controller: GistPOSBundle:POS:indexLoadUpsell }
 
 gist_main_sync_pos_data:

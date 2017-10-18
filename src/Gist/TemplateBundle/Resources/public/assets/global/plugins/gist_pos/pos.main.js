@@ -1273,8 +1273,11 @@ $(document).ready(function(){
             payment_total += parseFloat($(this).val());
         });
 
+
+
         if (balance <= 0) {
-            
+
+
             swal("Payment Complete!", "Enter customer information on the next form", "success");
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
@@ -1290,6 +1293,12 @@ $(document).ready(function(){
             }
 
             $('#string_trans_mode').val('normal');
+
+            if ($('#flag_upsell').val() == 'true') {
+                $('#string_trans_mode').val('upsell');
+                var upsell_parent = $('#transaction_upsell_parent').val();
+                $('#transaction_reference_sys_id').val(upsell_parent);
+            }
             
             $('#checkout_modal').modal('hide');
             if ($('#transaction_customer_id').val() == 0) {

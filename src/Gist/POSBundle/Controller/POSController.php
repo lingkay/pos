@@ -75,7 +75,7 @@ class POSController extends Controller
     /**
      * Show the POS page upsell mode
      */
-    public function indexLoadUpsellAction($ea)
+    public function indexLoadUpsellAction($ea, $upsell_parent)
     {
         $em = $this->getDoctrine()->getManager();
         $this->title = 'Dashboard Loaded';
@@ -84,6 +84,8 @@ class POSController extends Controller
         $params['transaction_object'] = null;
         $params['customer'] = null;
         $params['restrict'] = 'false';
+        $params['flag_upsell'] = 'true';
+        $params['upsell_parent'] = $upsell_parent;
 
         $params['ea'] = $ea;
 
