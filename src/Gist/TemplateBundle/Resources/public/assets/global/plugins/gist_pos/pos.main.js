@@ -1389,6 +1389,11 @@ $(document).ready(function(){
                     function(isConfirm){
                         if (isConfirm) {
                             // THIS WILL TRIGGER DEPOSIT MODE FROM CHECKOUT
+                            if ($('#flag_upsell').val() == 'true') {
+                                $('#string_trans_mode').val('upsell');
+                                var upsell_parent = $('#transaction_upsell_parent').val();
+                                $('#transaction_reference_sys_id').val(upsell_parent);
+                            }
                             $('.deposit_amount_totals_row').show();
                             $('.balance_totals_row').show();
                             appendDepositItemColumns();

@@ -1147,7 +1147,7 @@ function freezeTransaction(is_final = false)
     var transaction_cart_new_total = $('#float_cart_new_price').val();
     var transaction_cc_interest = $('#string_trans_cc_interest').val();
     var transaction_reference_sys_id = $('#transaction_reference_sys_id').val();
-
+    var flag_upsell = $('#flag_upsell').val();
     var deposit_amount = $('#float_trans_deposit_amount').val();
     var deposit_amt_net_vat = $('#float_deposit_tax_amt_net_vat').val();
     var deposit_vat_amt = $('#float_deposit_tax_vat_amt').val();
@@ -1164,7 +1164,7 @@ function freezeTransaction(is_final = false)
     } 
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount;
+    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell;
     var x_new_id = '';
 
     $.getJSON(url, function(json){  

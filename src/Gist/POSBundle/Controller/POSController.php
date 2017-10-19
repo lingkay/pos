@@ -289,16 +289,28 @@ class POSController extends Controller
      * Saving of POS transaction
      * (AJAX)
      */
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount)
+    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction = new POSTransaction();
 
-        if ($transaction_reference_sys_id != "0") {
+        if ($flag_upsell == 'true' && $transaction_mode == "Deposit") {
+
             $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$transaction_reference_sys_id]);
-            $transaction->setReferenceTransaction($ref_transaction);
+            $new_id = $this->normalToUpsellAction($ref_transaction->getID());
+            $transaction->setReferenceTransaction($new_id);
+        } else {
+            if ($transaction_reference_sys_id != "0") {
+                $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$transaction_reference_sys_id]);
+                $transaction->setReferenceTransaction($ref_transaction);
+            }
         }
+
+
+
+        $em->persist($transaction);
+        $em->flush();
 
         $transaction->setCustomerId($customer_id);
         $transaction->setTransactionBalance($balance);
@@ -343,6 +355,8 @@ class POSController extends Controller
         $transaction->setTransDisplayId($new_display_id);
         $em->persist($transaction);
         $em->flush();
+
+
 
         $list_opts[] = array('status'=>$transaction->getStatus(),'new_id'=>$transaction->getID());
         return new JsonResponse($list_opts);
@@ -614,6 +628,27 @@ class POSController extends Controller
 
         $this->addFlash('success', 'Quotation converted to sale '.$new_transaction->getTransDisplayId());
         return $this->redirect($this->generateUrl('gist_pos_reports'));
+    }
+
+    /**
+     * Generates upsell transaction from normal
+     */
+    public function normalToUpsellAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+
+        $new_transaction = clone $transaction;
+        $new_transaction->setReferenceTransaction($transaction);
+        $em->persist($new_transaction);
+        $em->flush();
+
+        $new_display_id = strtoupper('U').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
+        $new_transaction->setTransDisplayId($new_display_id);
+        $new_transaction->setTransactionMode('upsell');
+        $em->persist($new_transaction);
+        $em->flush();
+        return $new_transaction;
     }
 
     /**
