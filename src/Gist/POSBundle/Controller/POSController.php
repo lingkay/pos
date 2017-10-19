@@ -75,19 +75,20 @@ class POSController extends Controller
     /**
      * Show the POS page upsell mode
      */
-    public function indexLoadUpsellAction($ea, $upsell_parent)
+    public function indexLoadUpsellAction($upsell_parent)
     {
         $em = $this->getDoctrine()->getManager();
         $this->title = 'Dashboard Loaded';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
+        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id' => $upsell_parent));
         $params['transaction_object'] = null;
         $params['customer'] = null;
         $params['restrict'] = 'false';
         $params['flag_upsell'] = 'true';
         $params['upsell_parent'] = $upsell_parent;
 
-        $params['ea'] = $ea;
+        $params['ea'] = $transaction_object->getExtraAmount();
 
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
     }
