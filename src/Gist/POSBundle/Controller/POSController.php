@@ -11,6 +11,7 @@ use Gist\POSBundle\Entity\POSTransactionSplit;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
+use DateInterval;
 
 class POSController extends Controller
 {
@@ -77,20 +78,35 @@ class POSController extends Controller
      */
     public function indexLoadUpsellAction($upsell_parent)
     {
+        $conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
         $this->title = 'Dashboard Loaded';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
         $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id' => $upsell_parent));
         $params['transaction_object'] = null;
-        $params['customer'] = null;
         $params['restrict'] = 'false';
         $params['flag_upsell'] = 'true';
         $params['upsell_parent'] = $upsell_parent;
 
+        $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
+
         $params['ea'] = $transaction_object->getExtraAmount();
 
+
+        $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/upsell_time";
+        $result = file_get_contents($url);
+        $upsell_seconds = json_decode($result, true);
+        $date_orig = new DateTime();
+        $date_orig = $date_orig->format('m/d/Y H:i:s');
+        $date_end = $transaction_object->getDateCreate()->add(new DateInterval('PT'.$upsell_seconds.'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
+        if ($date_end > $date_orig) {
+            return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+        }
+
+        $params['restrict'] = 'true';
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+
     }
 
     /**

@@ -13,6 +13,7 @@ use Gist\POSBundle\Entity\POSTransactionPayment;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
+use DateInterval;
 
 class ReportsController extends CrudController     
 {
@@ -66,12 +67,27 @@ class ReportsController extends CrudController
     {
         $em = $this->getDoctrine()->getManager();
         $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+        $conf = $this->get('gist_configuration');
+        $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/upsell_time";
+        $result = file_get_contents($url);
+        $upsell_seconds = json_decode($result, true);
+
+        $canUpsell = false;
+        $date_orig = new DateTime();
+        $date_orig = $date_orig->format('m/d/Y H:i:s');
+        $date_end = $obj->getDateCreate()->add(new DateInterval('PT'.$upsell_seconds.'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
+        if ($date_end > $date_orig) {
+            $canUpsell = true;
+        }
+
+
         $params = array(
             'ea' => $obj->getExtraAmount(),
             'hasChild' => $obj->hasChild(),
             'hasSplit' => $obj->hasSplit(),
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
+            'canUpsell' => $canUpsell,
             'ea' => $obj->getExtraAmount(),
             'upsell_parent' => $obj->getID(),
             'transaction_display_id' => $obj->getTransDisplayId(),

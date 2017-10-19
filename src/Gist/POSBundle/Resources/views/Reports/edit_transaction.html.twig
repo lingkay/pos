@@ -222,7 +222,7 @@
                                 <a href="{{ path('gist_pos_delete_transaction', { 'id': object.getID }) }}" class="btn default btn red" title="Delete"><i class="fa fa-times"></i> Delete</a>
                                 {% endif %}
                                 {% if (object.getExtraAmount != '0' and object.getExtraAmount != '') and object.getTransactionMode == 'normal' %}
-                                <a href="javascript:void(0)" class="btn default green"><i class="fa fa-chevron-circle-up"></i> Upsell</a>
+                                <a href="{{ path('gist_pos_index_load_upsell', {'upsell_parent':object.getID})}}" class="btn default green"><i class="fa fa-chevron-circle-up"></i> Upsell</a>
                                 {% endif %}
                                 <a href="{{ path('gist_pos_reports') }}" class="btn default">Go Back</a>
                             </div>
