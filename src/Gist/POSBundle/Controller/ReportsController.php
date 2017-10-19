@@ -88,6 +88,7 @@ class ReportsController extends CrudController
             'mode' => $obj->getTransactionMode(),
             'id' => $id,
             'canUpsell' => $canUpsell,
+            'child_type' => $obj->getChildType(),
             'ea' => $obj->getExtraAmount(),
             'upsell_parent' => $obj->getID(),
             'transaction_display_id' => $obj->getTransDisplayId(),

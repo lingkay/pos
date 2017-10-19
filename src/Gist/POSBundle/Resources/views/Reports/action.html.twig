@@ -1,7 +1,9 @@
 <a href="{{ path(route_edit, { 'id': id }) }}" class="btn default btn-xs green-meadow" data-toggle="tooltip" data-placement="bottom" title="View"><i class="fa fa-eye"></i></a>
 {% if mode == 'normal' or mode == 'upsell' %}
 <a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
-<a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>
+{% endif %}
+{% if (mode == 'normal' or mode == 'upsell') and child_type != 'Deposit' %}
+    <a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>
 {% endif %}
 
 {% if mode == 'quotation' %}

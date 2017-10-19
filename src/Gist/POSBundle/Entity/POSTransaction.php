@@ -871,6 +871,15 @@ class POSTransaction
         
     }
 
+    public function getChildType()
+    {
+        if ($this->child_transaction == null) {
+            return 'null';
+        }
+        $child = $this->child_transaction;
+        return $child->getTransactionMode();
+    }
+
     public function hasChild()
     {
         if ($this->child_transaction == null) {
