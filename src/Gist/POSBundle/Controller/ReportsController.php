@@ -71,7 +71,8 @@ class ReportsController extends CrudController
         $conf = $this->get('gist_configuration');
         $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/upsell_time";
         $result = file_get_contents($url);
-        $upsell_seconds = $var_min_deposit = str_replace('"', '', $result);
+        $upsell_seconds = str_replace('"', '', $result);
+
 
         $canUpsell = false;
         try {
