@@ -3,6 +3,7 @@
 namespace Gist\POSBundle\Controller;
 
 // use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Gist\GridBundle\Model\Grid\Exception;
 use Gist\TemplateBundle\Model\CrudController;
 use Gist\POSBundle\Entity\POSTransaction;
 use Gist\POSBundle\Entity\POSTransactionItem;
@@ -73,12 +74,16 @@ class ReportsController extends CrudController
         $upsell_seconds = json_decode($result, true);
 
         $canUpsell = false;
-//        $date_orig = new DateTime();
-//        $date_orig = $date_orig->format('m/d/Y H:i:s');
-//        $date_end = $obj->getDateCreate()->add(new DateInterval('PT'.$upsell_seconds.'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
-//        if ($date_end > $date_orig) {
-//            $canUpsell = true;
-//        }
+        try {
+            $date_orig = new DateTime();
+            $date_orig = $date_orig->format('m/d/Y H:i:s');
+            $date_end = $obj->getDateCreate()->add(new DateInterval('PT' . $upsell_seconds . 'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
+            if ($date_end > $date_orig) {
+                $canUpsell = true;
+            }
+        } catch (Exception $e) {
+            $canUpsell = false;
+        }
 
 
         $params = array(
