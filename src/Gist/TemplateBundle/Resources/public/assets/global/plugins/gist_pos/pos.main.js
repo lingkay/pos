@@ -1292,7 +1292,9 @@ $(document).ready(function(){
                 });
             }
 
-            $('#string_trans_mode').val('normal');
+            if ($('#string_trans_mode').val() != 'quotation') {
+                $('#string_trans_mode').val('normal');
+            }
 
             if ($('#flag_upsell').val() == 'true') {
                 $('#string_trans_mode').val('upsell');
