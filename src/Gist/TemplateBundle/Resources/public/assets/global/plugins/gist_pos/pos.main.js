@@ -83,10 +83,7 @@ function applyBulkAdjustmentOnLoad()
     computeBalance();
 }
 
-function changeDepositTopNavIcon() 
-{
-    $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
-}
+
 
 function computeVATDeposit(total)
 {
@@ -221,76 +218,7 @@ $(document).ready(function(){
         location.replace('/reports/auto_search/deposit');
     });
 
-    $(document).on("click",".quotation_continue_btn", function(e){
-        if ($('#string_trans_mode').val() == 'normal') {
-            $('#string_trans_mode').val('quotation');
-            $('#pos_mode').text('Quotation');
-            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
-            swal("POS Mode Changed", "Quotation mode enabled!", "success");
-            $('#quotation_modal').modal('hide');
-        } else {
-            $('#string_trans_mode').val('normal');
-            $('#pos_mode').text('Normal');
-            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
-            swal("POS Mode Changed", "Quotation mode disabled!", "success");
-            $('#rev_quotation_modal').modal('hide');
-        }
-        
-    });
 
-    
-
-    $(document).on("click",".deposit_continue_btn", function(e){
-        if ($('#string_trans_mode').val() == 'normal') {
-            //open another modal
-            $('#string_trans_mode').val('Deposit');
-            $('.deposit_icon_img').each(function() {
-                $(this).attr('data-original-title',"Disable deposit mode");
-            });
-            $('#pos_mode').text('Deposit');
-            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
-            swal("POS Mode Changed", "Deposit mode enabled!", "success");
-            $('#deposit_modal').modal('hide');
-            appendDepositItemColumns();
-            appendDepositItemFields();
-        } else {
-            $('#string_trans_mode').val('normal');
-            $('#pos_mode').text('Normal');
-            $('.deposit_icon_img').each(function() {
-                $(this).attr('data-original-title',"Deposit");
-            });
-            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}");
-            swal("POS Mode Changed", "Deposit mode disabled!", "success");
-            $('#rev_deposit_modal').modal('hide');
-            $('.proceed_deposit').hide();
-
-            $('#cart_table').find('tr').each(function(){
-                if ($('#string_trans_type').val() == 'per') {
-                    if ($(this).children('th').length > 6) {
-                        $(this).find('th').eq(0).remove();
-                    }
-
-                    if ($(this).children('td').length > 6) {
-                        $(this).find('td').eq(0).remove();
-                    }
-                } else {
-                    if ($(this).children('th').length > 3) {
-                        $(this).find('th').eq(0).remove();
-                    }
-
-                    if ($(this).children('td').length > 3) {
-                        $(this).find('td').eq(0).remove();
-                    }
-                }
-                
-            });
-
-            $('.xrow').each(function() {
-                $(this).attr('colspan',3);
-            });
-        }
-        
-    });
 
     $(document).on("click",".check_issued", function(e){
 
