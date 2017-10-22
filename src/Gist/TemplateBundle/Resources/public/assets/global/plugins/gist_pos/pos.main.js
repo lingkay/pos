@@ -1298,9 +1298,6 @@ $(document).ready(function(){
                 $('#string_trans_mode').val('upsell');
                 var upsell_parent = $('#transaction_upsell_parent').val();
                 $('#transaction_reference_sys_id').val(upsell_parent);
-
-                var upsell_customer = $('#transaction_parent_customer').val();
-                $('#transaction_customer_id').val(upsell_customer);
             }
             
             $('#checkout_modal').modal('hide');
