@@ -73,12 +73,12 @@ class ReportsController extends CrudController
         $upsell_seconds = json_decode($result, true);
 
         $canUpsell = false;
-        $date_orig = new DateTime();
-        $date_orig = $date_orig->format('m/d/Y H:i:s');
-        $date_end = $obj->getDateCreate()->add(new DateInterval('PT'.$upsell_seconds.'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
-        if ($date_end > $date_orig) {
-            $canUpsell = true;
-        }
+//        $date_orig = new DateTime();
+//        $date_orig = $date_orig->format('m/d/Y H:i:s');
+//        $date_end = $obj->getDateCreate()->add(new DateInterval('PT'.$upsell_seconds.'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
+//        if ($date_end > $date_orig) {
+//            $canUpsell = true;
+//        }
 
 
         $params = array(
