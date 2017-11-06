@@ -487,7 +487,7 @@ function round(value, exp) {
 function addToCart(product_name, srp, min_price, id, barcode, item_code)
 {
     var trans_type = $('#string_trans_type').val();
-    if (trans_type == 'bulk') {
+    if (trans_type == 'bulk' && $('#flag_refund').val() == 'false') {
         sweetAlert("Can't add item!", "Reset transaction type to add item/s", "error");
     } else {
         $('.init_row_prods').remove();
@@ -556,7 +556,7 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
                 computeRefundCartRaw();
             } else if ($('#string_trans_type').val() == 'bulk') {
                 computeRefundCartRaw();
-                applyBulkAdjustment();
+                //applyBulkAdjustment();
             }
             computeBalance();
             computeRefundBalance();

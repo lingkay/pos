@@ -14,9 +14,19 @@ function computeRefundBalance()
     var refund_total = 0;
     $('.refund_issued:checkbox:checked').each(function () {
         var row = $(this).closest('.product_row');
-        var srp = row.find('.srp');
-        srp = srp.val();
-        refund_total += parseFloat(srp);
+        // var srp = row.find('.srp');
+        // srp = srp.val();
+        // refund_total += parseFloat(srp);
+
+        if ($('#string_trans_type').val() == 'per') {
+            var ap = row.find('.adjusted_price');
+            ap = ap.val();
+            refund_total += parseFloat(ap);
+        } else {
+            var srp = row.find('.srp');
+            srp = srp.val();
+            refund_total += parseFloat(srp);
+        }
     });
 
     var newCartTotal = 0;
@@ -25,6 +35,12 @@ function computeRefundBalance()
     });
 
     balance = ((transaction_amount - refund_total) - payments) + newCartTotal;
+    // alert('BALANCE FROM REF COMP BAL: '+ balance);
+    // alert('transaction_amount: '+ transaction_amount);
+    // alert('payments: '+ payments);
+    // alert('refund_total: '+ refund_total);
+    // alert('newCartTotal: '+ newCartTotal);
+
     $('#float_refund_trans_balance').val(balance);
     $('.totals_refund_balance').text(addCommas(balance));
     $('.co_balance').text(addCommas(balance));
@@ -147,10 +163,11 @@ function computeRefundCartIndiv()
         // alert($(this).val());
     });
 
-    var orig_price = $('#float_refund_cart_orig_price').val();
-    var savings = orig_price - sale_price;
+    //ENABLE FOR CUSTOMER REFUND
+    //var orig_price = $('#float_refund_cart_orig_price').val();
+    //var savings = orig_price - sale_price;
 
-    $('#customer_savings').text(addCommas(parseFloat(savings)));
+    //$('#customer_refund_savings').text(addCommas(parseFloat(savings)));
 
     // assign new values
     $('#float_refund_cart_new_price').val(sale_price);

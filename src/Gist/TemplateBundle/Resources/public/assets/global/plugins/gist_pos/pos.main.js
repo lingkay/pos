@@ -254,10 +254,18 @@ $(document).ready(function(){
         var rowx = $(this).closest('.product_row');
         $('.refund_issued:checkbox:checked').each(function () {
             var row = $(this).closest('.product_row');
-            var srp = row.find('.srp');
-            srp = srp.val();
-            items_to_refund++;
-            selected_refund_total += parseFloat(srp);
+            if ($('#string_trans_type').val() == 'per') {
+                var ap = row.find('.adjusted_price');
+                ap = ap.val();
+                items_to_refund++;
+                selected_refund_total += parseFloat(ap);
+            } else {
+                var srp = row.find('.srp');
+                srp = srp.val();
+                items_to_refund++;
+                selected_refund_total += parseFloat(srp);
+            }
+
         });
 
         //count number of items
@@ -649,7 +657,11 @@ $(document).ready(function(){
                         computeCartRaw();
                     }
 
-                    applyBulkAdjustment();
+                    if ($('#flag_refund').val() != 'true') {
+                        applyBulkAdjustment();
+                    }
+
+
                 } else {
                     if ($('#flag_refund').val() == 'true') {
                         computeRefundCartRaw();
@@ -667,7 +679,7 @@ $(document).ready(function(){
                 sweetAlert("Can't remove item!", "Payment already made", "error");
             }
         } else {
-            if (trans_type == 'bulk') {
+            if (trans_type == 'bulk' && $('#flag_refund').val() == 'false') {
                 sweetAlert("Can't remove item!", "Reset transaction type to remove item/s", "error");
             } else {
                 e.preventDefault();            
@@ -1751,9 +1763,20 @@ $(document).ready(function(){
                     var refund_total = 0;
                     $('.refund_issued:checkbox:checked').each(function () {
                         var row = $(this).closest('.product_row');
-                        var srp = row.find('.srp');
-                        srp = srp.val();
-                        refund_total += parseFloat(srp);
+                        // var srp = row.find('.srp');
+                        // srp = srp.val();
+                        // refund_total += parseFloat(srp);
+
+                        if ($('#string_trans_type').val() == 'per') {
+                            var ap = row.find('.adjusted_price');
+                            ap = ap.val();
+                            refund_total += parseFloat(ap);
+                        } else {
+                            var srp = row.find('.srp');
+                            srp = srp.val();
+                            refund_total += parseFloat(srp);
+                        }
+
                     });
 
                     var new_cart_total = 0;

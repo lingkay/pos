@@ -237,12 +237,17 @@
                                 <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="refund_new_cart_table">
                                     <thead>
                                     {% if transaction_object.getTransactionType|default('null') == 'per' %}
+                                        {#<tr>#}
+                                            {#<th width="60%" style="width: 118px;">Item</th>#}
+                                            {#<th width="25%" style="width: 88px;">Price</th>#}
+                                            {#<th style="width: 98px;">Discount Type</th>#}
+                                            {#<th style="width: 88px;">Value</th>#}
+                                            {#<th style="width: 88px;">Adjusted Price</th>#}
+                                            {#<th width="10%"></th>#}
+                                        {#</tr>#}
                                         <tr>
-                                            <th width="60%" style="width: 118px;">Item</th>
-                                            <th width="25%" style="width: 88px;">Price</th>
-                                            <th style="width: 98px;">Discount Type</th>
-                                            <th style="width: 88px;">Value</th>
-                                            <th style="width: 88px;">Adjusted Price</th>
+                                            <th width="60%">Item</th>
+                                            <th width="25%">Price</th>
                                             <th width="10%"></th>
                                         </tr>
                                     {% else %}
@@ -271,8 +276,8 @@
                                     <a href="/pos" class="btn" style="background-color: red; color: #ffffff;">Cancel Refund</a>
                                     <br>
                                     <br>
-                                    <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
-                                    <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
+                                    {#<h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>#}
+                                    {#<h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>#}
                                 </div>
                             </div>
                             <div class="row">
@@ -291,16 +296,16 @@
                                             <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_refund_amt_net_vat" value="0">0</span></b></p></td>
                                             <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_refund_vat_amt" value="0">0</span></b></p></td>
                                         </tr>
-                                        <tr class="updated_totals_row">
-                                            <td><p style="font-size:12px;" class="updated_price_h3">Updated <b>Php <span class="updated_refund_cart_price" value="0">0</span></b></p></td>
-                                            <td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_refund_amt_net_vat" value="0">0</span></b></p></td>
-                                            <td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_refund_vat_amt" value="0">0</span></b></p></td>
-                                        </tr>
-                                        <tr class="deposit_amount_totals_row">
-                                            <td><p style="font-size:12px;" class="deposit_amount_h3">Deposit <b>Php <span class="totals_refund_deposit_amt" value="0">0</span></b></p></td>
-                                            <td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_refund_amt_net_vat" value="0">0</span></b></p></td>
-                                            <td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_refund_vat_amt" value="0">0</span></b></p></td>
-                                        </tr>
+                                        {#<tr class="updated_totals_row">#}
+                                            {#<td><p style="font-size:12px;" class="updated_price_h3">Updated <b>Php <span class="updated_refund_cart_price" value="0">0</span></b></p></td>#}
+                                            {#<td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_refund_amt_net_vat" value="0">0</span></b></p></td>#}
+                                            {#<td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_refund_vat_amt" value="0">0</span></b></p></td>#}
+                                        {#</tr>#}
+                                        {#<tr class="deposit_amount_totals_row">#}
+                                            {#<td><p style="font-size:12px;" class="deposit_amount_h3">Deposit <b>Php <span class="totals_refund_deposit_amt" value="0">0</span></b></p></td>#}
+                                            {#<td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_refund_amt_net_vat" value="0">0</span></b></p></td>#}
+                                            {#<td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_refund_vat_amt" value="0">0</span></b></p></td>#}
+                                        {#</tr>#}
                                         <tr class="refund_balance_totals_row">
                                             <td><p style="font-size:12px;" class="refund_balance_amount_h3">Balance <b>Php <span class="totals_refund_balance" value="0">0.00</span></b></p></td>
                                             <td><p style="font-size:12px;" class="refund_balance_amt_vat"><b>Php <span id="balance_refund_amt_net_vat" value="0">0</span></b></p></td>
@@ -628,9 +633,7 @@
                     computeCartMinimum();
                     computeBalance();
 
-                    computeRefundCartRaw();
-                    computeRefundCartMinimum();
-                    computeRefundBalance();
+
                     if (trans_type == 'per') {
                         $('#string_trans_type').val('per');
                         $('.next_step_btn').hide();
@@ -647,7 +650,7 @@
                         var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
                         $('#string_trans_type').val('bulk');
                         $('.updated_totals_row').show();
-
+                        $('.bulk_discount_h4').show();
                         $('.next_step_btn').hide();
                         $('.savings_h4').show();
                         $('.bulk_adj').show();
@@ -655,6 +658,10 @@
                         applyBulkAdjustmentOnLoad();
                         $('.checkout_btn').show();
                     }
+
+                    computeRefundCartRaw();
+                    computeRefundCartMinimum();
+                    computeRefundBalance();
                 }
 
                 $(document).on("click",".quotation_continue_btn", function(e){
