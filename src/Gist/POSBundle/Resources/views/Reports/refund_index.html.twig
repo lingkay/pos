@@ -1,0 +1,185 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% block content %}
+    <div class="page-content">
+        <form method="post" class="form-horizontal">
+            <div class="row" style="width: 100%;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h2 class="form-section">Exchange/Refund</h2>
+                    <br>
+                    <!--BEGIN TABS-->
+                    <div class="tabbable tabbable-custom tabbable-full-width">
+                        <!-- MAIN TABS -->
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#tab_sales_history" data-toggle="tab">
+                                    Search Transaction </a>
+                            </li>
+                        </ul>
+                        <!-- END MAIN TABS -->
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_sales_history">
+                                {% include 'GistPOSBundle:Reports:sales_history.html.twig' %}
+                            </div>
+                            <div class="tab-pane" id="tab_sync_settings">
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--END TABS-->
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+
+    <script>
+        function syncUsers()
+        {
+            var route = "{{ path('gist_pos_settings_sync_users')|escape('js') }}";
+            $.getJSON(route, function(json){
+                $.each(json, function(i, x) {
+                    swal({
+                            title: "Users Data Updated!",
+                            text: "The page will now reload",
+                            type: "success",
+                            confirmButtonColor: "green",
+                            confirmButtonText: "Okay",
+                        },
+                        function(){
+                            location.reload();
+
+                        });
+
+                });
+            });
+        }
+
+        $(document).ready(function(){
+
+            var dTable;
+
+
+            dTable = $('#list_table').dataTable({
+                "bProcessing": true,
+                "bLengthChange": false,
+                "bFilter":false,
+                "iDeferLoading": 0,
+                "bInfo":false,
+                "bServerSide": true,
+                "sAjaxSource": "{{ path('gist_pos_reports_refund_grid_ajax') }}",
+                "iDisplayLength": 8,
+                "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [2,4,{{ grid_cols|length - 1}}] },
+                ],
+                "bAutoWidth": false ,
+                "aoColumns" : [
+                    { "sWidth": '5%' },
+                    { "sWidth": '15%' },
+                    { "sWidth": '15%' },
+                    { "sWidth": '15%' },
+                    { "sWidth": '15%' },
+                    { "sWidth": '10%' }
+                ],
+                "aaSorting" : [[0, 'desc']]
+            });
+
+            $('#list_table_wrapper .dataTables_filter input').addClass("form-control input-small input-inline"); // modify table search input
+            $('#list_table_wrapper .dataTables_length select').addClass("form-control input-xsmall input-inline"); // modify table per page dropdown
+            $('#list_table_wrapper .dataTables_length select').select2(); // initialize select2 dropdown
+
+            $(document).on("click",".sync_users", function(e){
+                swal({
+                        title: "Proceed with action?",
+                        text: "This will update all user records on this machine",
+                        imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
+                        imageSize: '100x100',
+                        showConfirmButton: true,
+                        showCancelButton: true
+                    },
+                    function(){
+                        // alert('hello');
+                        //location.reload();
+                        syncUsers();
+                    });
+                //update users here
+                // syncUsers();
+            });
+
+            $('#daterange').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [new Date(), moment().add(1, 'days')],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), new Date()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), new Date()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    opens: 'left',
+                    format: 'MM/DD/YYYY',
+                },
+                function(start, end) {
+                    $('#daterange input').val(start.format('MM/DD/YYYY') + '   -   ' + end.format('MM/DD/YYYY'));
+                    $('#cform-date_from').val(start.format('YYYYMMDD'));
+                    $('#cform-date_to').val(end.format('YYYYMMDD'));
+                }
+            );
+
+            $('#clear_filter_button').click(function (){
+                $('#cform-receipt_number').val('');
+                $('#cform-transaction_mode').val([]);
+            });
+
+
+
+            $('#filter_button').click(function (){
+
+                var date_to = $('#cform-date_to').val();
+                var date_from = $('#cform-date_from').val();
+                var receipt_number = $('#cform-receipt_number').val();
+                var mode = $('#cform-transaction_mode').val();
+
+                var pathx = "{{ path('gist_pos_reports_refund_grid_ajax', {
+
+                    'receipt_number' : 'RECEIPT_NUMBER',
+                    'date_from' : 'DATE_FROM',
+                    'date_to' : 'DATE_TO',
+                    'mode' : 'MODE'
+
+                }) }}";
+
+                if (receipt_number == '') {
+                    receipt_number = null;
+                }
+
+                if (mode == '') {
+                    mode = null;
+                }
+
+                pathx = pathx.replace('RECEIPT_NUMBER', receipt_number).replace('DATE_FROM', date_from).replace('DATE_TO', date_to).replace('MODE', mode);
+
+
+                // path = generatePath();
+                dTable.fnReloadAjax(pathx);
+            });
+
+            var mode = "{{mode|default('')}}";
+            if (mode != '') {
+                $('#filter_button').trigger('click');
+            }
+
+        });
+    </script>
+{% endblock %}

@@ -492,7 +492,22 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
     } else {
         $('.init_row_prods').remove();
         var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
-        var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';     
+
+        if ($('#flag_refund').val() == 'true') {
+            var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';
+            field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
+            field += '<input type=\"hidden\" name=\"issued_on[]\" class=\"issued_on\" value=\"0\" >';
+            field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
+            field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
+            field += '<input type=\"hidden\" name=\"min_refund_price[]\" class=\"min_refund_price\" value=\"'+min_price+'\" >';
+            field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
+            field += '<input type=\"hidden\" name=\"product_refund_amt[]\" class=\"product_refund_amt\" value=\"'+srp+'\" >';
+            field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
+            field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_refund_price[]" class="form-control display_refund_price" readonly="true" value="'+srp+'"></td>';
+            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
+            field += '</tr>';
+        } else {
+            var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';
             field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
             field += '<input type=\"hidden\" name=\"issued_on[]\" class=\"issued_on\" value=\"0\" >';
             field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
@@ -501,11 +516,19 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
             field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
             field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
             field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-            field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>';  
-            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>'; 
+            field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>';
+            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
             field += '</tr>';
+        }
 
-            $('#cart_items').prepend(field);
+
+
+            if ($('#flag_refund').val() == 'true') {
+                $('#refund_new_cart_items').prepend(field);
+            } else {
+                $('#cart_items').prepend(field);
+            }
+
 
             if ($('#string_trans_mode').val() == 'Deposit') {
                 appendDepositItemFields();
@@ -523,6 +546,21 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
             $('.cart_items_count').text(rowCount.toString());
 
             //compute raw amounts/values (no alterations or discounts)
+        if ($('#flag_refund').val() == 'true') {
+            if ($('#string_trans_type').val() == 'none') {
+                computeRefundCartRaw();
+            } else if ($('#string_trans_type').val() == 'per') {
+                computeRefundCartRaw();
+                computeRefundCartIndiv();
+            } else if ($('#string_trans_type').val() == 'reg') {
+                computeRefundCartRaw();
+            } else if ($('#string_trans_type').val() == 'bulk') {
+                computeRefundCartRaw();
+                applyBulkAdjustment();
+            }
+            computeBalance();
+            computeRefundBalance();
+        } else {
             if ($('#string_trans_type').val() == 'none') {
                 computeCartRaw();
             } else if ($('#string_trans_type').val() == 'per') {
@@ -535,6 +573,10 @@ function addToCart(product_name, srp, min_price, id, barcode, item_code)
                 applyBulkAdjustment();
             }
             computeBalance();
+        }
+
+
+
     }
 
 }
@@ -558,16 +600,6 @@ function computeBalance()
     $('.co_balance_static').text(addCommas(balance));
     $('.co_balance_disp').text(addCommas(balance));
 
-    if ($('#string_trans_type').val() == 'none') {
-
-    } else if ($('#string_trans_type').val() == 'per') {
-
-    } else if ($('#string_trans_type').val() == 'bulk') {
-
-    } else {
-
-    }
-
     computeVATBalance(balance);
 }
 
@@ -578,19 +610,9 @@ function computeBalanceDisplay(amt)
     var transaction_amount = $('#float_trans_balance').val();
     var balance = 0;
 
-
     balance = transaction_amount - payments;
     $('.co_balance_disp').text(addCommas(balance));
 
-    if ($('#string_trans_type').val() == 'none') {
-
-    } else if ($('#string_trans_type').val() == 'per') {
-
-    } else if ($('#string_trans_type').val() == 'bulk') {
-
-    } else {
-
-    }
 }
 
 
@@ -980,6 +1002,7 @@ function applyBulkAdjustment()
         $('#string_trans_bulk_type').val('none');
     }
     computeBalance();
+    computeRefundBalance();
 }
 
 
@@ -1119,8 +1142,9 @@ function loadFrozenTransactions()
 
 }
 
-function freezeTransaction(is_final = false)
+function freezeTransaction(is_final)
 {
+    is_final
     var trans_saved = false;
     var items_saved = false;
     var payments_saved = false;

@@ -110,6 +110,37 @@ class POSController extends Controller
     }
 
     /**
+     * Show the POS page refund mode
+     */
+    public function indexLoadRefundAction($transaction_display_id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $this->title = 'Dashboard Loaded';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $params = $this->padFormParams($params);
+        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('trans_display_id' => $transaction_display_id));
+        $params['transaction_object'] = null;
+        $params['customer'] = null;
+        $params['restrict'] = 'false';
+        $params['flag_refund'] = 'true';
+
+        if ($transaction_object) {
+
+            if ($transaction_object->hasChild()) {
+                return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
+            }
+
+            if ($transaction_object->getTransactionMode() != 'frozen' && $transaction_object->getTransactionMode() != 'Deposit' && $transaction_object->getTransactionMode() != 'normal') {
+                return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
+            }
+            $params['transaction_object'] = $transaction_object;
+            $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
+        }
+
+        return $this->render('GistPOSBundle:Dashboard:index_refund.html.twig', $params);
+    }
+
+    /**
      * Generate parameters
      */
     protected function padFormParams(&$params, $object = null)

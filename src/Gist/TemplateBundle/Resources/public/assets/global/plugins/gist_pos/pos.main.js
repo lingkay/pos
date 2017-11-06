@@ -148,6 +148,35 @@ function computeVATBalance(total)
     }
 }
 
+function computeRefundVATBalance(total)
+{
+    var tax_rate = parseFloat($('#float_tax_rate').val())/100;
+    var tax_coverage = $('#string_tax_coverage').val();
+    var vat_amt = 0;
+    var amt_net_of_vat = 0;
+    var incl_divisor = tax_rate + 1;
+
+    if (tax_coverage == 'incl') {
+        vat_amt = total*tax_rate;
+        amt_net_of_vat = total - vat_amt;
+
+        $('#float_refund_balance_tax_vat_amt').val(vat_amt);
+        $('#float_refund_balance_tax_amt_net_vat').val(amt_net_of_vat);
+        $("#balance_refund_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        $("#balance_refund_vat_amt").text(addCommas(round(vat_amt,2)));
+    } else if (tax_coverage == 'excl') {
+        vat_amt = total - (total/incl_divisor);
+        amt_net_of_vat = total - vat_amt;
+
+        $('#float_refund_balance_tax_vat_amt').val(vat_amt);
+        $('#float_refund_balance_tax_amt_net_vat').val(amt_net_of_vat);
+        $("#balance_refund_amt_net_vat").text(addCommas(round(amt_net_of_vat,2)));
+        $("#balance_refund_vat_amt").text(addCommas(round(vat_amt,2)));
+    } else {
+
+    }
+}
+
 
 $(document).ready(function(){ 
 
@@ -218,7 +247,24 @@ $(document).ready(function(){
         location.replace('/reports/auto_search/deposit');
     });
 
+    $(document).on("click", ".refund_issued", function (e) {
 
+        var selected_refund_total = 0;
+        var items_to_refund = 0;
+        var rowx = $(this).closest('.product_row');
+        $('.refund_issued:checkbox:checked').each(function () {
+            var row = $(this).closest('.product_row');
+            var srp = row.find('.srp');
+            srp = srp.val();
+            items_to_refund++;
+            selected_refund_total += parseFloat(srp);
+        });
+
+        //count number of items
+        var rowCount = $('#refund_new_cart_table tr').length - 1;
+        $('#lbl_refund_amount').text(addCommas(parseFloat(selected_refund_total)));
+        computeRefundBalance();
+    });
 
     $(document).on("click",".check_issued", function(e){
 
@@ -360,12 +406,20 @@ $(document).ready(function(){
     });
     $(document).on("click",".remove_card", function(e){
         $(this).closest('.cc_field').remove();
-        computeBalanceDisplayCardMulti(0);
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplayCardMulti(0);
+        } else {
+            computeBalanceDisplayCardMulti(0);
+        }
     });
 
     $(document).on("click",".remove_check", function(e){
         $(this).closest('.check_field').remove();
-        computeBalanceDisplayCheckMulti(0);
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplayCheckMulti(0);
+        } else {
+            computeBalanceDisplayCheckMulti(0);
+        }
     });
 
     $(document).on("click",".check_is_pdc", function(e){
@@ -550,7 +604,7 @@ $(document).ready(function(){
         var balance = $('#float_trans_balance').val();
 
         if (balance < trans_amt) {
-            if (trans_mode == 'Deposit') {
+            if (trans_mode == 'Deposit' || $('#flag_refund').val() == 'true') {
                 e.preventDefault();            
                 var tr = $(this).closest('tr');
                 tr.remove();
@@ -572,18 +626,43 @@ $(document).ready(function(){
                 }
 
                 if($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
-                    computeCartRaw();
+                    if ($('#flag_refund').val() == 'true') {
+                        computeRefundCartRaw();
+                    } else {
+                        computeCartRaw();
+                    }
+
                 } else if($('#string_trans_type').val() == 'per') {
                     // alert('remove indiv');
-                    computeCartRaw();
-                    computeCartIndiv();
+                    if ($('#flag_refund').val() == 'true') {
+                        computeRefundCartRaw();
+                        computeRefundCartIndiv();
+                    } else {
+                        computeCartRaw();
+                        computeCartIndiv();
+                    }
+
                 } else if($('#string_trans_type').val() == 'bulk') {
-                    computeCartRaw();
+                    if ($('#flag_refund').val() == 'true') {
+                        computeRefundCartRaw();
+                    } else {
+                        computeCartRaw();
+                    }
+
                     applyBulkAdjustment();
                 } else {
-                    computeCartRaw();
+                    if ($('#flag_refund').val() == 'true') {
+                        computeRefundCartRaw();
+                    } else {
+                        computeCartRaw();
+                    }
                 }
-                computeBalance();    
+                if ($('#flag_refund').val() == 'true') {
+                    computeRefundBalance();
+                } else {
+                    computeBalance();
+                }
+
             } else {
                 sweetAlert("Can't remove item!", "Payment already made", "error");
             }
@@ -910,7 +989,11 @@ $(document).ready(function(){
                             $('#cc_modal').modal('hide');
                             $('#swipe_expired').modal('hide');
                             $('#checkout_modal').modal('show');
-                            computeBalanceDisplayCardMulti(0);
+                            if ($('#flag_refund').val() == 'true') {
+                                computeRefundBalanceDisplayCardMulti(0);
+                            } else {
+                                computeBalanceDisplayCardMulti(0);
+                            }
                         }   
                     });
                     
@@ -1440,11 +1523,18 @@ $(document).ready(function(){
                 $('#cash_chg_amt').text(change);
             }
 
-            computeBalanceDisplay($(this).val());
-            
+            if ($('#flag_refund').val() == 'true') {
+                computeRefundBalanceDisplay($(this).val());
+            } else {
+                computeBalanceDisplay($(this).val());
+            }
         } else {
             $('#cash_chg_amt').text("0.00");
-            computeBalanceDisplay(0);
+            if ($('#flag_refund').val() == 'true') {
+                computeRefundBalanceDisplay($(this).val());
+            } else {
+                computeBalanceDisplay($(this).val());
+            }
         }
     });
 
@@ -1481,7 +1571,12 @@ $(document).ready(function(){
                 }
             }
         }
-        computeBalanceDisplay($('#cform-cash_received_amt').val());
+
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplay($('#cform-cash_received_amt').val());
+        } else {
+            computeBalanceDisplay($('#cform-cash_received_amt').val());
+        }
     });
 
     $(window).keydown(function(event){
@@ -1648,9 +1743,35 @@ $(document).ready(function(){
         if ($('#cart_table tr').length > 1) {
             $('#checkout_modal').modal('show');
             var rowCount = $('#payments_table tr').length-1;
-            if (parseFloat($('#float_trans_balance').val()) == 0 && rowCount == 0) {
-                $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
-                $('.co_balance').text($('#transaction_amt_to_pay').val());
+            if ((parseFloat($('#float_trans_balance').val()) == 0 && rowCount == 0) || $('#flag_refund').val() == 'true') {
+                if ($('#flag_refund').val() == 'true') {
+                    var trans_amt = $('#float_trans_amount').val();
+                    var refund_trans_amt = $('#float_refund_trans_amount').val();
+                    //get refund amount
+                    var refund_total = 0;
+                    $('.refund_issued:checkbox:checked').each(function () {
+                        var row = $(this).closest('.product_row');
+                        var srp = row.find('.srp');
+                        srp = srp.val();
+                        refund_total += parseFloat(srp);
+                    });
+
+                    var new_cart_total = 0;
+                    // compute each item's original price
+                    $('.display_refund_price').each(function(){
+                        new_cart_total = new_cart_total + parseFloat($(this).val());
+                    });
+
+                    var rem_total = ((parseFloat(trans_amt)+parseFloat(new_cart_total)) - parseFloat(refund_total));
+                    var ref_balance = parseFloat(new_cart_total) - parseFloat(refund_total);
+
+                    $('.co_amt_to_pay').text(addCommas(rem_total));
+                    $('.co_balance').text(addCommas(ref_balance));
+                } else {
+                    $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
+                    $('.co_balance').text($('#transaction_amt_to_pay').val());
+                }
+
             } else {
                 $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
             }
@@ -1663,7 +1784,11 @@ $(document).ready(function(){
 
     $('.bulk_adj').hide();
     $('.clear_discount').hide();
-    $('.checkout_btn').hide();
+
+    if ($('#flag_refund').val() != 'true') {
+        $('.checkout_btn').hide();
+    }
+
     $('.proceed_deposit').hide();
     $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
@@ -1694,14 +1819,22 @@ $(document).ready(function(){
         $('#cform-cash_received_amt').val('');
         $('#cash_modal').modal('hide');
         $('#checkout_modal').modal('show');
-        computeBalanceDisplay(0);
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplay(0);
+        } else {
+            computeBalanceDisplay(0);
+        }
     });
 
     $(document).on("click",".cc_go_back", function(e){
         clearCreditCardModal();
         $('#cc_modal').modal('hide');
         $('#checkout_modal').modal('show');
-        computeBalanceDisplayCardMulti(0);
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplayCardMulti(0);
+        } else {
+            computeBalanceDisplayCardMulti(0);
+        }
     });
 
     $(document).on("click",".cc_go_back2", function(e){
@@ -1709,14 +1842,22 @@ $(document).ready(function(){
         $('#cc_modal').modal('hide');
         $('#swipe_expired').modal('hide');
         $('#checkout_modal').modal('show');
-        computeBalanceDisplayCardMulti(0);
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplayCardMulti(0);
+        } else {
+            computeBalanceDisplayCardMulti(0);
+        }
     });
 
     $(document).on("click",".check_go_back", function(e){
         clearCheckModal();
         $('#check_modal').modal('hide');
         $('#checkout_modal').modal('show');
-        computeBalanceDisplayCheckMulti(0);
+        if ($('#flag_refund').val() == 'true') {
+            computeRefundBalanceDisplayCheckMulti(0);
+        } else {
+            computeBalanceDisplayCheckMulti(0);
+        }
     });
 
     $(document).on("click",".proceed_btn", function(e){

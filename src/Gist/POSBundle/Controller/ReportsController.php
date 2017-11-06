@@ -246,23 +246,13 @@ class ReportsController extends CrudController
         catch (ValidationException $e)
         {
             error_log($e->getMessage());
-            return $this->addError($obj);
         }
         catch (DBALException $e)
         {
             error_log($e->getMessage());
-            return $this->addError($obj);
         }
 
     }
-
-    // protected function getGridJoins()
-    // {
-    //     $grid = $this->get('gist_grid');
-    //     return array(
-    //         $grid->newJoin('s', 'reference_transaction', 'getReferenceTransaction'),
-    //     );
-    // }
 
     protected function getGridColumns()
     {
@@ -291,6 +281,28 @@ class ReportsController extends CrudController
             return "-";
     }
 
+    public function formatReferenceLink2($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $router = $this->get('router');
+        $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+        if($obj->getReferenceTransaction() != null)
+            return $obj->getReferenceTransactionDisplayID();
+        else
+            return "-";
+    }
+
+    public function formatTransLink($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $router = $this->get('router');
+        $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
+        if ($obj)
+            return "<a style=\"text-decoration: none;\" href=\"".$router->generate('gist_pos_index_refund', array('transaction_display_id' => $obj->getTransDisplayID()))."\">".$obj->getTransDisplayID()."</a>";
+        else
+            '-';
+    }
+
     public function indexAction()
     {
         $conf = $this->get('gist_configuration');
@@ -315,6 +327,88 @@ class ReportsController extends CrudController
 
 
         return $this->render('GistPOSBundle:Reports:index.html.twig', $params);
+    }
+
+    public function indexRefundAction()
+    {
+        $conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
+        $this->title = 'Dashboard';
+        $gl = $this->setupRefundGridLoader();
+
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
+        $params['sys_area_id'] = $conf->get('gist_sys_area_id');
+        $params['users'] = $user_exist;
+        $params['modes'] = array(
+            'normal'=>'Normal',
+            'quotation'=>'Quotation',
+            'deposit'=>'Deposit',
+            'upsell'=>'Upsell',
+            'frozen'=>'Frozen'
+        );
+        $params['grid_cols'] = $gl->getColumns();
+
+        //$params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
+
+
+        return $this->render('GistPOSBundle:Reports:refund_index.html.twig', $params);
+    }
+
+    protected function setupRefundGridLoader()
+    {
+        $data = $this->getRequest()->query->all();
+        $grid = $this->get('gist_grid');
+
+        // loader
+        $gloader = $grid->newLoader();
+        $gloader->processParams($data)
+            ->setRepository('GistPOSBundle:POSTransaction');
+
+        // grid joins
+        $gjoins = $this->getGridJoins();
+        foreach ($gjoins as $gj)
+            $gloader->addJoin($gj);
+
+        // grid columns
+        $gcols = $this->getRefundGridColumns();
+
+
+        // add columns
+        foreach ($gcols as $gc)
+            $gloader->addColumn($gc);
+
+        return $gloader;
+    }
+
+    public function gridRefundSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
+    {
+        $this->hookPreAction();
+
+        $gloader = $this->setupRefundGridLoader();
+
+        $gloader->setQBFilterGroup($this->filterSalesHistory($receipt_number,$date_from,$date_to, $mode));
+        $gres = $gloader->load();
+        $resp = new Response($gres->getJSON());
+        $resp->headers->set('Content-Type', 'application/json');
+
+        return $resp;
+    }
+
+    protected function getRefundGridColumns()
+    {
+        $grid = $this->get('gist_grid');
+
+        return array(
+            $grid->newColumn('ID', 'getID', 'id'),
+            $grid->newColumn('Receipt Number', 'getID', 'id','o',array($this,'formatTransLink')),
+            // $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
+            $grid->newColumn('Reference', 'getID', 'id','o',array($this,'formatReferenceLink2')),
+            $grid->newColumn('Transaction Date','getDateCreateFormattedPOS','date_create'),
+            //$grid->newColumn('Location', 'null', 'null'),
+            $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
+            $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
+        );
     }
 
     public function indexAutoSearchAction($mode)

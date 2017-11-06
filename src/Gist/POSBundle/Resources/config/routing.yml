@@ -10,6 +10,10 @@ gist_pos_index_load:
     path:     /pos/load/{transaction_display_id}
     defaults: { _controller: GistPOSBundle:POS:indexLoad }
 
+gist_pos_index_refund:
+    path:     /pos/load/refund/{transaction_display_id}
+    defaults: { _controller: GistPOSBundle:POS:indexLoadRefund }
+
 gist_pos_index_load_upsell:
     path:     /pos/load/upsell/{upsell_parent}
     defaults: { _controller: GistPOSBundle:POS:indexLoadUpsell }
@@ -90,6 +94,11 @@ gist_pos_reports:
     methods: [GET]
     defaults: { _controller: GistPOSBundle:Reports:index }
 
+gist_pos_refund_reports:
+    path:     /refund
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Reports:indexRefund }
+
 gist_pos_reports_auto_search:
     path:     /reports/auto_search/{mode}
     methods: [GET]
@@ -117,6 +126,10 @@ gist_pos_delete_transaction:
 gist_pos_reports_grid_ajax:
     path:    /reports/ajax/{receipt_number}/{date_from}/{date_to}/{mode}
     defaults: { _controller: GistPOSBundle:Reports:gridSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null }
+
+gist_pos_reports_refund_grid_ajax:
+    path:    /reports/ajax/refund/{receipt_number}/{date_from}/{date_to}/{mode}
+    defaults: { _controller: GistPOSBundle:Reports:gridRefundSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null }
 
 gist_pos_split_transaction_form:
     pattern: /reports/split_transaction/{id}
