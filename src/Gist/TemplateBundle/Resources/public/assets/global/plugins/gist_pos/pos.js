@@ -1144,11 +1144,12 @@ function loadFrozenTransactions()
 
 function freezeTransaction(is_final)
 {
-    is_final
+    is_final = is_final || false;
     var trans_saved = false;
     var items_saved = false;
     var payments_saved = false;
     var count_cart_items = $('#cart_items tr').length;
+    var count_new_cart_items = $('#refund_new_cart_items tr').length;
     var count_payments = $('#payments_table .init_row_payment').length;
     var transaction_sys_id = $('#transaction_system_id').val();
     var transaction_disp_id = $('#transaction_display_id').val();
@@ -1172,6 +1173,7 @@ function freezeTransaction(is_final)
     var transaction_cc_interest = $('#string_trans_cc_interest').val();
     var transaction_reference_sys_id = $('#transaction_reference_sys_id').val();
     var flag_upsell = $('#flag_upsell').val();
+    var flag_refund = $('#flag_refund').val();
     var deposit_amount = $('#float_trans_deposit_amount').val();
     var deposit_amt_net_vat = $('#float_deposit_tax_amt_net_vat').val();
     var deposit_vat_amt = $('#float_deposit_tax_vat_amt').val();
@@ -1199,72 +1201,109 @@ function freezeTransaction(is_final)
             x_new_id = trans.new_id;
             //save items
             if (count_cart_items > 0) {
+
                 $('#cart_items tr').each(function() {
                     var row = $(this).closest('tr');
-                    var product_id = row.find('.product_id').val();
-                    var orig_price = row.find('.srp').val();
-                    var min_price = row.find('.min_price').val();
-                    var product_name = row.find('.item_name').val();
-                    var barcode = row.find('.barcode').val();
-                    var item_code = row.find('.item_code').val();
-                    var discount_type = '%20';
-                    var discount_value = '%20';
-                    var adjusted_price = '%20';
-                    var is_issued = 'true';
-                    var issued_on = row.find('.issued_on').val();
 
-                    if (transaction_type == "per") {
-                        var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
-                        var per_item_discount_amt = row.find('.per_item_discount_amt').val();
-                        var adjusted_price_elem = row.find('.adjusted_price').val();
+                    if (!(row.find('.refund_issued').is(':checked')) && flag_refund == 'true') {
+                        var product_id = row.find('.product_id').val();
+                        var orig_price = row.find('.srp').val();
+                        var min_price = row.find('.min_price').val();
+                        var product_name = row.find('.item_name').val();
+                        var barcode = row.find('.barcode').val();
+                        var item_code = row.find('.item_code').val();
+                        var discount_type = '%20';
+                        var discount_value = '%20';
+                        var adjusted_price = '%20';
+                        var is_issued = 'true';
+                        var issued_on = row.find('.issued_on').val();
 
-                        if (indiv_disc_opt.length > 0) {
-                            discount_type = indiv_disc_opt;
-                        } else {
-                            discount_type = '%20';
+                        if (transaction_mode != 'Deposit') {
+                            issued_on = '%20';
                         }
 
-                        if (per_item_discount_amt.length > 0) {
-                            discount_value = per_item_discount_amt;
-                        } else {
-                            discount_value = '%20';
+                        if (transaction_type == "per") {
+                            var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
+                            var per_item_discount_amt = row.find('.per_item_discount_amt').val();
+                            var adjusted_price_elem = row.find('.adjusted_price').val();
+
+                            if (indiv_disc_opt.length > 0) {
+                                discount_type = indiv_disc_opt;
+                            } else {
+                                discount_type = '%20';
+                            }
+
+                            if (per_item_discount_amt.length > 0) {
+                                discount_value = per_item_discount_amt;
+                            } else {
+                                discount_value = '%20';
+                            }
+
+                            if (adjusted_price_elem.length > 0) {
+                                adjusted_price = adjusted_price_elem;
+                            } else {
+                                adjusted_price = '%20';
+                            }
                         }
 
-                        if (adjusted_price_elem.length > 0) {
-                            adjusted_price = adjusted_price_elem;
-                        } else {
-                            adjusted_price = '%20';
+                        if (transaction_mode == 'Deposit') {
+                            if (row.find('.check_issued').is(':checked')) {
+                                is_issued = 'true';
+                            } else {
+                                is_issued = 'false';
+                            }
                         }
-                    }
-                    
-                    if (transaction_mode == 'Deposit') {
-                        if (row.find('.check_issued').is(':checked')) {
-                            is_issued = 'true';
-                        } else {
+
+                        if (transaction_mode == 'frozen') {
                             is_issued = 'false';
                         }
-                    }
 
-                    if (transaction_mode == 'frozen') {
-                        is_issued = 'false';
-                    }
-                    
+                        var url2 = url_pos + "/pos/save_item/" + trans.new_id + "/" + product_id + "/" + product_name + "/" + orig_price + "/" + min_price + "/" + adjusted_price + "/" + discount_type + "/" + discount_value + "/" + barcode + "/" + item_code + "/" + is_issued + "/" + issued_on;
 
-
-                    var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code+"/"+is_issued+"/"+issued_on;
-
-
-                    $.getJSON(url2, function(json){  
-                        var count = 0;
-                        $.each(json, function(i, items) {
-                            items_saved = true;
-                            
-                            
+                        $.getJSON(url2, function (json) {
+                            var count = 0;
+                            $.each(json, function (i, items) {
+                                items_saved = true;
+                            });
                         });
-
-
-                    });
+                    }
                 });
+
+                // save new cart items
+                if (count_new_cart_items > 0) {
+                    $('#refund_new_cart_items tr').each(function() {
+                        var row = $(this).closest('tr');
+                        var product_id = row.find('.product_id').val();
+                        var orig_price = row.find('.srp').val();
+                        var min_price = row.find('.min_price').val();
+                        var product_name = row.find('.item_name').val();
+                        var barcode = row.find('.barcode').val();
+                        var item_code = row.find('.item_code').val();
+                        var discount_type = '%20';
+                        var discount_value = '%20';
+                        var adjusted_price = '%20';
+                        var is_issued = 'true';
+                        var issued_on = '%20';
+
+                        //manually assign adjusted price if the original transaction is PER ITEM DISCOUNT
+                        //replace this if refunds can also be discounted
+                        if (transaction_type == 'per') {
+                            adjusted_price = orig_price;
+                        }
+
+
+
+                        var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code+"/"+is_issued+"/"+issued_on;
+
+
+                        $.getJSON(url2, function(json){
+                            var count = 0;
+                            $.each(json, function(i, items) {
+                                items_saved = true;
+                            });
+                        });
+                    });
+                }
             } else {
                 items_saved = true;
 

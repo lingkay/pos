@@ -222,8 +222,10 @@
 
                                     </tbody>
                                 </table>
-                                <h4 class="form-section">Percent of Sale</h4>
-                                <p style="font-size: 20px;">This transaction is {{object.getPercentOfSale|default('')}} of the total SRP</p>
+                                {% if object.getTransactionMode|default('none') != 'refund' %}
+                                    <h4 class="form-section">Percent of Sale</h4>
+                                    <p style="font-size: 20px;">This transaction is {{object.getPercentOfSale|default('')}} of the total SRP</p>
+                                {% endif %}
                             {% else %}
                                 <div class="row" style="margin-top: 30px;">
                                     <div class="col-md-8">

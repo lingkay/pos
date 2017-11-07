@@ -723,8 +723,13 @@ $(document).ready(function(){
                     computeCartRaw();
                     computeCartIndiv();
                 } else if($('#string_trans_type').val() == 'bulk') {
-                    computeCartRaw();
-                    applyBulkAdjustment();
+                    if ($('#flag_refund').val() == 'true') {
+                        computeRefundCartRaw();
+                    } else {
+                        computeCartRaw();
+                        applyBulkAdjustment();
+                    }
+
                 } else {
                     computeCartRaw();
                 }
@@ -1324,6 +1329,11 @@ $(document).ready(function(){
                 var upsell_parent = $('#transaction_upsell_parent').val();
                 $('#transaction_reference_sys_id').val(upsell_parent);
             }
+
+            if ($('#flag_refund').val() == 'true') {
+
+                $('#string_trans_mode').val('refund');
+            }
             
             $('#checkout_modal').modal('hide');
             if ($('#transaction_customer_id').val() == 0) {
@@ -1379,7 +1389,7 @@ $(document).ready(function(){
             }
             
         } else {
-            if ($('#string_trans_mode').val() == "quotation" || payment_total == 0) {
+            if ($('#string_trans_mode').val() == "quotation" || payment_total == 0 || $('#string_trans_mode').val() == "refund") {
                 swal({
                       title: "Payment incomplete!",
                       text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
@@ -1787,6 +1797,9 @@ $(document).ready(function(){
 
                     var rem_total = ((parseFloat(trans_amt)+parseFloat(new_cart_total)) - parseFloat(refund_total));
                     var ref_balance = parseFloat(new_cart_total) - parseFloat(refund_total);
+
+                    $('#float_trans_amount').val(rem_total);
+                    $('#float_trans_balance').val(ref_balance);
 
                     $('.co_amt_to_pay').text(addCommas(rem_total));
                     $('.co_balance').text(addCommas(ref_balance));
