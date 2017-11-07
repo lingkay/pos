@@ -360,6 +360,8 @@ class ReportsController extends CrudController
         $data = $this->getRequest()->query->all();
         $grid = $this->get('gist_grid');
 
+
+
         // loader
         $gloader = $grid->newLoader();
         $gloader->processParams($data)
@@ -387,7 +389,7 @@ class ReportsController extends CrudController
 
         $gloader = $this->setupRefundGridLoader();
 
-        $gloader->setQBFilterGroup($this->filterSalesHistory($receipt_number,$date_from,$date_to, $mode));
+        $gloader->setQBFilterGroup($this->filterRefundHistory($receipt_number,$date_from,$date_to, $mode));
         $gres = $gloader->load();
         $resp = new Response($gres->getJSON());
         $resp->headers->set('Content-Type', 'application/json');
@@ -507,6 +509,38 @@ class ReportsController extends CrudController
         $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
 
         
+        if ($receipt_number != null and $receipt_number != 'null')
+        {
+            $qry[] = "(o.trans_display_id = '".$receipt_number."')";
+        }
+
+        if ($mode != null and $mode != 'null')
+        {
+            $qry[] = "(o.transaction_mode = '".$mode."')";
+        }
+
+        if (!empty($qry))
+        {
+            $filter = implode(' AND ', $qry);
+        }
+
+        return $fg->where($filter);
+    }
+
+    protected function filterRefundHistory($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
+    {
+        $grid = $this->get('gist_grid');
+        $fg = $grid->newFilterGroup();
+        $date = new DateTime();
+
+        $date_from = $date_from=='null'? new DateTime($date->format('Ym01')):new DateTime($date_from);
+        $date_to = $date_to=='null'? new DateTime($date->format('Ymt')):new DateTime($date_to);
+        $date_to = $date_to->modify('+1 day');
+
+        $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
+
+        $qry[] = "(o.transaction_mode = 'normal')";
+
         if ($receipt_number != null and $receipt_number != 'null')
         {
             $qry[] = "(o.trans_display_id = '".$receipt_number."')";

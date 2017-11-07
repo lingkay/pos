@@ -1803,6 +1803,7 @@ $(document).ready(function(){
 
                     if ($('#string_trans_type').val() == 'per') {
                         computeCartIndiv();
+
                     }
 
                     var trans_amt = $('#float_trans_amount').val(); //3800
@@ -1832,19 +1833,8 @@ $(document).ready(function(){
 
 
                     var rem_total = parseFloat(trans_amt)+parseFloat(new_cart_total);
+                    computeVATRaw(rem_total);
                     var ref_balance = parseFloat(new_cart_total) - parseFloat(refund_total);
-
-                    //console.log('RAW REM TOTAL: '+ rem_total);
-
-                    // console.log('trans_amt: '+trans_amt);
-                    // console.log('new_cart_total: '+new_cart_total);
-                    // console.log('refund_total: '+refund_total);
-                    //
-                    // console.log('rem_total: '+rem_total);
-
-
-
-
 
                     //add the new items total to the previous cart totals
                     //since refunds/new items have no discount...
@@ -1857,7 +1847,7 @@ $(document).ready(function(){
                     var ba = 0;
                     var savings = 0;
                     var bulk_adj_opt = $('#bulk_opt_sel').val();
-                    if (bulk_adj_opt != '') {
+                    if (bulk_adj_opt != 'none') {
                         if (bulk_adj_opt == 'bgift') {
                             bulk_adj = $('#float_trans_amount').val();
                             cart_new_price = 0;
@@ -1877,19 +1867,12 @@ $(document).ready(function(){
                         }
 
                         computeCartBulk(bulk_adj);
-
                         rem_total = bulk_adj;
-                        // console.log('BULK ADJUSTMENT: '+ bulk_adj);
-                        //apply bulk adjustments
-                        // console.log('RAW CART ORIG: '+ cart_orig_price);
-                        // console.log('RAW CART NEW : '+ cart_new_price);
-
                     }
                     //end checking for bulk discounts
 
                     cart_orig_price += parseFloat(new_cart_total);
                     cart_new_price += parseFloat(new_cart_total);
-
 
                     $('#float_trans_amount').val(rem_total);
                     $('#float_trans_balance').val(ref_balance);

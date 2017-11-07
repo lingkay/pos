@@ -175,6 +175,8 @@
                                         {% if object.getTransactionMode|default('none') == 'refund' %}
                                             {% if object.getTransactionType|default('none') == 'bulk' %}
                                                 {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                            {% elseif object.getTransactionType|default('none') == 'per' %}
+                                                {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                             {% else %}
                                                 {{ form.group_text('Sub Total', 'sub_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                            {% endif %}
