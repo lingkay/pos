@@ -671,9 +671,19 @@ function computeCartRaw()
     var minimum_price = 0;
 
     // compute each item's original price
-    $('.display_price').each(function(){
-        sale_price = sale_price + parseFloat($(this).val());
-    });
+    if ($('#flag_refund').val() == 'true') {
+        $(".refund_issued:checkbox:not(:checked)").each(function () {
+            var row = $(this).closest('.product_row');
+            var srp = row.find('.srp');
+            srp = srp.val();
+            sale_price += parseFloat(srp);
+        });
+    } else {
+        $('.display_price').each(function(){
+            sale_price = sale_price + parseFloat($(this).val());
+        });
+    }
+
 
     // compute each item's minimum price
     $('.min_price').each(function(){
@@ -706,10 +716,20 @@ function computeCartIndiv()
 
 
     // compute each item's original price
-    $('.adjusted_price').each(function(){
-        sale_price = sale_price + parseFloat($(this).val());
-        // alert($(this).val());
-    });
+    if ($('#flag_refund').val() == 'true') {
+        $(".refund_issued:checkbox:not(:checked)").each(function () {
+            var row = $(this).closest('.product_row');
+            var adjusted_price = row.find('.adjusted_price');
+            adjusted_price = adjusted_price.val();
+            sale_price += parseFloat(adjusted_price);
+        });
+    } else {
+        $('.adjusted_price').each(function(){
+            sale_price = sale_price + parseFloat($(this).val());
+            // alert($(this).val());
+        });
+    }
+
 
     var orig_price = $('#float_cart_orig_price').val();
     var savings = orig_price - sale_price;

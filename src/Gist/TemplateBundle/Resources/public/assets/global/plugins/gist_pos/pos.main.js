@@ -272,6 +272,36 @@ $(document).ready(function(){
         var rowCount = $('#refund_new_cart_table tr').length - 1;
         $('#lbl_refund_amount').text(addCommas(parseFloat(selected_refund_total)));
         computeRefundBalance();
+
+        //recompute original total
+        var sale_price = 0;
+        // compute each item's original price
+        $(".refund_issued:checkbox:not(:checked)").each(function () {
+            var row = $(this).closest('.product_row');
+            var srp = row.find('.srp');
+            srp = srp.val();
+            sale_price += parseFloat(srp);
+        });
+
+        //set the cart's original price WITHOUT the new items
+        $('#float_cart_orig_price').val(sale_price);
+
+        //if discount type is PER ITEM
+        if ($('#string_trans_type').val() == 'per') {
+            //this function will only compute PER ITEM totals.
+            var sale_price_indiv = 0;
+            // compute each item's original price
+            $(".refund_issued:checkbox:not(:checked)").each(function () {
+                var row = $(this).closest('.product_row');
+                var adjusted_price = row.find('.adjusted_price');
+                adjusted_price = adjusted_price.val();
+                sale_price_indiv += parseFloat(adjusted_price);
+            });
+            //set the cart's new price WITHPUT the new items
+            $('#float_cart_new_price').val(sale_price_indiv);
+        }
+
+        computeBalance();
     });
 
     $(document).on("click",".check_issued", function(e){
@@ -1767,15 +1797,20 @@ $(document).ready(function(){
             var rowCount = $('#payments_table tr').length-1;
             if ((parseFloat($('#float_trans_balance').val()) == 0 && rowCount == 0) || $('#flag_refund').val() == 'true') {
                 if ($('#flag_refund').val() == 'true') {
-                    var trans_amt = $('#float_trans_amount').val();
-                    var refund_trans_amt = $('#float_refund_trans_amount').val();
+
+
+                    computeCartRaw();
+
+                    if ($('#string_trans_type').val() == 'per') {
+                        computeCartIndiv();
+                    }
+
+                    var trans_amt = $('#float_trans_amount').val(); //3800
+
                     //get refund amount
                     var refund_total = 0;
                     $('.refund_issued:checkbox:checked').each(function () {
                         var row = $(this).closest('.product_row');
-                        // var srp = row.find('.srp');
-                        // srp = srp.val();
-                        // refund_total += parseFloat(srp);
 
                         if ($('#string_trans_type').val() == 'per') {
                             var ap = row.find('.adjusted_price');
@@ -1787,7 +1822,7 @@ $(document).ready(function(){
                             refund_total += parseFloat(srp);
                         }
 
-                    });
+                    });//990
 
                     var new_cart_total = 0;
                     // compute each item's original price
@@ -1795,14 +1830,76 @@ $(document).ready(function(){
                         new_cart_total = new_cart_total + parseFloat($(this).val());
                     });
 
-                    var rem_total = ((parseFloat(trans_amt)+parseFloat(new_cart_total)) - parseFloat(refund_total));
+
+                    var rem_total = parseFloat(trans_amt)+parseFloat(new_cart_total);
                     var ref_balance = parseFloat(new_cart_total) - parseFloat(refund_total);
+
+                    //console.log('RAW REM TOTAL: '+ rem_total);
+
+                    // console.log('trans_amt: '+trans_amt);
+                    // console.log('new_cart_total: '+new_cart_total);
+                    // console.log('refund_total: '+refund_total);
+                    //
+                    // console.log('rem_total: '+rem_total);
+
+
+
+
+
+                    //add the new items total to the previous cart totals
+                    //since refunds/new items have no discount...
+                    //we can directly add its totals
+                    var cart_orig_price = parseFloat($('#float_cart_orig_price').val());
+                    var cart_new_price = parseFloat($('#float_cart_new_price').val());
+
+                    //check for bulk discounts
+                    var bulk_adj = 0;
+                    var ba = 0;
+                    var savings = 0;
+                    var bulk_adj_opt = $('#bulk_opt_sel').val();
+                    if (bulk_adj_opt != '') {
+                        if (bulk_adj_opt == 'bgift') {
+                            bulk_adj = $('#float_trans_amount').val();
+                            cart_new_price = 0;
+                        } else if (bulk_adj_opt == 'bdiscamt') {
+                            ba = rem_total - $('#bulk_opt_amt').val();
+                            cart_new_price = cart_new_price - $('#bulk_opt_amt').val();
+                            bulk_adj = ba;
+                        } else if (bulk_adj_opt == 'bdisc') {
+                            ba = rem_total - (rem_total * ($('#bulk_opt_amt').val()/100));
+                            cart_new_price = cart_new_price - (cart_new_price * ($('#bulk_opt_amt').val()/100));
+                            savings = rem_total * ($('#bulk_opt_amt').val()/100);
+                            bulk_adj = ba;
+                        } else if (bulk_adj_opt == 'bamt') {
+                            savings = rem_total - $('#bulk_opt_amt').val();
+                            bulk_adj = savings;
+                            cart_new_price = savings;
+                        }
+
+                        computeCartBulk(bulk_adj);
+
+                        rem_total = bulk_adj;
+                        // console.log('BULK ADJUSTMENT: '+ bulk_adj);
+                        //apply bulk adjustments
+                        // console.log('RAW CART ORIG: '+ cart_orig_price);
+                        // console.log('RAW CART NEW : '+ cart_new_price);
+
+                    }
+                    //end checking for bulk discounts
+
+                    cart_orig_price += parseFloat(new_cart_total);
+                    cart_new_price += parseFloat(new_cart_total);
+
 
                     $('#float_trans_amount').val(rem_total);
                     $('#float_trans_balance').val(ref_balance);
-
                     $('.co_amt_to_pay').text(addCommas(rem_total));
                     $('.co_balance').text(addCommas(ref_balance));
+
+
+                    $('#float_cart_orig_price').val(cart_orig_price);
+                    $('#float_cart_new_price').val(cart_new_price);
+
                 } else {
                     $('.co_amt_to_pay').text($('#transaction_amt_to_pay').val());
                     $('.co_balance').text($('#transaction_amt_to_pay').val());
