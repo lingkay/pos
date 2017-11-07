@@ -1204,8 +1204,9 @@ function freezeTransaction(is_final)
 
                 $('#cart_items tr').each(function() {
                     var row = $(this).closest('tr');
+                    var for_refund = row.find('.refund_issued').is(':checked') || false;
 
-                    if (!(row.find('.refund_issued').is(':checked')) && flag_refund == 'true') {
+                    if ((!(for_refund) && flag_refund == 'true') || flag_refund == 'false') {
                         var product_id = row.find('.product_id').val();
                         var orig_price = row.find('.srp').val();
                         var min_price = row.find('.min_price').val();

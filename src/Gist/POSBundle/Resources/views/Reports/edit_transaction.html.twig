@@ -172,7 +172,11 @@
                                         </table>
                                     </div>
                                     <div class="col-md-4">
-                                        {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% if object.getTransactionMode|default('none') == 'refund' %}
+                                            {{ form.group_text('Sub Total', 'sub_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% else %}
+                                            {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% endif %}
                                         {{ form.group_text('Discount', 'discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         {{ form.group_text('Bulk Discount', 'bulk_discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         {{ form.group_text('VAT', 'vat', object.getFinalVAT|number_format(2, '.', ',')|default(''), 4, 5, true) }}
@@ -319,8 +323,8 @@
                 //$('#cgroup-discounted_total').show();
                 $('#cgroup-discount').show();
             } else {
-                $('#cgroup-discount').show();
-                $('#cgroup-bulk_discount').show();
+//                $('#cgroup-discount').show();
+//                $('#cgroup-bulk_discount').show();
             }
         });
     </script>
