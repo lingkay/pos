@@ -559,7 +559,7 @@ class ReportsController extends CrudController
 
         if ($cust_name != null and $cust_name != 'null')
         {
-            $qry[] = "(cust.first_name LIKE '%".$cust_name."%') OR (cust.last_name LIKE '%".$cust_name."%') OR (cust.middle_name LIKE '%".$cust_name."%')";
+            $qry[] = "(cust.first_name LIKE '%".$cust_name."%' OR cust.last_name LIKE '%".$cust_name."%' OR cust.middle_name LIKE '%".$cust_name."%')";
         }
 
         if ($cust_number != null and $cust_number != 'null')
