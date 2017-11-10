@@ -338,11 +338,12 @@ class POSController extends Controller
             }
         }
 
-
+        $customer_object = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(['erp_id'=>$customer_id]);
 
         $em->persist($transaction);
         $em->flush();
 
+        $transaction->setCustomer($customer_object);
         $transaction->setCustomerId($customer_id);
         $transaction->setTransactionBalance($balance);
         $transaction->setTransactionTotal($total);

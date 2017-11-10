@@ -35,6 +35,12 @@ class POSTransaction
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $customer_id;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="POSCustomer")
+     * @ORM\JoinColumn(name="customer", referencedColumnName="id")
+     */
+    protected $customer;
+
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $transaction_type;
 
@@ -379,6 +385,13 @@ class POSTransaction
         return $this;
     }
 
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
     /**
      * Get customerId
      *
@@ -387,6 +400,11 @@ class POSTransaction
     public function getCustomerId()
     {
         return $this->customer_id;
+    }
+
+    public function getCustomer()
+    {
+        return $this->customer;
     }
 
     /**

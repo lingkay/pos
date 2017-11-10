@@ -128,8 +128,8 @@ gist_pos_reports_grid_ajax:
     defaults: { _controller: GistPOSBundle:Reports:gridSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null }
 
 gist_pos_reports_refund_grid_ajax:
-    path:    /reports/ajax/refund/{receipt_number}/{date_from}/{date_to}/{mode}
-    defaults: { _controller: GistPOSBundle:Reports:gridRefundSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null }
+    path:    /reports/ajax/refund/{receipt_number}/{date_from}/{date_to}/{mode}/{cust_name}/{cust_id}/{cust_number}
+    defaults: { _controller: GistPOSBundle:Reports:gridRefundSalesHistory,receipt_number: null, date_from: null, date_to: null, mode: null, cust_name: null, cust_id: null, cust_number: null }
 
 gist_pos_split_transaction_form:
     pattern: /reports/split_transaction/{id}

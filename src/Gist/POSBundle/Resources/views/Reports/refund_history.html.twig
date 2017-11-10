@@ -1,0 +1,46 @@
+<!-- BEGIN FORM-->
+<div class="form-body">
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.group_date_range('daterange', 'Date Range', 'date_from', 'date_to', '01/01/2017', '12/31/2017', 4, 7) }}
+            {{ form.group_text('Receipt Number', 'receipt_number', '', 4, 7, false) }}
+            {{ form.group_selectx('Type', 'transaction_mode', modes, mode|default(''), 4, 7, false) }}
+        </div>
+        <div class="col-md-6">
+            {{ form.group_text('Customer Name', 'customer_name', '', 4, 7, false) }}
+            {{ form.group_text('Customer ID', 'customer_id', '', 4, 7, false) }}
+            {{ form.group_text('Customer Number', 'customer_number', '', 4, 7, false) }}
+            <div class="form-group">
+                <label class="col-md-4 control-label"></label>
+                <div class="col-md-7">
+                    <a id="filter_button" class="btn blue pull-right">Search</a>
+                    <a id="clear_filter_button" class="btn red pull-right" style="margin-right: 5px;">Clear Filters</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped table-bordered table-hover" id="list_table">
+        <thead>
+        <tr>
+            {% for col in grid_cols %}
+                {% if (loop.last) %}
+                    <th style="width: 145px">{{ col.getLabel }}</th>
+                {% else %}
+                    <th>{{ col.getLabel }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div class="form-actions fluid">
+    <div class="form-group">
+        <label class="col-md-3 control-label"></label>
+        <div class="col-md-6">
+
+        </div>
+    </div>
+</div>
+

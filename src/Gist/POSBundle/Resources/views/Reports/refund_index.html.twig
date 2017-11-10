@@ -20,7 +20,7 @@
                         <!-- END MAIN TABS -->
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_sales_history">
-                                {% include 'GistPOSBundle:Reports:sales_history.html.twig' %}
+                                {% include 'GistPOSBundle:Reports:refund_history.html.twig' %}
                             </div>
                             <div class="tab-pane" id="tab_sync_settings">
 
@@ -142,6 +142,15 @@
                 $('#cform-transaction_mode').val([]);
             });
 
+            $('#cform-customer_id').attr('maxlength','11');
+            $('#cform-customer_id').on('input',function(e){
+                var foo = $(this).val().split(" ").join("");
+                if (foo.length > 0) {
+                    foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
+                }
+                $(this).val(foo);
+            });
+
 
 
             $('#filter_button').click(function (){
@@ -151,12 +160,19 @@
                 var receipt_number = $('#cform-receipt_number').val();
                 var mode = $('#cform-transaction_mode').val();
 
+                var cust_name = $('#cform-customer_name').val();
+                var cust_id = $('#cform-customer_id').val();
+                var cust_number = $('#cform-customer_number').val();
+
                 var pathx = "{{ path('gist_pos_reports_refund_grid_ajax', {
 
                     'receipt_number' : 'RECEIPT_NUMBER',
                     'date_from' : 'DATE_FROM',
                     'date_to' : 'DATE_TO',
-                    'mode' : 'MODE'
+                    'mode' : 'MODE',
+                    'cust_name' : 'CUST_NAME',
+                    'cust_id' : 'CUST_ID',
+                    'cust_number' : 'CUST_NUMBER'
 
                 }) }}";
 
@@ -168,7 +184,19 @@
                     mode = null;
                 }
 
-                pathx = pathx.replace('RECEIPT_NUMBER', receipt_number).replace('DATE_FROM', date_from).replace('DATE_TO', date_to).replace('MODE', mode);
+                if (cust_name == '') {
+                    cust_name = null;
+                }
+
+                if (cust_id == '') {
+                    cust_id = null;
+                }
+
+                if (cust_number == '') {
+                    cust_number = null;
+                }
+
+                pathx = pathx.replace('RECEIPT_NUMBER', receipt_number).replace('DATE_FROM', date_from).replace('DATE_TO', date_to).replace('MODE', mode).replace('CUST_NAME', cust_name).replace('CUST_ID', cust_id).replace('CUST_NUMBER', cust_number);
 
 
                 // path = generatePath();

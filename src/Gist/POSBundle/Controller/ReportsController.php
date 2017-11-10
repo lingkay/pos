@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
 use DateInterval;
 
-class ReportsController extends CrudController     
+class ReportsController extends CrudController
 {
     public function __construct()
     {
@@ -277,7 +277,7 @@ class ReportsController extends CrudController
         $obj = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         if($obj->getReferenceTransaction() != null)
             return "<a style=\"text-decoration: none;\" href=\"".$router->generate('gist_pos_reports_edit_form', array('id' => $obj->getReferenceTransaction()->getID()))."\">".$obj->getReferenceTransactionDisplayID()."</a>";
-        else 
+        else
             return "-";
     }
 
@@ -307,7 +307,7 @@ class ReportsController extends CrudController
     {
         $conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
-    	$this->title = 'Dashboard';
+        $this->title = 'Dashboard';
         $gl = $this->setupGridLoader();
 
         $params = $this->getViewParams('', 'gist_dashboard_index');
@@ -315,11 +315,11 @@ class ReportsController extends CrudController
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
         $params['users'] = $user_exist;
         $params['modes'] = array(
-            'normal'=>'Normal',
-            'quotation'=>'Quotation',
-            'deposit'=>'Deposit',
-            'upsell'=>'Upsell',
-            'frozen'=>'Frozen'
+            'normal' => 'Normal',
+            'quotation' => 'Quotation',
+            'deposit' => 'Deposit',
+            'upsell' => 'Upsell',
+            'frozen' => 'Frozen'
         );
         $params['grid_cols'] = $gl->getColumns();
 
@@ -327,90 +327,6 @@ class ReportsController extends CrudController
 
 
         return $this->render('GistPOSBundle:Reports:index.html.twig', $params);
-    }
-
-    public function indexRefundAction()
-    {
-        $conf = $this->get('gist_configuration');
-        $em = $this->getDoctrine()->getManager();
-        $this->title = 'Dashboard';
-        $gl = $this->setupRefundGridLoader();
-
-        $params = $this->getViewParams('', 'gist_dashboard_index');
-        $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
-        $params['sys_area_id'] = $conf->get('gist_sys_area_id');
-        $params['users'] = $user_exist;
-        $params['modes'] = array(
-            'normal'=>'Normal',
-            'quotation'=>'Quotation',
-            'deposit'=>'Deposit',
-            'upsell'=>'Upsell',
-            'frozen'=>'Frozen'
-        );
-        $params['grid_cols'] = $gl->getColumns();
-
-        //$params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
-
-
-        return $this->render('GistPOSBundle:Reports:refund_index.html.twig', $params);
-    }
-
-    protected function setupRefundGridLoader()
-    {
-        $data = $this->getRequest()->query->all();
-        $grid = $this->get('gist_grid');
-
-
-
-        // loader
-        $gloader = $grid->newLoader();
-        $gloader->processParams($data)
-            ->setRepository('GistPOSBundle:POSTransaction');
-
-        // grid joins
-        $gjoins = $this->getGridJoins();
-        foreach ($gjoins as $gj)
-            $gloader->addJoin($gj);
-
-        // grid columns
-        $gcols = $this->getRefundGridColumns();
-
-
-        // add columns
-        foreach ($gcols as $gc)
-            $gloader->addColumn($gc);
-
-        return $gloader;
-    }
-
-    public function gridRefundSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
-    {
-        $this->hookPreAction();
-
-        $gloader = $this->setupRefundGridLoader();
-
-        $gloader->setQBFilterGroup($this->filterRefundHistory($receipt_number,$date_from,$date_to, $mode));
-        $gres = $gloader->load();
-        $resp = new Response($gres->getJSON());
-        $resp->headers->set('Content-Type', 'application/json');
-
-        return $resp;
-    }
-
-    protected function getRefundGridColumns()
-    {
-        $grid = $this->get('gist_grid');
-
-        return array(
-            $grid->newColumn('ID', 'getID', 'id'),
-            $grid->newColumn('Receipt Number', 'getID', 'id','o',array($this,'formatTransLink')),
-            // $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
-            $grid->newColumn('Reference', 'getID', 'id','o',array($this,'formatReferenceLink2')),
-            $grid->newColumn('Transaction Date','getDateCreateFormattedPOS','date_create'),
-            //$grid->newColumn('Location', 'null', 'null'),
-            $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
-            $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
-        );
     }
 
     public function indexAutoSearchAction($mode)
@@ -442,10 +358,10 @@ class ReportsController extends CrudController
 
     public function landingAction()
     {
-    	$this->title = 'Dashboard';
+        $this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
 
-        
+
 
         return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
     }
@@ -458,9 +374,9 @@ class ReportsController extends CrudController
         $this->hookPreAction();
         try
         {
-            
+
             $conf->set('gist_sys_area_id', $data['sys_area_id']);
-            $em->flush(); 
+            $em->flush();
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl('gist_pos_settings'));
             }else{
@@ -508,7 +424,7 @@ class ReportsController extends CrudController
 
         $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
 
-        
+
         if ($receipt_number != null and $receipt_number != 'null')
         {
             $qry[] = "(o.trans_display_id = '".$receipt_number."')";
@@ -527,7 +443,92 @@ class ReportsController extends CrudController
         return $fg->where($filter);
     }
 
-    protected function filterRefundHistory($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
+//    REFUND
+
+    public function indexRefundAction()
+    {
+        $conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
+        $this->title = 'Dashboard';
+        $gl = $this->setupRefundGridLoader();
+
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
+        $params['sys_area_id'] = $conf->get('gist_sys_area_id');
+        $params['users'] = $user_exist;
+        $params['modes'] = array(
+            'normal'=>'Normal',
+            'upsell'=>'Upsell'
+        );
+        $params['grid_cols'] = $gl->getColumns();
+
+        return $this->render('GistPOSBundle:Reports:refund_index.html.twig', $params);
+    }
+
+    protected function getRefundGridJoins()
+    {
+        $grid = $this->get('gist_grid');
+        return array (
+            $grid->newJoin('cust','customer','getCustomer'),
+        );
+    }
+
+    protected function setupRefundGridLoader()
+    {
+        $data = $this->getRequest()->query->all();
+        $grid = $this->get('gist_grid');
+
+        // loader
+        $gloader = $grid->newLoader();
+        $gloader->processParams($data)
+            ->setRepository('GistPOSBundle:POSTransaction');
+
+        // grid joins
+        $gjoins = $this->getRefundGridJoins();
+        foreach ($gjoins as $gj)
+            $gloader->addJoin($gj);
+
+        // grid columns
+        $gcols = $this->getRefundGridColumns();
+
+
+        // add columns
+        foreach ($gcols as $gc)
+            $gloader->addColumn($gc);
+
+        return $gloader;
+    }
+
+    public function gridRefundSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null, $cust_name = null, $cust_id = null, $cust_number = null)
+    {
+        $this->hookPreAction();
+
+        $gloader = $this->setupRefundGridLoader();
+
+        $gloader->setQBFilterGroup($this->filterRefundHistory($receipt_number,$date_from,$date_to, $mode, $cust_name, $cust_id, $cust_number));
+        $gres = $gloader->load();
+        $resp = new Response($gres->getJSON());
+        $resp->headers->set('Content-Type', 'application/json');
+
+        return $resp;
+    }
+
+    protected function getRefundGridColumns()
+    {
+        $grid = $this->get('gist_grid');
+
+        return array(
+            $grid->newColumn('ID', 'getID', 'id'),
+            $grid->newColumn('Receipt Number', 'getID', 'id','o',array($this,'formatTransLink')),
+            $grid->newColumn('Customer', 'getNameFormatted', 'first_name', 'cust'),
+            $grid->newColumn('Reference', 'getID', 'id','o',array($this,'formatReferenceLink2')),
+            $grid->newColumn('Transaction Date','getDateCreateFormattedPOS','date_create'),
+            $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
+            $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
+        );
+    }
+
+    protected function filterRefundHistory($receipt_number = null, $date_from = null, $date_to = null, $mode = null, $cust_name = null, $cust_id = null, $cust_number = null)
     {
         $grid = $this->get('gist_grid');
         $fg = $grid->newFilterGroup();
@@ -539,7 +540,6 @@ class ReportsController extends CrudController
 
         $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
 
-        $qry[] = "(o.transaction_mode = 'normal')";
 
         if ($receipt_number != null and $receipt_number != 'null')
         {
@@ -549,6 +549,22 @@ class ReportsController extends CrudController
         if ($mode != null and $mode != 'null')
         {
             $qry[] = "(o.transaction_mode = '".$mode."')";
+        }
+
+        if ($cust_id != null and $cust_id != 'null')
+        {
+            $cust_id = str_replace(' ', '', $cust_id);
+            $qry[] = "(cust.display_id = '".$cust_id."')";
+        }
+
+        if ($cust_name != null and $cust_name != 'null')
+        {
+            $qry[] = "(cust.first_name LIKE '%".$cust_name."%') OR (cust.last_name LIKE '%".$cust_name."%') OR (cust.middle_name LIKE '%".$cust_name."%')";
+        }
+
+        if ($cust_number != null and $cust_number != 'null')
+        {
+            $qry[] = "(cust.mobile_number = '".$cust_number."')";
         }
 
         if (!empty($qry))
