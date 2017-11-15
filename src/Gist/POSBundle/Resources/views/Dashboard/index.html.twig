@@ -1,15 +1,13 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
-<!-- SYS VARS -->
 <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
 <input type="hidden" id="url_erp" value="{{sys_erp_url}}">
-<!-- CART VARS -->
 <input type="hidden" id="float_cart_minimum_total" value="0">
 <input type="hidden" id="float_cart_orig_price" value="0">
 <input type="hidden" id="float_cart_new_price" value="0">
-<!-- END CART VARS -->
-<!-- TRANSACTION VARS -->
+<input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
+<input type="hidden" id="float_cart_orig_price" name="float_cart_orig_price" value="0">
 <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
 <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
 <input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
@@ -26,16 +24,19 @@
 <input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="{{customer.getERPID|default('0')}}">
 <input type="hidden" id="transaction_customer_display_id" name="transaction_customer_display_id" value="{{customer.getDisplayID|default('0')}}">
 <input type="hidden" id="transaction_customer_name" name="transaction_customer_name" value="{{customer.getNameFormatted|default('N/A')}}">
-<input type="hidden" id="transaction_system_id" name="transaction_system_id" value="{{next_sys_id|default(0)}}">
-<input type="hidden" id="transaction_display_id" name="transaction_display_id" value="{{next_id|default(0)}}">
+<input type="hidden" id="transaction_system_id" name="transaction_system_id" value="">
+<input type="hidden" id="transaction_display_id" name="transaction_display_id" value="">
 <input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
 <input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
 <input type="hidden" id="transaction_parent_ea" name="transaction_parent_ea" value="{{ea|default(0)}}">
 <input type="hidden" id="transaction_upsell_parent" name="transaction_upsell_parent" value="{{upsell_parent|default(0)}}">
 <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
 <input type="hidden" id="minimum_deposit_percent" name="minimum_deposit_percent" value="{{min_deposit_pct|default('null')}}">
-<!-- END TRANSACTION VARS -->
+<input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
+<input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
+<input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
 <!-- TAX VARS -->
+<input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
 <input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">
 <input type="hidden" id="float_orig_tax_vat_amt" value="0">
 <input type="hidden" id="float_new_tax_vat_amt" value="0">
@@ -44,24 +45,11 @@
 <input type="hidden" id="string_tax_coverage" value="{{tax_coverage|default('none')}}">
 <input type="hidden" id="float_orig_excl_total" value="0">
 <input type="hidden" id="float_new_excl_total" value="0">
-
 <input type="hidden" id="float_deposit_tax_vat_amt" value="0">
 <input type="hidden" id="float_balance_tax_vat_amt" value="0">
 <input type="hidden" id="float_deposit_tax_amt_net_vat" value="0">
 <input type="hidden" id="float_balance_tax_amt_net_vat" value="0">
 <!-- END TAX VARS -->
-<!-- OLD VARS -->
-<input type="hidden" id="session_vat" name="session_vat" value="0">
-<input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
-<input type="hidden" id="cart_int_price" name="cart_int_price" value="0">
-<input type="hidden" id="float_cart_orig_price" name="float_cart_orig_price" value="0">
-<input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
-<input type="hidden" id="transaction_balance" name="transaction_balance" value="0">
-<input type="hidden" id="reg_trans_flag" name="reg_trans_flag" value="0">
-<input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
-<input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
-<input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
-<!-- END OLD VARS -->
 <div class="page-content">
     <br>
     <div class="row" style="margin-right: 0px !important;">
@@ -216,7 +204,14 @@
             </div>
         </div>
     </div>
-<input type="hidden" id="url_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
+    <input type="hidden" id="url_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
+    <input type="hidden" id="quote_png" value="{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}">
+    <input type="hidden" id="normal_png" value="{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}">
+    <input type="hidden" id="deposit_on_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}">
+    <input type="hidden" id="deposit_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}">
+    <input type="hidden" id="path_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
+    <input type="hidden" id="path_sync_data" value="{{ path('gist_main_sync_pos_data') }}">
+</div>
 {% include 'GistPOSBundle:Dashboard:modals.html.twig' %}
 {% endblock %}
 {% block js %}
@@ -376,205 +371,6 @@ function appendDepositItemFields()
             
     }
 }
-
-function finalModalAction(opt)
-{
-    $('#final_modal').modal('hide');
-    $('#final_modal2').modal('hide');
-    if (opt == 'save') {
-        freezeTransaction(true);
-    } else {
-        freezeTransaction(true);
-        setTimeout(
-          function() 
-          {
-            var url = '{{ path("gist_pos_print_receipt", {'id': 'id'})|escape('js') }}'; 
-            url = url.replace("id", $('#transaction_system_id').val());
-            var win = window.open(url, '_blank');
-            if (win) {
-                win.focus();
-            } else {
-                alert('Receipt pop-up blocked. Please allow.');
-            }
-          }, 3000);
-    }
-}
-
-function syncToERP()
-{
-    var route = "{{ path('gist_main_sync_pos_data') }}";
-    $.getJSON(route, function(json){  
-       $.each(json, function(i, x) {
-                
-            swal({
-              title: "POS Data Synced!",
-              text: "",
-              type: "success",
-              confirmButtonColor: "green",
-              confirmButtonText: "Okay",
-            },
-            function(){
-                location.replace('/pos');
-                
-            });
-        });
-    });
-}
-
-function changeDepositTopNavIcon()
-{
-    $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
-}
-
-$(document).ready(function() {
-    computeExtraAmount();
-
-
-    var restrict = "{{restrict}}";
-    if (restrict == 'true') {
-        swal({
-              title: "Cannot load transaction!",
-              text: "The trasaction you are trying to access is not valid for reloading",
-              type: "error",
-              confirmButtonColor: "green",
-              confirmButtonText: "Okay",
-            },
-            function(){
-                location.replace('/pos');
-                
-            });
-    }
-
-
-    var hasItems = "{{transaction_object.hasItems|default(false)}}";
-    var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
-    var trans_type = $('#string_trans_type').val();
-    var trans_mode = $('#string_trans_mode').val();
-    var balance = $('#float_trans_balance').val();
-    var ref_trans = $('#transaction_reference_sys_disp_id').val();
-    $('#footer_customer').text($('#transaction_customer_name').val());
-    $('#header_customer').text($('#transaction_customer_name').val());
-    $('#ref_trans').text(ref_trans);
-    if (hasItems == true) {
-        $('.clear_discount').hide();
-        computeCartRaw();
-        computeCartMinimum();
-        computeBalance();
-        if (trans_type == 'per') {
-            $('#string_trans_type').val('per');
-            $('.next_step_btn').hide();
-            $('.savings_h4').show();
-            $('.checkout_btn').show();
-            $('#transaction_type_modal').modal('hide');
-            $('.updated_totals_row').show();
-            $('.clear_discount').show();
-            
-            computeCartIndiv();
-            computeVATIndiv();
-            computeBalance();
-        } else if (trans_type == 'bulk') {
-            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
-            $('#string_trans_type').val('bulk');
-            $('.updated_totals_row').show();
-
-            $('.next_step_btn').hide();
-            $('.savings_h4').show();
-            $('.bulk_adj').show();
-            $('#proc').show();
-            applyBulkAdjustmentOnLoad();
-            $('.checkout_btn').show();
-        }
-
-        if (trans_mode == 'Deposit') {
-            $('.deposit_amount_totals_row').show();
-            $('.balance_totals_row').show();
-            appendDepositItemColumns();
-            appendDepositItemFields();
-            computeVATDeposit(payment_total);
-            computeVATBalance(parseFloat(balance));
-            $('#float_trans_deposit_amount').val(payment_total);
-            $('#string_trans_mode').val('Deposit');
-            $('#pos_mode').text('Deposit');
-            $('.checkout_btn').show();
-            $('.proceed_deposit').show();
-            $('.next_step_btn').hide();
-            $('.clear_discount').hide();
-        }
-
-        
-    }
-
-    $(document).on("click",".quotation_continue_btn", function(e){
-        if ($('#string_trans_mode').val() == 'normal') {
-            $('#string_trans_mode').val('quotation');
-            $('#pos_mode').text('Quotation');
-            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}");
-            swal("POS Mode Changed", "Quotation mode enabled!", "success");
-            $('#quotation_modal').modal('hide');
-        } else {
-            $('#string_trans_mode').val('normal');
-            $('#pos_mode').text('Normal');
-            $('.quotation_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}");
-            swal("POS Mode Changed", "Quotation mode disabled!", "success");
-            $('#rev_quotation_modal').modal('hide');
-        }
-
-    });
-
-
-
-    $(document).on("click",".deposit_continue_btn", function(e){
-        if ($('#string_trans_mode').val() == 'normal') {
-            //open another modal
-            $('#string_trans_mode').val('Deposit');
-            $('.deposit_icon_img').each(function() {
-                $(this).attr('data-original-title',"Disable deposit mode");
-            });
-            $('#pos_mode').text('Deposit');
-            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}");
-            swal("POS Mode Changed", "Deposit mode enabled!", "success");
-            $('#deposit_modal').modal('hide');
-            appendDepositItemColumns();
-            appendDepositItemFields();
-        } else {
-            $('#string_trans_mode').val('normal');
-            $('#pos_mode').text('Normal');
-            $('.deposit_icon_img').each(function() {
-                $(this).attr('data-original-title',"Deposit");
-            });
-            $('.deposit_icon_img').attr("src", "{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}");
-            swal("POS Mode Changed", "Deposit mode disabled!", "success");
-            $('#rev_deposit_modal').modal('hide');
-            $('.proceed_deposit').hide();
-
-            $('#cart_table').find('tr').each(function(){
-                if ($('#string_trans_type').val() == 'per') {
-                    if ($(this).children('th').length > 6) {
-                        $(this).find('th').eq(0).remove();
-                    }
-
-                    if ($(this).children('td').length > 6) {
-                        $(this).find('td').eq(0).remove();
-                    }
-                } else {
-                    if ($(this).children('th').length > 3) {
-                        $(this).find('th').eq(0).remove();
-                    }
-
-                    if ($(this).children('td').length > 3) {
-                        $(this).find('td').eq(0).remove();
-                    }
-                }
-
-            });
-
-            $('.xrow').each(function() {
-                $(this).attr('colspan',3);
-            });
-        }
-
-    });
-});
 </script>
 {% endblock %}
  

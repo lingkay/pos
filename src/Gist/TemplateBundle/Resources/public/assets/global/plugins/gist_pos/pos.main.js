@@ -1,3 +1,52 @@
+function finalModalAction(opt)
+{
+    $('#final_modal').modal('hide');
+    $('#final_modal2').modal('hide');
+    if (opt == 'save') {
+        freezeTransaction(true);
+    } else {
+        freezeTransaction(true);
+        setTimeout(
+            function()
+            {
+                var url = $('#path_print_receipt').val();
+                url = url.replace("id", $('#transaction_system_id').val());
+                var win = window.open(url, '_blank');
+                if (win) {
+                    win.focus();
+                } else {
+                    alert('Receipt pop-up blocked. Please allow.');
+                }
+            }, 3000);
+    }
+}
+
+function changeDepositTopNavIcon()
+{
+    $('.deposit_icon_img').attr("src", $('#deposit_on_png').val());
+}
+
+function syncToERP()
+{
+    var route = $('#path_sync_data').val();
+    $.getJSON(route, function(json){
+        $.each(json, function(i, x) {
+
+            swal({
+                    title: "POS Data Synced!",
+                    text: "",
+                    type: "success",
+                    confirmButtonColor: "green",
+                    confirmButtonText: "Okay",
+                },
+                function(){
+                    location.replace('/pos');
+
+                });
+        });
+    });
+}
+
 function computeExtraAmount()
 {
     var cart_min_price = 0;
@@ -178,15 +227,160 @@ function computeRefundVATBalance(total)
 }
 
 
-$(document).ready(function(){ 
+$(document).ready(function(){
+
+    computeExtraAmount();
+
+    var restrict = "{{restrict}}";
+    if (restrict == 'true') {
+        swal({
+                title: "Cannot load transaction!",
+                text: "The trasaction you are trying to access is not valid for reloading",
+                type: "error",
+                confirmButtonColor: "green",
+                confirmButtonText: "Okay",
+            },
+            function(){
+                location.replace('/pos');
+
+            });
+    }
+
+    var hasItems = "{{transaction_object.hasItems|default(false)}}";
+    var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
+    var trans_type = $('#string_trans_type').val();
+    var trans_mode = $('#string_trans_mode').val();
+    var balance = $('#float_trans_balance').val();
+    var ref_trans = $('#transaction_reference_sys_disp_id').val();
+    $('#footer_customer').text($('#transaction_customer_name').val());
+    $('#header_customer').text($('#transaction_customer_name').val());
+    $('#ref_trans').text(ref_trans);
+
+    // for loading saved transactions
+    if (hasItems == true) {
+        $('.clear_discount').hide();
+        computeCartRaw();
+        computeCartMinimum();
+        computeBalance();
+        if (trans_type == 'per') {
+            $('#string_trans_type').val('per');
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.checkout_btn').show();
+            $('#transaction_type_modal').modal('hide');
+            $('.updated_totals_row').show();
+            $('.clear_discount').show();
+
+            computeCartIndiv();
+            computeVATIndiv();
+            computeBalance();
+        } else if (trans_type == 'bulk') {
+            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
+            $('#string_trans_type').val('bulk');
+            $('.updated_totals_row').show();
+
+            $('.next_step_btn').hide();
+            $('.savings_h4').show();
+            $('.bulk_adj').show();
+            $('#proc').show();
+            applyBulkAdjustmentOnLoad();
+            $('.checkout_btn').show();
+        }
+
+        if (trans_mode == 'Deposit') {
+            $('.deposit_amount_totals_row').show();
+            $('.balance_totals_row').show();
+            appendDepositItemColumns();
+            appendDepositItemFields();
+            computeVATDeposit(payment_total);
+            computeVATBalance(parseFloat(balance));
+            $('#float_trans_deposit_amount').val(payment_total);
+            $('#string_trans_mode').val('Deposit');
+            $('#pos_mode').text('Deposit');
+            $('.checkout_btn').show();
+            $('.proceed_deposit').show();
+            $('.next_step_btn').hide();
+            $('.clear_discount').hide();
+        }
+    }
+
+    $(document).on("click",".quotation_continue_btn", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            $('#string_trans_mode').val('quotation');
+            $('#pos_mode').text('Quotation');
+            $('.quotation_icon_img').attr("src", $('#quote_png').val());
+            swal("POS Mode Changed", "Quotation mode enabled!", "success");
+            $('#quotation_modal').modal('hide');
+        } else {
+            $('#string_trans_mode').val('normal');
+            $('#pos_mode').text('Normal');
+            $('.quotation_icon_img').attr("src", $('#normal_png').val());
+            swal("POS Mode Changed", "Quotation mode disabled!", "success");
+            $('#rev_quotation_modal').modal('hide');
+        }
+
+    });
+
+
+
+    $(document).on("click",".deposit_continue_btn", function(e){
+        if ($('#string_trans_mode').val() == 'normal') {
+            //open another modal
+            $('#string_trans_mode').val('Deposit');
+            $('.deposit_icon_img').each(function() {
+                $(this).attr('data-original-title',"Disable deposit mode");
+            });
+            $('#pos_mode').text('Deposit');
+            $('.deposit_icon_img').attr("src", $('#deposit_on_png').val());
+            swal("POS Mode Changed", "Deposit mode enabled!", "success");
+            $('#deposit_modal').modal('hide');
+            appendDepositItemColumns();
+            appendDepositItemFields();
+        } else {
+            $('#string_trans_mode').val('normal');
+            $('#pos_mode').text('Normal');
+            $('.deposit_icon_img').each(function() {
+                $(this).attr('data-original-title',"Deposit");
+            });
+            $('.deposit_icon_img').attr("src", $('#deposit_png').val());
+            swal("POS Mode Changed", "Deposit mode disabled!", "success");
+            $('#rev_deposit_modal').modal('hide');
+            $('.proceed_deposit').hide();
+
+            $('#cart_table').find('tr').each(function(){
+                if ($('#string_trans_type').val() == 'per') {
+                    if ($(this).children('th').length > 6) {
+                        $(this).find('th').eq(0).remove();
+                    }
+
+                    if ($(this).children('td').length > 6) {
+                        $(this).find('td').eq(0).remove();
+                    }
+                } else {
+                    if ($(this).children('th').length > 3) {
+                        $(this).find('th').eq(0).remove();
+                    }
+
+                    if ($(this).children('td').length > 3) {
+                        $(this).find('td').eq(0).remove();
+                    }
+                }
+
+            });
+
+            $('.xrow').each(function() {
+                $(this).attr('colspan',3);
+            });
+        }
+
+    });
 
     $('#cform-cust_search_id').attr('maxlength','11');
     $('.switch_to_normal_class').hide();
 
-    // 
-    
-    // 
-    ajaxGetProductCategories();  
+    var tax_rate = $('#float_tax_rate').val();
+    if (typeof tax_rate !== "undefined") { ajaxGetProductCategories(); }
+
     toastr.options = {
       "closeButton": false,
       "debug": false,
@@ -1419,7 +1613,7 @@ $(document).ready(function(){
             }
             
         } else {
-            if ($('#string_trans_mode').val() == "quotation" || payment_total == 0 || $('#string_trans_mode').val() == "refund") {
+            if ($('#string_trans_mode').val() == "quotation" || payment_total == 0) {
                 swal({
                       title: "Payment incomplete!",
                       text: "Balance of "+addCommas(parseFloat(balance))+" not paid",

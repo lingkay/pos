@@ -93,7 +93,7 @@ class POSController extends Controller
 
         $params['ea'] = $transaction_object->getExtraAmount();
 
-
+        // check if selected transaction is still within upsell time limit
         $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/upsell_time";
         $result = file_get_contents($url);
         $upsell_seconds = json_decode($result, true);
@@ -106,7 +106,6 @@ class POSController extends Controller
 
         $params['restrict'] = 'true';
         return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
-
     }
 
     /**
@@ -201,15 +200,6 @@ class POSController extends Controller
             'married' => 'Married',
             'widow' => 'Widow'
         );
-
-        $last_entry = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('transaction_mode' => 'normal'),array('id' => 'DESC'),1);
-        if (count($last_entry) > 0) {
-            $params['next_id'] = '005-' . str_pad($last_entry->getID() + 1,6,'0',STR_PAD_LEFT);
-            $params['next_sys_id'] = $last_entry->getID() + 1;
-        } else {
-            $params['next_id'] = '005-' . str_pad(0 + 1,6,'0',STR_PAD_LEFT);
-            $params['next_sys_id'] = "1";
-        }
 
         $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
         $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
@@ -320,7 +310,7 @@ class POSController extends Controller
      * Saving of POS transaction
      * (AJAX)
      */
-    public function saveTransactionAction($id, $display_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell)
+    public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();

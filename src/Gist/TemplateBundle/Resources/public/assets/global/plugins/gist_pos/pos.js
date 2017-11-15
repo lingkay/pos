@@ -142,10 +142,21 @@ function ajaxGetProducts(cid)
     });
 }
 
-function addToPayments(payment_type, amount, details = null, cc_number = null, cc_bank = null, cc_terminal_opt = null, cc_interest = null, cc_terms = null, account_number = null, payee = null, payor = null, expiry = null, cvv = null)
+function addToPayments(payment_type, amount, details, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, account_number, payee, payor, expiry, cvv)
 {
+    cc_bank = cc_bank || "";
+    cc_interest = cc_interest || "";
+    cc_number = cc_number || "";
+    cc_terminal_opt = cc_terminal_opt || "";
+    cc_terms = cc_terms || "";
+    account_number = account_number || "";
+    payee = payee || "";
+    payor = payor || "";
+    expiry = expiry || "";
+    cvv = cvv || "";
+
     $('.init_row_payment').remove();
-    //ADD CONDITION FOR 
+
     var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
     var field = '<tr class=\"row_payment_'+row_id+'\">';     
         field += '<input type=\"hidden\" name=\"control_number\" class=\"control_number\" value=\"'+cc_number+'\">';
@@ -169,8 +180,6 @@ function addToPayments(payment_type, amount, details = null, cc_number = null, c
         $('#payments_list').prepend(field);
         toastr['success']('Payment added', 'Success');
         computeBalance();
-
-
 }
 
 function ajaxSearchCustomer()
@@ -487,101 +496,57 @@ function round(value, exp) {
 function addToCart(product_name, srp, min_price, id, barcode, item_code)
 {
     var trans_type = $('#string_trans_type').val();
-    if (trans_type == 'bulk' && $('#flag_refund').val() == 'false') {
-        sweetAlert("Can't add item!", "Reset transaction type to add item/s", "error");
-    } else {
-        $('.init_row_prods').remove();
-        var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+    var trans_mode = $('#string_trans_mode').val();
 
-        if ($('#flag_refund').val() == 'true') {
-            var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';
-            field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
-            field += '<input type=\"hidden\" name=\"issued_on[]\" class=\"issued_on\" value=\"0\" >';
-            field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
-            field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
-            field += '<input type=\"hidden\" name=\"min_refund_price[]\" class=\"min_refund_price\" value=\"'+min_price+'\" >';
-            field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
-            field += '<input type=\"hidden\" name=\"product_refund_amt[]\" class=\"product_refund_amt\" value=\"'+srp+'\" >';
-            field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-            field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_refund_price[]" class="form-control display_refund_price" readonly="true" value="'+srp+'"></td>';
-            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
-            field += '</tr>';
-        } else {
-            var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';
-            field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
-            field += '<input type=\"hidden\" name=\"issued_on[]\" class=\"issued_on\" value=\"0\" >';
-            field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
-            field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
-            field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
-            field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
-            field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
-            field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
-            field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>';
-            field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
-            field += '</tr>';
-        }
+    $('.init_row_prods').remove();
+    var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
+
+    //construct cart row
+    var field = '<tr class=\"row_prod_'+row_id+'\ product_row">';
+    field += '<input type=\"hidden\" name=\"product_id[]\" class=\"product_id\" value=\"'+id+'\" >';
+    field += '<input type=\"hidden\" name=\"issued_on[]\" class=\"issued_on\" value=\"0\" >';
+    field += '<input type=\"hidden\" name=\"barcode[]\" class=\"barcode\" value=\"'+barcode+'\" >';
+    field += '<input type=\"hidden\" name=\"item_code[]\" class=\"item_code\" value=\"'+item_code+'\" >';
+    field += '<input type=\"hidden\" name=\"min_price[]\" class=\"min_price\" value=\"'+min_price+'\" >';
+    field += '<input type=\"hidden\" name=\"srp[]\" class=\"srp\" value=\"'+srp+'\" >';
+    field += '<input type=\"hidden\" name=\"product_amt[]\" class=\"product_amt\" value=\"'+srp+'\" >';
+    field += '<td><input type="text" style=\"font-size: 10px !important;\" value="'+product_name+'" readonly="true" class="form-control item_name"></td>';
+    field += '<td><input type="text" style=\"font-size: 10px !important;\" name="display_price[]" class="form-control display_price" readonly="true" value="'+srp+'"></td>';
+    field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
+    field += '</tr>';
 
 
+    //append selected item to cart
+    $('#cart_items').prepend(field);
 
-            if ($('#flag_refund').val() == 'true') {
-                $('#refund_new_cart_items').prepend(field);
-            } else {
-                $('#cart_items').prepend(field);
-            }
-
-
-            if ($('#string_trans_mode').val() == 'Deposit') {
-                appendDepositItemFields();
-            }
-            
-            // if there is already a discount type applied
-            if($('#string_trans_type').val() == 'per') {
-                appendPerItemFields();
-            }
-
-            
-
-            //count number of products in cart
-            var rowCount = $('#cart_table tr').length-1;
-            $('.cart_items_count').text(rowCount.toString());
-
-            //compute raw amounts/values (no alterations or discounts)
-        if ($('#flag_refund').val() == 'true') {
-            if ($('#string_trans_type').val() == 'none') {
-                computeRefundCartRaw();
-            } else if ($('#string_trans_type').val() == 'per') {
-                computeRefundCartRaw();
-                computeRefundCartIndiv();
-            } else if ($('#string_trans_type').val() == 'reg') {
-                computeRefundCartRaw();
-            } else if ($('#string_trans_type').val() == 'bulk') {
-                computeRefundCartRaw();
-                //applyBulkAdjustment();
-            }
-            computeBalance();
-            computeRefundBalance();
-        } else {
-            if ($('#string_trans_type').val() == 'none') {
-                computeCartRaw();
-            } else if ($('#string_trans_type').val() == 'per') {
-                computeCartRaw();
-                computeCartIndiv();
-            } else if ($('#string_trans_type').val() == 'reg') {
-                computeCartRaw();
-            } else if ($('#string_trans_type').val() == 'bulk') {
-                computeCartRaw();
-                applyBulkAdjustment();
-            }
-            computeBalance();
-        }
-
-
-
+    //if transaction mode is deposit, add deposit fields
+    if (trans_mode == 'Deposit') {
+        appendDepositItemFields();
     }
 
+    //if discount type is per item, add discount fields
+    if(trans_type == 'per') {
+        appendPerItemFields();
+    }
+
+    //count number of products in cart
+    var rowCount = $('#cart_table tr').length-1;
+    $('.cart_items_count').text(rowCount.toString());
+
+    //compute raw amounts/values (no alterations or discounts)
+    if (trans_type == 'none') {
+        computeCartRaw();
+    } else if (trans_type == 'per') {
+        computeCartRaw();
+        computeCartIndiv();
+    } else if (trans_type == 'reg') {
+        computeCartRaw();
+    } else if (trans_type == 'bulk') {
+        computeCartRaw();
+        applyBulkAdjustment();
+    }
+    computeBalance();
 }
-
-
 
 
 function computeBalance()
@@ -666,24 +631,14 @@ function computeBalanceDisplayCheckMulti()
 
 function computeCartRaw() 
 {
-    //this function will only compute RAW totals, not discounts/altered prices here
+    //this function will only compute RAW totals, no discounts/altered prices here
     var sale_price = 0;
     var minimum_price = 0;
 
     // compute each item's original price
-    if ($('#flag_refund').val() == 'true') {
-        $(".refund_issued:checkbox:not(:checked)").each(function () {
-            var row = $(this).closest('.product_row');
-            var srp = row.find('.srp');
-            srp = srp.val();
-            sale_price += parseFloat(srp);
-        });
-    } else {
-        $('.display_price').each(function(){
-            sale_price = sale_price + parseFloat($(this).val());
-        });
-    }
-
+    $('.display_price').each(function(){
+        sale_price = sale_price + parseFloat($(this).val());
+    });
 
     // compute each item's minimum price
     $('.min_price').each(function(){
@@ -696,7 +651,7 @@ function computeCartRaw()
 
     // display new raw/original cart total
     $('.initial_cart_price').text(addCommas(sale_price));
-    $('.updated_cart_price').text(addCommas(sale_price)); //will be overwritten by peritem/bulk if set
+    $('.updated_cart_price').text(addCommas(sale_price)); //will be overwritten by per-item/bulk if set
     $('.transaction_total').text(addCommas(sale_price));
     $('#transaction_amt_to_pay').val(addCommas(sale_price));
     $('#float_trans_amount').val(sale_price);
@@ -704,36 +659,25 @@ function computeCartRaw()
     // compute taxes and vat
     computeVATRaw(sale_price);
 
-
     // compute minimum
     computeCartMinimum();
 }
 
 function computeCartIndiv() 
 {
-    //this function will only compute PER ITEM totals.
+    // this function will only compute PER ITEM totals.
     var sale_price = 0;
 
-
     // compute each item's original price
-    if ($('#flag_refund').val() == 'true') {
-        $(".refund_issued:checkbox:not(:checked)").each(function () {
-            var row = $(this).closest('.product_row');
-            var adjusted_price = row.find('.adjusted_price');
-            adjusted_price = adjusted_price.val();
-            sale_price += parseFloat(adjusted_price);
-        });
-    } else {
-        $('.adjusted_price').each(function(){
-            sale_price = sale_price + parseFloat($(this).val());
-            // alert($(this).val());
-        });
-    }
+    $('.adjusted_price').each(function(){
+        sale_price = sale_price + parseFloat($(this).val());
+    });
 
 
     var orig_price = $('#float_cart_orig_price').val();
     var savings = orig_price - sale_price;
 
+    // display discount amount
     $('#customer_savings').text(addCommas(parseFloat(savings)));
 
     // assign new values
@@ -744,12 +688,12 @@ function computeCartIndiv()
     $('.transaction_total').text(addCommas(sale_price));
     $('#transaction_amt_to_pay').val(addCommas(sale_price));
     $('#float_trans_amount').val(sale_price);
+
     // compute taxes and vat
     computeVATIndiv(sale_price);
 
-    // compute minimum
+    // compute cart's minimum price
     computeCartMinimum();
-
 }
 
 function computeCartBulk(sale_price) 
@@ -766,10 +710,7 @@ function computeCartBulk(sale_price)
     computeVATIndiv(sale_price);
     // compute minimum
     computeCartMinimum();
-
 }
-
-
 
 
 function computeVATRaw(total)
@@ -809,8 +750,6 @@ function computeVATRaw(total)
         $("#cart_new_amt_vat").text("No vat set in ERP");
         $("#cart_new_vat").text("No vat set in ERP");
     }
-
-
 }
 
 function computeVATIndiv(total)
@@ -820,7 +759,6 @@ function computeVATIndiv(total)
     var vat_amt = 0;
     var amt_net_of_vat = 0;
     var incl_divisor = tax_rate + 1;
-    // console.log("incl_divisor: "+incl_divisor);
 
     if (tax_coverage == 'incl') {
         vat_amt = total*tax_rate;
@@ -896,8 +834,6 @@ function computeCartMinimum()
         total = total + parseFloat($(this).val());
     });
 
-    
-
     if ($('#string_trans_mode').val() == 'normal') {
         var additional_ea = $('#transaction_parent_ea').val();
         additional_ea = additional_ea.replace(/-/g, "");
@@ -928,9 +864,9 @@ function computeCartMinimum()
 }
 
 
-
 function apply_indiv(x)
 {
+    // this function will apply each cart item's selected discount
     var row = $(x).closest('tr');
     var srp = row.find('.srp').val();
     var adjusted_price = row.find('.adjusted_price');
@@ -998,7 +934,6 @@ function applyBulkAdjustment()
             }
         } else if (bulk_adj_opt == 'bamt') {
             var savings = $('#float_cart_orig_price').val() - $('#cform-new_total').val();
-            // alert(savings);
             computeCartBulk(parseFloat($('#cform-new_total').val()));
             $('#applied_bulk_discount').text('Change Amount');
             $('#string_trans_bulk_type').val('Change Amount to pay to: Php ' + $('#cform-new_total').val());
@@ -1022,10 +957,7 @@ function applyBulkAdjustment()
         $('#string_trans_bulk_type').val('none');
     }
     computeBalance();
-    computeRefundBalance();
 }
-
-
 
 function updateBulkForm(opt)
 {
@@ -1050,10 +982,8 @@ function updateBulkForm(opt)
         $('#cform-discount_pct').val('');
         $('#cform-selected_bulk').val('Change Amount to Pay');
         $('#cgroup-discount_pct').hide();
-        // $('#cform-new_total').val('');
         $('#cgroup-new_total').show();
     } else if (bulk_adj_opt == 'bdiscamt') {
-        // $('#cform-discount_amount').val('');
         $('#bulk_opt_sel').val('bdiscamt');
         $('#cgroup-discount_amount').show();
         $('#cform-discount_pct').val('');
@@ -1065,7 +995,6 @@ function updateBulkForm(opt)
         $('#bulk_opt_sel').val('bdisc');
         $('#cform-discount_amount').val('');
         $('#cgroup-discount_amount').hide();
-        // $('#cform-discount_pct').val('');
         $('#cform-selected_bulk').val('Discount %');
         $('#cgroup-discount_pct').show();
         $('#cform-new_total').val('');
@@ -1080,7 +1009,6 @@ function updateBulkForm(opt)
 function clearCreditCardModal()
 {
     $('#cc_form').empty();
-    // $("#cc_fields").clone().find("input").val("").end().appendTo('#cc_form');
     $("#cc_fields").children().clone(true,true).find("input").val("").end().appendTo('#cc_form');
 }
 
@@ -1089,9 +1017,6 @@ function clearCheckModal()
     $('#check_form').empty();
     $("#check_fields").clone().find("input").val("").end().appendTo('#check_form');
 }
-
-
-
 
 
 function hideBulkAmounts()
@@ -1123,8 +1048,6 @@ function cancelBulkAdjustment()
     });
 }
 
-
-
 function revertOriginalPrices()
 {
     $('.display_price').each(function() {
@@ -1139,29 +1062,6 @@ function revertOriginalPrices()
     computeCartMinimum();
 }
 
-function loadFrozenTransactions()
-{
-    $('#frozen_list').empty();
-    var url_pos = $('#url_pos').val();
-    var url_erp = $('#url_erp').val();
-    var url = url_pos+"/pos/get_frozen_transactions";
-    $.getJSON(url, function(json){  
-        var count = 0;
-       $.each(json, function(i, x) {
-            $('.init_row_prods').remove();
-            var field = '<tr class=\"row_prod_'+x.id+'\">';     
-                field += '<td><input type="text" style=\"font-size: 12px !important;\" value="'+x.disp_id+'" readonly="true" class="form-control"></td>';
-                field += '<td><input type="text" style=\"font-size: 12px !important;\"  class="form-control" readonly="true" value="'+x.date_created+'"></td>';  
-                field += '<td ><a href="javascript:void(0)" class="btn btn-xs default green"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>'; 
-                field += '</tr>';
-
-                $('#frozen_list').append(field);
-       });
-
-   });
-
-}
-
 function freezeTransaction(is_final)
 {
     is_final = is_final || false;
@@ -1169,10 +1069,7 @@ function freezeTransaction(is_final)
     var items_saved = false;
     var payments_saved = false;
     var count_cart_items = $('#cart_items tr').length;
-    var count_new_cart_items = $('#refund_new_cart_items tr').length;
     var count_payments = $('#payments_table .init_row_payment').length;
-    var transaction_sys_id = $('#transaction_system_id').val();
-    var transaction_disp_id = $('#transaction_display_id').val();
     var transaction_total = $('#float_trans_amount').val();
     var transaction_ea = $('#float_trans_ea').val();
     var transaction_balance = $('#float_trans_balance').val();
@@ -1210,7 +1107,7 @@ function freezeTransaction(is_final)
     } 
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = url_pos+"/pos/save_transaction/"+transaction_sys_id+"/"+transaction_disp_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell;
+    var url = url_pos+"/pos/save_transaction/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell;
     var x_new_id = '';
 
     $.getJSON(url, function(json){  
@@ -1224,108 +1121,72 @@ function freezeTransaction(is_final)
 
                 $('#cart_items tr').each(function() {
                     var row = $(this).closest('tr');
-                    var for_refund = row.find('.refund_issued').is(':checked') || false;
 
-                    if ((!(for_refund) && flag_refund == 'true') || flag_refund == 'false') {
-                        var product_id = row.find('.product_id').val();
-                        var orig_price = row.find('.srp').val();
-                        var min_price = row.find('.min_price').val();
-                        var product_name = row.find('.item_name').val();
-                        var barcode = row.find('.barcode').val();
-                        var item_code = row.find('.item_code').val();
-                        var discount_type = '%20';
-                        var discount_value = '%20';
-                        var adjusted_price = '%20';
-                        var is_issued = 'true';
-                        var issued_on = row.find('.issued_on').val();
+                    var product_id = row.find('.product_id').val();
+                    var orig_price = row.find('.srp').val();
+                    var min_price = row.find('.min_price').val();
+                    var product_name = row.find('.item_name').val();
+                    var barcode = row.find('.barcode').val();
+                    var item_code = row.find('.item_code').val();
+                    var discount_type = '%20';
+                    var discount_value = '%20';
+                    var adjusted_price = '%20';
+                    var is_issued = 'true';
+                    var issued_on = row.find('.issued_on').val();
 
-                        if (transaction_mode != 'Deposit') {
-                            issued_on = '%20';
+                    if (transaction_mode != 'Deposit') {
+                        issued_on = '%20';
+                    }
+
+                    if (transaction_type == "per") {
+                        var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
+                        var per_item_discount_amt = row.find('.per_item_discount_amt').val();
+                        var adjusted_price_elem = row.find('.adjusted_price').val();
+
+                        if (indiv_disc_opt.length > 0) {
+                            discount_type = indiv_disc_opt;
+                        } else {
+                            discount_type = '%20';
                         }
 
-                        if (transaction_type == "per") {
-                            var indiv_disc_opt = row.find('.pos_indiv_discount_opt').val();
-                            var per_item_discount_amt = row.find('.per_item_discount_amt').val();
-                            var adjusted_price_elem = row.find('.adjusted_price').val();
-
-                            if (indiv_disc_opt.length > 0) {
-                                discount_type = indiv_disc_opt;
-                            } else {
-                                discount_type = '%20';
-                            }
-
-                            if (per_item_discount_amt.length > 0) {
-                                discount_value = per_item_discount_amt;
-                            } else {
-                                discount_value = '%20';
-                            }
-
-                            if (adjusted_price_elem.length > 0) {
-                                adjusted_price = adjusted_price_elem;
-                            } else {
-                                adjusted_price = '%20';
-                            }
+                        if (per_item_discount_amt.length > 0) {
+                            discount_value = per_item_discount_amt;
+                        } else {
+                            discount_value = '%20';
                         }
 
-                        if (transaction_mode == 'Deposit') {
-                            if (row.find('.check_issued').is(':checked')) {
-                                is_issued = 'true';
-                            } else {
-                                is_issued = 'false';
-                            }
+                        if (adjusted_price_elem.length > 0) {
+                            adjusted_price = adjusted_price_elem;
+                        } else {
+                            adjusted_price = '%20';
                         }
+                    }
 
-                        if (transaction_mode == 'frozen') {
+                    if (transaction_mode == 'Deposit') {
+                        if (row.find('.check_issued').is(':checked')) {
+                            is_issued = 'true';
+                        } else {
                             is_issued = 'false';
                         }
-
-                        var url2 = url_pos + "/pos/save_item/" + trans.new_id + "/" + product_id + "/" + product_name + "/" + orig_price + "/" + min_price + "/" + adjusted_price + "/" + discount_type + "/" + discount_value + "/" + barcode + "/" + item_code + "/" + is_issued + "/" + issued_on;
-
-                        $.getJSON(url2, function (json) {
-                            var count = 0;
-                            $.each(json, function (i, items) {
-                                items_saved = true;
-                            });
-                        });
                     }
-                });
 
-                // save new cart items
-                if (count_new_cart_items > 0) {
-                    $('#refund_new_cart_items tr').each(function() {
-                        var row = $(this).closest('tr');
-                        var product_id = row.find('.product_id').val();
-                        var orig_price = row.find('.srp').val();
-                        var min_price = row.find('.min_price').val();
-                        var product_name = row.find('.item_name').val();
-                        var barcode = row.find('.barcode').val();
-                        var item_code = row.find('.item_code').val();
-                        var discount_type = '%20';
-                        var discount_value = '%20';
-                        var adjusted_price = '%20';
-                        var is_issued = 'true';
-                        var issued_on = '%20';
+                    if (transaction_mode == 'frozen') {
+                        is_issued = 'false';
+                    }
 
-                        //manually assign adjusted price if the original transaction is PER ITEM DISCOUNT
-                        //replace this if refunds can also be discounted
-                        if (transaction_type == 'per') {
-                            adjusted_price = orig_price;
-                        }
+                    var url2 = url_pos + "/pos/save_item/" + trans.new_id + "/" + product_id + "/" + product_name + "/" + orig_price + "/" + min_price + "/" + adjusted_price + "/" + discount_type + "/" + discount_value + "/" + barcode + "/" + item_code + "/" + is_issued + "/" + issued_on;
 
-
-
-                        var url2 = url_pos+"/pos/save_item/"+trans.new_id+"/"+product_id+"/"+product_name+"/"+orig_price+"/"+min_price+"/"+adjusted_price+"/"+discount_type+"/"+discount_value+"/"+barcode+"/"+item_code+"/"+is_issued+"/"+issued_on;
-
-
-                        $.getJSON(url2, function(json){
-                            var count = 0;
-                            $.each(json, function(i, items) {
-                                items_saved = true;
-                            });
+                    $.getJSON(url2, function (json) {
+                        var count = 0;
+                        $.each(json, function (i, items) {
+                            items_saved = true;
                         });
                     });
-                }
+
+                });
             } else {
+                // this is only for freezing a transaction without items
+                // other transactions are not allowed to be processed and save without items
                 items_saved = true;
 
                 if (!is_final) {
@@ -1338,8 +1199,6 @@ function freezeTransaction(is_final)
                         },
                         function(){
                                 syncToERP();
-                                //location.reload();
-                            
                         });
                 } else {
                     swal({
@@ -1351,8 +1210,6 @@ function freezeTransaction(is_final)
                         },
                         function(){
                             syncToERP();
-                            //location.reload();
-                            
                         });
                 }
             }
@@ -1382,13 +1239,22 @@ function freezeTransaction(is_final)
                         var count = 0;
                         $.each(json, function(i, payments) {
                             //reload form
-                            if (trans_saved && items_saved) {
+                            if (trans_saved) {
+
+                                if (!items_saved) {
+                                    setTimeout(
+                                        function()
+                                        {
+                                           // timeout waiting for saving of items
+                                        }, 2000);
+                                }
+
                                 if (!is_final) {
                                     swal({
                                           title: "Transaction Frozen!",
                                           text: "The page will now reload",
                                           type: "success",
-                                          timer: 5000,
+                                          timer: 6000,
                                             showConfirmButton: false,
                                         },
                                         function(){
@@ -1401,7 +1267,7 @@ function freezeTransaction(is_final)
                                           title: "Transaction Saved!",
                                           text: "Please wait for data sync",
                                           type: "success",
-                                          timer: 5000,
+                                          timer: 6000,
                                             showConfirmButton: false,
                                         },
                                         function(){
@@ -1412,10 +1278,8 @@ function freezeTransaction(is_final)
                                 }
                             } else {
                                 if (!trans_saved) {
-                                    //race
-                                    //swal('Error encountered',transaction_disp_id+' not frozen (Transaction)','error');
-                                } else if (!items_saved) {
-                                    //swal('Error encountered',transaction_disp_id+' not frozen (Items)','error');
+                                    swal('Error encountered!', 'There was a problem saving this transaction','error');
+                                    location.reload();
                                 }
                             }
                         });
@@ -1423,6 +1287,8 @@ function freezeTransaction(is_final)
                     });
                 });
             } else {
+                // when there are no payments made
+                // this is only allowed for freezing transactions
                 payments_saved = true;
 
                 if (!is_final) {
@@ -1452,13 +1318,12 @@ function freezeTransaction(is_final)
                             
                         });
                 }
-
             }
         });
 
     });
 
-
+    // save default split
     setTimeout(
     function() 
     {
@@ -1468,26 +1333,14 @@ function freezeTransaction(is_final)
             $.each(json, function(i, resp) {
                 if (resp.status == 'saved') {
                     
+                } else {
+
                 }
             });
 
         });
         //
-    }, 3000); 
-
-}
-
-
-
-function unfreezeTransaction()
-{
-    //clear ALL
-
-    //load transaction
-
-    //load items
-
-    //load payments
+    }, 4000);
 }
 
 function resetCustomerModal()
@@ -1532,3 +1385,4 @@ function clearCustomerFields()
     $('.cust_search_marital').prop('selectedIndex',0);
     $('.posgrp_cust_search_marriage_date').hide();
 }
+
