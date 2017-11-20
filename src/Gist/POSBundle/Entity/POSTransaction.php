@@ -142,6 +142,12 @@ class POSTransaction
     protected $location;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $refundMethod;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $refundAmount;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $generic_var1;
 
 
@@ -501,6 +507,54 @@ class POSTransaction
     public function getTransactionType()
     {
         return $this->transaction_type;
+    }
+
+    /**
+     * Set RefundMethod
+     *
+     * @param string $refundMethod
+     *
+     * @return POSTransaction
+     */
+    public function setRefundMethod($refundMethod)
+    {
+        $this->refundMethod = $refundMethod;
+
+        return $this;
+    }
+
+    /**
+     * Get RefundMethod
+     *
+     * @return string
+     */
+    public function getRefundMethod()
+    {
+        return $this->refundMethod;
+    }
+
+    /**
+     * Set RefundAmount
+     *
+     * @param string $refundAmount
+     *
+     * @return POSTransaction
+     */
+    public function setRefundAmount($refundAmount)
+    {
+        $this->refundAmount = $refundAmount;
+
+        return $this;
+    }
+
+    /**
+     * Get RefundAmount
+     *
+     * @return string
+     */
+    public function getRefundAmount()
+    {
+        return $this->refundAmount;
     }
 
     public function getTransactionTypeFormatted()

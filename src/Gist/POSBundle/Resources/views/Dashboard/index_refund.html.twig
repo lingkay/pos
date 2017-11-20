@@ -10,14 +10,18 @@
     <input type="hidden" id="float_cart_orig_price" name="float_cart_orig_price" value="0">
     <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
     <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
+    <input type="hidden" id="float_static_trans_amount" name="float_static_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
+    <input type="hidden" id="float_trans_refund_amount" name="float_trans_refund_amount" value="0">
     <input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
     <input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
     <input type="hidden" id="transaction_prev_balance" name="transaction_prev_balance" value="0">
     <input type="hidden" id="float_trans_ea" name="transaction_balance" value="0">
-    <input type="hidden" id="string_trans_type" value="none">
+    <input type="hidden" id="string_trans_type" value="reg">
+    <input type="hidden" id="string_parent_trans_type" value="{{ transaction_object.getTransactionType|default('null') }}">
+    <input type="hidden" id="string_refund_method" value="none">
     <input type="hidden" id="string_trans_main_type" value="Normal">
     <input type="hidden" id="string_trans_bulk_type" value="none">
-    <input type="hidden" id="string_trans_mode" value="normal">
+    <input type="hidden" id="string_trans_mode" value="refund">
     <input type="hidden" id="flag_refund" value="{{flag_refund|default('false')}}">
     <input type="hidden" id="flag_upsell" value="{{flag_upsell|default('false')}}">
     <input type="hidden" id="string_trans_cc_interest" value="true">
@@ -126,7 +130,7 @@
                                                     <input type="hidden" name="product_amt[]" class="existing_product_amt" value="{{item.getOrigPrice}}" >
 
                                                     <td style="font-size: 10px !important;">{{ form.checkbox_issued_item('refund_issued', 0, '', '', '')}}</td>
-                                                    <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control item_name"></td>
+                                                    <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control existing_item_name"></td>
                                                     <td><input type="text" style="font-size: 10px !important;" name="existing_display_price[]" class="form-control existing_display_price" readonly="true" value="{{item.getOrigPrice}}"></td>
                                                     {% if transaction_object.getTransactionType|default('null') == 'per' %}
                                                         <td style="font-size: 10px !important;">{{ form.group_select_only3('Type', 'existing_indiv_disc_opt', indiv_options, item.getDiscountType|default(''), 12, 12, true) }}</td>
@@ -209,7 +213,7 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12" >
-                                        <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
+                                        <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Continue Refund</a>
                                         <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                                         <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout/Pay</a>
                                         <a href="javascript:void(0)" class="btn proceed_deposit" style="background-color: green; color: #ffffff;">Proceed Deposit</a>
@@ -233,9 +237,9 @@
                                             </thead>
                                             <tbody>
                                             <tr class="initial_totals">
-                                                <td><p style="font-size:12px;" class="cart_price_h3">Total <b>Php <span class="initial_cart_price" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="cart_price_h3">Total <b>Php <span class="initial_cart_price" value="0">0.00</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0.00</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0.00</span></b></p></td>
                                             </tr>
                                             <tr class="updated_totals_row">
                                                 <td><p style="font-size:12px;" class="updated_price_h3">Updated <b>Php <span class="updated_cart_price" value="0">0</span></b></p></td>
@@ -247,10 +251,10 @@
                                                 <td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_amt_net_vat" value="0">0</span></b></p></td>
                                                 <td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_vat_amt" value="0">0</span></b></p></td>
                                             </tr>
-                                            <tr class="balance_totals_row">
-                                                <td><p style="font-size:12px;" class="balance_amount_h3">Balance <b>Php <span class="totals_balance" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="balance_amt_vat"><b>Php <span id="balance_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="balance_vat"><b>Php <span id="balance_vat_amt" value="0">0</span></b></p></td>
+                                            <tr class="refund_balance_totals_row">
+                                                <td><p style="font-size:12px;" class="balance_amount_h3">Balance <b>Php <span class="totals_balance" value="0">0.00</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="balance_amt_vat"><b>Php <span id="balance_amt_net_vat" value="0">0.00</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="balance_vat"><b>Php <span id="balance_vat_amt" value="0">0.00</span></b></p></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -432,6 +436,21 @@
 
         $(document).ready(function() {
 
+            var restrict = "{{restrict}}";
+            if (restrict == 'true') {
+                swal({
+                        title: "Cannot load transaction!",
+                        text: "The trasaction you are trying to access is not valid for reloading",
+                        type: "error",
+                        confirmButtonColor: "green",
+                        confirmButtonText: "Okay",
+                    },
+                    function(){
+                        location.replace('/pos');
+
+                    });
+            }
+
             // compute existing cart
             $(document).on("click", ".refund_issued", function (e) {
                 var trans_type = '{{ transaction_object.getTransactionType|default('') }}';
@@ -455,7 +474,9 @@
                 //count number of items
                 var rowCount = $('#refund_new_cart_table tr').length - 1;
                 $('#lbl_refund_amount').text(addCommas(parseFloat(selected_refund_total)));
+                $('#float_trans_refund_amount').val(selected_refund_total);
                 $('#selected_items_total').val(selected_refund_total);
+                computeBalance();
             });
         });
     </script>

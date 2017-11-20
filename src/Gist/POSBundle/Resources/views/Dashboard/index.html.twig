@@ -10,11 +10,15 @@
 <input type="hidden" id="float_cart_orig_price" name="float_cart_orig_price" value="0">
 <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
 <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
+<input type="hidden" id="float_static_trans_amount" name="float_static_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
+<input type="hidden" id="float_trans_refund_amount" name="float_trans_refund_amount" value="0">
 <input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
 <input type="hidden" id="float_trans_balance" name="transaction_balance" value="{{transaction_object.getBalance|default(0)}}">
 <input type="hidden" id="transaction_prev_balance" name="transaction_prev_balance" value="{{transaction_object.getBalance|default(0)}}">
 <input type="hidden" id="float_trans_ea" name="transaction_balance" value="0">
 <input type="hidden" id="string_trans_type" value="{{transaction_object.getTransactionType|default('none')}}">
+<input type="hidden" id="string_parent_trans_type" value="{{ transaction_object.getTransactionType|default('null') }}">
+<input type="hidden" id="string_refund_method" value="none">
 <input type="hidden" id="string_trans_main_type" value="Normal">
 <input type="hidden" id="string_trans_bulk_type" value="none">
 <input type="hidden" id="string_trans_mode" value="{{transaction_object.getTransactionMode|default('normal')}}">
@@ -371,6 +375,24 @@ function appendDepositItemFields()
             
     }
 }
+
+$(document).ready(function() {
+
+    var restrict = "{{restrict}}";
+    if (restrict == 'true') {
+        swal({
+                title: "Cannot load transaction!",
+                text: "The trasaction you are trying to access is not valid for reloading",
+                type: "error",
+                confirmButtonColor: "green",
+                confirmButtonText: "Okay",
+            },
+            function(){
+                location.replace('/pos');
+
+            });
+    }
+});
 </script>
 {% endblock %}
  

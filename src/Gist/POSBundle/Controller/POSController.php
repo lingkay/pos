@@ -310,7 +310,7 @@ class POSController extends Controller
      * Saving of POS transaction
      * (AJAX)
      */
-    public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell)
+    public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -343,6 +343,9 @@ class POSController extends Controller
         $transaction->setTransactionMode($transaction_mode);
         $transaction->setExtraAmount($transaction_ea);
 
+        $transaction->setRefundMethod($refundMethod);
+        $transaction->setRefundAmount($refundAmount);
+
         $transaction->setSelectedBulkDiscountType($selected_bulk_discount_type);
         $transaction->setSelectedBulkDiscountAmount($selected_bulk_discount_amount);
 
@@ -373,7 +376,12 @@ class POSController extends Controller
         $em->persist($transaction);
         $em->flush();
 
-        $new_display_id = strtoupper(substr($transaction_mode, 0,1)).'-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
+        if ($exchangeFlag == 'true') {
+            $new_display_id = 'E-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
+        } else {
+            $new_display_id = strtoupper(substr($transaction_mode, 0,1)).'-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
+        }
+
         $transaction->setTransDisplayId($new_display_id);
         $em->persist($transaction);
         $em->flush();
@@ -424,10 +432,25 @@ class POSController extends Controller
     }
 
     /**
-     * Save transction items
+     * Save transaction items
+     *
      * (AJAX)
+     * @param $trans_sys_id
+     * @param $prod_id
+     * @param $prod_name
+     * @param $orig_price
+     * @param $min_price
+     * @param $adjusted_price
+     * @param $discount_type
+     * @param $discount_value
+     * @param $barcode
+     * @param $item_code
+     * @param $is_issued
+     * @param $issued_on
+     * @param $refund_issued
+     * @return JsonResponse
      */
-    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued, $issued_on)
+    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued, $issued_on, $refund_issued)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -463,6 +486,16 @@ class POSController extends Controller
         $transaction_item->setDiscountValue($discount_value);
         $transaction_item->setBarcode($barcode);
         $transaction_item->setItemCode($item_code);
+
+        if ($refund_issued == 'true') {
+            $transaction_item->setReturned(true);
+        } elseif ($refund_issued == 'new') {
+            $transaction_item->setIsNewItem(true);
+        } else {
+            $transaction_item->setReturned(false);
+        }
+
+
 
         $em->persist($transaction_item);
         $em->flush();

@@ -467,7 +467,7 @@
 {% macro group_select_only3(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
 {% import _self as self %}
 <div style="padding-left: 0px !important; padding-right: 0px !important;" class="col-md-{{ body_size }}">
-<select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control pos_indiv_discount_opt" onchange="apply_indiv(this);" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
+<select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control pos_indiv_discount_opt {{ name }}" onchange="apply_indiv(this);" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
 {{ self.options2(options, value) }}
 </select>
 </div>

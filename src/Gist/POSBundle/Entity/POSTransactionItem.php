@@ -67,6 +67,12 @@ class POSTransactionItem
     /** @ORM\Column(type="boolean", nullable=true) */
     protected $issued;
 
+    /** @ORM\Column(type="boolean", nullable=true) */
+    protected $new_item;
+
+    /** @ORM\Column(type="boolean", nullable=true) */
+    protected $returned;
+
     public function __construct()
     {
         $this->initTrackCreate();
@@ -385,6 +391,30 @@ class POSTransactionItem
     }
 
     /**
+     * Set returned
+     *
+     * @param boolean $returned
+     *
+     * @return POSTransactionItem
+     */
+    public function setReturned($returned)
+    {
+        $this->returned = $returned;
+
+        return $this;
+    }
+
+    /**
+     * Get returned
+     *
+     * @return boolean
+     */
+    public function getReturned()
+    {
+        return $this->returned;
+    }
+
+    /**
      * Set itemIssuedOn
      *
      * @param string $itemIssuedOn
@@ -406,5 +436,31 @@ class POSTransactionItem
     public function getItemIssuedOn()
     {
         return $this->item_issued_on;
+    }
+
+    //
+
+    /**
+     * setIsNewItem
+     *
+     * @param string $new_item
+     *
+     * @return POSTransactionItems
+     */
+    public function setIsNewItem($new_item)
+    {
+        $this->new_item = $new_item;
+
+        return $this;
+    }
+
+    /**
+     * getIsNewItem
+     *
+     * @return string
+     */
+    public function getIsNewItem()
+    {
+        return $this->new_item;
     }
 }

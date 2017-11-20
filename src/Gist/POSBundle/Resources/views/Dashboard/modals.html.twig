@@ -1,4 +1,5 @@
-<div id="bulk_adjustment" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div>
+    <div id="bulk_adjustment" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form method="post" action="">
@@ -65,6 +66,38 @@
                     </div>
                     <div class="modal-footer">
                         
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="refund_type_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Select Refund Method</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="col-md-4" class="proceed_btn_reg" onclick="proceedRefund('gc')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/gift_card.png') }}"></a>
+                                <h4>Gift Card</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedRefund('cash')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_cash.png') }}"></a>
+                                <h4>Cash</h4>
+                            </div>
+                            <div class="col-md-4" class="proceed_btn_bulk"  onclick="proceedRefund('credit')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_card.png') }}"></a>
+                                <h4>Credit</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
                         <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
