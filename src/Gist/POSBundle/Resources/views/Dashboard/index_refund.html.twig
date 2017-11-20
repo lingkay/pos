@@ -39,6 +39,7 @@
     <input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
     <input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
     <input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
+    <input type="hidden" id="hasItems" value="{{transaction_object.hasItems|default(false)}}">
     <!-- TAX VARS -->
     <input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
     <input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">

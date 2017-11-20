@@ -247,10 +247,11 @@ $(document).ready(function(){
 
 
 
-    var hasItems = "{{transaction_object.hasItems|default(false)}}";
+    var hasItems = $('#hasItems').val();
     var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
     var trans_type = $('#string_trans_type').val();
     var trans_mode = $('#string_trans_mode').val();
+    var xtrans_mode = $('#flag_refund').val();
     var balance = $('#float_trans_balance').val();
     var ref_trans = $('#transaction_reference_sys_disp_id').val();
     $('#footer_customer').text($('#transaction_customer_name').val());
@@ -267,7 +268,9 @@ $(document).ready(function(){
             $('#string_trans_type').val('per');
             $('.next_step_btn').hide();
             $('.savings_h4').show();
-            $('.checkout_btn').show();
+            if (xtrans_mode != 'true') {
+                $('.checkout_btn').show();
+            }
             $('#transaction_type_modal').modal('hide');
             $('.updated_totals_row').show();
             $('.clear_discount').show();
@@ -285,7 +288,9 @@ $(document).ready(function(){
             $('.bulk_adj').show();
             $('#proc').show();
             applyBulkAdjustmentOnLoad();
-            $('.checkout_btn').show();
+            if (xtrans_mode != 'true') {
+                $('.checkout_btn').show();
+            }
         }
 
         if (trans_mode == 'Deposit') {
@@ -298,12 +303,12 @@ $(document).ready(function(){
             $('#float_trans_deposit_amount').val(payment_total);
             $('#string_trans_mode').val('Deposit');
             $('#pos_mode').text('Deposit');
-            $('.checkout_btn').show();
+            if (xtrans_mode != 'true') {
+                $('.checkout_btn').show();
+            }
             $('.proceed_deposit').show();
             $('.next_step_btn').hide();
             $('.clear_discount').hide();
-        } else if (trans_mode == 'refund' || trans_mode == 'exchange') {
-            $('.checkout_btn').hide();
         }
     }
 
@@ -2017,9 +2022,9 @@ $(document).ready(function(){
     $('.bulk_adj').hide();
     $('.clear_discount').hide();
 
-    if ($('#flag_refund').val() != 'true') {
-        $('.checkout_btn').hide();
-    }
+
+    $('.checkout_btn').hide();
+
 
     $('.proceed_deposit').hide();
     $('.orig_totals_row').hide();
