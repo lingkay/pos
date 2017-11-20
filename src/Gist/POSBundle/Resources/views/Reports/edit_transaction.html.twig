@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                             {# ITEMS #}
-                            {% if object.getTransactionMode|default('none') == 'exchange' %}
+                            {% if object.getTransactionMode|default('none') == 'exchange' or object.getTransactionMode|default('none') == 'refund' %}
                                 {% embed "GistPOSBundle:Dashboard:exchange_items.html.twig" %}{% endembed %}
                             {% else %}
                                 {% embed "GistPOSBundle:Dashboard:items.html.twig" %}{% endembed %}
