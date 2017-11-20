@@ -259,6 +259,23 @@ class POSTransaction
         return $total;
     }
 
+    public function getTransactionTotalER()
+    {
+        $total = 0;
+
+        foreach ($this->items as $p) {
+            if ($p->getReturned() == false) {
+                if ($this->transaction_type == 'per') {
+                    $total = $total + $p->getAdjustedPrice();
+                } else {
+                    $total = $total + $p->getOrigPrice();
+                }
+            }
+        }
+
+        return $total;
+    }
+
 
     public function getAmountIssued()
     {
