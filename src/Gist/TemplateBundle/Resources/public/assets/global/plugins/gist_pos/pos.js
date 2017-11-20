@@ -1218,7 +1218,7 @@ function freezeTransaction(is_final)
                     var item_code = row.find('.item_code').val();
                     var discount_type = '%20';
                     var discount_value = '%20';
-                    var adjusted_price = '%20';
+                    var adjusted_price = row.find('.srp').val();
                     var is_issued = 'true';
                     var refund_issued = 'new';
                     var issued_on = row.find('.issued_on').val();

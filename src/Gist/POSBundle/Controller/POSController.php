@@ -378,6 +378,7 @@ class POSController extends Controller
 
         if ($exchangeFlag == 'true') {
             $new_display_id = 'E-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
+            $transaction->setTransactionMode('exchange');
         } else {
             $new_display_id = strtoupper(substr($transaction_mode, 0,1)).'-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
         }
@@ -631,7 +632,12 @@ class POSController extends Controller
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         
         $params['transaction'] = $transaction;
-        $params['total_sales'] = $transaction->getTransactionTotal();
+        if ($transaction->getTransactionMode() == 'exchange' || $transaction->getTransactionMode() == 'refund') {
+            $params['total_sales'] = $transaction->getTransactionTotal();
+        } else {
+            $params['total_sales'] = $transaction->getTransactionTotal();
+        }
+
         $params['change'] = $transaction->getTransactionTotal() - $transaction->getTransactionBalance();
 
         $twig = 'GistPOSBundle:POS:receipt.html.twig';

@@ -1,0 +1,104 @@
+<br>
+<br>
+<br>
+<!-- TOTALS -->
+{% if transaction.getTransactionType|default('') == 'bulk' %}
+    <div style="width: 100%; height: 15px; vertical-align: middle; margin-bottom: 15px;font-size: 16px;">
+        <table width="300">
+            <tr>
+                <td width="180">Bulk Discount</td>
+                <td width="150" style="text-align: right; position: absolute;">{{transaction.getBulkDiscountType|default('')}}</td>
+            </tr>
+        </table>
+    </div>
+{% endif %}
+<div style="width: 100%; height: 15px; vertical-align: middle; margin-bottom: 15px;font-size: 16px;">
+    <table width="300">
+        <tr>
+            <td width="240">Sale Total</td>
+            <td width="90" style="text-align: right; position: absolute;">P{{total_sales|number_format(2,'.',',')}}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr /></td>
+        </tr>
+        {% for t in transaction.getPayments|default('') %}
+            <tr>
+                {% if t.getTransaction.getID == t.getPaymentIssuedOn.getID|default('') %}
+                    <td width="240">{{t.getType}}*</td>
+                {% else %}
+                    <td width="240">{{t.getType}}</td>
+                {% endif %}
+                <td width="10" style="text-align: right;" align="right">P{{t.getAmount|number_format(2,'.',',')}}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            {% if transaction.getTransactionMode == 'Deposit' %}
+                <td width="240">Balance</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{(transaction.getTransactionTotal-transaction.getTotalPayments)|abs|number_format(2,'.',',')}}</td>
+            {% else %}
+                <td width="240">Change</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{(transaction.getTransactionTotal-transaction.getTotalPayments)|abs|number_format(2,'.',',')}}</td>
+            {% endif %}
+        </tr>
+    </table>
+    {% if transaction.getTransactionMode == 'Deposit' or transaction.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
+        <i>*issued payment/s on this transaction</i>
+    {% endif %}
+</div>
+<div style="width: 100%; height: 15px; vertical-align: middle; margin-bottom: 15px;font-size: 16px;">
+    <table width="300">
+
+        {% if transaction.getTransactionType|default('') == 'per' or transaction.getTransactionType|default('') == 'bulk' %}
+            <tr>
+                <td width="240">VATable Sales</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{transaction.getNewAmtNetVat|number_format(2,'.',',')}}</td>
+            </tr>
+        {% elseif transaction.getTransactionType|default('') == 'reg' %}
+            <tr>
+                <td width="240">VATable Sales</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{transaction.getOrigAmtNetVat|number_format(2,'.',',')}}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td width="240">VAT-Exempt Sale</td>
+            <td width="90" style="text-align: right; position: absolute;">P0.00</td>
+        </tr>
+        <tr>
+            <td width="240">VAT-Zero Rated Sale</td>
+            <td width="90" style="text-align: right; position: absolute;">P0.00</td>
+        </tr>
+    </table>
+</div>
+
+<div style="width: 100%; height: 15px; vertical-align: middle; margin-bottom: 15px;font-size: 16px;">
+    <table width="300">
+
+        {% if transaction.getTransactionType|default('') == 'per' or transaction.getTransactionType|default('') == 'bulk' %}
+            <tr>
+                <td width="240">Total Sale</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{transaction.getNewAmtNetVat|number_format(2,'.',',')}}</td>
+            </tr>
+            <tr>
+                <td width="240">VAT</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{transaction.getNewVatAmt|number_format(2,'.',',')}}</td>
+            </tr>
+        {% elseif transaction.getTransactionType|default('') == 'reg' %}
+            <tr>
+                <td width="240">Total Sale</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{transaction.getOrigAmtNetVat|number_format(2,'.',',')}}</td>
+            </tr>
+            <tr>
+                <td width="240">VAT</td>
+                <td width="90" style="text-align: right; position: absolute;">P{{transaction.getOrigVatAmt|number_format(2,'.',',')}}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td width="240"><b>Amount Due</b></td>
+            <td width="90" style="text-align: right; position: absolute;"><b>P{{total_sales|number_format(2,'.',',')}}</b></td>
+        </tr>
+    </table>
+</div>
+<page_footer>
+    <div align="center" style="margin: 0;"><p style="color: black; font-size: 12px; margin: 0;">THIS INVOICE/RECEIPT SHALL BE VALID FOR<br>FIVE (5) YEARS FROM THE DATE OF THE<br>PERMIT TO USE<br>THIS SERVES AS AN OFFICIAL RECEIPT</p></div>
+    <div align="center" style="margin: 0;"></div>
+</page_footer>
