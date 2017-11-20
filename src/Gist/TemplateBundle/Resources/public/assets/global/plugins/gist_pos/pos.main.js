@@ -1155,9 +1155,15 @@ $(document).ready(function(){
             if ($('#flag_refund').val() === 'true') {
                 // straight to refund
                 // show money return modal
-                $('#refund_type_modal').modal('show');
+                var refund_total = $('#float_trans_refund_amount').val();
+                if (refund_total > 0) {
+                    $('#refund_type_modal').modal('show');
+                } else {
+                    swal("Cannot continue refund!", "Select at least one item to proceed", "error");
+                }
+
             } else {
-                toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
+                swal("Cannot proceed!", "Add products to cart before proceeding to next step", "error");
             }
         }
     });
