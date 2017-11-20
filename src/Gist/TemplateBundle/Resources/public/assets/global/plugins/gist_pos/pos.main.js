@@ -65,20 +65,55 @@ function computeExtraAmount()
 {
     var cart_min_price = 0;
     var cart_price = 0;
-    cart_min_price = parseInt($("#float_cart_minimum_total").val());
 
-    if ($('#string_trans_mode').val() == 'normal') {
-        var additional_ea = $('#transaction_parent_ea').val();
-        additional_ea = additional_ea.replace(/-/g, "");
+
+
+    if ($('#flag_refund').val() == 'true') {
+        var minimum_price = 0;
+        var existing_minimum_price = 0;
+        // compute each item's minimum price
+        $('.min_price').each(function(){
+            minimum_price = minimum_price + parseFloat($(this).val());
+        });
+
+        $('.refund_issued:checkbox:not(:checked)').each(function () {
+            var row = $(this).closest('.existing_product_row');
+            var ext_min_price = row.find('.existing_min_price');
+            existing_minimum_price += parseFloat(ext_min_price.val());
+        });
+
+        cart_min_price = minimum_price + existing_minimum_price;
+
+        if ($('#string_trans_mode').val() == 'normal') {
+            var additional_ea = $('#transaction_parent_ea').val();
+            additional_ea = additional_ea.replace(/-/g, "");
+        } else {
+            var additional_ea = '0';
+        }
+
+        if ($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
+            cart_price = parseInt($("#ovr_float_cart_orig_price").val());
+        } else {
+            cart_price = parseInt($("#ovr_float_cart_new_price").val());
+        }
     } else {
-        var additional_ea = '0';
+        cart_min_price = parseInt($("#float_cart_minimum_total").val());
+
+        if ($('#string_trans_mode').val() == 'normal') {
+            var additional_ea = $('#transaction_parent_ea').val();
+            additional_ea = additional_ea.replace(/-/g, "");
+        } else {
+            var additional_ea = '0';
+        }
+
+        if ($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
+            cart_price = parseInt($("#float_cart_orig_price").val());
+        } else {
+            cart_price = parseInt($("#float_cart_new_price").val());
+        }
     }
 
-    if ($('#string_trans_type').val() == 'none' || $('#string_trans_type').val() == 'reg') {
-        cart_price = parseInt($("#float_cart_orig_price").val());
-    } else {
-        cart_price = parseInt($("#float_cart_new_price").val());
-    }
+
     
     var extra_amt = (cart_price - cart_min_price) + parseInt(additional_ea);
     var extra_amt_disp = addDashes(extra_amt.toString());
@@ -243,7 +278,7 @@ function computeRefundVATBalance(total)
 
 $(document).ready(function(){
 
-    computeExtraAmount();
+
 
 
 
@@ -310,7 +345,11 @@ $(document).ready(function(){
             $('.next_step_btn').hide();
             $('.clear_discount').hide();
         }
+
+
     }
+
+    computeExtraAmount();
 
     $(document).on("click",".quotation_continue_btn", function(e){
         if ($('#string_trans_mode').val() == 'normal') {
@@ -1142,11 +1181,16 @@ $(document).ready(function(){
         var balance = parseFloat($('#float_trans_balance').val());
         if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
             if ($('#flag_refund').val() === 'true') {
-                if (balance <= 0) {
-                    // exchanged item/s total is still lower than refund amount
-                    $('#refund_type_modal').modal('show');
+                var number_of_items_to_return = $('.refund_issued:checkbox:checked').length;
+                if (number_of_items_to_return > 0) {
+                    if (balance <= 0) {
+                        // exchanged item/s total is still lower than refund amount
+                        $('#refund_type_modal').modal('show');
+                    } else {
+                        $('#transaction_type_modal').modal('show');
+                    }
                 } else {
-                    $('#transaction_type_modal').modal('show');
+                    swal("Cannot continue refund!", "Select at least one item to return", "error");
                 }
             } else {
                 $('#transaction_type_modal').modal('show');

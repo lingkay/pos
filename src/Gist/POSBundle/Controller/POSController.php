@@ -110,6 +110,8 @@ class POSController extends Controller
 
     /**
      * Show the POS page refund mode
+     * @param $transaction_display_id
+     * @return
      */
     public function indexLoadRefundAction($transaction_display_id)
     {
@@ -122,6 +124,7 @@ class POSController extends Controller
         $params['customer'] = null;
         $params['restrict'] = 'false';
         $params['flag_refund'] = 'true';
+        $params['ea'] = $transaction_object->getExtraAmount();
 
         if ($transaction_object) {
 
@@ -141,6 +144,9 @@ class POSController extends Controller
 
     /**
      * Generate parameters
+     * @param $params
+     * @param null $object
+     * @return
      */
     protected function padFormParams(&$params, $object = null)
     {
@@ -256,6 +262,8 @@ class POSController extends Controller
 
     /**
      * Get customer object
+     * @param $id
+     * @return null
      */
     protected function getCustomer($id)
     {
@@ -309,6 +317,37 @@ class POSController extends Controller
     /**
      * Saving of POS transaction
      * (AJAX)
+     * @param $total
+     * @param $balance
+     * @param $type
+     * @param $customer_id
+     * @param $status
+     * @param $tax_rate
+     * @param $orig_vat_amt
+     * @param $new_vat_amt
+     * @param $orig_amt_net_vat
+     * @param $new_amt_net_vat
+     * @param $tax_coverage
+     * @param $cart_min
+     * @param $orig_cart_total
+     * @param $new_cart_total
+     * @param $bulk_type
+     * @param $transaction_mode
+     * @param $transaction_cc_interest
+     * @param $transaction_ea
+     * @param $deposit_amount
+     * @param $deposit_amt_net_vat
+     * @param $deposit_vat_amt
+     * @param $balance_amt_net_vat
+     * @param $balance_vat_amt
+     * @param $transaction_reference_sys_id
+     * @param $selected_bulk_discount_type
+     * @param $selected_bulk_discount_amount
+     * @param $flag_upsell
+     * @param $refundMethod
+     * @param $refundAmount
+     * @param $exchangeFlag
+     * @return JsonResponse
      */
     public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag)
     {
@@ -396,6 +435,8 @@ class POSController extends Controller
     /**
      * Generate default split
      * (AJAX)
+     * @param $trans_sys_id
+     * @return JsonResponse
      */
     public function generateDefaultSplitAction($trans_sys_id)
     {

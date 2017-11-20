@@ -576,6 +576,10 @@ function computeBalance()
     $('.co_balance_disp').text(addCommas(balance));
 
     computeVATBalance(balance);
+
+    if ($('#flag_refund').val() == "true") {
+        computeRefundTotal();
+    }
 }
 
 function computeBalanceDisplay(amt)
@@ -1113,6 +1117,16 @@ function freezeTransaction(is_final)
 
     if (count_cart_items > 0 && transaction_mode == 'refund') {
         exchange_flag = 'true';
+    }
+
+    if (flag_refund == 'true') {
+        transaction_total = $('#ovr_float_trans_amount').val();
+        transaction_orig_vat_amt = $('#ovr_float_orig_tax_vat_amt').val();
+        transaction_new_vat_amt = $('#ovr_float_new_tax_vat_amt').val();
+        transaction_orig_vat_amt_net = $('#ovr_float_orig_tax_amt_net_vat').val();
+        transaction_new_vat_amt_net = $('#ovr_float_new_tax_amt_net_vat').val();
+        transaction_cart_orig_total = $('#ovr_float_cart_orig_price').val();
+        transaction_cart_new_total = $('#ovr_float_cart_new_price').val();
     }
 
 

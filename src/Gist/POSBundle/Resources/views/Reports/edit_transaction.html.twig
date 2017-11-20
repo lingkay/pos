@@ -102,8 +102,8 @@
                                         </table>
                                     </div>
                                     <div class="col-md-4">
-                                        {% if object.getTransactionMode|default('none') == 'refund' %}
-                                            {{ form.group_text('Sub Total', 'sub_total', object.getTransactionTotalER|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% if object.getTransactionMode|default('none') == 'refund' or object.getTransactionMode|default('none') == 'exchange' %}
+                                            {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         {% else %}
                                             {{ form.group_text('Sub Total', 'sub_total', object.getCartOrigTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         {% endif %}

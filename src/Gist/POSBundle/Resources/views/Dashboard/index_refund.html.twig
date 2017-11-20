@@ -40,6 +40,14 @@
     <input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
     <input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
     <input type="hidden" id="hasItems" value="{{transaction_object.hasItems|default(false)}}">
+    {# OVERRIDES #}
+    <input type="hidden" id="ovr_float_trans_amount"            value="0">
+    <input type="hidden" id="ovr_float_cart_orig_price"         value="0">
+    <input type="hidden" id="ovr_float_cart_new_price"          value="0">
+    <input type="hidden" id="ovr_float_orig_tax_vat_amt"        value="0">
+    <input type="hidden" id="ovr_float_new_tax_vat_amt"         value="0">
+    <input type="hidden" id="ovr_float_orig_tax_amt_net_vat"    value="0">
+    <input type="hidden" id="ovr_float_new_tax_amt_net_vat"     value="0">
     <!-- TAX VARS -->
     <input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
     <input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">
@@ -158,7 +166,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <table class="table table-striped table-bordered table-hover" style="" id="existing_cart_totals_table">
+                                        <table class="table table-striped table-bordered" style="" id="existing_cart_totals_table">
                                             <thead>
                                             <tr>
                                                 <th width="40%" style="font-size: 12px;">Amount</th>
@@ -195,12 +203,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div style="overflow:scroll; overflow-x: hidden; height: 240px;">
-                                    <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="cart_table">
+                                    <table class="table table-striped table-bordered" style="margin-top: 10px;" id="cart_table">
                                         <thead>
                                             <tr>
-                                                <th width="60%">Item</th>
-                                                <th width="25%">Price</th>
-                                                <th width="10%"></th>
+                                                <th width="60%" class="xcol">Item</th>
+                                                <th width="25%" class="xcol">Price</th>
+                                                <th width="10%" class="xcol"></th>
                                             </tr>
                                         </thead>
                                         <tbody id="cart_items">
@@ -251,10 +259,18 @@
                                                 <td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_amt_net_vat" value="0">0</span></b></p></td>
                                                 <td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_vat_amt" value="0">0</span></b></p></td>
                                             </tr>
+                                            <tr>
+                                                <td colspan="3">&nbsp;</td>
+                                            </tr>
                                             <tr class="refund_balance_totals_row">
                                                 <td><p style="font-size:12px;" class="balance_amount_h3">Balance <b>Php <span class="totals_balance" value="0">0.00</span></b></p></td>
                                                 <td><p style="font-size:12px;" class="balance_amt_vat"><b>Php <span id="balance_amt_net_vat" value="0">0.00</span></b></p></td>
                                                 <td><p style="font-size:12px;" class="balance_vat"><b>Php <span id="balance_vat_amt" value="0">0.00</span></b></p></td>
+                                            </tr>
+                                            <tr class="refund_totals_row">
+                                                <td><p style="font-size:12px;" class="refund_new_amount_h3">New Total <b>Php <span class="refund_new_total" value="0">0.00</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="refund_new_amt_vat"><b>Php <span id="refund_new_amt_net_vat" value="0">0.00</span></b></p></td>
+                                                <td><p style="font-size:12px;" class="refund_new_vat"><b>Php <span id="refund_new_vat_amt" value="0">0.00</span></b></p></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -280,53 +296,30 @@
     <script type="text/javascript">
         function appendPerItemColumns()
         {
-            if ($('#string_trans_mode').val() == 'Deposit') {
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(2).after('<th>Discount Type</th>');
-                });
 
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(3).after('<th>Value</th>');
-                });
+            $('#cart_table').find('tr').each(function(){
+                $(this).find('th').eq(1).after('<th class="xcol">Discount Type</th>');
+            });
 
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(4).after('<th>Adjusted Price</th>');
-                });
-                var ths = $('th');
-                var element = ths.eq(1);
-                element.width(100);
-                var element2 = ths.eq(2);
-                element2.width(70);
-                var element2 = ths.eq(3);
-                element2.width(80);
-                var element2 = ths.eq(4);
-                element2.width(70);
-                var element2 = ths.eq(5);
-                element2.width(70);
-            } else {
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(1).after('<th>Discount Type</th>');
-                });
+            $('#cart_table').find('tr').each(function(){
+                $(this).find('th').eq(2).after('<th class="xcol">Value</th>');
+            });
 
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(2).after('<th>Value</th>');
-                });
+            $('#cart_table').find('tr').each(function(){
+                $(this).find('th').eq(3).after('<th class="xcol">Adjusted Price</th>');
+            });
+            var ths = $('.xcol');
+            var element = ths.eq(0);
+            element.width(100);
+            var element2 = ths.eq(1);
+            element2.width(70);
+            var element2 = ths.eq(2);
+            element2.width(80);
+            var element2 = ths.eq(3);
+            element2.width(70);
+            var element2 = ths.eq(4);
+            element2.width(70);
 
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(3).after('<th>Adjusted Price</th>');
-                });
-                var ths = $('th');
-                var element = ths.eq(0);
-                element.width(100);
-                var element2 = ths.eq(1);
-                element2.width(70);
-                var element2 = ths.eq(2);
-                element2.width(80);
-                var element2 = ths.eq(3);
-                element2.width(70);
-                var element2 = ths.eq(4);
-                element2.width(70);
-            }
         }
 
         function appendPerItemFields()

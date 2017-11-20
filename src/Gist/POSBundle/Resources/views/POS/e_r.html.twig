@@ -20,7 +20,7 @@
                         {% elseif t.getReturned|default(false) == true %}
                             <td width="240">[R] {{t.getName}}</td>
                         {% elseif t.getIsNewItem|default(false) == true %}
-                            <td width="240">[E] {{t.getName}}</td>
+                            <td width="240">[N] {{t.getName}}</td>
                         {% else %}
                             <td width="240">{{t.getName}}</td>
                         {% endif %}
@@ -60,7 +60,7 @@
                             {% elseif t.getReturned|default(false) == true %}
                                 <td width="240" colspan="2">[R] {{t.getName}}</td>
                             {% elseif t.getIsNewItem|default(false) == true %}
-                                <td width="240" colspan="2">[E] {{t.getName}}</td>
+                                <td width="240" colspan="2">[N] {{t.getName}}</td>
                             {% else %}
                                 <td width="240" colspan="2">{{t.getName}}</td>
                             {% endif %}
@@ -79,7 +79,7 @@
                             {% elseif t.getReturned|default(false) == true %}
                                 <td width="240" colspan="2">[R] {{t.getName}}</td>
                             {% elseif t.getIsNewItem|default(false) == true %}
-                                <td width="240" colspan="2">[E] {{t.getName}}</td>
+                                <td width="240" colspan="2">[N] {{t.getName}}</td>
                             {% else %}
                                 <td width="240" colspan="2">{{t.getName}}</td>
                             {% endif %}
@@ -105,7 +105,7 @@
             {% if transaction.getTransactionMode == 'exchange' %}
                 <i>[R] returned item</i>
                 <br>
-                <i>[E] new item</i>
+                <i>[N] new item</i>
             {% endif %}
         {% endif %}
     </div>
