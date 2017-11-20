@@ -109,7 +109,11 @@
                                         {% endif %}
                                         {{ form.group_text('Discount', 'discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         {{ form.group_text('Bulk Discount', 'bulk_discount', object.getDiscountAmount|number_format(2, '.', ',')|default(''), 4, 5, true) }}
-                                        {{ form.group_text('VAT', 'vat', object.getFinalVAT|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% if object.getTransactionMode|default('none') == 'refund' or object.getTransactionMode|default('none') == 'exchange' %}
+                                            {{ form.group_text('VAT', 'vat', object.getRefundVAT|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% else %}
+                                            {{ form.group_text('VAT', 'vat', object.getFinalVAT|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% endif %}
                                         {{ form.group_text('Grand Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         <hr style="border-top: dotted 2px;" />
                                         {{ form.group_text('Change', 'change', object.getChange|number_format(2, '.', ',')|default(''), 4, 5, true) }}
@@ -243,13 +247,15 @@
     <script>
         $(document).ready(function() {
             var discount = "{{object.getTransactionTypeFormatted|default('')}}";
+            var parent_discount = "{{object.getReferenceTransaction.getTransactionTypeFormatted|default('')}}";
+            var mode = "{{ object.getTransactionMode|default('none') }}";
             $('#cgroup-bulk_discount').hide();
             $('#cgroup-discount').hide();
             //$('#cgroup-discounted_total').hide();
-            if (discount == "Bulk Discount") {
+            if (discount == "Bulk Discount" || (mode == 'refund' && parent_discount == "Bulk Discount")|| (mode == 'exchange' && parent_discount == "Bulk Discount")) {
                 $('#cgroup-bulk_discount').show();
                 //$('#cgroup-discounted_total').show();
-            } else if(discount == 'Per-item Discount') {
+            } else if(discount == 'Per-item Discount' || (mode == 'refund' && parent_discount == "Per-item Discount")|| (mode == 'exchange' && parent_discount == "Per-item Discount")) {
                 //$('#cgroup-discounted_total').show();
                 $('#cgroup-discount').show();
             } else {

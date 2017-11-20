@@ -1082,7 +1082,7 @@ function freezeTransaction(is_final)
     var trans_saved = false;
     var items_saved = false;
     var payments_saved = false;
-    var count_cart_items = $('#cart_items tr').length;
+    var count_cart_items = $('#cart_items .product_row').length;
     var count_payments = $('#payments_table .init_row_payment').length;
     var transaction_total = $('#float_trans_amount').val();
     var transaction_ea = $('#float_trans_ea').val();

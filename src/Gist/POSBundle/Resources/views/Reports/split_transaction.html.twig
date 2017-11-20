@@ -133,6 +133,8 @@
         var transaction_total = 0;
         if (mode == 'Deposit' || ref_mode == 'Deposit') {
             transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
+        } else if (mode == 'refund' || mode == 'exchange') {
+            transaction_total = parseFloat("{{object.getBalance|default('0')}}");
         } else {
             transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
         }
@@ -298,6 +300,8 @@
             var transaction_total = 0;
             if (mode == 'Deposit' || ref_mode == 'Deposit') {
                 transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
+            } else if (mode == 'refund' || mode == 'exchange') {
+                transaction_total = parseFloat("{{object.getBalance|default('0')}}");
             } else {
                 transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
             }
@@ -380,7 +384,7 @@
                 var row = $(this).closest('.row_entry');
                 var final = (allocation/transaction_total)*100;
                 var amount_allocation = row.find('.percent_allocation');
-                amount_allocation.val(final.toFixed(2));
+                amount_allocation.val(final);
                 computeTotals();
             });
         });

@@ -440,11 +440,25 @@ class POSController extends Controller
      */
     public function generateDefaultSplitAction($trans_sys_id)
     {
+        $split_trans_total = 0;
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$trans_sys_id));
-         if ($transaction->getTransactionMode() != 'frozen' && $transaction->getTransactionMode() != 'quotation') {
 
-            $split_trans_total = 0;
+        if ($transaction->getTransactionMode() == 'exchange' || $transaction->getTransactionMode() == 'refund') {
+            $split_trans_total = $transaction->getBalance();
+            $split_entry = new POSTransactionSplit();
+            $split_entry->setConsultant($this->getUser());
+            $split_entry->setTransaction($transaction);
+            $split_entry->setAmount($split_trans_total);
+            $split_entry->setPercent('100.00');
+            $em->persist($split_entry);
+
+            $em->flush();
+            $list_opts[] = array('status'=>'saved');
+            return new JsonResponse($list_opts);
+        }
+
+        if ($transaction->getTransactionMode() != 'frozen' && $transaction->getTransactionMode() != 'quotation') {
             $ref = $transaction->getReferenceTransaction() ? $transaction->getReferenceTransaction() : null;
             if ($ref != null) {
                 if ($transaction->getTransactionMode() == 'Deposit' || $ref->getTransactionMode() == 'Deposit') {
@@ -459,17 +473,20 @@ class POSController extends Controller
                     $split_trans_total = $transaction->getPaymentIssued();
                 }
             }
-                
+
             $split_entry = new POSTransactionSplit();
             $split_entry->setConsultant($this->getUser());
             $split_entry->setTransaction($transaction);
             $split_entry->setAmount($split_trans_total);
             $split_entry->setPercent('100.00');
             $em->persist($split_entry);
-            
-            $em->flush();   
+
+            $em->flush();
+            $list_opts[] = array('status'=>'saved');
+            return new JsonResponse($list_opts);
         }
-        $list_opts[] = array('status'=>'saved');
+
+        $list_opts[] = array('status'=>'error');
         return new JsonResponse($list_opts);
     }
 

@@ -195,7 +195,16 @@ class POSTransaction
 
     public function getFinalVAT()
     {
-        if ($this->transaction_type == 'per' || $this->transaction_type == 'bulk') {
+        if (($this->transaction_type == 'per' || $this->transaction_type == 'bulk')) {
+            return $this->new_vat_amt;
+        }
+
+        return $this->orig_vat_amt;
+    }
+
+    public function getRefundVAT()
+    {
+        if (($this->reference_transaction->transaction_type == 'per' || $this->reference_transaction->transaction_type == 'bulk')) {
             return $this->new_vat_amt;
         }
 
