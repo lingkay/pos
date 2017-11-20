@@ -302,6 +302,8 @@ $(document).ready(function(){
             $('.proceed_deposit').show();
             $('.next_step_btn').hide();
             $('.clear_discount').hide();
+        } else if (trans_mode == 'refund' || trans_mode == 'exchange') {
+            $('.checkout_btn').hide();
         }
     }
 
