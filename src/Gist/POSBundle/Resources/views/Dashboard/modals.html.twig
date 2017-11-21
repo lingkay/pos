@@ -82,17 +82,21 @@
                     </div>
                     <div class="modal-body">
                         <div class="row form-horizontal form">
-                            <div class="col-md-4" class="proceed_btn_reg" onclick="proceedRefund('gc')">
+                            <div class="col-md-3" class="proceed_btn_reg" onclick="proceedRefund('gc')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/gift_card.png') }}"></a>
                                 <h4>Gift Card</h4>
                             </div>
-                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedRefund('cash')">
+                            <div class="col-md-3" class="proceed_btn_per"  onclick="proceedRefund('cash')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_cash.png') }}"></a>
                                 <h4>Cash</h4>
                             </div>
-                            <div class="col-md-4" class="proceed_btn_bulk"  onclick="proceedRefund('credit')">
+                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="proceedRefund('credit')">
                                 <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_card.png') }}"></a>
                                 <h4>Credit</h4>
+                            </div>
+                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="proceedRefund('check')">
+                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}"></a>
+                                <h4>Check</h4>
                             </div>
                         </div>
                     </div>
@@ -104,6 +108,32 @@
             </div>
         </div>
     </div>
+    {# #}
+    <div id="gc_refund_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Gift Card Refund</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                            <div class="col-md-12">
+                                {{ form.group_text('Refund Amount', 'gcr_refund_amt', '', 4, 4, true) }}
+                                {{ form.group_text('GC Credit Amount', 'gcr_credit_amt', '', 4, 4, true) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green gc_refund_proceed_btn" style="margin=0" href="javascript:void(0)">Confirm</a>
+                        <a class="btn default gc_refund_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {# #}
     <div id="checkout_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">

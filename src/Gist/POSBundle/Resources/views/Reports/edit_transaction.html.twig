@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                             {# ITEMS #}
-                            {% if object.getTransactionMode|default('none') == 'exchange' %}
+                            {% if object.getTransactionMode|default('none') == 'exchange' or object.getTransactionMode|default('none') == 'refund' %}
                                 {% embed "GistPOSBundle:Dashboard:exchange_items.html.twig" %}{% endembed %}
                             {% else %}
                                 {% embed "GistPOSBundle:Dashboard:items.html.twig" %}{% endembed %}
@@ -116,7 +116,14 @@
                                         {% endif %}
                                         {{ form.group_text('Grand Total', 'grand_total', object.getTransactionTotal|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         <hr style="border-top: dotted 2px;" />
-                                        {{ form.group_text('Change', 'change', object.getChange|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% if object.getTransactionMode|default('none') == 'refund' %}
+                                            {{ form.group_text('Refund Amount', 'change', object.getRefundTotalER|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                            {% if object.getRefundMethod|default('none') == 'Gift Card' %}
+                                                {{ form.group_text('GC Credits Earned', 'gc_credit', object.getGCCredit|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                            {% endif %}
+                                        {% else %}
+                                            {{ form.group_text('Change', 'change', object.getChange|number_format(2, '.', ',')|default(''), 4, 5, true) }}
+                                        {% endif %}
                                         {{ form.group_text('Balance', 'balance', object.getBalanceDisplay|number_format(2, '.', ',')|default(''), 4, 5, true) }}
                                         <hr style="border-top: dotted 2px;" />
                                     </div>

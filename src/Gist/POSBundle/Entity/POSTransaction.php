@@ -120,6 +120,9 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $deposit_amount;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $gc_credit_amount;
+
 
     /**
      * @ORM\OneToOne(targetEntity="POSTransaction")
@@ -274,6 +277,23 @@ class POSTransaction
 
         foreach ($this->items as $p) {
             if ($p->getReturned() == false) {
+                if ($this->transaction_type == 'per') {
+                    $total = $total + $p->getAdjustedPrice();
+                } else {
+                    $total = $total + $p->getOrigPrice();
+                }
+            }
+        }
+
+        return $total;
+    }
+
+    public function getRefundTotalER()
+    {
+        $total = 0;
+
+        foreach ($this->items as $p) {
+            if ($p->getReturned() == true) {
                 if ($this->transaction_type == 'per') {
                     $total = $total + $p->getAdjustedPrice();
                 } else {
@@ -1326,12 +1346,12 @@ class POSTransaction
     }
 
     /**
-     * Set selectedBulkDiscountAmount
-     *
-     * @param string $selectedBulkDiscountAmount
-     *
-     * @return POSTransaction
-     */
+ * Set selectedBulkDiscountAmount
+ *
+ * @param string $selectedBulkDiscountAmount
+ *
+ * @return POSTransaction
+ */
     public function setSelectedBulkDiscountAmount($selectedBulkDiscountAmount)
     {
         $this->selected_bulk_discount_amount = $selectedBulkDiscountAmount;
@@ -1347,5 +1367,29 @@ class POSTransaction
     public function getSelectedBulkDiscountAmount()
     {
         return $this->selected_bulk_discount_amount;
+    }
+
+    /**
+     * Set setGCCredit
+     *
+     * @param string $gc_credit_amount
+     *
+     * @return POSTransaction
+     */
+    public function setGCCredit($gc_credit_amount)
+    {
+        $this->gc_credit_amount = $gc_credit_amount;
+
+        return $this;
+    }
+
+    /**
+     * Get getGCCredit
+     *
+     * @return string
+     */
+    public function getGCCredit()
+    {
+        return $this->gc_credit_amount;
     }
 }

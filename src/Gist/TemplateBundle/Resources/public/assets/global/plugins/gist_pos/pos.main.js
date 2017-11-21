@@ -1,15 +1,33 @@
 function proceedRefund(method)
 {
     if (method == "gc") {
+        var refund_orig_total = 0;
+        $('.refund_issued:checkbox:checked').each(function () {
+            var row = $(this).closest('.existing_product_row');
+            var ext_srp = row.find('.existing_srp');
+            refund_orig_total += parseFloat(ext_srp.val());
+        });
+
+        var refund_amt = parseFloat($('#float_trans_refund_amount').val());
         $('#string_refund_method').val('Gift Card');
+        $('#float_trans_gc_credit').val(refund_orig_total);
+        $('#cform-gcr_refund_amt').val(addCommas(refund_amt));
+        $('#cform-gcr_credit_amt').val(addCommas(refund_orig_total));
+        $('#refund_type_modal').modal('hide');
+        $('#gc_refund_modal').modal('show');
     } else if (method == "cash") {
         $('#string_refund_method').val('Cash');
+        $('#refund_type_modal').modal('hide');
+        $('#final_modal').modal('show');
     } else if (method == "credit") {
         $('#string_refund_method').val('Credit Card');
+        $('#refund_type_modal').modal('hide');
+        $('#final_modal').modal('show');
+    } else if (method == "check") {
+        $('#string_refund_method').val('Check');
+        $('#refund_type_modal').modal('hide');
+        $('#final_modal').modal('show');
     }
-
-    $('#refund_type_modal').modal('hide');
-    $('#final_modal').modal('show');
 }
 
 function finalModalAction(opt)
@@ -368,7 +386,10 @@ $(document).ready(function(){
 
     });
 
-
+    $(document).on("click",".gc_refund_proceed_btn", function(e){
+        $('#gc_refund_modal').modal('hide');
+        $('#final_modal').modal('show');
+    });
 
     $(document).on("click",".deposit_continue_btn", function(e){
         if ($('#string_trans_mode').val() == 'normal') {
@@ -2111,6 +2132,11 @@ $(document).ready(function(){
         } else {
             computeBalanceDisplay(0);
         }
+    });
+
+    $(document).on("click",".gc_refund_go_back", function(e){
+        $('#gc_refund_modal').modal('hide');
+        $('#refund_type_modal').modal('show');
     });
 
     $(document).on("click",".cc_go_back", function(e){
