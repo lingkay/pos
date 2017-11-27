@@ -209,6 +209,7 @@ class POSController extends Controller
 
         $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
         $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
+        $params['erp_gc_id'] = $conf->get('erp_gc_id');
 
         $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/banks";
         $result = file_get_contents($url);

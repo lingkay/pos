@@ -391,6 +391,32 @@ $(document).ready(function(){
         $('#final_modal').modal('show');
     });
 
+    $(document).on("click",".cp_gc", function(e){
+        $('#gc_avail_modal').modal('show');
+    });
+
+    $(document).on("click",".gc_avail_proceed_btn", function(e){
+        var load_amt = parseFloat($('#cform-gc_load_amt').val());
+        var erp_gc_id = $('#erp_gc_id').val();
+
+
+        if (erp_gc_id != 'null') {
+            if (load_amt > 1) {
+                addToCart('Gift Card', load_amt, 0, erp_gc_id, 'GC', 'GC');
+                $('cform-gc_load_amt').val('0');
+                $('#gc_avail_modal').modal('hide');
+            } else {
+                $('cform-gc_load_amt').val('0');
+                swal("Cannot avail gift card!", "Load amount must be greater than 0", "error");
+            }
+        } else {
+            $('cform-gc_load_amt').val('0');
+            $('#gc_avail_modal').modal('hide');
+            swal("Cannot avail gift card!", "Load amount must be greater than 0", "error");
+        }
+    });
+
+
     $(document).on("click",".deposit_continue_btn", function(e){
         if ($('#string_trans_mode').val() == 'normal') {
             //open another modal

@@ -3,14 +3,16 @@
         <!-- BEGIN FORM-->
         <div class="form-body">
             {{ form.group_text_orig('Area ID', 'sys_area_id', sys_area_id|default(''), 3, 6, false) }}
-            {{ form.group_text_orig('POS URL', 'sys_pos_url', sys_pos_url|default(''), 3, 6, false) }}
-            {{ form.group_text_orig('ERP URL', 'sys_erp_url', sys_erp_url|default(''), 3, 6, false) }}
             <div class="form-group">
                 <label class="col-md-3 control-label"></label>
                 <div class="col-md-6">
                     <p><b>Area ID</b> is used to filter the users to sync with this POS</p>
                 </div>
             </div>
+            {{ form.group_text_orig('POS URL', 'sys_pos_url', sys_pos_url|default(''), 3, 6, false) }}
+            {{ form.group_text_orig('ERP URL', 'sys_erp_url', sys_erp_url|default(''), 3, 6, false) }}
+            {{ form.group_text_orig('GC Product ID', 'erp_gc_id', erp_gc_id|default(''), 3, 6, false) }}
+
         </div>
         <div class="form-actions fluid">
             <div class="form-group">
