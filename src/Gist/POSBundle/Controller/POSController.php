@@ -248,9 +248,14 @@ class POSController extends Controller
         $result_min_dep = file_get_contents($url_min_dep);
         $var_min_deposit = str_replace('"', '', $result_min_dep);
 
+        $url_exchange_limit=$conf->get('gist_sys_erp_url')."/inventory/pos/get/exchange_rule_below";
+        $result_exchange_limit = file_get_contents($url_exchange_limit);
+        $var_exchange_limit = str_replace('"', '', $result_exchange_limit);
+
         $params['tax_coverage'] = $var_tax_coverage;
         $params['tax_rate'] = $var_tax_rate;
         $params['min_deposit_pct'] = $var_min_deposit;
+        $params['exchange_limit'] = $var_exchange_limit;
 
         $params['cust_required_fields'] = $vars_req;
         $params['cust_visible_fields'] = $vars_visible;

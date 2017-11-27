@@ -1241,13 +1241,19 @@ $(document).ready(function(){
 
     $(document).on("click",".next_step_btn", function(e){
         var balance = parseFloat($('#float_trans_balance').val());
+        var exchange_limit = $('#string_exchange_limit').val();
         if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
             if ($('#flag_refund').val() === 'true') {
                 var number_of_items_to_return = $('.refund_issued:checkbox:checked').length;
                 if (number_of_items_to_return > 0) {
                     if (balance < 0) {
                         // exchanged item/s total is still lower than refund amount
-                        $('#refund_type_modal').modal('show');
+                        if (exchange_limit == 'True') {
+                            swal("Cannot continue refund!", "Item/s for exchange amount should not be lower than selected item/s for return amount", "error");
+                        } else {
+                            $('#refund_type_modal').modal('show');
+                        }
+
                     } else if (balance == 0) {
                         //exact item/s replacement
                         $('#final_modal').modal('show');
