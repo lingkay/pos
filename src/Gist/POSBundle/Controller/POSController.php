@@ -452,7 +452,11 @@ class POSController extends Controller
             $split_entry->setConsultant($this->getUser());
             $split_entry->setTransaction($transaction);
             $split_entry->setAmount($split_trans_total);
-            $split_entry->setPercent('100.00');
+            if ($split_trans_total < 0) {
+                $split_entry->setPercent('-100.00');
+            } else {
+                $split_entry->setPercent('100.00');
+            }
             $em->persist($split_entry);
 
             $em->flush();
@@ -480,7 +484,13 @@ class POSController extends Controller
             $split_entry->setConsultant($this->getUser());
             $split_entry->setTransaction($transaction);
             $split_entry->setAmount($split_trans_total);
-            $split_entry->setPercent('100.00');
+
+            if ($split_trans_total < 0) {
+                $split_entry->setPercent('-100.00');
+            } else {
+                $split_entry->setPercent('100.00');
+            }
+
             $em->persist($split_entry);
 
             $em->flush();

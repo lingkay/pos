@@ -1231,9 +1231,12 @@ $(document).ready(function(){
             if ($('#flag_refund').val() === 'true') {
                 var number_of_items_to_return = $('.refund_issued:checkbox:checked').length;
                 if (number_of_items_to_return > 0) {
-                    if (balance <= 0) {
+                    if (balance < 0) {
                         // exchanged item/s total is still lower than refund amount
                         $('#refund_type_modal').modal('show');
+                    } else if (balance == 0) {
+                        //exact item/s replacement
+                        $('#final_modal').modal('show');
                     } else {
                         $('#transaction_type_modal').modal('show');
                     }
@@ -1873,14 +1876,20 @@ $(document).ready(function(){
 
     $(document).on('keyup', '#cform-gcp_pay_amt', function () {
         if ($(this).val() != '') {
-            var amt_to_pay = parseFloat($('#float_trans_balance').val());
+            var amt_to_pay = parseFloat($('#float_trans_amount').val());
             var orig_amt_to_pay = parseFloat($('#float_cart_orig_price').val());
             var input_amt = parseFloat($(this).val());
             var percentage = 0;
             var debit = 0;
+            var payments = 0;
 
             if ($('#flag_refund').val() == "true") {
+                $('.payment_amt_float').each(function(){
+                    payments = payments + parseFloat($(this).val());
+                });
+
                 orig_amt_to_pay = orig_amt_to_pay - parseFloat($('#float_trans_refund_amount').val());
+                amt_to_pay = amt_to_pay - parseFloat($('#float_trans_refund_amount').val());
             }
 
             console.log('AMT TO PAY: '+amt_to_pay);

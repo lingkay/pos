@@ -55,11 +55,11 @@
                                                 <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, s.getConsultant.getERPID|default('none'), 12, 12, false) }}</td>                             
                                                 <td>
                                                     <div class="input-group">
-                                                        <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="{{s.getPercent|number_format(2, '.', ',')|default('')}}">
+                                                        <input type="number" max="100" step="0.01" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="{{s.getPercent|number_format(2, '.', ',')|default('')}}">
                                                         <span class="input-group-addon" id="sizing-addon1">%</span>
                                                     </div>
                                                 </td>
-                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{s.getAmount|number_format(2, '.', '')|default('')}}"></td>
+                                                <td><input type="number" max="999999" step="0.01" class="form-control amount_allocation" name="amount_allocation[]" value="{{(s.getAmount)|number_format(2, '.', '')|default('')}}"></td>
                                                 <td ><a href="javascript:void(0)" class="btn btn-xs default red rem_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
                                             </tr>
                                         {% endfor %}
@@ -70,7 +70,7 @@
                                             
                                             <td>
                                                 <div class="input-group">
-                                                    <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="100.00">
+                                                    <input type="number" max="100" step="0.01" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="100.00">
                                                     <span class="input-group-addon" id="sizing-addon1">%</span>
                                                 </div>
                                             </td>
@@ -142,6 +142,10 @@
         var indiv_amount = transaction_total/table_rows;
         var percent = (indiv_amount/transaction_total)*100;
 
+        if (transaction_total < 0) {
+            percent = percent * -1;
+        }
+
         var new_percent = parseFloat(percent, 10);
         // var fina_percent = new_percent.toFixed(2);
 
@@ -171,7 +175,7 @@
                 field += '        <td>{{ form.group_select_only_split("", "consultant_name[]", emp_opts, "", 12, 12, false)|e("js") }}</td> ';       
                 field += '       <td>';
                 field +=  '  <div class="input-group">';
-                field +=  '  <input type="number" max="100" step="0.01" min="1" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="0">';
+                field +=  '  <input type="number" max="100" step="0.01" class="form-control percent_allocation" name="percent_allocation[]" placeholder="" aria-describedby="sizing-addon1" value="0">';
                 field += '               <span class="input-group-addon" id="sizing-addon1">%</span>';
                 field += '           </div>';
                 field += '       </td>';
@@ -210,7 +214,7 @@
             });
 
             if (!!arr.reduce(function(a, b){ return (a === b) ? a : NaN; })) {
-                pct_total = Math.round(pct_total);
+                //pct_total = Math.round(pct_total);
                 amt_total = Math.round(amt_total);
                 var final_pct_total = parseFloat(pct_total, 10);
             } else {
@@ -276,9 +280,29 @@
                 return false;
             }
 
-            if ($('#total_percent').val() != '100.00'){
-                swal('Invalid split!','Please check percentages', 'error');
-                return false;
+            var mode = "{{object.getTransactionMode|default('')}}";
+            var ref_mode = "{{object.getReferenceTransaction.getTransactionMode|default('')}}";
+            var transaction_total = 0;
+            if (mode == 'Deposit' || ref_mode == 'Deposit') {
+                transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
+            } else if (mode == 'refund' || mode == 'exchange') {
+                transaction_total = parseFloat("{{object.getBalance|default('0')}}");
+            } else {
+                transaction_total = parseFloat("{{object.getPaymentIssued|default('0')}}");
+            }
+
+            if (transaction_total > 0) {
+                if ($('#total_percent').val() != '100.00'){
+                    swal('Invalid split!','Please check percentages', 'error');
+                    return false;
+                }
+
+            } else {
+                if ($('#total_percent').val() != '-100.00'){
+                    swal('Invalid split!','Please check percentages', 'error');
+                    return false;
+                }
+
             }
 
             if ($('#total_amount').val() != transaction_total){
@@ -361,13 +385,17 @@
                     $(this).val('');
                     allocation = 0;
                 }
-                if (allocation > 100 || allocation < 0) {
+                if (allocation > 100) {
                     swal('Invalid allocation!','Please enter a value from 1 to 100', 'error');
                     $(this).val('0');
                     allocation = 0;
                 }
                 var row = $(this).closest('.row_entry');
                 var final = (allocation/100)*transaction_total;
+                if (transaction_total < 0) {
+                    final = final * -1;
+                }
+
                 var amount_allocation = row.find('.amount_allocation');
                 amount_allocation.val(final.toFixed(2));
                 computeTotals();
@@ -376,15 +404,18 @@
             $(document).on('keyup change', '.amount_allocation', function()
             {
                 var allocation = parseFloat($(this).val());
-                if (allocation > transaction_total) {
+                if (allocation > transaction_total && transaction_total > 0) {
                     swal('Invalid allocation!','Please enter a value from 1 to '+transaction_total+'', 'error');
                     $(this).val('');
                     allocation = 0;
                 }
                 var row = $(this).closest('.row_entry');
                 var final = (allocation/transaction_total)*100;
+                if (transaction_total < 0) {
+                    final = final * -1;
+                }
                 var amount_allocation = row.find('.percent_allocation');
-                amount_allocation.val(final);
+                amount_allocation.val(final.toFixed(2));
                 computeTotals();
             });
         });
