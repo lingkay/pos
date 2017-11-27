@@ -13,7 +13,9 @@ function proceedRefund(method)
 
         var percentage = 0;
         var amt_to_pay = parseFloat($('#float_trans_amount').val());
-        if ($('#flag_refund').val() == "true") {
+        var count_cart_items = $('#cart_items .product_row').length;
+
+        if (count_cart_items > 0) {
             // get percentage
             percentage = (refund_amt/amt_to_pay)*100;
 
