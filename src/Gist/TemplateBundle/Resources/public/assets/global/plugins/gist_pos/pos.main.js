@@ -1878,10 +1878,21 @@ $(document).ready(function(){
             var input_amt = parseFloat($(this).val());
             var percentage = 0;
             var debit = 0;
+
+            if ($('#flag_refund').val() == "true") {
+                orig_amt_to_pay = orig_amt_to_pay - parseFloat($('#float_trans_refund_amount').val());
+            }
+
+            console.log('AMT TO PAY: '+amt_to_pay);
+            console.log('ORIG AMT TO PAY: '+orig_amt_to_pay);
+            console.log('INPUT AMT: '+input_amt);
+
             // get percentage
             percentage = (input_amt/amt_to_pay)*100;
+            console.log('PCT: '+percentage);
             // compute from original price
             debit = orig_amt_to_pay*(percentage/100);
+            console.log('DEBIT: '+debit);
             // set as debit amount
             $('#float_trans_gc_credit').val((debit * -1));
             $('#cform-gcp_debit_amt').val(addCommas(debit));
@@ -2203,6 +2214,7 @@ $(document).ready(function(){
 
     $(document).on("click",".gc_payment_go_back", function(e){
         $('#cform-gcp_pay_amt').val('');
+        $('#cform-gcp_debit_amt').val('');
         $('#gc_payment_modal').modal('hide');
         $('#checkout_modal').modal('show');
         if ($('#flag_refund').val() == 'true') {
