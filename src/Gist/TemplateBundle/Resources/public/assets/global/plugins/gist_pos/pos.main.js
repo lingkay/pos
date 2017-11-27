@@ -12,14 +12,13 @@ function proceedRefund(method)
         refund_amt = Math.abs(refund_amt);
 
         var percentage = 0;
-        var debit = 0;
         var amt_to_pay = parseFloat($('#float_trans_amount').val());
         if ($('#flag_refund').val() == "true") {
             // get percentage
             percentage = (refund_amt/amt_to_pay)*100;
 
             // compute from original price
-            debit = refund_orig_total*(percentage/100);
+            refund_orig_total = refund_orig_total*(percentage/100);
         }
 
 
