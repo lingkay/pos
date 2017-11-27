@@ -8,7 +8,8 @@ function proceedRefund(method)
             refund_orig_total += parseFloat(ext_srp.val());
         });
 
-        var refund_amt = parseFloat($('#float_trans_refund_amount').val());
+        var refund_amt = parseFloat($('#float_trans_balance').val());
+        refund_amt = Math.abs(refund_amt);
         $('#string_refund_method').val('Gift Card');
         $('#float_trans_gc_credit').val(refund_orig_total);
         $('#cform-gcr_refund_amt').val(addCommas(refund_amt));
@@ -1870,6 +1871,25 @@ $(document).ready(function(){
         computeBalanceDisplayCheckMulti();
     });
 
+    $(document).on('keyup', '#cform-gcp_pay_amt', function () {
+        if ($(this).val() != '') {
+            var amt_to_pay = parseFloat($('#float_trans_balance').val());
+            var orig_amt_to_pay = parseFloat($('#float_cart_orig_price').val());
+            var input_amt = parseFloat($(this).val());
+            var percentage = 0;
+            var debit = 0;
+            // get percentage
+            percentage = (input_amt/amt_to_pay)*100;
+            // compute from original price
+            debit = orig_amt_to_pay*(percentage/100);
+            // set as debit amount
+            $('#float_trans_gc_credit').val((debit * -1));
+            $('#cform-gcp_debit_amt').val(addCommas(debit));
+        } else {
+            $('#cform-gcp_debit_amt').val("0.00");
+        }
+    });
+
     $(document).on('keyup', '#cform-cash_received_amt', function () {
         if ($(this).val() != '') {
             var amt_to_pay = $('#float_trans_balance').val();
@@ -1958,6 +1978,22 @@ $(document).ready(function(){
         }
         
     });
+
+    $(document).on("click",".gc_payment_proceed_btn", function(e){
+        var payment_amt = $('#cform-gcp_pay_amt').val();
+        if (payment_amt > 0) {
+            addToPayments('Gift Card', parseFloat(payment_amt));
+            $('#gc_payment_modal').modal('hide');
+            $('#cform-gcp_pay_amt').val('');
+            $('#cform-gcp_debit_amt').val('');
+            $('#checkout_modal').modal('show');
+        } else {
+            toastr['error']('Invalid payment amount.', 'Error');
+        }
+
+    });
+
+
 
     $(document).on("click",".card_proceed_btn", function(e){
         var complete_flag = true;
@@ -2149,9 +2185,25 @@ $(document).ready(function(){
         $('#check_modal').modal('show');
     });
 
+    $(document).on("click",".co_gc_payment", function(e){
+        $('#checkout_modal').modal('hide');
+        $('#gc_payment_modal').modal('show');
+    });
+
     $(document).on("click",".cash_go_back", function(e){
         $('#cform-cash_received_amt').val('');
         $('#cash_modal').modal('hide');
+        $('#checkout_modal').modal('show');
+        if ($('#flag_refund').val() == 'true') {
+            computeBalanceDisplay(0);
+        } else {
+            computeBalanceDisplay(0);
+        }
+    });
+
+    $(document).on("click",".gc_payment_go_back", function(e){
+        $('#cform-gcp_pay_amt').val('');
+        $('#gc_payment_modal').modal('hide');
         $('#checkout_modal').modal('show');
         if ($('#flag_refund').val() == 'true') {
             computeBalanceDisplay(0);

@@ -48,7 +48,7 @@
                                                     {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
                                                         <th width="15%">Reference</th>
                                                     {% endif %}
-                                                    <th width="15%">Method</th>
+                                                    <th width="15%">Mode</th>
                                                     <th width="15%">Amount</th>
                                                     <th width="20%">Terms</th>
                                                     <th width="15%">Interest</th>
@@ -89,6 +89,20 @@
                                                             <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getInterest|default('')}}"  readonly="true"></td>
                                                             <td><input type="text" style="text-align: left !important;" name="x" class="form-control terms" value="{{i.getBank|default('')}}"  readonly="true"></td>
                                                         </tr>
+
+                                                        {% if i.getType == 'Gift Card' %}
+                                                            <tr>
+                                                                <td>
+                                                                    {% if object.getGCCredit|default('0') > 0 %}
+                                                                        <input type="text" name="rate_name[]" value="GC Credit Amount" class="form-control rate_name" readonly="true" style="font-size: 12px;">
+                                                                    {% else %}
+                                                                        <input type=3"text" name="rate_name[]" value="GC Debit Amount" class="form-control rate_name" readonly="true" style="font-size: 12px;">
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{object.getGCCreditAbsolute|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                                <td colspan="3"></td>
+                                                            </tr>
+                                                        {% endif %}
                                                     {% endfor %}
                                                 {% endif %}
                                                 <tr>
@@ -180,7 +194,7 @@
                                                 {% if object.getTransactionMode|default('') == 'Deposit' or object.getReferenceTransaction.getTransactionMode|default('') == 'Deposit' %}
                                                     <th width="15%">Reference</th>
                                                 {% endif %}
-                                                <th width="15%">Method</th>
+                                                <th width="15%">Mode</th>
                                                 <th width="15%">Amount</th>
                                                 <th width="20%">Terms</th>
                                                 <th width="15%">Interest</th>

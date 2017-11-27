@@ -1392,4 +1392,14 @@ class POSTransaction
     {
         return $this->gc_credit_amount;
     }
+
+    /**
+     * Get getGCCredit fmtd
+     *
+     * @return string
+     */
+    public function getGCCreditAbsolute()
+    {
+        return abs($this->gc_credit_amount);
+    }
 }
