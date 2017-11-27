@@ -10,6 +10,13 @@ function proceedRefund(method)
 
         var refund_amt = parseFloat($('#float_trans_balance').val());
         refund_amt = Math.abs(refund_amt);
+
+        if ($('#flag_refund').val() == "true") {
+            refund_orig_total = refund_orig_total - parseFloat($('#float_trans_refund_amount').val());
+            refund_amt = refund_amt - parseFloat($('#float_trans_refund_amount').val());
+        }
+
+
         $('#string_refund_method').val('Gift Card');
         $('#float_trans_gc_credit').val(refund_orig_total);
         $('#cform-gcr_refund_amt').val(addCommas(refund_amt));
@@ -1881,13 +1888,8 @@ $(document).ready(function(){
             var input_amt = parseFloat($(this).val());
             var percentage = 0;
             var debit = 0;
-            var payments = 0;
 
             if ($('#flag_refund').val() == "true") {
-                $('.payment_amt_float').each(function(){
-                    payments = payments + parseFloat($(this).val());
-                });
-
                 orig_amt_to_pay = orig_amt_to_pay - parseFloat($('#float_trans_refund_amount').val());
                 amt_to_pay = amt_to_pay - parseFloat($('#float_trans_refund_amount').val());
             }
