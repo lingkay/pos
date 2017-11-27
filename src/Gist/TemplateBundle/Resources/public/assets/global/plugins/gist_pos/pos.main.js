@@ -11,9 +11,15 @@ function proceedRefund(method)
         var refund_amt = parseFloat($('#float_trans_balance').val());
         refund_amt = Math.abs(refund_amt);
 
+        var percentage = 0;
+        var debit = 0;
+        var amt_to_pay = parseFloat($('#float_trans_amount').val());
         if ($('#flag_refund').val() == "true") {
-            refund_orig_total = refund_orig_total - parseFloat($('#float_trans_refund_amount').val());
-            refund_amt = refund_amt - parseFloat($('#float_trans_refund_amount').val());
+            // get percentage
+            percentage = (refund_amt/amt_to_pay)*100;
+
+            // compute from original price
+            debit = refund_orig_total*(percentage/100);
         }
 
 
@@ -1894,16 +1900,13 @@ $(document).ready(function(){
                 amt_to_pay = amt_to_pay - parseFloat($('#float_trans_refund_amount').val());
             }
 
-            console.log('AMT TO PAY: '+amt_to_pay);
-            console.log('ORIG AMT TO PAY: '+orig_amt_to_pay);
-            console.log('INPUT AMT: '+input_amt);
 
             // get percentage
             percentage = (input_amt/amt_to_pay)*100;
-            console.log('PCT: '+percentage);
+
             // compute from original price
             debit = orig_amt_to_pay*(percentage/100);
-            console.log('DEBIT: '+debit);
+
             // set as debit amount
             $('#float_trans_gc_credit').val((debit * -1));
             $('#cform-gcp_debit_amt').val(addCommas(debit));
