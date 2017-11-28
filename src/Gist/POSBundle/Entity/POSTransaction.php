@@ -295,7 +295,7 @@ class POSTransaction
     {
         $total = 0;
 
-        if ($this->refundAmount == '0') {
+        if ($this->refundAmount == 0) {
             $total = 0;
         } else {
             if ($this->reference_transaction->transaction_type != 'bulk') {
