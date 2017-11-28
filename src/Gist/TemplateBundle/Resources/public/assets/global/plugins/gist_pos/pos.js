@@ -1127,6 +1127,10 @@ function freezeTransaction(is_final)
     var gc_credit = $('#float_trans_gc_credit').val();
     var refund_reason = $('#cform-refund_reason').val();
 
+    if(refund_reason.length < 1) {
+        refund_reason = '%20';
+    }
+
     var exchange_flag = 'false';
 
     if (count_cart_items > 0 && transaction_mode == 'refund') {
