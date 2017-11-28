@@ -226,7 +226,7 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12" >
-                                        <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Continue</a>
+                                        <a class="btn default green reason_refund_proceed_btn" style="margin=0" href="javascript:void(0)">Continue</a>
                                         <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
                                         <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout/Pay</a>
                                         <a href="javascript:void(0)" class="btn proceed_deposit" style="background-color: green; color: #ffffff;">Proceed Deposit</a>
@@ -363,74 +363,6 @@
             }
         }
 
-        function appendDepositItemColumns()
-        {
-            var proceed = true;
-            $('#cart_table').find('tr').each(function(){
-                if ($('#string_trans_type').val() == 'per') {
-                    if ($(this).children('th').length == 7) {
-                        proceed = false;
-                    } else {
-                        proceed = true;
-                    }
-                } else {
-                    if ($(this).children('th').length == 3) {
-                        proceed = false;
-                    } else {
-                        proceed = true;
-                    }
-                }
-            });
-
-            if (proceed) {
-                $('#cart_table').find('tr').each(function(){
-                    $(this).find('th').eq(0).before('<th>Issue</th>');
-                });
-
-                var ths = $('th');
-                var element = ths.eq(0);
-                element.width(10);
-            }
-        }
-
-        function appendDepositItemFields()
-        {
-            if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
-                $('#cart_table').find('tr').each(function(){
-                    if ($(this).children('td').length < 4) {
-                        var issued = $(this).find('.is_issued').val();
-                        if (issued == '1') {
-                            $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
-                        } else {
-                            $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
-                        }
-                    } else {
-                        if ($('#string_trans_type').val() == 'per') {
-                            if ($(this).children('td').length < 7) {
-                                var issued = $(this).find('.is_issued').val();
-                                // issued = issued.find('.is_issued').val();
-                                if (issued == '1') {
-                                    $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
-                                } else {
-                                    $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
-                                }
-                            }
-                        }
-                    }
-                });
-            } else {
-                if ($('#string_trans_type').val() == 'per') {
-                    $('.xrow').each(function() {
-                        $(this).attr('colspan','7');
-                    });
-                } else {
-                    $('.xrow').each(function() {
-                        $(this).attr('colspan','4');
-                    });
-                }
-
-            }
-        }
 
         $(document).ready(function() {
 
@@ -472,10 +404,12 @@
                 var bulk_option = $('#bulk_opt_sel').val();
                 var bulk_amt = $('#bulk_opt_amt').val();
                 if (bulk_option != 'none') {
-                    if (bulk_option != 'bgift') {
-//                        console.log('BAL BEFORE: '+balance);
-//                        console.log('BULK AMT: '+bulk_amt);
+                    if (bulk_option == 'bdiscamt') {
                         selected_refund_total = selected_refund_total - parseFloat(bulk_amt);
+                    } else if (bulk_option == 'bdisc') {
+                        selected_refund_total = selected_refund_total - (selected_refund_total * (bulk_amt/100));
+                    } else if (bulk_option == 'bamt') {
+                        selected_refund_total = bulk_amt; //not sure
                     } else {
                         selected_refund_total = 0;
                     }

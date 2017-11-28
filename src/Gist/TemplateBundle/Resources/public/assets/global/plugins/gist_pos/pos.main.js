@@ -14,10 +14,12 @@ function proceedRefund(method)
         var bulk_option = $('#bulk_opt_sel').val();
         var bulk_amt = $('#bulk_opt_amt').val();
         if (bulk_option != 'none') {
-            if (bulk_option != 'bgift') {
-//                        console.log('BAL BEFORE: '+balance);
-//                        console.log('BULK AMT: '+bulk_amt);
+            if (bulk_option == 'bdiscamt') {
                 refund_orig_total = refund_orig_total - parseFloat(bulk_amt);
+            } else if (bulk_option == 'bdisc') {
+                refund_orig_total = refund_orig_total - (refund_orig_total * (bulk_amt/100));
+            } else if (bulk_option == 'bamt') {
+                refund_orig_total = bulk_amt; //not sure
             } else {
                 refund_orig_total = 0;
             }
@@ -410,6 +412,22 @@ $(document).ready(function(){
             swal("POS Mode Changed", "Quotation mode disabled!", "success");
             $('#rev_quotation_modal').modal('hide');
         }
+
+    });
+
+
+
+
+    $(document).on("click",".reason_refund_proceed_btn", function(e){
+        var number_of_items_to_return = $('.refund_issued:checkbox:checked').length;
+        var refund_total = $('#float_trans_refund_amount').val();
+
+        if (number_of_items_to_return > 0 || refund_total > 0) {
+            $('#refund_reason_modal').modal('show');
+        } else {
+            swal('Cannot continue refund!', 'Select at least one item to return', 'error');
+        }
+
 
     });
 
@@ -1256,24 +1274,28 @@ $(document).ready(function(){
         var exchange_limit = $('#string_exchange_limit').val();
         if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
             if ($('#flag_refund').val() === 'true') {
-                var number_of_items_to_return = $('.refund_issued:checkbox:checked').length;
-                if (number_of_items_to_return > 0) {
+                var refund_reason = $('#cform-refund_reason').val().length;
+                if (refund_reason > 0) {
                     if (balance < 0) {
                         // exchanged item/s total is still lower than refund amount
-                        if (exchange_limit == 'True') {
-                            swal("Cannot continue refund!", "Item/s for exchange amount should not be lower than selected item/s for return amount", "error");
+                        if (exchange_limit == 'False') {
+                            $('#float_trans_refund_amount').val('0');
+                            $('#float_trans_balance').val('0');
+                            $('#final_modal').modal('show');
                         } else {
                             $('#refund_type_modal').modal('show');
                         }
 
                     } else if (balance == 0) {
                         //exact item/s replacement
+                        $('#refund_reason_modal').modal('hide');
                         $('#final_modal').modal('show');
                     } else {
+                        $('#refund_reason_modal').modal('hide');
                         $('#transaction_type_modal').modal('show');
                     }
                 } else {
-                    swal("Cannot continue refund!", "Select at least one item to return", "error");
+                    swal("Cannot continue refund!", "Please specify reason for exchange", "error");
                 }
             } else {
                 $('#transaction_type_modal').modal('show');
@@ -1282,11 +1304,12 @@ $(document).ready(function(){
             if ($('#flag_refund').val() === 'true') {
                 // straight to refund
                 // show money return modal
-                var refund_total = $('#float_trans_refund_amount').val();
-                if (refund_total > 0) {
+                var refund_reason = $('#cform-refund_reason').val().length;
+                if (refund_reason > 0) {
+                    $('#refund_reason_modal').modal('hide');
                     $('#refund_type_modal').modal('show');
                 } else {
-                    swal("Cannot continue refund!", "Select at least one item to proceed", "error");
+                    swal("Cannot continue refund!", "Please specify reason for refund", "error");
                 }
 
             } else {

@@ -331,6 +331,14 @@
 </div>
 {% endmacro %}
 
+{% macro group_textarea_bare(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <div class="col-md-{{ body_size }}">
+            <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro group_textarea_white(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
 <div id="{{ prefix }}group-{{ name }}" class="form-group">
     <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
@@ -357,6 +365,8 @@
     </div>
 </div>
 {% endmacro %}
+
+
 
 
 {% macro select_bare(name, options, value, body_size, disabled = false, prefix = 'c') %}

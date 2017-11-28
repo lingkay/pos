@@ -153,6 +153,9 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $generic_var1;
 
+    /** @ORM\Column(type="string", length=255, nullable=true) */
+    protected $remarks;
+
 
     public function __construct()
     {
@@ -363,6 +366,18 @@ class POSTransaction
     public function setTransactionCCInterest($transaction_cc_interest)
     {
         $this->transaction_cc_interest = $transaction_cc_interest;
+
+        return $this;
+    }
+
+    public function getRemarks()
+    {
+        return ucfirst($this->remarks);
+    }
+
+    public function setRemarks($remarks)
+    {
+        $this->remarks = $remarks;
 
         return $this;
     }
