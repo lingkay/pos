@@ -362,7 +362,7 @@ class POSController extends Controller
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction = new POSTransaction();
-
+        
         if ($flag_upsell == 'true' && $transaction_mode == "Deposit") {
 
             $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$transaction_reference_sys_id]);

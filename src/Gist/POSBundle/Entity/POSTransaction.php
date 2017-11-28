@@ -341,7 +341,7 @@ class POSTransaction
 
     public function getChange()
     {
-        if ($this->transaction_mode = 'exchange' && $this->refundAmount == 0) {
+        if ($this->transaction_mode == 'exchange' && $this->refundAmount == 0) {
             return 0;
         }
 
