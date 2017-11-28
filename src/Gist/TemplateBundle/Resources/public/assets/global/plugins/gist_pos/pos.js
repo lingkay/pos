@@ -565,6 +565,16 @@ function computeBalance()
 
     if ($('#flag_refund').val() == "true") {
         balance = ((transaction_static_amount - payments) - refund_amt) + transaction_amount;
+
+        var bulk_option = $('#bulk_opt_sel').val();
+        var bulk_amt = $('#bulk_opt_amt').val();
+        if (bulk_option != 'none') {
+            if (bulk_option != 'bgift') {
+                balance = balance - parseFloat(bulk_amt);
+            } else {
+                balance = 0;
+            }
+        }
     } else {
         balance = transaction_amount - payments;
     }
