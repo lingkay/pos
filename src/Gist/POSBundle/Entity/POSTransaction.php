@@ -292,14 +292,18 @@ class POSTransaction
     {
         $total = 0;
 
-        foreach ($this->items as $p) {
-            if ($p->getReturned() == true) {
-                if ($this->transaction_type == 'per') {
-                    $total = $total + $p->getAdjustedPrice();
-                } else {
-                    $total = $total + $p->getOrigPrice();
+        if ($this->reference_transaction->transaction_type != 'bulk') {
+            foreach ($this->items as $p) {
+                if ($p->getReturned() == true) {
+                    if ($this->transaction_type == 'per') {
+                        $total = $total + $p->getAdjustedPrice();
+                    } else {
+                        $total = $total + $p->getOrigPrice();
+                    }
                 }
             }
+        } else {
+            $total = $this->refundAmount;
         }
 
         return $total;

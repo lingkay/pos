@@ -11,6 +11,18 @@ function proceedRefund(method)
         var refund_amt = parseFloat($('#float_trans_balance').val());
         refund_amt = Math.abs(refund_amt);
 
+        var bulk_option = $('#bulk_opt_sel').val();
+        var bulk_amt = $('#bulk_opt_amt').val();
+        if (bulk_option != 'none') {
+            if (bulk_option != 'bgift') {
+//                        console.log('BAL BEFORE: '+balance);
+//                        console.log('BULK AMT: '+bulk_amt);
+                refund_orig_total = refund_orig_total - parseFloat(bulk_amt);
+            } else {
+                refund_orig_total = 0;
+            }
+        }
+
         var percentage = 0;
         var amt_to_pay = parseFloat($('#float_trans_amount').val());
         var count_cart_items = $('#cart_items .product_row').length;
@@ -347,7 +359,7 @@ $(document).ready(function(){
             computeVATIndiv();
             computeBalance();
         } else if (trans_type == 'bulk') {
-            var bulk_type = "{{transaction_object.getBulkDiscountType|default('')}}";
+
             $('#string_trans_type').val('bulk');
             $('.updated_totals_row').show();
 

@@ -160,6 +160,9 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-md-12" >
+                                        {% if transaction_object.getBulkDiscountType != 'none' %}
+                                            <h4 class="ref_bulk_discount_h4">Bulk Discount: <b><span id="ref_applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
+                                        {% endif %}
                                         <h4 class="refund_amount_h4">Refund amount: <b>Php <span id="lbl_refund_amount" value="">0.00</span></b></h4>
                                         <input type="hidden" value="0" id="selected_items_total">
                                         <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
@@ -465,6 +468,18 @@
                     items_to_refund++;
                     selected_refund_total += parseFloat(srp);
                 });
+
+                var bulk_option = $('#bulk_opt_sel').val();
+                var bulk_amt = $('#bulk_opt_amt').val();
+                if (bulk_option != 'none') {
+                    if (bulk_option != 'bgift') {
+//                        console.log('BAL BEFORE: '+balance);
+//                        console.log('BULK AMT: '+bulk_amt);
+                        selected_refund_total = selected_refund_total - parseFloat(bulk_amt);
+                    } else {
+                        selected_refund_total = 0;
+                    }
+                }
 
                 //count number of items
                 var rowCount = $('#refund_new_cart_table tr').length - 1;
