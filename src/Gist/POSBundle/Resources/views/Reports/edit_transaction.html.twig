@@ -35,7 +35,7 @@
                             {% if object.getTransactionMode|default('none') == 'exchange' or object.getTransactionMode|default('none') == 'refund' %}
                                 <div class="row">
                                     <div class="col-md-12">
-                                        {{ form.group_textarea('Remarks', 'refund_reason', object.getRemarks|default('None'), 5, 4, 12, true) }}
+                                        {{ form.group_textarea('Remarks', 'refund_reason', object.getRemarks|default('None'), 5, 4, 8, true) }}
                                     </div>
                                 </div>
                             {% endif %}

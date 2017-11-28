@@ -1281,8 +1281,10 @@ $(document).ready(function(){
                         if (exchange_limit == 'False') {
                             $('#float_trans_refund_amount').val('0');
                             $('#float_trans_balance').val('0');
+                            $('#refund_reason_modal').modal('hide');
                             $('#final_modal').modal('show');
                         } else {
+                            $('#refund_reason_modal').modal('hide');
                             $('#refund_type_modal').modal('show');
                         }
 
