@@ -32,6 +32,13 @@
                                     {{ form.group_text('Birthdate', 'birthdate', customer.getBirthdate|default(''), 4, 5, true) }}
                                 </div>
                             </div>
+                            {% if object.getTransactionMode|default('none') == 'exchange' or object.getTransactionMode|default('none') == 'refund' %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {{ form.group_textarea('Remarks', 'refund_reason', object.getRemarks|default('None'), 5, 4, 12, true) }}
+                                    </div>
+                                </div>
+                            {% endif %}
                             {# ITEMS #}
                             {% if object.getTransactionMode|default('none') == 'exchange' or object.getTransactionMode|default('none') == 'refund' %}
                                 {% embed "GistPOSBundle:Dashboard:exchange_items.html.twig" %}{% endembed %}
