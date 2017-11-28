@@ -100,7 +100,7 @@
             <div class="col-md-6">
                 <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;">
                     <div class="portlet-title">
-                        <div class="caption">Existing Items Cart</div>
+                        <div class="caption">Existing Items Cart &nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="btn default btn-xs blue-madison select_all_return">Select All</a> <a href="javascript:void(0);" class="btn default btn-xs red unselect_all_return">Clear Selection</a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -119,7 +119,7 @@
                                             </tr>
                                         {% else %}
                                             <tr>
-                                                <th>Refund</th>
+                                                <th>Return</th>
                                                 <th width="60%">Item</th>
                                                 <th width="25%">Price</th>
                                             </tr>
@@ -363,6 +363,47 @@
             }
         }
 
+        function recompute() {
+            var trans_type = '{{ transaction_object.getTransactionType|default('') }}';
+            var selected_refund_total = 0;
+            var items_to_refund = 0;
+            $('.refund_issued:checkbox:checked').each(function () {
+                var row = $(this).closest('.existing_product_row');
+                var srp = 0;
+
+                if (trans_type == 'per') {
+                    srp = row.find('.existing_adjusted_price');
+                } else {
+                    srp = row.find('.existing_srp');
+                }
+
+                srp = srp.val();
+                items_to_refund++;
+                selected_refund_total += parseFloat(srp);
+            });
+
+            var bulk_option = $('#bulk_opt_sel').val();
+            var bulk_amt = $('#bulk_opt_amt').val();
+            if (bulk_option != 'none') {
+                if (bulk_option == 'bdiscamt') {
+                    selected_refund_total = selected_refund_total - parseFloat(bulk_amt);
+                } else if (bulk_option == 'bdisc') {
+                    selected_refund_total = selected_refund_total - (selected_refund_total * (bulk_amt/100));
+                } else if (bulk_option == 'bamt') {
+                    selected_refund_total = bulk_amt; //not sure
+                } else {
+                    selected_refund_total = 0;
+                }
+            }
+
+            //count number of items
+            var rowCount = $('#refund_new_cart_table tr').length - 1;
+            $('#lbl_refund_amount').text(addCommas(parseFloat(selected_refund_total)));
+            $('#float_trans_refund_amount').val(selected_refund_total);
+            $('#selected_items_total').val(selected_refund_total);
+            computeBalance();
+        }
+
 
         $(document).ready(function() {
 
@@ -381,46 +422,29 @@
                     });
             }
 
-            // compute existing cart
-            $(document).on("click", ".refund_issued", function (e) {
-                var trans_type = '{{ transaction_object.getTransactionType|default('') }}';
-                var selected_refund_total = 0;
-                var items_to_refund = 0;
-                $('.refund_issued:checkbox:checked').each(function () {
-                    var row = $(this).closest('.existing_product_row');
-                    var srp = 0;
 
-                    if (trans_type == 'per') {
-                        srp = row.find('.existing_adjusted_price');
-                    } else {
-                        srp = row.find('.existing_srp');
-                    }
-
-                    srp = srp.val();
-                    items_to_refund++;
-                    selected_refund_total += parseFloat(srp);
+            $(document).on("click", ".select_all_return", function (e) {
+                $('.existing_product').find(':checkbox').each(function(){
+                    $(this).closest('span').addClass('checked');
+                    $(this).attr('checked','checked');
                 });
 
-                var bulk_option = $('#bulk_opt_sel').val();
-                var bulk_amt = $('#bulk_opt_amt').val();
-                if (bulk_option != 'none') {
-                    if (bulk_option == 'bdiscamt') {
-                        selected_refund_total = selected_refund_total - parseFloat(bulk_amt);
-                    } else if (bulk_option == 'bdisc') {
-                        selected_refund_total = selected_refund_total - (selected_refund_total * (bulk_amt/100));
-                    } else if (bulk_option == 'bamt') {
-                        selected_refund_total = bulk_amt; //not sure
-                    } else {
-                        selected_refund_total = 0;
-                    }
-                }
+                recompute();
+            });
 
-                //count number of items
-                var rowCount = $('#refund_new_cart_table tr').length - 1;
-                $('#lbl_refund_amount').text(addCommas(parseFloat(selected_refund_total)));
-                $('#float_trans_refund_amount').val(selected_refund_total);
-                $('#selected_items_total').val(selected_refund_total);
-                computeBalance();
+            $(document).on("click", ".unselect_all_return", function (e) {
+                $('.existing_product').find(':checkbox').each(function(){
+                    $(this).closest('span').removeClass('checked');
+                    $(this).removeAttr('checked');
+                });
+
+                recompute();
+            });
+
+
+            // compute existing cart
+            $(document).on("click", ".refund_issued", function (e) {
+                recompute();
             });
         });
     </script>
