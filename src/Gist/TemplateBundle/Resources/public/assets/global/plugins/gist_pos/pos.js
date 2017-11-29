@@ -813,6 +813,7 @@ function proceedToTransaction(x)
     var select_trans = x;
     if (select_trans != '') {
         if (select_trans == 'reg') {
+            $('.reason_refund_proceed_btn').hide();
             $('.next_step_btn').hide();
             $('.checkout_btn').show();
             $('#transaction_type_modal').modal('hide');
@@ -821,6 +822,7 @@ function proceedToTransaction(x)
             $('#string_trans_type').val('reg');
         } else if (select_trans == 'per') {
             $('#string_trans_type').val('per');
+            $('.reason_refund_proceed_btn').hide();
             $('.next_step_btn').hide();
             $('.savings_h4').show();
             $('.checkout_btn').show();
@@ -832,7 +834,7 @@ function proceedToTransaction(x)
         } else if (select_trans == 'bulk') {
             $('#string_trans_type').val('bulk');
             $('.updated_totals_row').show();
-
+            $('.reason_refund_proceed_btn').hide();
             $('.next_step_btn').hide();
             $('.savings_h4').show();
             $('.bulk_adj').show();

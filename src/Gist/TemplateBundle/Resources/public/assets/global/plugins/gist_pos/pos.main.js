@@ -1322,6 +1322,7 @@ $(document).ready(function(){
 
     $(document).on("click",".clear_discount", function(e){
         revertDiscounts();
+        $('.reason_refund_proceed_btn').show();
         $('.customer_savings').text("0.00");
         $('.savings_h4').hide();
     });
