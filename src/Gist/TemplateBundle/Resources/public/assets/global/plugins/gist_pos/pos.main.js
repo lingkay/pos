@@ -327,7 +327,7 @@ $(document).ready(function(){
 
 
 
-
+    $('input[name=gc_card_expiry]').payment('formatCardExpiry');
 
     var hasItems = $('#hasItems').val();
     var payment_total = parseFloat("{{transaction_object.getTotalPayments|default(0.00)}}");
@@ -690,6 +690,7 @@ $(document).ready(function(){
         $(this).hide();
     });
 
+    //BEGIN CC CARD SWIPE
     $(document).on("click",".swipe_card", function(e){
         $('#swipe_await').modal('show');
 
@@ -775,6 +776,97 @@ $(document).ready(function(){
 
 
     });
+    //END OF CC CARD SWIPE
+
+    //BEGIN GIFTCARD CARD SWIPE
+    $(document).on("click",".swipe_giftcard", function(e){
+        $('#swipe_await').modal('show');
+
+        // Event handler for scanstart.cardswipe.
+        var scanstart = function () {
+
+        };
+
+        // Event handler for scanend.cardswipe.
+        var scanend = function () {
+
+        };
+
+        // Event handler for success.cardswipe.  Displays returned data in a dialog
+        var success = function (event, data) {
+
+        }
+
+        var failure = function () {
+
+        }
+        // Bind event listeners to the document
+        $(document)
+            .on("scanstart.cardswipe", scanstart)
+            .on("scanend.cardswipe", scanend)
+            .on("success.cardswipe", success)
+            .on("failure.cardswipe", failure)
+        ;
+
+
+        // Bind event listeners to the document
+
+
+        var row = $(this).closest('.cc_field');
+        var cc_num = row.find('.gc_card_number');
+        var cc_name = row.find('.gc_card_name');
+        //var cc_type = row.find('.gc_card_type select');
+        var cc_expiry = row.find('.gc_card_expiry');
+
+        var date = new Date();
+        // alert(date.getMonth()+1);
+        var curr_mm = date.getMonth()+1;
+        var curr_yy = date.getFullYear().toString().substr(-2);
+
+        // Called by plugin on a successful scan.
+        var complete = function (data) {
+            $('#swipe_await').modal('hide');
+            // Is it a payment card?
+            if (data.type == "generic")
+            {
+                $('#swipe_error').modal('show');
+                return;
+            }
+
+            if (parseFloat(data.expYear) < parseFloat(curr_yy)) {
+                //alert(parseFloat(parseFloat(data.expYear)+" "+parseFloat(curr_yy)));
+                $('#swipe_expired').modal('show');
+                return;
+            } else if (parseFloat(data.expMonth) <= parseFloat(curr_mm) && parseFloat(data.expYear) <= parseFloat(curr_yy)) {
+                // alert(parseFloat(data.expMonth)+" "+parseFloat(curr_mm)+" "+parseFloat(data.expYear)+" "+parseFloat(curr_yy));
+                $('#swipe_expired').modal('show');
+                return;
+            }
+
+            // Copy data fields to form
+            // cc_type.val(data.type);
+            // $('.cc_card_type option[value='+data.type+']').prop('selected',true);
+            //row.find('.cc_card_type option[value='+data.type+']').prop('selected',true);
+            cc_name.val($.trim(data.firstName)+ ' '+$.trim(data.lastName));
+            cc_num.val(data.account);
+            cc_expiry.val(data.expMonth+'/'+data.expYear);
+            $(document).off(".cardswipe-listener");
+
+
+        };
+
+        $.cardswipe({
+            firstLineOnly: true,
+            success: complete,
+            parsers: ["visa", "amex", "mastercard", "discover", "generic"],
+            debug: false
+        });
+
+
+    });
+    //END OF GIFTCARD CARD SWIPE
+
+
     $(document).on("click",".remove_card", function(e){
         $(this).closest('.cc_field').remove();
         if ($('#flag_refund').val() == 'true') {
@@ -1445,6 +1537,74 @@ $(document).ready(function(){
         }
     });
 
+    $(".gc_card_expiry").focusout(function() {
+        var date = new Date();
+        var this_eleme = $(this);
+        var curr_mm = date.getMonth()+1;
+        var curr_yy = date.getFullYear().toString().substr(-2);
+        if ($(this).val().length == 7) {
+            var mm = $(this).val().substring(0, 2);
+            var yy = $(this).val().substring(5, 7);
+            if (mm != '' && yy != '')
+            {
+                if (parseFloat(yy) < parseFloat(curr_yy)) {
+                    swal({
+                            title: "Gift Card expired!",
+                            text: "",
+                            type: "error",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                            confirmButtonText: "Edit gift card details",
+                            cancelButtonText: "Go back to payment options",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+
+                            } else {
+                                clearCreditCardModal();
+                                $('#gc_payment_modal').modal('hide');
+                                $('#swipe_expired').modal('hide');
+                                $('#checkout_modal').modal('show');
+                                if ($('#flag_refund').val() == 'true') {
+                                    computeBalanceDisplayCardMulti(0);
+                                } else {
+                                    computeBalanceDisplayCardMulti(0);
+                                }
+                            }
+                        });
+
+
+                } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
+                    swal({
+                            title: "Card expired!",
+                            text: "",
+                            type: "error",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                            confirmButtonText: "Edit gift card details",
+                            cancelButtonText: "Go back to payment options",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+
+                            } else {
+                                clearCreditCardModal();
+                                $('#gc_payment_modal').modal('hide');
+                                $('#swipe_expired').modal('hide');
+                                $('#checkout_modal').modal('show');
+                                computeBalanceDisplayCardMulti(0);
+                            }
+                        });
+                }
+            }
+            else
+            {
+                swal('Invalid expirty date','Please enter expiry date again', 'error');
+                $(this).val('');
+            }
+        }
+    });
+
     $(document).on('keydown', '#cform-new_price', function (event) {
         if (event.shiftKey == true) {
             event.preventDefault();
@@ -1958,6 +2118,27 @@ $(document).ready(function(){
         } else {
             $('#cform-gcp_debit_amt').val("0.00");
         }
+
+        var payments = 0;
+        var transaction_amount = $('#float_trans_balance').val();
+        var balance = 0;
+
+        $('.gc_field').each(function() {
+            // alert('payments: '+payments);
+            var payment_amt = parseFloat($(this).find('#cform-gcp_pay_amt').val());
+            // alert('payment amt: '+payment_amt);
+            if (payment_amt != '') {
+                if (payment_amt > 0) {
+                    payments = parseFloat(payments) + parseFloat(payment_amt);
+                }
+            } else {
+
+            }
+        });
+
+        balance = parseFloat(transaction_amount) - parseFloat(payments);
+        // alert('payments: '+payments+' balance: '+balance);
+        $('.co_balance_disp').text(addCommas(balance));
     });
 
     $(document).on('keyup', '#cform-cash_received_amt', function () {
@@ -2050,17 +2231,42 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".gc_payment_proceed_btn", function(e){
+
+        var complete_flag = true;
+
+        $('#gc_form').find('.gc_field').each(function() {
+            var cc_number = $(this).find('#cform-gc_card_number').val();
+            var cc_name = $(this).find('#cform-gc_card_name').val();
+            var payment_amt = $(this).find('#cform-gcp_pay_amt').val();
+            var cc_expiry = $(this).find('#cform-gc_card_expiry').val();
+            if (cc_number != '' && payment_amt != '' && cc_name != '' && cc_expiry != '') {
+                if (complete_flag) {
+                    complete_flag = true;
+                }
+            } else {
+                complete_flag = false;
+            }
+        });
+
+        //change below for multiple gift cards
         var payment_amt = $('#cform-gcp_pay_amt').val();
-        if (payment_amt > 0) {
+        if (payment_amt < 0) {
+            swal('Invalid payment amount!','','error');
+            complete_flag = false;
+        }
+
+        if (complete_flag) {
             addToPayments('Gift Card', parseFloat(payment_amt));
             $('#gc_payment_modal').modal('hide');
             $('#cform-gcp_pay_amt').val('');
             $('#cform-gcp_debit_amt').val('');
+            $('#cform-gc_card_number').val('');
+            $('#cform-gc_card_name').val('');
+            $('#cform-gc_card_expiry').val('');
             $('#checkout_modal').modal('show');
         } else {
-            toastr['error']('Invalid payment amount.', 'Error');
+            swal('Incomplete fields!','Please enter gift card details to continue','error');
         }
-
     });
 
 
@@ -2189,13 +2395,25 @@ $(document).ready(function(){
         $("#cc_fields").children().clone(true,true).find("input").val("").end().appendTo('#cc_form');
         $('input[name=cc_card_number]').payment('formatCardNumber');
         $('input[name=cc_card_cvv]').payment('formatCardCVC');
-        $('input[name=cc_card_expiry').payment('formatCardExpiry');
+        $('input[name=cc_card_expiry]').payment('formatCardExpiry');
 
         var objDiv = document.getElementById("cc_form");
         objDiv.scrollTop = objDiv.scrollHeight;
 
         return false;
     });
+
+    // $(document).on("click",".add_giftcard_btn", function(e){
+    //     $("#cc_fields").children().clone(true,true).find("input").val("").end().appendTo('#cc_form');
+    //     $('input[name=cc_card_number]').payment('formatCardNumber');
+    //     $('input[name=cc_card_cvv]').payment('formatCardCVC');
+    //     $('input[name=cc_card_expiry').payment('formatCardExpiry');
+    //
+    //     var objDiv = document.getElementById("cc_form");
+    //     objDiv.scrollTop = objDiv.scrollHeight;
+    //
+    //     return false;
+    // });
 
     $(document).on("click",".add_check_btn", function(e){
         $("#check_fields").children().clone(true,true).find("input").val("").end().appendTo('#check_form');
