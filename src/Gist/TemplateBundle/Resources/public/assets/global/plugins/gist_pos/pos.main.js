@@ -1,3 +1,14 @@
+
+function clearGiftCardModal()
+{
+    $('#cform-gcp_pay_amt').val('');
+    $('#cform-gcp_debit_amt').val('');
+    $('#cform-gc_card_number').val('');
+    $('#cform-gc_card_name').val('');
+    $('#cform-gc_card_expiry').val('');
+}
+
+
 function proceedRefund(method)
 {
     if (method == "gc") {
@@ -1561,7 +1572,7 @@ $(document).ready(function(){
                             if (isConfirm) {
 
                             } else {
-                                clearCreditCardModal();
+                                clearGiftCardModal();
                                 $('#gc_payment_modal').modal('hide');
                                 $('#swipe_expired').modal('hide');
                                 $('#checkout_modal').modal('show');
@@ -1576,7 +1587,7 @@ $(document).ready(function(){
 
                 } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
                     swal({
-                            title: "Card expired!",
+                            title: "Gift Card expired!",
                             text: "",
                             type: "error",
                             showCancelButton: true,
@@ -1588,7 +1599,7 @@ $(document).ready(function(){
                             if (isConfirm) {
 
                             } else {
-                                clearCreditCardModal();
+                                clearGiftCardModal();
                                 $('#gc_payment_modal').modal('hide');
                                 $('#swipe_expired').modal('hide');
                                 $('#checkout_modal').modal('show');
@@ -2234,11 +2245,16 @@ $(document).ready(function(){
 
         var complete_flag = true;
 
+        var cc_number = '';
+        var cc_name = '';
+        var payment_amt = '';
+        var cc_expiry = '';
+
         $('#gc_form').find('.gc_field').each(function() {
-            var cc_number = $(this).find('#cform-gc_card_number').val();
-            var cc_name = $(this).find('#cform-gc_card_name').val();
-            var payment_amt = $(this).find('#cform-gcp_pay_amt').val();
-            var cc_expiry = $(this).find('#cform-gc_card_expiry').val();
+            cc_number = $(this).find('#cform-gc_card_number').val();
+            cc_name = $(this).find('#cform-gc_card_name').val();
+            payment_amt = $(this).find('#cform-gcp_pay_amt').val();
+            cc_expiry = $(this).find('#cform-gc_card_expiry').val().replace(/\//g, '-');
             if (cc_number != '' && payment_amt != '' && cc_name != '' && cc_expiry != '') {
                 if (complete_flag) {
                     complete_flag = true;
@@ -2249,14 +2265,15 @@ $(document).ready(function(){
         });
 
         //change below for multiple gift cards
-        var payment_amt = $('#cform-gcp_pay_amt').val();
+        payment_amt = $('#cform-gcp_pay_amt').val();
         if (payment_amt < 0) {
             swal('Invalid payment amount!','','error');
             complete_flag = false;
         }
 
         if (complete_flag) {
-            addToPayments('Gift Card', parseFloat(payment_amt));
+            //payment_type, amount, details, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, account_number, payee, payor, expiry, cvv
+            addToPayments('Gift Card', parseFloat(payment_amt), '', cc_number, '','','','','','',cc_name,cc_expiry,'');
             $('#gc_payment_modal').modal('hide');
             $('#cform-gcp_pay_amt').val('');
             $('#cform-gcp_debit_amt').val('');
@@ -2295,7 +2312,7 @@ $(document).ready(function(){
                 var cc_name = $(this).find('#cform-cc_card_name').val();
                 var payment_amt = $(this).find('#cform-cc_charge_amt').val(); 
                 var cc_bank = $(this).find('#form-cc_bank option:selected').text(); 
-                var cc_expiry = $(this).find('#cform-cc_card_expiry').val().replace(/\//g, '-');; 
+                var cc_expiry = $(this).find('#cform-cc_card_expiry').val().replace(/\//g, '-');
                 var cc_name = $(this).find('#cform-cc_card_name').val(); 
 
                 var cc_type = $(this).find('#cform-form-cc_card_type option:selected').text();
