@@ -57,7 +57,14 @@
 <!-- BEGIN NOTIFICATION DROPDOWN -->
         {% if tax_coverage|default('') != '' %}
             <li  style="display: block; position: relative; overflow-wrap: break-word;">
-                <p style="display: block; position: relative; margin-top: 14px; color: white; font-size: 13px; overflow-wrap: break-word; width: 220px;" class="top_customer_label">Customer: <span id="header_customer" style=" overflow-wrap: break-word;">N/A</span></p>
+                <p style="display: block; position: relative; margin-bottom: 0px; margin-top: 5px; color: white; font-size: 13px; overflow-wrap: break-word; width: 220px;" class="top_customer_label">
+                    Customer:
+                    <span id="header_customer" style=" overflow-wrap: break-word;">N/A</span>
+                </p>
+                <p style="display: block; position: relative; margin-top: 0px; color: white; font-size: 13px; overflow-wrap: break-word; width: 220px;" class="top_customer_label">
+                    Customer Card:
+                    <span id="header_gc_number" style=" overflow-wrap: break-word;">N/A</span><span id="header_gc_balance" style=" overflow-wrap: break-word;"></span>
+                </p>
             </li>    
         {% endif %}
         <li class="dropdown dropdown-user">
