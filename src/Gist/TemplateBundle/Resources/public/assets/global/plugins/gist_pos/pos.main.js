@@ -459,14 +459,14 @@ $(document).ready(function(){
         if (erp_gc_id != 'null') {
             if (load_amt > 1) {
                 addToCart('Gift Card', load_amt, 0, erp_gc_id, 'GC', 'GC');
-                $('cform-gc_load_amt').val('0');
+                $('#cform-gc_load_amt').val('0');
                 $('#gc_avail_modal').modal('hide');
             } else {
-                $('cform-gc_load_amt').val('0');
+                $('#cform-gc_load_amt').val('0');
                 swal("Cannot avail gift card!", "Load amount must be greater than 0", "error");
             }
         } else {
-            $('cform-gc_load_amt').val('0');
+            $('#cform-gc_load_amt').val('0');
             $('#gc_avail_modal').modal('hide');
             swal("Cannot avail gift card!", "Load amount must be greater than 0", "error");
         }
