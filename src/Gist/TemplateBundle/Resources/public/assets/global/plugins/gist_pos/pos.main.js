@@ -1946,7 +1946,6 @@ $(document).ready(function(){
                       showCancelButton: true,
                       showConfirmButton: true,
                       confirmButtonText: "Proceed",
-                      //cancelButtonText: "Change customer",
                     },
 
                     function(isConfirm){
@@ -2006,7 +2005,6 @@ $(document).ready(function(){
                           showCancelButton: true,
                           showConfirmButton: true,
                           confirmButtonText: "Proceed",
-                          //cancelButtonText: "Change customer",
                         },
                         function(isConfirm){
                             if (isConfirm) {
@@ -2105,7 +2103,6 @@ $(document).ready(function(){
                           showCancelButton: true,
                           showConfirmButton: true,
                           confirmButtonText: "Proceed",
-                          //cancelButtonText: "Change customer",
                         },
                         function(isConfirm){
                             if (isConfirm) {
@@ -2451,11 +2448,11 @@ $(document).ready(function(){
             $.getJSON(url, function(json) {
                 $.each(json, function (i, cust) {
 
-                    $('#transaction_gc_number').val(cust.gc_number);
-                    $('#transaction_gc_expiry').val(cust.gc_expiry);
-                    $('#transaction_gc_balance').val(cust.gc_balance);
+                    $('#transaction_gc_number').val($('#cform-gca_card_number').val());
+                    $('#transaction_gc_expiry').val('');
+                    $('#transaction_gc_balance').val('0');
                     $('#header_gc_number').text(cust.gc_number);
-                    $('#header_gc_balance').text(" (Php " + cust.gc_balance + ")");
+                    $('#header_gc_balance').text(" (Php 0.00)");
                 });
             });
             //end

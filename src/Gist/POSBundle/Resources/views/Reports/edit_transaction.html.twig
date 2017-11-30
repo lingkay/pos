@@ -100,15 +100,19 @@
 
                                                         {% if i.getType == 'Gift Card' %}
                                                             <tr>
-                                                                <td>
-                                                                    {% if object.getGCCredit|default('0') > 0 %}
+                                                                {% if object.getGCCredit|default('0') > 0 %}
+                                                                    <td>
                                                                         <input type="text" name="rate_name[]" value="GC Credit Amount" class="form-control rate_name" readonly="true" style="font-size: 12px;">
-                                                                    {% else %}
+                                                                    </td>
+                                                                    <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{object.getGCCreditAbsolute|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                                    <td colspan="3"></td>
+                                                                {% else %}
+                                                                    <td>
                                                                         <input type=3"text" name="rate_name[]" value="GC Debit Amount" class="form-control rate_name" readonly="true" style="font-size: 12px;">
-                                                                    {% endif %}
-                                                                </td>
-                                                                <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{object.getGCCreditAbsolute|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
-                                                                <td colspan="3"></td>
+                                                                    </td>
+                                                                    <td><input type="text" style="text-align: right !important;" name="x" class="form-control qty" value="{{object.getGCDebit|number_format(2, '.', ',')|default('')}}"  readonly="true"></td>
+                                                                    <td colspan="3"></td>
+                                                                {% endif %}
                                                             </tr>
                                                         {% endif %}
                                                     {% endfor %}
