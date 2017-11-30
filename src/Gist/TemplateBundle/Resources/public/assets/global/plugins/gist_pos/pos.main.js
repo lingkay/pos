@@ -2124,7 +2124,7 @@ $(document).ready(function(){
             debit = orig_amt_to_pay*(percentage/100);
 
             // set as debit amount
-            $('#float_trans_gc_credit').val((debit * -1));
+            $('#float_trans_gc_debit').val(debit);
             $('#cform-gcp_debit_amt').val(addCommas(debit));
         } else {
             $('#cform-gcp_debit_amt').val("0.00");
@@ -2254,7 +2254,8 @@ $(document).ready(function(){
             cc_number = $(this).find('#cform-gc_card_number').val();
             cc_name = $(this).find('#cform-gc_card_name').val();
             payment_amt = $(this).find('#cform-gcp_pay_amt').val();
-            cc_expiry = $(this).find('#cform-gc_card_expiry').val().replace(/\//g, '-');
+            //cc_expiry = replace(/\//g, '-');
+            cc_expiry = 'x';
             if (cc_number != '' && payment_amt != '' && cc_name != '' && cc_expiry != '') {
                 if (complete_flag) {
                     complete_flag = true;

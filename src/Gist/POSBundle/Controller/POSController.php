@@ -354,10 +354,11 @@ class POSController extends Controller
      * @param $refundAmount
      * @param $exchangeFlag
      * @param $gcCredit
+     * @param $gcDebit
      * @param $refundReason
      * @return JsonResponse
      */
-    public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag, $gcCredit, $refundReason)
+    public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag, $gcCredit, $gcDebit, $refundReason)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -421,6 +422,19 @@ class POSController extends Controller
         $transaction->setTransactionCCInterest($transaction_cc_interest);
         $transaction->setUserCreate($this->getUser());
         $transaction->setGCCredit($gcCredit);
+        $transaction->setGCDebit($gcDebit);
+
+        // GC Balance manipulation
+        if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {
+            $current_balance = floatval($customer_object->getGCBalance());
+            $gcCredit = floatval($gcCredit);
+            $gcDebit = floatval($gcDebit);
+            $new_balance = $current_balance - $gcDebit;
+            $new_balance = $new_balance + $gcCredit;
+            $customer_object->setGCBalance($new_balance);
+            $em->persist($customer_object);
+
+        }
 
         $em->persist($transaction);
         $em->flush();

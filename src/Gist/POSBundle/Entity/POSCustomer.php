@@ -85,6 +85,17 @@ class POSCustomer
     /** @ORM\Column(type="string", length=25, nullable=true) */
     protected $notes;
 
+    /** @ORM\Column(type="string", length=25, nullable=true) */
+    protected $gc_number;
+
+    /** @ORM\Column(type="string", length=25, nullable=true) */
+    protected $gc_expiry;
+
+    /**
+     * @ORM\Column(type="decimal", precision=7, scale=2, nullable=true)
+     */
+    protected $gc_balance = 0;
+
 
 
     public function __construct()
@@ -548,6 +559,78 @@ class POSCustomer
     public function getNotes()
     {
         return $this->notes;
+    }
+
+    /**
+     * Set setGCNumber
+     *
+     * @param string $notes
+     *
+     * @return Customer
+     */
+    public function setGCNumber($gc_number)
+    {
+        $this->gc_number = $gc_number;
+
+        return $this;
+    }
+
+    /**
+     * Get getGCNumber
+     *
+     * @return string
+     */
+    public function getGCNumber()
+    {
+        return $this->gc_number;
+    }
+
+    /**
+     * Set setGCNumber
+     *
+     * @param string $notes
+     *
+     * @return Customer
+     */
+    public function setGCBalance($gc_balance)
+    {
+        $this->gc_balance = $gc_balance;
+
+        return $this;
+    }
+
+    /**
+     * Get getGCNumber
+     *
+     * @return string
+     */
+    public function getGCBalance()
+    {
+        return $this->gc_balance;
+    }
+
+    /**
+     * Set setGCExpiry
+     *
+     * @param string $notes
+     *
+     * @return Customer
+     */
+    public function setGCExpiry($gc_expiry)
+    {
+        $this->gc_expiry = $gc_expiry;
+
+        return $this;
+    }
+
+    /**
+     * Get getGCExpiry
+     *
+     * @return string
+     */
+    public function getGCExpiry()
+    {
+        return $this->gc_expiry;
     }
 
 

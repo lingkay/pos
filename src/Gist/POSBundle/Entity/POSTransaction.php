@@ -123,6 +123,9 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $gc_credit_amount;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $gc_debit_amount;
+
 
     /**
      * @ORM\OneToOne(targetEntity="POSTransaction")
@@ -1420,6 +1423,31 @@ class POSTransaction
     {
         return $this->gc_credit_amount;
     }
+
+    /**
+     * Get getGCDebit
+     *
+     * @return string
+     */
+    public function getGCDebit()
+    {
+        return $this->gc_debit_amount;
+    }
+
+    /**
+     * Set setGCDebit
+     *
+     * @param string $gc_debit_amount
+     *
+     * @return POSTransaction
+     */
+    public function setGCDebit($gc_debit_amount)
+    {
+        $this->gc_debit_amount = $gc_debit_amount;
+
+        return $this;
+    }
+
 
     /**
      * Get getGCCredit fmtd

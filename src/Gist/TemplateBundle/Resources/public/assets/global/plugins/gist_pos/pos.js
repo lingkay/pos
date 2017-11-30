@@ -1127,11 +1127,25 @@ function freezeTransaction(is_final)
     var balance_amt_net_vat = $('#float_balance_tax_amt_net_vat').val();
     var balance_vat_amt = $('#float_balance_tax_vat_amt').val();
     var gc_credit = $('#float_trans_gc_credit').val();
+    var gc_debit = $('#float_trans_gc_debit').val();
     var refund_reason = $('#cform-refund_reason').val();
 
     if(refund_reason.length < 1) {
         refund_reason = '%20';
     }
+
+    //add gc topups to existing credit if there's any
+    var current_credit = parseFloat(gc_credit);
+    var additional_credit = 0;
+    $('#cart_items tr').each(function() {
+        var row = $(this).closest('tr');
+        var barcode = row.find('.barcode').val();
+        var srp = row.find('.srp').val();
+        if (barcode == 'GC') {
+            additional_credit = additional_credit + parseFloat(srp);
+        }
+        gc_credit = current_credit + additional_credit;
+    });
 
     var exchange_flag = 'false';
 
@@ -1159,7 +1173,7 @@ function freezeTransaction(is_final)
     }
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = url_pos+"/pos/save_transaction/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell+"/"+refund_method+"/"+refund_amount+"/"+exchange_flag+"/"+gc_credit+"/"+refund_reason;
+    var url = url_pos+"/pos/save_transaction/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell+"/"+refund_method+"/"+refund_amount+"/"+exchange_flag+"/"+gc_credit+"/"+gc_debit+"/"+refund_reason;
     var x_new_id = '';
 
     $.getJSON(url, function(json){
