@@ -320,6 +320,21 @@ class POSController extends Controller
         return new JsonResponse($transactions);
     }
 
+    public function getCustomerGCAction($cust_id)
+    {
+        header("Access-Control-Allow-Origin: *");
+        $em = $this->getDoctrine()->getManager();
+        $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$cust_id));
+
+        if ($customer->getGCNumber() == null) {
+            $list_opts[] = array('gc_number'=>'N/A','gc_balance'=>'0.00','gc_expiry'=>'');
+            return new JsonResponse($list_opts);
+        }
+
+        $list_opts[] = array('gc_number'=>$customer->getGCNumber(),'gc_balance'=>$customer->getGCBalance(),'gc_expiry'=>$customer->getGCExpiry());
+        return new JsonResponse($list_opts);
+    }
+
     /**
      * Saving of POS transaction
      * (AJAX)

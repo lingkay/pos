@@ -1010,6 +1010,7 @@ $(document).ready(function(){
         $('#footer_customer').text(name_fmtd);
         $('#header_customer').text(name_fmtd);
         $('#customer_modal').modal('hide');
+
         swal("Success!", 'Customer selected!',"success");
         if ($('#string_trans_type').val() != 'none' && balance <= 0) {
             if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
@@ -1022,8 +1023,26 @@ $(document).ready(function(){
         }
 
         if ($('#string_trans_mode').val() == 'Deposit') {
+            //will be incorrect when deposit mode is selected INITIALLY
+            //this wwill show final modal right away
             $('#final_modal').modal('show');
         }
+
+        //assign customer gc details
+        var url_pos = $('#url_pos').val();
+        var url = url_pos+"/pos/get_customer_gc/"+row.find('.display_id').val();
+
+        $.getJSON(url, function(json) {
+            $.each(json, function (i, cust) {
+
+                $('#transaction_gc_number').val(cust.gc_number);
+                $('#transaction_gc_expiry').val(cust.gc_expiry);
+                $('#transaction_gc_balance').val(cust.gc_balance);
+                $('#header_gc_number').text(cust.gc_number);
+                $('#header_gc_balance').text(" (Php " + cust.gc_balance + ")");
+            });
+        });
+        //end
     });
 
 
