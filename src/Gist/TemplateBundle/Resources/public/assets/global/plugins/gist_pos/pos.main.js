@@ -1,3 +1,44 @@
+function getCustomerGCInfo(cust_id)
+{
+    var url_pos = $('#url_pos').val();
+    var url = url_pos+"/pos/get_customer_gc/"+cust_id;
+
+    $.getJSON(url, function(json) {
+        $.each(json, function (i, cust) {
+
+            $('#transaction_gc_number').val(cust.gc_number);
+            $('#transaction_gc_expiry').val(cust.gc_expiry);
+            $('#transaction_gc_balance').val(cust.gc_balance);
+            $('#header_gc_number').text(cust.gc_number);
+            $('#header_gc_balance').text(" (Php " + cust.gc_balance_formatted + ")");
+        });
+    });
+}
+
+function autoloadGCModalInfo()
+{
+    //assign customer gc details
+    var url_pos = $('#url_pos').val();
+    var cust_id = $('#transaction_customer_id').val();
+    var url = url_pos+"/pos/get_customer_gc/"+cust_id;
+
+    $.getJSON(url, function(json) {
+        $.each(json, function (i, cust) {
+            if (cust.gc_number == 'N/A') {
+                swal('Card not found!','Please try again','error');
+                $('#cform-gc_card_number').val('');
+                $('#cform-gcp_balance').val('');
+                $('#cform-gcp_card_name').val('');
+            } else {
+                swal('Customer gift card detected!','','success');
+                $('#cform-gc_card_number').val(cust.gc_number);
+                $('#cform-gcp_balance').val(cust.gc_balance);
+                $('#cform-gcp_card_name').val(cust.gc_name);
+            }
+        });
+    });
+    //end
+}
 
 function clearGiftCardModal()
 {
@@ -12,6 +53,16 @@ function clearGiftCardModal()
 function proceedRefund(method)
 {
     if (method == "gc") {
+
+        var trans_gc = $('#transaction_gc_number').val();
+
+        if (trans_gc == '0' || trans_gc == 'N/A') {
+            swal('Customer has no Gift Card!','','error');
+            return 0;
+        } else {
+            $('#cform-gcr_card_number').val(trans_gc);
+        }
+
         var refund_orig_total = 0;
         $('.refund_issued:checkbox:checked').each(function () {
             var row = $(this).closest('.existing_product_row');
@@ -47,6 +98,8 @@ function proceedRefund(method)
             // compute from original price
             refund_orig_total = refund_orig_total*(percentage/100);
         }
+
+        //subtract payments not made thru GC
 
 
         $('#string_refund_method').val('Gift Card');
@@ -448,8 +501,31 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".cp_gc", function(e){
-        $('#gc_avail_modal').modal('show');
+        if ($('#transaction_customer_id').val() == '0') {
+            swal('No customer selected!', 'Select a customer first for gift card loading', 'error');
+        } else {
+            if ($('#transaction_gc_number').val() == '0' || $('#transaction_gc_number').val() == 'N/A') {
+                swal({
+                        title: "No gift card found!",
+                        text: "Selected customer has no card yet",
+                        type: "error",
+                        showCancelButton: true,
+                        showConfirmButton: true,
+                        confirmButtonText: "Create card",
+                        cancelButtonText: "Cancel",
+                    },
+                    function(isConfirm){
+                        if (isConfirm) {
+                            $('#gc_avail_create_modal').modal('show');
+                        }
+                    });
+            } else {
+                $('#gc_avail_modal').modal('show');
+            }
+        }
     });
+
+
 
     $(document).on("click",".gc_avail_proceed_btn", function(e){
         var load_amt = parseFloat($('#cform-gc_load_amt').val());
@@ -994,6 +1070,41 @@ $(document).ready(function(){
 
     });
 
+
+
+    $(document).on("click",".gc_pay_search", function(e) {
+        //assign customer gc details
+        var url_pos = $('#url_pos').val();
+        var url = url_pos+"/pos/get_customer_by_gc_number/"+$('#cform-gc_card_number').val();
+
+        $.getJSON(url, function(json) {
+            $.each(json, function (i, cust) {
+                if (cust.gc_number == 'none') {
+                    swal('Card not found!','Please try again','error');
+                    $('#cform-gc_card_number').val('');
+                } else {
+                    swal('Customer selected!','Customer automatically selected from GC number','success');
+
+                    $('#transaction_customer_id').val(cust.customer_id);
+                    $('#transaction_customer_display_id').val(cust.customer_id);
+                    $('#transaction_customer_name').val(cust.customer_name);
+                    $('#footer_customer').text(cust.customer_name);
+                    $('#header_customer').text(cust.customer_name);
+
+                    $('#cform-gcp_balance').val(cust.gc_balance);
+                    $('#cform-gcp_card_name').val(cust.gc_name);
+
+                    $('#transaction_gc_number').val(cust.gc_number);
+                    $('#transaction_gc_expiry').val(cust.gc_expiry);
+                    $('#transaction_gc_balance').val(cust.gc_balance);
+                    $('#header_gc_number').text(cust.gc_number);
+                    $('#header_gc_balance').text(" (Php " + cust.gc_balance_formatted + ")");
+                }
+            });
+        });
+        //end
+    });
+
     $(document).on("click",".use_customer_btn", function(e){
         var row = $(this).closest('tr');
         var balance = $('#float_trans_balance').val();
@@ -1028,9 +1139,10 @@ $(document).ready(function(){
             $('#final_modal').modal('show');
         }
 
+
         //assign customer gc details
         var url_pos = $('#url_pos').val();
-        var url = url_pos+"/pos/get_customer_gc/"+row.find('.display_id').val();
+        var url = url_pos+"/pos/get_customer_gc/"+row.find('.id').val();
 
         $.getJSON(url, function(json) {
             $.each(json, function (i, cust) {
@@ -1039,7 +1151,7 @@ $(document).ready(function(){
                 $('#transaction_gc_expiry').val(cust.gc_expiry);
                 $('#transaction_gc_balance').val(cust.gc_balance);
                 $('#header_gc_number').text(cust.gc_number);
-                $('#header_gc_balance').text(" (Php " + cust.gc_balance + ")");
+                $('#header_gc_balance').text(" (Php " + cust.gc_balance_formatted + ")");
             });
         });
         //end
@@ -1221,7 +1333,43 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".cp_customers", function(e){
-        $('#customer_modal').modal('show');
+        var complete_flag = true;
+
+        $('#cart_items tr').each(function() {
+            var row = $(this).closest('tr');
+            var barcode = row.find('.barcode').val();
+            if (barcode == 'GC') {
+                complete_flag = false;
+            }
+        });
+
+        var gc_paid_flag = false;
+        $('#payments_list tr').each(function() {
+            var type = $(this).find('.payment_type').val();
+            if (type == 'Gift Card') {
+                gc_paid_flag = true;
+            }
+        });
+
+        if (gc_paid_flag) {
+            swal('Cannot change customer!','GC payment already made. Remove gift card payment or reset cart to proceed.','error');
+            return 0;
+        }
+
+        $('#cart_items tr').each(function() {
+            var row = $(this).closest('tr');
+            var barcode = row.find('.barcode').val();
+            if (barcode == 'GC') {
+                complete_flag = false;
+            }
+        });
+
+        if (complete_flag) {
+            $('#customer_modal').modal('show');
+        } else {
+            swal('Cannot change customer!','GC top-up already added in cart. Remove top-up entry or reset cart.','error');
+        }
+
     });
 
     $('#cform-cust_search_id').on('input',function(e){
@@ -1798,7 +1946,7 @@ $(document).ready(function(){
                       showCancelButton: true,
                       showConfirmButton: true,
                       confirmButtonText: "Proceed",
-                      cancelButtonText: "Change customer",
+                      //cancelButtonText: "Change customer",
                     },
 
                     function(isConfirm){
@@ -1858,7 +2006,7 @@ $(document).ready(function(){
                           showCancelButton: true,
                           showConfirmButton: true,
                           confirmButtonText: "Proceed",
-                          cancelButtonText: "Change customer",
+                          //cancelButtonText: "Change customer",
                         },
                         function(isConfirm){
                             if (isConfirm) {
@@ -1957,7 +2105,7 @@ $(document).ready(function(){
                           showCancelButton: true,
                           showConfirmButton: true,
                           confirmButtonText: "Proceed",
-                          cancelButtonText: "Change customer",
+                          //cancelButtonText: "Change customer",
                         },
                         function(isConfirm){
                             if (isConfirm) {
@@ -2142,8 +2290,7 @@ $(document).ready(function(){
             // compute from original price
             debit = orig_amt_to_pay*(percentage/100);
 
-            // set as debit amount
-            $('#float_trans_gc_debit').val(debit);
+
             $('#cform-gcp_debit_amt').val(addCommas(debit));
         } else {
             $('#cform-gcp_debit_amt').val("0.00");
@@ -2260,7 +2407,8 @@ $(document).ready(function(){
         
     });
 
-    $(document).on("click",".gc_payment_proceed_btn", function(e){
+
+    $(document).on("click",".gc_avail_create_proceed_btn", function(e){
 
         var complete_flag = true;
 
@@ -2269,15 +2417,89 @@ $(document).ready(function(){
         var payment_amt = '';
         var cc_expiry = '';
 
-        $('#gc_form').find('.gc_field').each(function() {
-            cc_number = $(this).find('#cform-gc_card_number').val();
-            cc_name = $(this).find('#cform-gc_card_name').val();
-            payment_amt = $(this).find('#cform-gcp_pay_amt').val();
+        var load_amt = parseFloat($('#cform-gca_load_amt').val());
+        var erp_gc_id = $('#erp_gc_id').val();
+
+        $('#gca_form').find('.gc_field').each(function() {
+            cc_number = $(this).find('#cform-gca_card_number').val();
+            cc_name = $(this).find('#cform-gca_card_name').val();
+            payment_amt = $(this).find('#cform-gca_load_amt').val();
             //cc_expiry = replace(/\//g, '-');
             cc_expiry = 'x';
             if (cc_number != '' && payment_amt != '' && cc_name != '' && cc_expiry != '') {
                 if (complete_flag) {
                     complete_flag = true;
+                }
+            } else {
+                complete_flag = false;
+            }
+        });
+
+        //change below for multiple gift cards
+        payment_amt = $('#cform-gca_load_amt').val();
+        if (payment_amt < 0) {
+            swal('Invalid load amount!','','error');
+            complete_flag = false;
+        }
+
+        if (complete_flag) {
+            //save gc
+            //assign customer gc details
+            var url_pos = $('#url_pos').val();
+            var url = url_pos+"/pos/save_customer_gc/"+$('#transaction_customer_id').val()+"/"+$('#cform-gca_card_number').val()+"/"+$('#cform-gca_card_name').val()+"/%20";
+
+            $.getJSON(url, function(json) {
+                $.each(json, function (i, cust) {
+
+                    $('#transaction_gc_number').val(cust.gc_number);
+                    $('#transaction_gc_expiry').val(cust.gc_expiry);
+                    $('#transaction_gc_balance').val(cust.gc_balance);
+                    $('#header_gc_number').text(cust.gc_number);
+                    $('#header_gc_balance').text(" (Php " + cust.gc_balance + ")");
+                });
+            });
+            //end
+
+
+            getCustomerGCInfo($('#transaction_customer_id').val());
+            addToCart('Gift Card', load_amt, 0, erp_gc_id, 'GC', 'GC');
+
+            $('#gc_avail_create_modal').modal('hide');
+            $('#cform-gca_load_amt').val('');
+            $('#cform-gca_card_number').val('');
+            $('#cform-gca_card_name').val('');
+
+        } else {
+            swal('Incomplete fields!','Please enter gift card details to continue','error');
+        }
+    });
+
+    $(document).on("click",".gc_payment_proceed_btn", function(e) {
+
+        var complete_flag = true;
+
+        var trans_gc = $('#transaction_gc_number').val();
+
+        var cc_number = '';
+        var cc_name = '';
+        var payment_amt = '';
+        var cc_expiry = '';
+        var cc_balance = '';
+
+        $('#gc_form').find('.gc_field').each(function() {
+            cc_number = $(this).find('#cform-gc_card_number').val();
+            cc_name = $(this).find('#cform-gcp_card_name').val();
+            cc_balance = $(this).find('#cform-gcp_balance').val();
+            payment_amt = $(this).find('#cform-gcp_pay_amt').val();
+            //cc_expiry = replace(/\//g, '-');
+            cc_expiry = 'x';
+            if (cc_number != '' && payment_amt != '' && cc_name != '' && cc_expiry != '' && cc_balance != '') {
+                if (trans_gc != '0' || trans_gc != 'N/A') {
+                    if (complete_flag) {
+                        complete_flag = true;
+                    }
+                } else {
+                    complete_flag = false;
                 }
             } else {
                 complete_flag = false;
@@ -2291,9 +2513,19 @@ $(document).ready(function(){
             complete_flag = false;
         }
 
+        var gc_balance = parseFloat($('#cform-gcp_balance').val());
+        if (parseFloat(payment_amt) > gc_balance) {
+            swal('Insufficient balance!','','error');
+            complete_flag = false;
+            return 0;
+        }
+
         if (complete_flag) {
             //payment_type, amount, details, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, account_number, payee, payor, expiry, cvv
             addToPayments('Gift Card', parseFloat(payment_amt), '', cc_number, '','','','','','',cc_name,cc_expiry,'');
+            var for_debit = parseFloat($('#cform-gcp_debit_amt').val().replace(/,/g, ''));
+            // set as debit amount
+            $('#float_trans_gc_debit').val(for_debit);
             $('#gc_payment_modal').modal('hide');
             $('#cform-gcp_pay_amt').val('');
             $('#cform-gcp_debit_amt').val('');
@@ -2410,6 +2642,14 @@ $(document).ready(function(){
     $(document).on("click",".remove_payment_row", function(e){
         e.preventDefault();            
         var tr = $(this).closest('tr');
+
+        var pt = tr.find('.payment_type');
+        if (pt.val() == 'Gift Card') {
+            $('#float_trans_gc_debit').val('0');
+        }
+
+
+
         tr.remove();
 
         //count number of payments in list
@@ -2422,6 +2662,8 @@ $(document).ready(function(){
 
             $('#payments_table').prepend(field);
         }
+
+
 
         computeBalance();
         toastr['success']('Payment removed', 'Success');
@@ -2511,8 +2753,30 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".co_gc_payment", function(e){
-        $('#checkout_modal').modal('hide');
-        $('#gc_payment_modal').modal('show');
+        var complete_flag = true;
+        $('#payments_list tr').each(function() {
+            var type = $(this).find('.payment_type').val();
+            if (type == 'Gift Card') {
+                complete_flag = false;
+            }
+        });
+
+        if ($('#transaction_gc_number').val() == 'N/A') {
+            swal('No gift card found!', 'Selected customer does not have a gift card','error');
+            return 0;
+        }
+
+        if (complete_flag) {
+            if ($('#transaction_customer_id').val() != '0' && $('#transaction_customer_id').val() != 'N/A') {
+                autoloadGCModalInfo();
+            }
+
+            $('#checkout_modal').modal('hide');
+            $('#gc_payment_modal').modal('show');
+        } else {
+            swal('Cannot add GC payment!', 'GC payment already added','error');
+        }
+
     });
 
     $(document).on("click",".cash_go_back", function(e){
@@ -2529,6 +2793,11 @@ $(document).ready(function(){
     $(document).on("click",".gc_payment_go_back", function(e){
         $('#cform-gcp_pay_amt').val('');
         $('#cform-gcp_debit_amt').val('');
+
+        $('#cform-gcp_balance').val('');
+        $('#cform-gc_card_number').val('');
+        $('#cform-gcp_card_name').val('');
+
         $('#gc_payment_modal').modal('hide');
         $('#checkout_modal').modal('show');
         if ($('#flag_refund').val() == 'true') {

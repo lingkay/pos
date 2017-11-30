@@ -50,8 +50,9 @@
     <input type="hidden" id="ovr_float_orig_tax_amt_net_vat"    value="0">
     <input type="hidden" id="ovr_float_new_tax_amt_net_vat"     value="0">
     {# GIFT CARD DETAILS #}
-    <input type="hidden" id="transaction_gc_number" value="{{customer.getGiftCardNumber|default('0')}}">
+    <input type="hidden" id="transaction_gc_number" value="{{customer.getGCNumber|default('0')}}">
     <input type="hidden" id="transaction_gc_expiry" value="null">
+    <input type="hidden" id="transaction_gc_balance" value="null">
     <input type="hidden" id="float_trans_gc_credit" name="float_trans_gc_credit" value="0">
     <input type="hidden" id="float_trans_gc_debit" name="float_trans_gc_debit" value="0">
     {# END GIFT CARD DETAILS #}

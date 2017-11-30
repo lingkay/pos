@@ -85,8 +85,11 @@ class POSCustomer
     /** @ORM\Column(type="string", length=25, nullable=true) */
     protected $notes;
 
-    /** @ORM\Column(type="string", length=25, nullable=true) */
+    /** @ORM\Column(type="string", length=125, nullable=true) */
     protected $gc_number;
+
+    /** @ORM\Column(type="string", length=125, nullable=true) */
+    protected $gc_name;
 
     /** @ORM\Column(type="string", length=25, nullable=true) */
     protected $gc_expiry;
@@ -583,6 +586,30 @@ class POSCustomer
     public function getGCNumber()
     {
         return $this->gc_number;
+    }
+
+    /**
+     * Set setGCName
+     *
+     * @param string $gc_name
+     *
+     * @return Customer
+     */
+    public function setGCName($gc_name)
+    {
+        $this->gc_name = $gc_name;
+
+        return $this;
+    }
+
+    /**
+     * Get getGCName
+     *
+     * @return string
+     */
+    public function getGCName()
+    {
+        return $this->gc_name;
     }
 
     /**

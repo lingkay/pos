@@ -327,13 +327,68 @@ class POSController extends Controller
         $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$cust_id));
 
         if ($customer->getGCNumber() == null) {
-            $list_opts[] = array('gc_number'=>'N/A','gc_balance'=>'0.00','gc_expiry'=>'');
+            $list_opts[] = array('gc_number'=>'N/A','gc_balance'=>'0.00','gc_expiry'=>'', 'gc_balance_formatted'=>'0,00','gc_name'=>'N/A');
             return new JsonResponse($list_opts);
         }
 
-        $list_opts[] = array('gc_number'=>$customer->getGCNumber(),'gc_balance'=>$customer->getGCBalance(),'gc_expiry'=>$customer->getGCExpiry());
+        $gc_balance = $customer->getGCBalance();
+        if ($gc_balance == null) {
+            $gc_balance = 0;
+        }
+
+        $gc_balance_formatted = number_format($gc_balance, 2);
+
+
+        $list_opts[] = array('gc_number'=>$customer->getGCNumber(),'gc_balance'=>$gc_balance,'gc_expiry'=>$customer->getGCExpiry(), 'gc_balance_formatted'=>$gc_balance_formatted,'gc_name'=>$customer->getGCName());
         return new JsonResponse($list_opts);
     }
+
+    public function getCustomerByGCAction($gc_number)
+    {
+        header("Access-Control-Allow-Origin: *");
+        $em = $this->getDoctrine()->getManager();
+        $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('gc_number'=>$gc_number));
+
+        if (count($customer) < 1) {
+            $list_opts[] = array('gc_number'=>'none','gc_balance'=>'0.00','gc_expiry'=>'');
+            return new JsonResponse($list_opts);
+        }
+
+        $gc_balance = $customer->getGCBalance();
+        if ($gc_balance == null) {
+            $gc_balance = 0;
+        }
+
+        $gc_balance_formatted = number_format($gc_balance, 2);
+
+        $list_opts[] = array('gc_number'=>$customer->getGCNumber(),'gc_balance'=>$gc_balance,'gc_expiry'=>$customer->getGCExpiry(), 'customer_id'=>$customer->getERPID(),
+            'customer_name'=>$customer->getNameFormatted(),'gc_name'=>$customer->getGCName(),'gc_balance_formatted'=>$gc_balance_formatted);
+
+        return new JsonResponse($list_opts);
+    }
+
+    public function saveCustomerGCAction($cust_id, $gc_number, $gc_name, $gc_expiry)
+    {
+        header("Access-Control-Allow-Origin: *");
+        $em = $this->getDoctrine()->getManager();
+        $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$cust_id));
+
+        try {
+            $customer->setGCNumber($gc_number);
+            $customer->setGCName($gc_name);
+            $customer->setGCExpiry($gc_expiry);
+
+            $em->persist($customer);
+            $em->flush();
+
+            $list_opts[] = array('gc_saved'=>'true');
+            return new JsonResponse($list_opts);
+        } catch (\Exception $e) {
+            $list_opts[] = array('gc_saved'=>'false');
+            return new JsonResponse($list_opts);
+        }
+    }
+
 
     /**
      * Saving of POS transaction
@@ -438,6 +493,7 @@ class POSController extends Controller
         $transaction->setUserCreate($this->getUser());
         $transaction->setGCCredit($gcCredit);
         $transaction->setGCDebit($gcDebit);
+
 
         // GC Balance manipulation
         if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {

@@ -42,7 +42,7 @@
 <input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
 <input type="hidden" id="hasItems" value="{{transaction_object.hasItems|default(false)}}">
 {# GIFT CARD DETAILS #}
-<input type="hidden" id="transaction_gc_number" value="{{customer.getGiftCardNumber|default('0')}}{{customer.getGiftCardNumber|default('0')}}">
+<input type="hidden" id="transaction_gc_number" value="{{customer.getGCNumber|default('0')}}">
 <input type="hidden" id="transaction_gc_expiry" value="null">
 <input type="hidden" id="transaction_gc_balance" value="null">
 <input type="hidden" id="float_trans_gc_credit" name="float_trans_gc_credit" value="0">

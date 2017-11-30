@@ -144,6 +144,7 @@
                     <div class="modal-body">
                         <div class="row form-horizontal form" style="margin-top: 20px;">
                             <div class="col-md-12">
+                                {{ form.group_text('GC Number', 'gcr_card_number', '', 4, 4, true) }}
                                 {{ form.group_text('Refund Amount', 'gcr_refund_amt', '', 4, 4, true) }}
                                 {{ form.group_text('GC Credit Amount', 'gcr_credit_amt', '', 4, 4, true) }}
                             </div>
@@ -164,7 +165,7 @@
                 <form method="post" action="">
                     <div class="modal-header">
                         <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Buy Gift Card</h4>
+                        <h4 id="form_title" class="modal-title">Top-up Gift Card</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row form-horizontal form" style="margin-top: 20px;">
@@ -175,6 +176,42 @@
                     </div>
                     <div class="modal-footer">
                         <a class="btn default green gc_avail_proceed_btn" style="margin=0" href="javascript:void(0)">Add to Cart</a>
+                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {# #}
+    <div id="gc_avail_create_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="width: 800px !important;">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
+                        <h4 id="form_title" class="modal-title">Buy Gift Card - New Card Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form gc_main_form" style="margin-top: 20px;">
+                            <div class="col-md-12" id="gca_form" style="height: 250px; overflow:scroll;overflow-x: hidden;">
+                                <div class="gca_field">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            {{ form.group_text('Load Amount', 'gca_load_amt', '', 5, 6, false) }}
+                                        </div>
+                                        <div class="col-md-7">
+                                            {{ form.group_text_pos('Card Number', 'gca_card_number', '', 4, 7, 'Card Number', false) }}
+                                            {{ form.group_text_pos('Name on Card', 'gca_card_name', '', 4, 7, 'Name on Card', false) }}
+                                            {#{{ form.group_text_pos('Expiry Date', 'gc_card_expiry', '', 4, 7, 'mm/yy', false) }}#}
+                                            <a href="javascript:void(0)" class="btn blue swipe_new_giftcard pull-right">Swipe New Gift Card</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn default green gc_avail_create_proceed_btn" style="margin=0" href="javascript:void(0)">Add to Cart</a>
                         <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
                     </div>
                 </form>
@@ -201,19 +238,26 @@
                             </div>
                         </div>
                         <div class="row form-horizontal form cc_main_form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="gc_form" style="height: 350px; overflow:scroll;overflow-x: hidden;">
+                            <div class="col-md-12" id="gc_form" style="height: 250px; overflow:scroll;overflow-x: hidden;">
                                 <div class="gc_field">
                                     <h4 class="form-section">Gift Card Details</h4>
                                     <div class="row">
-                                        <div class="col-md-5">
+                                        <div class="col-md-6">
                                             {{ form.group_text_pos('Amount to pay', 'gcp_pay_amt', '', 5, 6, false) }}
+                                            {{ form.group_text('GC Balance', 'gcp_balance', '', 5, 6, true) }}
                                             {{ form.group_text('GC Debit Amount', 'gcp_debit_amt', '', 5, 6, true) }}
                                         </div>
-                                        <div class="col-md-7">
+                                        <div class="col-md-6">
                                             {{ form.group_text_pos('Card Number', 'gc_card_number', '', 4, 7, 'Card Number', false) }}
-                                            {{ form.group_text_pos('Name on Card', 'gc_card_name', '', 4, 7, 'Name on Card', false) }}
+                                            <div id="cgroup-x" class="form-group">
+                                                <label class="col-md-5 control-label"></label>
+                                                <div class="col-md-6">
+                                                    <a href="javascript:void(0)" class="btn green btn-xs pull-right gc_pay_search">Search Card</a>
+                                                </div>
+                                            </div>
+
+                                            {{ form.group_text_pos('Name on Card', 'gcp_card_name', '', 4, 7, 'Name on Card', false) }}
                                             {#{{ form.group_text_pos('Expiry Date', 'gc_card_expiry', '', 4, 7, 'mm/yy', false) }}#}
-                                            <a href="javascript:void(0)" class="btn blue swipe_giftcard pull-right">Swipe Card</a>
                                         </div>
                                     </div>
                                 </div>
@@ -223,6 +267,7 @@
                     <div class="modal-footer">
                         <h4 class="pull-left">Balance <b>Php <span class="co_balance_static" value="0">0.00</span></b></h4>
                         {#<a href="javascript:void(0)" class="btn blue add_giftcard_btn">Add Card</a>#}
+                        <a href="javascript:void(0)" class="btn blue swipe_giftcard">Swipe Card</a>
                         <a class="btn default green gc_payment_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
                         <a class="btn default gc_payment_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
                     </div>
