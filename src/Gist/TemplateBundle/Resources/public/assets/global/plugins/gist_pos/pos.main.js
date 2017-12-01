@@ -68,12 +68,15 @@ function proceedRefund(method)
         //get payments not made thru GC
         var other_payments = 0;
         var count_other_payments = 0;
+        var count_gc_payments = 0;
         $('#payments_list tr').each(function() {
             var type = $(this).find('.payment_type').val();
             var payment_amt = parseFloat($(this).find('.payment_amt_float').val());
             if (type != 'Gift Card') {
                 count_other_payments++;
                 other_payments = other_payments + payment_amt;
+            } else if (type == 'Gift Card') {
+                count_gc_payments++;
             }
         });
 
@@ -143,7 +146,7 @@ function proceedRefund(method)
             }
         }
 
-        if (count_other_payments > 0) {
+        if (count_other_payments > 0 && count_gc_payments > 1) {
             refund_orig_total = refund_orig_total + other_payments;
             console.log('refund_orig_total add other: ' + refund_orig_total);
         }
