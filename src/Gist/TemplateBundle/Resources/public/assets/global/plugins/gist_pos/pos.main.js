@@ -123,14 +123,13 @@ function proceedRefund(method)
             } else {
                 refund_orig_total = 0;
             }
-            //console.log('AFTER BULK' + refund_orig_total);
-            var refund_orig_total_less_others = refund_orig_total - other_payments;
-            var trans_orig_price = parseFloat($('#float_static_trans_orig_price').val());
-            trans_percent_discount = ((trans_orig_price - refund_orig_total) / trans_orig_price) * 100;
-            //console.log('BULK PCT: ' + trans_percent_discount);
-            //console.log('BULK REF: ' + refund_orig_total_less_others);
-            refund_orig_total = refund_orig_total_less_others + (refund_orig_total_less_others * (trans_percent_discount/100));
-            //console.log('POST BULK' + refund_orig_total);
+
+            if (count_other_payments > 0) {
+                var refund_orig_total_less_others = refund_orig_total - other_payments;
+                var trans_orig_price = parseFloat($('#float_static_trans_orig_price').val());
+                trans_percent_discount = ((trans_orig_price - refund_orig_total) / trans_orig_price) * 100;
+                refund_orig_total = refund_orig_total_less_others + (refund_orig_total_less_others * (trans_percent_discount / 100));
+            }
         } else {
             if ($('#string_parent_trans_type').val() == 'per') {
                 //compute percentage accounting other payments
@@ -139,15 +138,15 @@ function proceedRefund(method)
                     var trans_orig_price = parseFloat($('#float_static_trans_orig_price').val());
                     var trans_new_price = parseFloat($('#float_static_trans_amount').val());
                     trans_percent_discount = ((trans_orig_price - trans_new_price) / trans_orig_price) * 100;
-                    //console.log('PER PCT: ' + trans_percent_discount);
                     refund_orig_total = refund_orig_total + (refund_orig_total * (trans_percent_discount/100));
-                    //console.log('after per refund_orig_total: ' + refund_orig_total);
                 }
             }
         }
 
-        refund_orig_total = refund_orig_total + other_payments;
-        console.log('refund_orig_total add other: ' + refund_orig_total);
+        if (count_other_payments == 0) {
+            refund_orig_total = refund_orig_total + other_payments;
+            console.log('refund_orig_total add other: ' + refund_orig_total);
+        }
 
 
         //for additional neww items cart
