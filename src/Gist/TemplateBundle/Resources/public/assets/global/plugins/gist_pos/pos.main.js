@@ -64,11 +64,48 @@ function proceedRefund(method)
         }
 
         var refund_orig_total = 0;
-        $('.refund_issued:checkbox:checked').each(function () {
-            var row = $(this).closest('.existing_product_row');
-            var ext_srp = row.find('.existing_srp');
-            refund_orig_total += parseFloat(ext_srp.val());
+
+        //get payments not made thru GC
+        var other_payments = 0;
+        var count_other_payments = 0;
+        $('#payments_list tr').each(function() {
+            var type = $(this).find('.payment_type').val();
+            var payment_amt = parseFloat($(this).find('.payment_amt_float').val());
+            if (type != 'Gift Card') {
+                count_other_payments++;
+                other_payments = other_payments + payment_amt;
+            }
         });
+
+        if (count_other_payments == 0) {
+            //GC payment only, refer to original prices
+            $('.refund_issued:checkbox:checked').each(function () {
+                var row = $(this).closest('.existing_product_row');
+                var ext_srp = row.find('.existing_srp');
+                refund_orig_total += parseFloat(ext_srp.val());
+                //console.log('ext srp' + parseFloat(ext_srp.val()));
+            });
+        } else {
+            //Mixed payments, refer to adjusted prices if there's any
+            $('.refund_issued:checkbox:checked').each(function () {
+                var row = $(this).closest('.existing_product_row');
+                if ($('#string_parent_trans_type').val() == 'per') {
+                    var ext_srp = row.find('.existing_adjusted_price');
+                } else {
+                    var ext_srp = row.find('.existing_srp');
+                }
+
+                refund_orig_total += parseFloat(ext_srp.val());
+            });
+
+            if ($('#string_parent_trans_type').val() == 'per') {
+                refund_orig_total = refund_orig_total - other_payments;
+            }
+
+        }
+
+
+        //console.log('refund_orig_total from [1]: ' + refund_orig_total);
 
         var refund_amt = parseFloat($('#float_trans_balance').val());
         refund_amt = Math.abs(refund_amt);
@@ -80,13 +117,40 @@ function proceedRefund(method)
                 refund_orig_total = refund_orig_total - parseFloat(bulk_amt);
             } else if (bulk_option == 'bdisc') {
                 refund_orig_total = refund_orig_total - (refund_orig_total * (bulk_amt/100));
+
             } else if (bulk_option == 'bamt') {
                 refund_orig_total = bulk_amt; //not sure
             } else {
                 refund_orig_total = 0;
             }
+            //console.log('AFTER BULK' + refund_orig_total);
+            var refund_orig_total_less_others = refund_orig_total - other_payments;
+            var trans_orig_price = parseFloat($('#float_static_trans_orig_price').val());
+            trans_percent_discount = ((trans_orig_price - refund_orig_total) / trans_orig_price) * 100;
+            //console.log('BULK PCT: ' + trans_percent_discount);
+            //console.log('BULK REF: ' + refund_orig_total_less_others);
+            refund_orig_total = refund_orig_total_less_others + (refund_orig_total_less_others * (trans_percent_discount/100));
+            //console.log('POST BULK' + refund_orig_total);
+        } else {
+            if ($('#string_parent_trans_type').val() == 'per') {
+                //compute percentage accounting other payments
+                if (count_other_payments > 0) {
+                    var trans_percent_discount = 0;
+                    var trans_orig_price = parseFloat($('#float_static_trans_orig_price').val());
+                    var trans_new_price = parseFloat($('#float_static_trans_amount').val());
+                    trans_percent_discount = ((trans_orig_price - trans_new_price) / trans_orig_price) * 100;
+                    //console.log('PER PCT: ' + trans_percent_discount);
+                    refund_orig_total = refund_orig_total + (refund_orig_total * (trans_percent_discount/100));
+                    //console.log('after per refund_orig_total: ' + refund_orig_total);
+                }
+            }
         }
 
+        refund_orig_total = refund_orig_total + other_payments;
+        console.log('refund_orig_total add other: ' + refund_orig_total);
+
+
+        //for additional neww items cart
         var percentage = 0;
         var amt_to_pay = parseFloat($('#float_trans_amount').val());
         var count_cart_items = $('#cart_items .product_row').length;
@@ -94,12 +158,12 @@ function proceedRefund(method)
         if (count_cart_items > 0) {
             // get percentage
             percentage = (refund_amt/amt_to_pay)*100;
-
+            console.log(percentage);
             // compute from original price
             refund_orig_total = refund_orig_total*(percentage/100);
         }
 
-        //subtract payments not made thru GC
+        //ADD payments not made thru GC
 
 
         $('#string_refund_method').val('Gift Card');

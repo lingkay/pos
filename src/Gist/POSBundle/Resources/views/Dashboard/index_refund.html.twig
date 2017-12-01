@@ -11,6 +11,7 @@
     <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
     <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
     <input type="hidden" id="float_static_trans_amount" name="float_static_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
+    <input type="hidden" id="float_static_trans_orig_price" name="float_static_trans_orig_price" value="{{ transaction_object.getCartOrigTotal|default('0') }}">
     <input type="hidden" id="float_trans_refund_amount" name="float_trans_refund_amount" value="0">
     <input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
     <input type="hidden" id="float_trans_balance" name="transaction_balance" value="0">
