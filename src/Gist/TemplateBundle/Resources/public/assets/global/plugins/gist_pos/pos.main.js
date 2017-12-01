@@ -146,7 +146,7 @@ function proceedRefund(method)
             }
         }
 
-        if (count_other_payments > 0 && count_gc_payments > 1) {
+        if (count_other_payments > 0 && count_gc_payments > 0) {
             refund_orig_total = refund_orig_total + other_payments;
             console.log('refund_orig_total add other: ' + refund_orig_total);
         }
