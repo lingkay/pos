@@ -35,6 +35,10 @@ gist_pos_menu_index:
     path:     /
     defaults: { _controller: GistPOSBundle:POS:posMenu }
 
+gist_inventory_menu_index:
+    path:     /inventory_menu
+    defaults: { _controller: GistPOSBundle:POS:inventoryMenu }
+
 
 # POS AJAX
 gist_pos_get_frozen_transactions:

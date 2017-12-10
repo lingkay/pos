@@ -303,6 +303,16 @@ class POSController extends Controller
     }
 
     /**
+     * Show the POS menu
+     */
+    public function inventoryMenuAction()
+    {
+        $this->title = 'Dashboard';
+        $params = $this->getViewParams('', 'gist_dashboard_index');
+        return $this->render('GistPOSBundle:Dashboard:inventory_menu.html.twig', $params);
+    }
+
+    /**
      * Returns list of frozen transactions
      */
     public function getFrozenTransactionsAction()
