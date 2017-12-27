@@ -115,9 +115,9 @@ gist_contact:
 #     resource: "@GistManufacturingBundle/Resources/config/routing.yml"
 #     prefix:   /manufacturing
 
-# gist_inventory:
-#     resource: "@GistInventoryBundle/Resources/config/routing.yml"
-#     prefix:   /inventory
+gist_inventory:
+    resource: "@GistInventoryBundle/Resources/config/routing.yml"
+    prefix:   /inventory
 
 # gist_accounting:
 #     resource: "@GistAccountingBundle/Resources/config/routing.yml"
