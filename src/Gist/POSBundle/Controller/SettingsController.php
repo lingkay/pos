@@ -9,6 +9,7 @@ use Gist\POSBundle\Entity\POSTransactionItem;
 use Gist\POSBundle\Entity\POSCustomer;
 use Gist\POSBundle\Entity\POSClock;
 use Gist\UserBundle\Entity\User;
+use Gist\InventoryBundle\Entity\Product;
 use Gist\POSBundle\Entity\POSTransactionPayment;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,11 +44,14 @@ class SettingsController extends CrudController
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
         $customers = $em->getRepository('GistPOSBundle:POSCustomer')->findAll();
+        $products = $em->getRepository('GistInventoryBundle:Product')->findAll();
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
         $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
         $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
+        $params['sys_pos_loc_id'] = $conf->get('gist_sys_pos_loc_id');
         $params['erp_gc_id'] = $conf->get('erp_gc_id');
         $params['users'] = $user_exist;
+        $params['products'] = $products;
         $params['customers'] = $customers;
 
         return $this->render('GistPOSBundle:Settings:index.html.twig', $params);
@@ -75,23 +79,24 @@ class SettingsController extends CrudController
             $conf->set('gist_sys_area_id', $data['sys_area_id']);
             $conf->set('gist_sys_pos_url', $data['sys_pos_url']);
             $conf->set('gist_sys_erp_url', $data['sys_erp_url']);
+            $conf->set('gist_sys_pos_loc_id', $data['sys_pos_loc_id']);
             $conf->set('erp_gc_id', $data['erp_gc_id']);
             $em->flush(); 
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl('gist_pos_settings'));
             }else{
-                return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(),array('id'=>$obj->getID())).$this->url_append);
+                return $this->redirect($this->generateUrl('gist_pos_settings'));
             }
         }
         catch (ValidationException $e)
         {
             error_log($e->getMessage());
-            return $this->addError($obj);
+//            return $this->addError($obj);
         }
         catch (DBALException $e)
         {
             error_log($e->getMessage());
-            return $this->addError($obj);
+//            return $this->addError($obj);
         }
 
     }
@@ -282,6 +287,66 @@ class SettingsController extends CrudController
             die();
         }
         
+
+        $list_opts[] = array('status'=>'ok');
+        return new JsonResponse($list_opts);
+    }
+
+    public function syncProductsAction()
+    {
+        header("Access-Control-Allow-Origin: *");
+        $conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
+        $area_id = $conf->get('gist_sys_pos_loc_id');
+
+        $url= $conf->get('gist_sys_erp_url')."/pos_erp/get/products/".$area_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        foreach ($vars as $u) {
+            //check if user already saved
+            // echo $u['id']."<br>";
+
+            $product_exist = $em->getRepository('GistInventoryBundle:Product')->findOneBy(array('id' => $u['id']));
+            if ($product_exist) {
+                //user found. update record
+                $product_exist->setName($u['name']);
+                $product_exist->setBarcode($u['bar_code']);
+                $product_exist->setItemCode($u['item_code']);
+                $product_exist->setBrand($u['brand']);
+                $em->persist($product_exist);
+
+            } else {
+                //user not found. create record
+                $product_new = new Product;
+                $product_new->setID($u['id']);
+                $product_new->setName($u['name']);
+                $product_new->setBarcode($u['bar_code']);
+                $product_new->setItemCode($u['item_code']);
+                $product_new->setBrand($u['brand']);
+                $em->persist($product_new);
+
+            }
+        }
+
+        try
+        {
+            $em->flush();
+        }
+        catch (UniqueConstraintViolationException $e) {
+            var_dump($e->getMessage());
+            die();
+        }
+        catch (ValidationException $e)
+        {
+            var_dump($e->getMessage());
+            die();
+        }
+        catch (DBALException $e)
+        {
+            var_dump($e->getMessage());
+            die();
+        }
 
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);

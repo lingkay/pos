@@ -15,7 +15,6 @@ class Product
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
@@ -42,10 +41,7 @@ class Product
     /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $class;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Brand")
-     * @ORM\JoinColumn(name="brand_id", referencedColumnName="id")
-     */
+    /** @ORM\Column(type="string", length=150, nullable=true) */
     protected $brand;
 
     /**
@@ -65,7 +61,7 @@ class Product
     protected $cost;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     protected $cost_currency;
 
@@ -79,10 +75,10 @@ class Product
     /** @ORM\Column(type="decimal", precision=13, scale=2, nullable=true) */
     protected $fda_expiration_price;
 
-    /** @ORM\Column(type="datetime") */
+    /** @ORM\Column(type="datetime", nullable=true) */
     protected $permit_date_from;
 
-    /** @ORM\Column(type="datetime") */
+    /** @ORM\Column(type="datetime", nullable=true) */
     protected $permit_date_to;
 
     /**
@@ -154,6 +150,12 @@ class Product
     public function getBrand()
     {
         return $this->brand;
+    }
+
+    public function setID($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function setClass($class)
