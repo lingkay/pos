@@ -46,7 +46,7 @@
                                             <td>{{ s.date_create }}</td>
                                             <td>{{ s.source }}</td>
                                             <td>{{ s.destination }}</td>
-                                            <td></td>
+                                            <td><a href="{{ path(route_edit, { 'id': s.id }) }}" class="btn default btn-xs blue-madison"><i class="fa fa-edit"></i> View</a></td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -75,7 +75,7 @@
                                             <td>{{ r.date_create }}</td>
                                             <td>{{ r.source }}</td>
                                             <td>{{ r.destination }}</td>
-                                            <td></td>
+                                            <td><a href="{{ path(route_edit, { 'id': r.id }) }}" class="btn default btn-xs blue-madison"><i class="fa fa-edit"></i> View</a></td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

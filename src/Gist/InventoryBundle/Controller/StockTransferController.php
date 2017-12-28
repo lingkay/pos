@@ -103,7 +103,7 @@ class StockTransferController extends CrudController
 
         $inv = $this->get('gist_inventory');
         $params['curr_inv_acct'] = 0; //get POS' inventory account
-        $params['wh_opts'] = array('-1'=>'-- Select Location --') + array('0'=>'Main Warehouse');
+
         $params['item_opts'] = array('000'=>'-- Select Product --') + $inv->getProductOptionsTransfer();
 
         header("Access-Control-Allow-Origin: *");
@@ -119,119 +119,109 @@ class StockTransferController extends CrudController
         $result_to = file_get_contents($url_to);
         $vars_to = json_decode($result_to, true);
 
+        $url_opt= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/loc_options/".$pos_loc_id;
+        $result_opt = file_get_contents($url_opt);
+        $vars_opt = json_decode($result_opt, true);
+
         $params['sent'] = $vars_from;
         $params['receive'] = $vars_to;
+        $params['wh_opts'] = $vars_opt;
 
 
 
         return $params;
     }
 
-    protected function add($obj)
+    public function addSubmitAction()
     {
-        $em = $this->getDoctrine()->getManager();
-        $data = $this->getRequest()->request->all();
+        // override for AJAX to ERP
+        try
+        {
+            // send data to ERP for saving
 
-        // validate
-        $this->validate($data, 'add');
-
-        // update db
-        $this->update($obj, $data, true);
-
-        $em->persist($obj);
-        $em->flush();
-        $this->hookPostSave($obj,true);
-
-        // log
-        $odata = $obj->toData();
-        $this->logAdd($odata);
-    }
-
-    protected function update($o, $data, $is_new = false)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $inv = $this->get('gist_inventory');
-        $config = $this->get('gist_configuration');
-
-//        echo "<pre>";
-//        var_dump($data);
-//        echo "</pre>";
-//
-//        die();
-
-        if ($is_new) {
-            $o->setStatus('requested');
-            $o->setRequestingUser($this->getUser());
-
-            // initialize entries
-            $entries = array();
-
-            // warehouse
-            if ($data['source'] == 0) {
-                $wh_src = $inv->findWarehouse($config->get('gist_main_warehouse'));
-            } else {
-                $wh_src = $em->getRepository('GistLocationBundle:POSLocations')->find($data['source']);
-            }
-
-            if ($data['destination'] == 0) {
-                $wh_destination = $inv->findWarehouse($config->get('gist_main_warehouse'));
-            } else {
-                $wh_destination = $em->getRepository('GistLocationBundle:POSLocations')->find($data['destination']);
-            }
-
-            $o->setDescription($data['description']);
-            $o->setSource($wh_src->getInventoryAccount());
-            $o->setDestination($wh_destination->getInventoryAccount());
-
-            $em->persist($o);
-            $em->flush();
-
-
-            foreach ($data['product_item_code'] as $index => $value)
-            {
-                $prod_item_code = $value;
-                $qty = $data['quantity'][$index];
-
-
-
-                // product
-                $prod = $em->getRepository('GistInventoryBundle:Product')->findOneBy(array('item_code'=>$prod_item_code));
-                if ($prod == null)
-                    throw new ValidationException('Could not find product.');
-
-                //from src
-                $entry = new StockTransferEntry();
-                $entry->setStockTransfer($o)
-                    ->setProduct($prod)
-                    ->setQuantity($qty);
-
-                $em->persist($entry);
-                $em->flush();
-
-
-                $em->persist($entry);
-                $em->flush();
-
-                $entries[] = $entry;
-            }
-
-
-            return $entries;
-        } else {
-            $o->setStatus($data['status']);
-
-            if($data['status'] == 'processed') {
-                $o->setProcessedUser($this->getUser());
-                $o->setDateProcessed(new DateTime());
-
-            } elseif ($data['status'] == 'delivered') {
-                $o->setDeliverUser($this->getUser());
-                $o->setDateDelivered(new DateTime());
-            } elseif ($data['status'] == 'arrived') {
-                $o->setReceivingUser($this->getUser());
-                $o->setDateReceived(new DateTime());
+            $this->addFlash('success', 'Stock transfer added successfully.');
+            if($this->submit_redirect){
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }else{
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }
         }
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            //return $this->addError($obj);
+        }
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            error_log($e->getMessage());
+            //return $this->addError($obj);
+        }
+    }
+
+    public function editSubmitAction($id)
+    {
+        // override for AJAX to ERP
+        try
+        {
+            // send data to ERP for updating
+
+            $this->addFlash('success', 'Stock transfer added successfully.');
+            if($this->submit_redirect){
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }else{
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+        }
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            //return $this->addError($obj);
+        }
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            error_log($e->getMessage());
+            //return $this->addError($obj);
+        }
+    }
+
+    public function editFormAction($id)
+    {
+        $conf = $this->get('gist_configuration');
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+        $this->checkAccess($this->route_prefix . '.view');
+
+        $this->hookPreAction();
+        $em = $this->getDoctrine()->getManager();
+
+        //get object from erp
+        //$obj = $em->getRepository($this->repo)->find($id);
+        $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data/".$id."/".$pos_loc_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        $url_ent= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data_entries/".$id;
+        $result_ent = file_get_contents($url_ent);
+        $vars_ent = json_decode($result_ent, true);
+
+//        var_dump($vars[0]['id']);
+//        die();
+
+        $session = $this->getRequest()->getSession();
+        $session->set('csrf_token', md5(uniqid()));
+
+        $params = $this->getViewParams('Edit');
+        $params['object'] = $vars[0];
+        $params['entries'] = $vars_ent;
+        $params['o_label'] = null;
+
+        // check if we have access to form
+        $params['readonly'] = true;
+
+        $this->padFormParams($params, $vars);
+
+        return $this->render('GistTemplateBundle:Object:edit.html.twig', $params);
     }
 
     public function printPDFAction($id)
