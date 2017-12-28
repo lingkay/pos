@@ -92,13 +92,13 @@
                                     <a href="{{ path(route_list) }}" class="btn default">Cancel</a>
                                 {% else %}
                                     {% if object.status|default('') == 'requested' %}
-                                        <button name="status" type="submit" value="processed" class="btn blue"><i class="fa fa-pencil"></i> Process</button>
+                                        {#<button name="status" type="submit" value="processed" class="btn blue"><i class="fa fa-pencil"></i> Process</button>#}
                                     {% elseif object.status|default('') == 'processed' %}
-                                        <a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>
-                                        <button name="status" type="submit" value="delivered" class="btn blue"><i class="fa fa-truck"></i> Deliver</button>
+                                        {#<a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>#}
+                                        {#<button name="status" type="submit" value="delivered" class="btn blue"><i class="fa fa-truck"></i> Deliver</button>#}
                                     {% elseif object.status|default('') == 'delivered' %}
-                                        <a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>
-                                        <button name="status" type="submit" value="arrived" class="btn blue"><i class="fa fa-check"></i> Receive</button>
+                                        {#<a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>#}
+                                        {#<button name="status" type="submit" value="arrived" class="btn blue"><i class="fa fa-check"></i> Receive</button>#}
                                     {% endif %}
                                     <a href="{{ path(route_list) }}" class="btn default">Go back</a>
                                 {% endif %}
