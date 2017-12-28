@@ -92,6 +92,7 @@ class StockTransferController extends CrudController
         return array(
             $grid->newColumn('ID','getID','id'),
             $grid->newColumn('Status','getStatus','status'),
+            $grid->newColumn('Date Create','getName','name','d_inv'),
             $grid->newColumn('Source','getName','name','s_inv'),
             $grid->newColumn('Destination','getName','name','d_inv'),
         );
@@ -104,6 +105,25 @@ class StockTransferController extends CrudController
         $params['curr_inv_acct'] = 0; //get POS' inventory account
         $params['wh_opts'] = array('-1'=>'-- Select Location --') + array('0'=>'Main Warehouse');
         $params['item_opts'] = array('000'=>'-- Select Product --') + $inv->getProductOptionsTransfer();
+
+        header("Access-Control-Allow-Origin: *");
+        $conf = $this->get('gist_configuration');
+        $em = $this->getDoctrine()->getManager();
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+
+        $url_from= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/from/".$pos_loc_id;
+        $result_from = file_get_contents($url_from);
+        $vars_from = json_decode($result_from, true);
+
+        $url_to= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/to/".$pos_loc_id;
+        $result_to = file_get_contents($url_to);
+        $vars_to = json_decode($result_to, true);
+
+        $params['sent'] = $vars_from;
+        $params['receive'] = $vars_to;
+
+
+
         return $params;
     }
 

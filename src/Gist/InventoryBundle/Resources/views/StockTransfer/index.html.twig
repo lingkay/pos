@@ -39,6 +39,16 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    {% for s in sent %}
+                                        <tr>
+                                            <td>{{ s.id }}</td>
+                                            <td>{{ s.status }}</td>
+                                            <td>{{ s.date_create }}</td>
+                                            <td>{{ s.source }}</td>
+                                            <td>{{ s.destination }}</td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                                 {# END TRANSFER INDEX #}
@@ -58,6 +68,16 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                        {% for r in receive %}
+                                        <tr>
+                                            <td>{{ r.id }}</td>
+                                            <td>{{ r.status }}</td>
+                                            <td>{{ r.date_create }}</td>
+                                            <td>{{ r.source }}</td>
+                                            <td>{{ r.destination }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
                                 {# END RECEIVE INDEX #}
@@ -83,8 +103,8 @@
 
             sent_dTable = $('#sent_table').dataTable({
                 "bProcessing": true,
-                "bServerSide": true,
-                "sAjaxSource": "{{ path('gist_inv_stock_transfer_grid') }}",
+                "bServerSide": false,
+                {#"sAjaxSource": "{{ path('gist_inv_stock_transfer_grid') }}",#}
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,
@@ -104,8 +124,8 @@
 
             receive_dTable = $('#receive_table').dataTable({
                 "bProcessing": true,
-                "bServerSide": true,
-                "sAjaxSource": "{{ path('gist_inv_stock_transfer_grid') }}",
+                "bServerSide": false,
+                {#"sAjaxSource": "{{ path('gist_inv_stock_transfer_grid') }}",#}
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,
