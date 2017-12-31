@@ -171,6 +171,11 @@ class StockTransferController extends CrudController
             $result = file_get_contents($url);
             $vars = json_decode($result, true);
 
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+
             $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
@@ -232,47 +237,36 @@ class StockTransferController extends CrudController
     public function printPDFAction($id)
     {
         $settings = $this->get('hris_settings');
-        $wf = $this->get('hris_workforce');
+        //$wf = $this->get('hris_workforce');
         $em = $this->getDoctrine()->getManager();
         $twig = "GistInventoryBundle:StockTransfer:print.html.twig";
 
         $conf = $this->get('gist_configuration');
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+        //get object from erp
+        //$obj = $em->getRepository($this->repo)->find($id);
+        $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data/".$id."/".$pos_loc_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        $url_ent= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data_entries/".$id;
+        $result_ent = file_get_contents($url_ent);
+        $vars_ent = json_decode($result_ent, true);
 
         //getOutputData
-        $data = $this->getOutputData($id);
+        //$data = $this->getOutputData($id);
 
         $params['emp'] = null;
         $params['dept'] = null;
 
 
-        $params['all'] = $data;
+        $params['all'] = $vars;
+        $params['entries'] = $vars_ent;
         $pdf = $this->get('gist_pdf');
         $pdf->newPdf('A4');
         $html = $this->render($twig, $params);
         return $pdf->printPdf($html->getContent());
     }
-
-    private function getOutputData($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $date = new DateTime();
-
-
-        $query = $em    ->createQueryBuilder();
-        $query          ->from('GistInventoryBundle:StockTransfer', 'o');
-//        $query          ->join('HrisWorkforceBundle:Employee','e','WITH','o.employee=e.id');
-
-
-        $query      ->andwhere("o.id = '".$id."'");
-
-
-        $data = $query          ->select('o')
-            ->getQuery()
-            ->getResult();
-
-        return $data;
-    }
-
 
     protected function hookPostSave($obj, $is_new = false)
     {

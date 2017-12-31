@@ -39,25 +39,25 @@
     <table style="border: 1px solid black; border-collapse: collapse; font-size: 14px;" align="left" border="1">
         <tr>
             <th style="width: 160px;height: 20px;">Status</th>
-            <td style="width: 220px;">{{ all[0].getStatus }}</td>
+            <td style="width: 220px;">{{ all[0].status }}</td>
             <th style="width: 140px;">Document ID</th>
-            <td style="width: 180px;">{{ all[0].getID }}</td>
+            <td style="width: 180px;">{{ all[0].id }}</td>
         </tr>
         <tr>
             <th style="width: 160px;height: 20px;">Inventory Site From</th>
-            <td style="width: 220px;">{{ all[0].getSource.getName }}</td>
+            <td style="width: 220px;">{{ all[0].source }}</td>
             <th style="width: 140px;">Date Created</th>
-            <td style="width: 180px;">{{ all[0].getDateCreate|date('M d, Y h:i a') }}</td>
+            <td style="width: 180px;">{{ all[0].date_create|date('M d, Y h:i a') }}</td>
         </tr>
         <tr>
             <th style="width: 160px;height: 20px;">Inventory Site To</th>
-            <td style="width: 220px;">{{ all[0].getDestination.getName }}</td>
+            <td style="width: 220px;">{{ all[0].destination }}</td>
             <th style="width: 140px;">Delivery Personnel</th>
-            <td style="width: 180px;">{{ all[0].getDeliverUser.getDisplayName|default('-') }}</td>
+            <td style="width: 180px;">{{ all[0].user_delivered|default('-') }}</td>
         </tr>
         <tr>
             <th style="width: 160px; height: 50px;">Remarks</th>
-            <td colspan="1" style="width: 220px;">{{ all[0].getDescription }}</td>
+            <td colspan="1" style="width: 220px;">{{ all[0].description }}</td>
         </tr>
     </table>
     <br>
@@ -67,11 +67,11 @@
             <th width="350px" align="center">Item Name</th>
             <th width="120px" align="center">Quantity</th>
         </tr>
-        {% for a in all[0].getEntries %}
+        {% for e in entries|default('') %}
             <tr>
-                <td style="width: 220px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{a.getProduct.getItemCode|default('-')}}</td>
-                <td style="width: 340px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{a.getProduct.getName|default('-')}}</td>
-                <td style="width: 140px; padding-top: 1px; padding-bottom: 1px; text-align: right;">{{a.getQuantity|default('-')}}</td>
+                <td style="width: 220px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{e.item_code|default('-')}}</td>
+                <td style="width: 340px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{e.product_name|default('-')}}</td>
+                <td style="width: 140px; padding-top: 1px; padding-bottom: 1px; text-align: right;">{{e.quantity|default('-')}}</td>
             </tr>
         {% endfor %}
     </table>
@@ -80,15 +80,15 @@
         <table style="border: 1px solid black; border-collapse: collapse; font-size: 14px;" align="left" border="1">
             <tr>
                 <th style="width: 100px;height: 20px;">Prepared by</th>
-                <td style="width: 260px;">{{ all[0].getRequestingUser.getDisplayName|default('-') }} ({{ all[0].getDateCreate|date('y-m-d H:i:s')|default('') }})</td>
+                <td style="width: 260px;">{% if all[0].user_create|default('-') != '-' %}{{ all[0].user_create|default('-') }} ({{ all[0].date_create|default('') }}){% endif %}</td>
                 <th style="width: 100px;height: 20px;">Processed by</th>
-                <td style="width: 260px;">{{ all[0].getProcessedUser.getDisplayName|default('-') }} ({{ all[0].getDateProcessed|date('y-m-d H:i:s')|default('') }})</td>
+                <td style="width: 260px;">{% if all[0].user_processed|default('-') != '-' %}{{ all[0].user_processed|default('-') }} ({{ all[0].date_processed|default('') }}){% endif %}</td>
             </tr>
             <tr>
                 <th style="width: 100px;">Delivered by</th>
-                <td style="width: 260px;">{{ all[0].getDeliverUser.getDisplayName|default('-') }} ({{ all[0].getDateDelivered|date('y-m-d H:i:s')|default('') }})</td>
+                <td style="width: 260px;">{% if all[0].user_delivered|default('-') != '-' %}{{ all[0].user_delivered|default('-') }} ({{ all[0].date_delivered|default('') }}){% endif %}</td>
                 <th style="width: 100px;">Received by</th>
-                <td style="width: 260px;">{{ all[0].getReceivingUser.getDisplayName|default('-') }} ({{ all[0].getDateReceived|date('y-m-d H:i:s')|default('') }})</td>
+                <td style="width: 260px;">{% if all[0].user_received|default('-') != '-' %}{{ all[0].user_received|default('-') }} ({{ all[0].date_received|default('') }}){% endif %}</td>
             </tr>
         </table>
     </page_footer>
