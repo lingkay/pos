@@ -161,12 +161,17 @@ class StockTransferController extends CrudController
 
     public function editSubmitAction($id)
     {
+        $conf = $this->get('gist_configuration');
+        $data = $this->getRequest()->request->all();
         // override for AJAX to ERP
         try
         {
             // send data to ERP for updating
+            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$this->getUser()->getERPID()."/".$data['status'];
+            $result = file_get_contents($url);
+            $vars = json_decode($result, true);
 
-            $this->addFlash('success', 'Stock transfer added successfully.');
+            $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }else{
