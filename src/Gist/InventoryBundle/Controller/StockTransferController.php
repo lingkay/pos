@@ -193,8 +193,12 @@ class StockTransferController extends CrudController
         // override for AJAX to ERP
         try
         {
+            $uid = $this->getUser()->getERPID();
+            if ($uid == '' || $uid == null) {
+                $uid = 1;
+            }
             // send data to ERP for updating
-            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$this->getUser()->getERPID()."/".$data['status'];
+            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
             $result = file_get_contents($url);
             $vars = json_decode($result, true);
 
@@ -205,7 +209,8 @@ class StockTransferController extends CrudController
 
             $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
-                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+//                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $id)).$this->url_append);
             }else{
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }
