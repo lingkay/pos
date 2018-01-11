@@ -22,7 +22,7 @@ class DamagedItemsController extends CrudController
 
         $this->list_title = 'Damaged Items';
         $this->list_type = 'dynamic';
-        $this->repo = "GistInventoryBundle:DamagedItems";
+        $this->repo = "GistInventoryBundle:Product";
     }
 
     public function indexAction()
@@ -109,11 +109,11 @@ class DamagedItemsController extends CrudController
         //$params['wh_opts'] = array('-1'=>'-- Select Location --') + array('0'=>'Main Warehouse') + array('00'=>'Damaged Items Warehouse') + $inv->getPOSLocationOptions();
         //$params['item_opts'] = array('000'=>'-- Select Product --') + $inv->getProductOptionsTransfer();
 
-        $url_from= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/from/".$pos_loc_id;
+        $url_from= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/from/".$pos_loc_id;
         $result_from = file_get_contents($url_from);
         $vars_from = json_decode($result_from, true);
 
-        $url_to= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/to/".$pos_loc_id;
+        $url_to= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/to/".$pos_loc_id;
         $result_to = file_get_contents($url_to);
         $vars_to = json_decode($result_to, true);
 
@@ -125,6 +125,7 @@ class DamagedItemsController extends CrudController
         $params['receive'] = $vars_to;
         $params['wh_opts'] = $vars_opt;
         $params['item_opts'] = null;
+        //$params['pos_loc_id'] = $pos_loc_id;
 
         //CATEGORY
 //        $filter = array();
@@ -155,6 +156,44 @@ class DamagedItemsController extends CrudController
         $params['status_opts'] = $status_opts;
 
         return $params;
+    }
+
+    public function editFormAction($id)
+    {
+        $conf = $this->get('gist_configuration');
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+        $this->checkAccess($this->route_prefix . '.view');
+
+        $this->hookPreAction();
+        $em = $this->getDoctrine()->getManager();
+
+        //get object from erp
+        //$obj = $em->getRepository($this->repo)->find($id);
+        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/data/".$id."/".$pos_loc_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        $url_ent= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/data_entries/".$id;
+        $result_ent = file_get_contents($url_ent);
+        $vars_ent = json_decode($result_ent, true);
+
+//        var_dump($vars[0]['id']);
+//        die();
+
+        $session = $this->getRequest()->getSession();
+        $session->set('csrf_token', md5(uniqid()));
+
+        $params = $this->getViewParams('Edit');
+        $params['object'] = $vars[0];
+        $params['entries'] = $vars_ent;
+        $params['o_label'] = null;
+
+        // check if we have access to form
+        $params['readonly'] = true;
+
+        $this->padFormParams($params, $vars);
+
+        return $this->render('GistTemplateBundle:Object:edit.html.twig', $params);
     }
 
     protected function add($obj)
@@ -253,39 +292,36 @@ class DamagedItemsController extends CrudController
         // override for AJAX to ERP
         try
         {
-            $damaged_item_entry = $em->getRepository('GistInventoryBundle:DamagedItemsEntry')->findOneBy(array('id'=>$id));
+            //inventory/damaged_items/get/to
+            // send data to ERP for updating.
+            $uid = $this->getUser()->getERPID();
+            if ($uid == '' || $uid == null) {
+                $uid = 1;
+            }
+            $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/entry/status/".$id."/".$status."/".$uid;
+            $result = file_get_contents($url);
+            $vars = json_decode($result, true);
 
-            $damaged_item_entry->setStatus($status);
-
-            if($status == 'requested') {
-                $damaged_item_entry->setProcessedUser($this->getUser());
-                $damaged_item_entry->setDateProcessed(new DateTime());
-            } elseif ($status == 'delivered') {
-                $damaged_item_entry->setDeliverUser($this->getUser());
-                $damaged_item_entry->setDateDelivered(new DateTime());
-            } elseif ($status == 'arrived') {
-                $damaged_item_entry->setReceivingUser($this->getUser());
-                $damaged_item_entry->setDateReceived(new DateTime());
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Damaged items form failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }
 
-            $em->persist($damaged_item_entry);
-            $em->flush();
-
-            $this->addFlash('success', 'Damaged items entry status updated successfully.');
+            $this->addFlash('success', 'Damaged items updated successfully.');
             if($this->submit_redirect){
-                return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $damaged_item_entry->getDamagedItems()->getID())).$this->url_append);
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $vars[0]['parentID'])).$this->url_append);
             }else{
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }
         }
         catch (ValidationException $e)
         {
-            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            $this->addFlash('error', 'Database error occurred. Possible duplicate.');
             //return $this->addError($obj);
         }
         catch (DBALException $e)
         {
-            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            $this->addFlash('error', 'Database error occurred. Possible duplicate.');
             error_log($e->getMessage());
             //return $this->addError($obj);
         }
@@ -426,23 +462,6 @@ class DamagedItemsController extends CrudController
         return $pdf->printPdf($html->getContent());
     }
 
-    private function getOutputData($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $date = new DateTime();
-
-        $query = $em    ->createQueryBuilder();
-        $query          ->from('GistInventoryBundle:DamagedItems', 'o');
-
-        $query      ->andwhere("o.id = '".$id."'");
-
-
-        $data = $query          ->select('o')
-            ->getQuery()
-            ->getResult();
-
-        return $data;
-    }
 
     protected function hookPostSave($obj, $is_new = false)
     {
@@ -451,6 +470,7 @@ class DamagedItemsController extends CrudController
 
     public function addSubmitAction()
     {
+        header("Access-Control-Allow-Origin: *");
         $conf = $this->get('gist_configuration');
         $data = $this->getRequest()->request->all();
         // override for AJAX to ERP
@@ -460,7 +480,6 @@ class DamagedItemsController extends CrudController
             $source_iacc = $pos_loc_id = $conf->get('gist_sys_pos_loc_id');;
             $destination_iacc = $data['destination'];
 //            $entries = http_build_query($data[])
-
 
             $entries = [];
             foreach ($data['product_item_code'] as $index => $value) {
@@ -478,19 +497,17 @@ class DamagedItemsController extends CrudController
 
             $entries = http_build_query($entries);
             $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/add_new/".$source_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries;
-
             $result = file_get_contents($url);
             $vars = json_decode($result, true);
 
             if ($vars[0]['status'] == 'failed') {
-                $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
+                $this->addFlash('error', 'Damaged items form failed to update. Please refresh/reload form.');
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
-            }
-
-            $this->addFlash('success', 'Stock transfer updated successfully.');
-            if($this->submit_redirect){
+            } elseif ($vars[0]['status'] == 'success') {
+                $this->addFlash('success', 'Damaged items form updated successfully.');
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
-            }else{
+            } else {
+                $this->addFlash('error', 'Damaged items form failed to save.');
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }
         }
