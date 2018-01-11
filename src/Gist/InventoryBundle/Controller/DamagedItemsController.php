@@ -243,9 +243,6 @@ class DamagedItemsController extends CrudController
 
 
         }
-
-
-
     }
 
     public function statusUpdateAction($id, $status)
@@ -452,300 +449,61 @@ class DamagedItemsController extends CrudController
 
     }
 
-
-    /**
-     *
-     * Function for POS to fetch stock transfer records
-     *
-     * @param $pos_loc_id
-     * @return JsonResponse
-     */
-    public function getSentFromPOSAction($pos_loc_id)
+    public function addSubmitAction()
     {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-        $pos_location = $em->getRepository('GistLocationBundle:POSLocations')->findOneBy(array('id'=>$pos_loc_id));
-        $stock_transfers = $em->getRepository('GistInventoryBundle:DamagedItems')->findBy(array('source_inv_account'=>$pos_location->getInventoryAccount()->getID()));
+        $conf = $this->get('gist_configuration');
+        $data = $this->getRequest()->request->all();
+        // override for AJAX to ERP
+        try
+        {
+            // send data to ERP for saving
+            $source_iacc = $pos_loc_id = $conf->get('gist_sys_pos_loc_id');;
+            $destination_iacc = $data['destination'];
+//            $entries = http_build_query($data[])
 
-        $list_opts = [];
-        foreach ($stock_transfers as $p) {
-            $list_opts[] = array(
-                'id'=>$p->getID(),
-                'source'=> $p->getSource()->getName(),
-                'destination'=> $p->getDestination()->getName(),
-                'date_create'=> $p->getDateCreateFormatted(),
-                'status'=> ucfirst($p->getStatus()),
-            );
 
+            $entries = [];
+            foreach ($data['product_item_code'] as $index => $value) {
+                $prod_item_code = $value;
+                $qty = $data['quantity'][$index];
+                $dest = $data['destination'][$index];
+
+                $entries[] = array(
+                    'code'=>$prod_item_code,
+                    'quantity'=> $qty,
+                    'destination'=>$dest,
+                );
+
+            }
+
+            $entries = http_build_query($entries);
+            $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/add_new/".$source_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries;
+
+            $result = file_get_contents($url);
+            $vars = json_decode($result, true);
+
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+
+            $this->addFlash('success', 'Stock transfer updated successfully.');
+            if($this->submit_redirect){
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }else{
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
         }
-
-        return new JsonResponse($list_opts);
-    }
-
-    /**
-     *
-     * Function for POS to fetch stock transfer records
-     *
-     * @param $pos_loc_id
-     * @return JsonResponse
-     */
-    public function getSentToPOSAction($pos_loc_id)
-    {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-        $pos_location = $em->getRepository('GistLocationBundle:POSLocations')->findOneBy(array('id'=>$pos_loc_id));
-        $stock_transfers = $em->getRepository('GistInventoryBundle:DamagedItems')->findBy(array('destination_inv_account'=>$pos_location->getInventoryAccount()->getID()));
-
-        $list_opts = [];
-        foreach ($stock_transfers as $p) {
-            $list_opts[] = array(
-                'id'=>$p->getID(),
-                'source'=> $p->getSource()->getName(),
-                'destination'=> $p->getDestination()->getName(),
-                'date_create'=> $p->getDateCreateFormatted(),
-                'status'=> ucfirst($p->getStatus()),
-            );
-
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            //return $this->addError($obj);
         }
-
-        return new JsonResponse($list_opts);
-    }
-
-    /**
-     *
-     * Function for POS to fetch location options
-     *
-     * @param $pos_loc_id
-     * @return JsonResponse
-     */
-    public function getLocationOptionsAction($pos_loc_id)
-    {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-
-        $inv = $this->get('gist_inventory');
-        $list_opts = array('-1'=>'-- Select Location --') + array('0'=>'Main Warehouse') + $inv->getPOSLocationOptions();
-
-        return new JsonResponse($list_opts);
-    }
-
-    /**
-     *
-     * Function for POS to fetch stock transfer form data
-     *
-     * @param $id
-     * @param $pos_loc_id
-     * @return JsonResponse
-     */
-    public function getPOSFormDataAction($id, $pos_loc_id)
-    {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-        $st = $em->getRepository('GistInventoryBundle:DamagedItems')->findOneBy(array('id'=>$id));
-        $pos_location = $em->getRepository('GistLocationBundle:POSLocations')->findOneBy(array('id'=>$pos_loc_id));
-        $pos_iacc_id = $pos_location->getInventoryAccount()->getID();
-        $list_opts = [];
-
-        if ($st->getSource()->getID() == $pos_iacc_id || $st->getDestination()->getID() == $pos_iacc_id) {
-            $list_opts[] = array(
-                'id'=>$st->getID(),
-                'source'=> $st->getSource()->getName(),
-                'destination'=> $st->getDestination()->getName(),
-                'date_create'=> $st->getDateCreate()->format('y-m-d H:i:s'),
-                'status'=> $st->getStatus(),
-                'description'=> $st->getDescription(),
-                'user_create' => $st->getRequestingUser()->getDisplayName(),
-                'user_processed' => ($st->getProcessedUser() == null ? '-' : $st->getProcessedUser()->getDisplayName()),
-                'user_delivered' => ($st->getDeliverUser() == null ? '-' : $st->getDeliverUser()->getDisplayName()),
-                'user_received' => ($st->getReceivingUser() == null ? '-' : $st->getReceivingUser()->getDisplayName()),
-                'date_processed' => ($st->getDateProcessed() == null ? '' : $st->getDateProcessed()->format('y-m-d H:i:s')),
-                'date_delivered' => ($st->getDateDelivered() == null ? '' : $st->getDateDelivered()->format('y-m-d H:i:s')),
-                'date_received' => ($st->getDateReceived() == null ? '' : $st->getDateReceived()->format('y-m-d H:i:s')),
-                'invalid'=>'false',
-            );
-        } else {
-            $list_opts[] = array(
-                'id'=>0,
-                'source'=> 0,
-                'destination'=> 0,
-                'date_create'=> 0,
-                'status'=> 0,
-                'description'=> 0,
-                'user_create' => 0,
-                'user_processed' => 0,
-                'user_delivered' => 0,
-                'user_received' => 0,
-                'date_processed' => 0,
-                'date_delivered' => 0,
-                'date_received' => 0,
-                'invalid'=>'true',
-            );
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            error_log($e->getMessage());
+            //return $this->addError($obj);
         }
-
-
-
-        return new JsonResponse($list_opts);
-    }
-
-    /**
-     *
-     * Function for POS to fetch stock transfer form data
-     *
-     * @param $id
-     * @return JsonResponse
-     * @internal param $pos_loc_id
-     */
-    public function getPOSFormDataEntriesAction($id)
-    {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-        $st = $em->getRepository('GistInventoryBundle:DamagedItemsEntry')->findBy(array('stock_transfer'=>$id));
-
-
-        $list_opts = [];
-        foreach ($st as $p) {
-            $list_opts[] = array(
-                'id'=>$p->getID(),
-                'item_code'=>$p->getProduct()->getItemCode(),
-                'product_name'=> $p->getProduct()->getName(),
-                'quantity'=> $p->getQuantity(),
-            );
-
-        }
-
-        return new JsonResponse($list_opts);
-    }
-
-    /**
-     *
-     * Function for POS to update stock transfer status
-     *
-     * @param $id
-     * @return JsonResponse
-     * @internal param $pos_loc_id
-     */
-    public function updatePOSStockTransferAction($id, $userId, $status)
-    {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-        $st = $em->getRepository('GistInventoryBundle:DamagedItems')->findOneBy(array('id'=>$id));
-        $user = $em->getRepository('GistUserBundle:User')->findOneBy(array('id'=>$userId));
-
-        $st->setStatus($status);
-
-        if($status == 'processed') {
-            $st->setProcessedUser($user);
-            $st->setDateProcessed(new DateTime());
-
-        } elseif ($status == 'delivered') {
-            $st->setDeliverUser($user);
-            $st->setDateDelivered(new DateTime());
-        } elseif ($status == 'arrived') {
-            $st->setReceivingUser($user);
-            $st->setDateReceived(new DateTime());
-        } else {
-            // for overwrite scenario
-            $list_opts[] = array(
-                'status'=>'failed'
-            );
-
-            return new JsonResponse($list_opts);
-        }
-
-        $em->persist($st);
-        $em->flush();
-
-        $list_opts[] = array(
-            'status'=>'success'
-        );
-
-        return new JsonResponse($list_opts);
-    }
-
-    //{src}/{dest}/{user}/{description}/{entries}
-
-    /**
-     *
-     * Function for POS to add stock transfer
-     *
-     * @param $src
-     * @param $dest
-     * @param $user
-     * @param $description
-     * @param $entries
-     * @return JsonResponse
-     * @internal param $pos_loc_id
-     */
-    public function addPOSStockTransferAction($src, $dest, $user, $description, $entries)
-    {
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
-        $inv = $this->get('gist_inventory');
-        $config = $this->get('gist_configuration');
-        //$st = $em->getRepository('GistInventoryBundle:DamagedItems')->findOneBy(array('id'=>$id));
-        $user = $em->getRepository('GistUserBundle:User')->findOneBy(array('id'=>$user));
-
-        parse_str($entries, $entriesParsed);
-
-        //$pos_location = $em->getRepository('GistLocationBundle:POSLocations')->findOneBy(array('id'=>$src));
-
-        $st = new DamagedItems();
-        $st->setStatus('requested');
-        $st->setRequestingUser($user);
-
-        // warehouse
-        if ($src == '0') {
-            $wh_src = $inv->findWarehouse($config->get('gist_main_warehouse'));
-        } else {
-            $wh_src = $em->getRepository('GistLocationBundle:POSLocations')->find($src);
-        }
-
-        if ($dest == '0') {
-            $wh_destination = $inv->findWarehouse($config->get('gist_main_warehouse'));
-        } else {
-            $wh_destination = $em->getRepository('GistLocationBundle:POSLocations')->find($dest);
-        }
-
-        $st->setDescription($description);
-        $st->setSource($wh_src->getInventoryAccount());
-        $st->setDestination($wh_destination->getInventoryAccount());
-
-        $em->persist($st);
-        $em->flush();
-
-        foreach ($entriesParsed as $e) {
-            $prod_item_code = $e['code'];
-            $qty = $e['quantity'];
-            $prod = $em->getRepository('GistInventoryBundle:Product')->findOneBy(array('item_code'=>$prod_item_code));
-            if ($prod == null)
-                throw new ValidationException('Could not find product.');
-
-            //from src
-            $entry = new DamagedItemsEntry();
-            $entry->setDamagedItems($st)
-                ->setProduct($prod)
-                ->setQuantity($qty);
-
-            $em->persist($entry);
-            $em->flush();
-
-
-            $em->persist($entry);
-            $em->flush();
-
-            //$entries[] = $entry;
-        }
-
-
-
-        $em->persist($st);
-        $em->flush();
-
-        $list_opts[] = array(
-            'status'=>'success',
-            'id'=>$st->getID()
-        );
-
-        return new JsonResponse($list_opts);
     }
 }
