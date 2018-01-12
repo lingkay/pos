@@ -8,9 +8,7 @@
                 <div class="col-md-10">
                     <h2 class="form-section">{{ list_title }}</h2>
                     <br>
-                    <!--BEGIN TABS-->
                     <div class="tabbable tabbable-custom tabbable-full-width">
-                        <!-- MAIN TABS -->
                         <ul class="nav nav-tabs">
                             <li class="active">
                                 <a href="#tab_sent" data-toggle="tab">
@@ -21,10 +19,8 @@
                                     Inbox </a>
                             </li>
                         </ul>
-                        <!-- END MAIN TABS -->
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_sent">
-                                <!--BEGIN TABLE-->
                                 <a href="{{ path(route_add) }}" class="btn green">Add New</a>
                                 <table class="table table-striped table-bordered table-hover" id="sent_table">
                                     <thead>
@@ -47,10 +43,8 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                <!--END TABLE-->
                             </div>
                             <div class="tab-pane" id="tab_receive">
-                                {# RECEIVE INDEX #}
                                 <table class="table table-striped table-bordered table-hover" id="receive_table">
                                     <thead>
                                     <tr>
@@ -72,11 +66,9 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                {# END RECEIVE INDEX #}
                             </div>
                         </div>
                     </div>
-                    <!--END TABS-->
                 </div>
                 <div class="col-md-1"></div>
             </div>
@@ -90,7 +82,6 @@
             sent_dTable = $('#sent_table').dataTable({
                 "bProcessing": true,
                 "bServerSide": false,
-                {#"sAjaxSource": "{{ path('gist_inv_stock_transfer_grid') }}",#}
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,
@@ -112,7 +103,6 @@
             receive_dTable = $('#receive_table').dataTable({
                 "bProcessing": true,
                 "bServerSide": false,
-                {#"sAjaxSource": "{{ path('gist_inv_stock_transfer_grid') }}",#}
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,

@@ -9,10 +9,7 @@
                 <div class="col-md-10">
                     <h2 class="form-section">Stock Transfer Form ID: {{object.id|default('Add New')}}</h2>
                     <br>
-
                     <div class="portlet-body form">
-                        <!-- BEGIN FORM-->
-
                         <div class="form-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -31,19 +28,19 @@
                                         <ol class="ProgressBar">
                                             <li class="ProgressBar-step is-current">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">Pending<br>{#{{ object.getDateCreate|date('M d, Y h:i a')|default('') }}#}</span>
+                                                <span class="ProgressBar-stepLabel">Pending<br></span>
                                             </li>
                                             <li class="ProgressBar-step">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">Processed<br>{#{{ object.getDateProcessed|date('M d, Y h:i a')|default('') }}#}</span>
+                                                <span class="ProgressBar-stepLabel">Processed<br></span>
                                             </li>
                                             <li class="ProgressBar-step">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">In-transit<br>{#{{ object.getDateDelivered|date('M d, Y h:i a')|default('') }}#}</span>
+                                                <span class="ProgressBar-stepLabel">In-transit<br></span>
                                             </li>
                                             <li class="ProgressBar-step">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">Arrived<br>{#{{ object.getDateReceived|date('M d, Y h:i a')|default('') }}#}</span>
+                                                <span class="ProgressBar-stepLabel">Arrived<br></span>
                                             </li>
                                         </ol>
                                     </div>
@@ -105,8 +102,6 @@
 
                             </div>
                         </div>
-
-                        <!-- END FORM-->
                     </div>
                 </div>
                 <div class="col-md-1"></div>
@@ -120,7 +115,6 @@
     <script>
 
         $(document).ready(function() {
-
 
             var statusCount = 0;
             var currentStatus = "{{ object.status|default('new') }}";
@@ -157,10 +151,8 @@
                     },
                     function(){
                         location.replace('/inventory/stock_transfer/list');
-
                     });
             }
-
 
             $('#transfer_form_btn').on('click', function(e){
                 e.preventDefault();
@@ -172,8 +164,6 @@
                     toastr['error']('Description is required', 'Form validation');
                     return false;
                 }
-
-
 
                 if (rowCount > 1 && destination != '-1') {
                     var qty_passed = true;
@@ -206,7 +196,6 @@
                 return false;
             });
 
-
             $('.add_transfer_item').on('click', function () {
 
                 var selected_item = $('#cform-item').val();
@@ -218,15 +207,12 @@
                     if (selected_item == $(this).val()) {
                         duplicates = true;
                     }
-
-
                 });
 
                 if (duplicates) {
                     toastr['error']('Selected item already added!', 'Error');
                     return false;
                 }
-
 
                 if (selected_item == '000') {
                     toastr['error']('Invalid selection!', 'Error');
@@ -240,7 +226,6 @@
                     $('#transfer_table_body').append(tr);
                 }
             });
-
         });
     </script>
 {% endblock %}

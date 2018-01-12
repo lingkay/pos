@@ -85,7 +85,6 @@ class StockTransferController extends CrudController
         );
     }
 
-
     protected function getGridColumns()
     {
         $grid = $this->get('gist_grid');
@@ -98,19 +97,13 @@ class StockTransferController extends CrudController
         );
     }
 
-    protected function padFormParams(&$params, $object = NULL){
-        $em = $this->getDoctrine()->getManager();
-
-        $inv = $this->get('gist_inventory');
-        $params['curr_inv_acct'] = 0; //get POS' inventory account
-
-        $params['item_opts'] = array('000'=>'-- Select Product --') + $inv->getProductOptionsTransfer();
-
+    protected function padFormParams(&$params, $object = NULL)
+    {
         header("Access-Control-Allow-Origin: *");
         $conf = $this->get('gist_configuration');
-        $em = $this->getDoctrine()->getManager();
-        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+        $inv = $this->get('gist_inventory');
 
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
         $url_from= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/from/".$pos_loc_id;
         $result_from = file_get_contents($url_from);
         $vars_from = json_decode($result_from, true);
@@ -126,22 +119,24 @@ class StockTransferController extends CrudController
         $params['sent'] = $vars_from;
         $params['receive'] = $vars_to;
         $params['wh_opts'] = $vars_opt;
+        $params['item_opts'] = array('000'=>'-- Select Product --') + $inv->getProductOptionsTransfer();
 
         return $params;
     }
 
+    /**
+     * Send data to ERP for saving.
+     *
+     * @return mixed
+     */
     public function addSubmitAction()
     {
         $conf = $this->get('gist_configuration');
         $data = $this->getRequest()->request->all();
-        // override for AJAX to ERP
         try
         {
-            // send data to ERP for saving
             $source_iacc = $pos_loc_id = $conf->get('gist_sys_pos_loc_id');;
             $destination_iacc = $data['destination'];
-//            $entries = http_build_query($data[])
-
 
             $entries = [];
             foreach ($data['product_item_code'] as $index => $value) {
@@ -152,7 +147,6 @@ class StockTransferController extends CrudController
                     'code'=>$prod_item_code,
                     'quantity'=> $qty,
                 );
-
             }
 
             $entries = http_build_query($entries);
@@ -176,28 +170,30 @@ class StockTransferController extends CrudController
         catch (ValidationException $e)
         {
             $this->addFlash('error', 'Database error occured. Possible duplicate.');
-            //return $this->addError($obj);
         }
         catch (DBALException $e)
         {
             $this->addFlash('error', 'Database error occured. Possible duplicate.');
             error_log($e->getMessage());
-            //return $this->addError($obj);
         }
     }
 
+    /**
+     * Send form data to ERP for updating
+     *
+     * @param $id
+     * @return mixed
+     */
     public function editSubmitAction($id)
     {
         $conf = $this->get('gist_configuration');
         $data = $this->getRequest()->request->all();
-        // override for AJAX to ERP
         try
         {
             $uid = $this->getUser()->getERPID();
             if ($uid == '' || $uid == null) {
                 $uid = 1;
             }
-            // send data to ERP for updating
             $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
             $result = file_get_contents($url);
             $vars = json_decode($result, true);
@@ -209,7 +205,6 @@ class StockTransferController extends CrudController
 
             $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
-//                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $id)).$this->url_append);
             }else{
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
@@ -218,27 +213,27 @@ class StockTransferController extends CrudController
         catch (ValidationException $e)
         {
             $this->addFlash('error', 'Database error occured. Possible duplicate.');
-            //return $this->addError($obj);
         }
         catch (DBALException $e)
         {
             $this->addFlash('error', 'Database error occured. Possible duplicate.');
             error_log($e->getMessage());
-            //return $this->addError($obj);
         }
     }
 
+    /**
+     * Load form. Get data from ERP.
+     *
+     * @param $id
+     * @return mixed
+     */
     public function editFormAction($id)
     {
         $conf = $this->get('gist_configuration');
         $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
         $this->checkAccess($this->route_prefix . '.view');
-
         $this->hookPreAction();
-        $em = $this->getDoctrine()->getManager();
 
-        //get object from erp
-        //$obj = $em->getRepository($this->repo)->find($id);
         $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data/".$id."/".$pos_loc_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
@@ -246,9 +241,6 @@ class StockTransferController extends CrudController
         $url_ent= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data_entries/".$id;
         $result_ent = file_get_contents($url_ent);
         $vars_ent = json_decode($result_ent, true);
-
-//        var_dump($vars[0]['id']);
-//        die();
 
         $session = $this->getRequest()->getSession();
         $session->set('csrf_token', md5(uniqid()));
@@ -257,8 +249,6 @@ class StockTransferController extends CrudController
         $params['object'] = $vars[0];
         $params['entries'] = $vars_ent;
         $params['o_label'] = null;
-
-        // check if we have access to form
         $params['readonly'] = true;
 
         $this->padFormParams($params, $vars);
@@ -266,17 +256,19 @@ class StockTransferController extends CrudController
         return $this->render('GistTemplateBundle:Object:edit.html.twig', $params);
     }
 
+    /**
+     * Print stock transfer form
+     *
+     * @param $id
+     * @return mixed
+     */
     public function printPDFAction($id)
     {
-        $settings = $this->get('hris_settings');
-        //$wf = $this->get('hris_workforce');
-        $em = $this->getDoctrine()->getManager();
         $twig = "GistInventoryBundle:StockTransfer:print.html.twig";
 
         $conf = $this->get('gist_configuration');
         $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
-        //get object from erp
-        //$obj = $em->getRepository($this->repo)->find($id);
+
         $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data/".$id."/".$pos_loc_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
@@ -285,13 +277,8 @@ class StockTransferController extends CrudController
         $result_ent = file_get_contents($url_ent);
         $vars_ent = json_decode($result_ent, true);
 
-        //getOutputData
-        //$data = $this->getOutputData($id);
-
         $params['emp'] = null;
         $params['dept'] = null;
-
-
         $params['all'] = $vars;
         $params['entries'] = $vars_ent;
         $pdf = $this->get('gist_pdf');
@@ -299,10 +286,4 @@ class StockTransferController extends CrudController
         $html = $this->render($twig, $params);
         return $pdf->printPdf($html->getContent());
     }
-
-    protected function hookPostSave($obj, $is_new = false)
-    {
-
-    }
-
 }
