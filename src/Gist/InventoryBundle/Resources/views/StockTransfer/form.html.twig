@@ -13,7 +13,7 @@
                         <div class="form-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <input type="hidden" name="status" value="{{ object.status|default('none') }}">
+                                    <input type="hidden" id="status" name="status" value="{{ object.status|default('none') }}">
                                     <input type="hidden" name="id" value="{{ object.id|default('none') }}">
                                     <h4 class="form-section">Information</h4>
                                     {% if object.id|default('') == '' %}
@@ -99,14 +99,14 @@
                                             <td width="20%">Item Code</td>
                                             <td width="50%">Item Name</td>
                                             <td width="20%">Quantity</td>
-                                            {% if object.id|default('') == '' or object.status|default('') != 'arrived' %}
+                                            {% if object.id|default('') == '' or (object.status|default('') != 'arrived' and object.status|default('') != 'delivered') %}
                                                 <td width="10%"></td>
                                             {% endif %}
                                         </tr>
                                         </thead>
                                         <tbody id="transfer_table_body">
                                         {% for e in entries|default('') %}
-                                            {% if object.status|default('') == 'arrived' %}
+                                            {% if object.status|default('') == 'arrived' and object.status|default('') != 'delivered' %}
                                                 <tr>
                                                     <input type="hidden" class="product_item_code" name="product_item_code[]" value="{{ e.item_code }}">
                                                     <td><input type="text"  class='form-control' value="{{ e.item_code|default('N/A') }}" readonly></td>
@@ -136,15 +136,15 @@
                                 {% else %}
                                     {% if object.status|default('') == 'requested' %}
                                         <a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>
-                                        <a href="javascript:void(0)" id="transfer_form_btn" class="btn blue"><i class="fa fa-save"></i> Update</a>
+                                        <a href="javascript:void(0)" id="update_form_btn" class="btn blue"><i class="fa fa-save"></i> Update</a>
                                         <button name="status" type="submit" value="processed" class="btn blue"><i class="fa fa-pencil"></i> Process</button>
                                     {% elseif object.status|default('') == 'processed' %}
                                         <a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>
-                                        <a href="javascript:void(0)" id="transfer_form_btn" class="btn blue"><i class="fa fa-save"></i> Update</a>
-                                        <button name="status" type="submit" value="delivered" class="btn blue"><i class="fa fa-truck"></i> In-transit</button>
+                                        <a href="javascript:void(0)" id="update_form_btn" class="btn blue"><i class="fa fa-save"></i> Update</a>
+                                        <button name="status" type="submit" value="delivered" class="btn blue"><i class="fa fa-truck"></i> Deliver</button>
                                     {% elseif object.status|default('') == 'delivered' %}
                                         <a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>
-                                        <a href="javascript:void(0)" id="transfer_form_btn" class="btn blue"><i class="fa fa-save"></i> Update</a>
+                                        <a href="javascript:void(0)" id="update_form_btn" class="btn blue"><i class="fa fa-save"></i> Update</a>
                                         <button name="status" type="submit" value="arrived" class="btn blue"><i class="fa fa-check"></i> Arrived</button>
                                     {% elseif object.status|default('') == 'arrived' %}
                                         <a href="{{ path('gist_inv_stock_transfer_print', { 'id': object.id}) }}" id="print_btn" class="btn green"><i class="fa fa-print"></i> Print</a>
@@ -290,6 +290,43 @@
             $('#transfer_form_btn').on('click', function(e){
                 e.preventDefault();
                 e.stopImmediatePropagation();
+                //$('#status').val('to_update');
+                var rowCount = $('#list_table tr').length;
+                var destination = $('#cform-destination').val();
+
+                if ($('#cform-description').val() == '') {
+                    toastr['error']('Description is required', 'Form validation');
+                    return false;
+                }
+
+                if (rowCount > 1 && destination != '-1') {
+                    var qty_passed = true;
+                    $('.quantity_row').each(function() {
+                        if ($(this).val() == '' || $(this).val() < 1) {
+                            qty_passed = false;
+                        }
+                    });
+
+                    if (qty_passed) {
+                        $('#transfer_form').submit();
+                    } else {
+                        toastr['error']('Please check quantities.', 'Form validation');
+                    }
+                } else {
+                    if (destination == '-1') {
+                        toastr['error']('Please select destination!', 'Form validation');
+                    }
+
+                    if (rowCount < 2) {
+                        toastr['error']('No item/s to transfer!', 'Form validation');
+                    }
+                }
+            });
+
+            $('#update_form_btn').on('click', function(e){
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#status').val('to_update');
                 var rowCount = $('#list_table tr').length;
                 var destination = $('#cform-destination').val();
 

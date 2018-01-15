@@ -155,7 +155,6 @@ class StockTransferController extends CrudController
             }
 
             $entries = http_build_query($entries);
-//            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries;
             $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries."/".$data['status']."/".$data['id'];
 
             $result = file_get_contents($url);
@@ -194,13 +193,14 @@ class StockTransferController extends CrudController
     {
         $conf = $this->get('gist_configuration');
         $data = $this->getRequest()->request->all();
+
         try
         {
             $uid = $this->getUser()->getERPID();
             if ($uid == '' || $uid == null) {
                 $uid = 1;
             }
-            if ($data['status'] != 'none') {
+            if ($data['status'] == 'to_update') {
                 $source_iacc = $pos_loc_id = $conf->get('gist_sys_pos_loc_id');;
                 $destination_iacc = $data['destination'];
 
@@ -217,10 +217,6 @@ class StockTransferController extends CrudController
 
                 $entries = http_build_query($entries);
                 $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries."/".$data['status']."/".$data['id'];
-
-//                echo $url;
-//                die();
-
                 $result = file_get_contents($url);
                 $vars = json_decode($result, true);
 
@@ -230,8 +226,6 @@ class StockTransferController extends CrudController
                 }
             } else {
                 $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
-//                echo $url;
-//                die();
                 $result = file_get_contents($url);
                 $vars = json_decode($result, true);
 
@@ -240,8 +234,7 @@ class StockTransferController extends CrudController
                     return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
                 }
             }
-
-
+            
             $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $id)).$this->url_append);
