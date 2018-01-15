@@ -28,19 +28,51 @@
                                         <ol class="ProgressBar">
                                             <li class="ProgressBar-step is-current">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">Pending<br></span>
+                                                <span class="ProgressBar-stepLabel">
+                                                    Pending
+                                                    <br>
+                                                    <span id="step1-stamp" style="font-size: 14px; color: black;">
+                                                        {{ object.date_create|default('') }}
+                                                        <br>
+                                                        {{ object.user_create|default('') }}
+                                                    </span>
+                                                </span>
                                             </li>
                                             <li class="ProgressBar-step">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">Processed<br></span>
+                                                <span class="ProgressBar-stepLabel">
+                                                    Processed
+                                                    <br>
+                                                    <span id="step2-stamp" style="font-size: 14px; color: black;">
+                                                        {{ object.date_processed|default('') }}
+                                                        <br>
+                                                        {{ object.user_processed|default('') }}
+                                                    </span>
+                                                </span>
                                             </li>
                                             <li class="ProgressBar-step">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">In-transit<br></span>
+                                                <span class="ProgressBar-stepLabel">
+                                                    In-transit
+                                                    <br>
+                                                    <span id="step3-stamp" style="font-size: 14px; color: black;">
+                                                        {{ object.date_delivered|default('') }}
+                                                        <br>
+                                                        {{ object.user_delivered|default('') }}
+                                                    </span>
+                                                </span>
                                             </li>
                                             <li class="ProgressBar-step">
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
-                                                <span class="ProgressBar-stepLabel">Arrived<br></span>
+                                                <span class="ProgressBar-stepLabel">
+                                                    Arrived
+                                                    <br>
+                                                    <span id="step4-stamp" style="font-size: 14px; color: black;">
+                                                        {{ object.date_received|default('') }}
+                                                        <br>
+                                                        {{ object.user_received|default('') }}
+                                                    </span>
+                                                </span>
                                             </li>
                                         </ol>
                                     </div>
@@ -188,6 +220,11 @@
                 statusCount = 4;
             }
 
+            $('#step1-stamp').hide();
+            $('#step2-stamp').hide();
+            $('#step3-stamp').hide();
+            $('#step4-stamp').hide();
+
             for (var i = 0; i < statusCount; i++) {
                 var $bar = $(".ProgressBar");
                 if ($bar.children(".is-current").length > 0) {
@@ -195,6 +232,8 @@
                 } else {
                     $bar.children().first().addClass("is-current");
                 }
+                var ident = i+1;
+                $('#step'+ident+'-stamp').show();
             }
 
             dTable = $('#search_table').dataTable({
