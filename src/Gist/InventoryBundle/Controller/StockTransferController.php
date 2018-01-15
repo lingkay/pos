@@ -155,7 +155,8 @@ class StockTransferController extends CrudController
             }
 
             $entries = http_build_query($entries);
-            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries;
+//            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries;
+            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries."/".$data['status']."/".$data['id'];
 
             $result = file_get_contents($url);
             $vars = json_decode($result, true);
@@ -199,14 +200,47 @@ class StockTransferController extends CrudController
             if ($uid == '' || $uid == null) {
                 $uid = 1;
             }
-            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
-            $result = file_get_contents($url);
-            $vars = json_decode($result, true);
+            if ($data['status'] != 'none') {
+                $source_iacc = $pos_loc_id = $conf->get('gist_sys_pos_loc_id');;
+                $destination_iacc = $data['destination'];
 
-            if ($vars[0]['status'] == 'failed') {
-                $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
-                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+                $entries = [];
+                foreach ($data['product_item_code'] as $index => $value) {
+                    $prod_item_code = $value;
+                    $qty = $data['quantity'][$index];
+
+                    $entries[] = array(
+                        'code'=>$prod_item_code,
+                        'quantity'=> $qty,
+                    );
+                }
+
+                $entries = http_build_query($entries);
+                $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries."/".$data['status']."/".$data['id'];
+
+//                echo $url;
+//                die();
+
+                $result = file_get_contents($url);
+                $vars = json_decode($result, true);
+
+                if ($vars[0]['status'] == 'failed') {
+                    $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
+                    return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+                }
+            } else {
+                $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
+//                echo $url;
+//                die();
+                $result = file_get_contents($url);
+                $vars = json_decode($result, true);
+
+                if ($vars[0]['status'] == 'failed') {
+                    $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
+                    return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+                }
             }
+
 
             $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
