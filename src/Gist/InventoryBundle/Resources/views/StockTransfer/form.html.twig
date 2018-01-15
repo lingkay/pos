@@ -15,7 +15,7 @@
                                 <div class="col-md-6">
                                     <h4 class="form-section">Information</h4>
                                     {% if object.id|default('') == '' %}
-                                        {{ form.group_select("Destination", "destination", wh_opts, object.destination|default(-1), 3, 5, readonly) }}
+                                        {{ form.group_select_legacy2("Destination", "destination", wh_opts, object.destination|default(-1), 3, 5, readonly) }}
                                         {{ form.group_textarea('Description', 'description',object.description|default(''),3,3,5)}}
                                     {% else %}
                                         {{ form.group_text('Destination', 'destination', object.destination, 3, 4, true) }}
@@ -55,7 +55,9 @@
                                 <div class="col-md-12">
                                     <h4 class="form-section">Items to transfer</h4>
                                     {% if object.id|default('') == '' and object.invalid|default('false') == 'false' %}
-                                        {{ form.group_select_transfer("Item", "item", item_opts, '000', 3, 5, readonly) }}
+                                        <a href="#add_entry_modal" class="btn green" data-toggle="modal" style="margin-bottom: 15px;">
+                                            Search Product
+                                        </a>
                                     {% endif %}
                                     <table class="table table-striped table-bordered table-hover" id="list_table">
                                         <thead>
@@ -108,13 +110,68 @@
             </div>
         </form>
     </div>
+    <div id="add_entry_modal" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">Search Product</h4>
+                </div>
+                <div class="modal-body" style="">
+                    <form id="entry-form">
+                        <div class="row form-horizontal form">
+                            <div class="form-body">
+                                {{ form.group_select_legacy("Product Category", "product_category", cat_opts, 0, 3, 5, readonly) }}
+                                <hr>
+                                <table class="table table-striped table-bordered table-hover" id="search_table">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 140px">Item Code</th>
+                                        <th style="width: 140px">Barcode</th>
+                                        <th style="width: 180px">Name</th>
+                                        <th style="width: 80px"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                    <button id="add_entry_submit" type="button" class="btn green">Add Entry</button>
+                    <button type="button" data-dismiss="modal" class="btn default">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block js %}
 
     <script>
 
+        function generatePath() {
+
+            var product_category = $('#cform-product_category').val();
+            var path = "{{ path('gist_inv_damaged_items_search_ajax_grid', {
+                'category' : 'CATEGORY'}
+            ) }}";
+
+
+            if (product_category == null || product_category == '') {
+                path = path.replace('CATEGORY', null);
+            } else {
+                path = path.replace('CATEGORY', product_category);
+            }
+            console.log(path);
+            return path;
+        }
+
         $(document).ready(function() {
+
+            // SEARCH MODAL TABLE
+            path = "{{ path('gist_inv_damaged_items_ajax_grid') }}";
+            // path = path.replace('CATEGORY', '');
 
             var statusCount = 0;
             var currentStatus = "{{ object.status|default('new') }}";
@@ -139,6 +196,25 @@
                     $bar.children().first().addClass("is-current");
                 }
             }
+
+            dTable = $('#search_table').dataTable({
+                "bProcessing": true,
+                "bServerSide": false,
+                "sAjaxSource": path,
+                "iDisplayLength": 5,
+                "bLengthChange": false,
+                "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [3] },
+                ]
+            });
 
             var restrict = "{{object.invalid|default('false')}}";
             if (restrict == 'true') {
@@ -226,6 +302,41 @@
                     $('#transfer_table_body').append(tr);
                 }
             });
+
+            //    ADD SELECTED ITEM TO TABLE
+            $(document).on("click",".add_to_table", function(e){
+                var row = $(this).closest('tr');
+                var item_code = row.find('.itemCode').val();
+                var item_name = row.find('.itemName').val();
+
+                var selected_item = item_code;
+                var selected_item_name = item_name;
+                var duplicates = false;
+                $(".product_item_code").each(function() {
+                    if (selected_item == $(this).val()) {
+                        duplicates = true;
+                    }
+                });
+
+                if (duplicates) {
+                    // toastr['error']('Selected item already added!', 'Error');
+                    // return false;
+                }
+
+                if (selected_item == '000') {
+                    toastr['error']('Invalid selection!', 'Error');
+                } else {
+                    var tr = "<tr><input type='hidden' name='product_item_code[]' class='product_item_code' value='"+item_code+"'>" +
+                        "<td><input type='text'  class='form-control' value='"+item_code+"' readonly></td>" +
+                        "<td><input type='text'  class='form-control' value='"+item_name+"' readonly></td>" +
+                        "<td><input type='number' min='1' step='1' name='quantity[]' class='form-control quantity_row' required></td>" +
+                        "<td><a href='javascript:void(0)' class='btn btn-xs red remove_row'>Remove</a></td></tr>";
+
+                    $('#transfer_table_body').append(tr);
+                    $('#add_entry_modal').modal('hide');
+                }
+            });
+            //    END ADD
         });
     </script>
 {% endblock %}

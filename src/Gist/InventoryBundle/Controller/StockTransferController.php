@@ -116,6 +116,11 @@ class StockTransferController extends CrudController
         $result_opt = file_get_contents($url_opt);
         $vars_opt = json_decode($result_opt, true);
 
+        $url_cat= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/prod_cats";
+        $result_cat = file_get_contents($url_cat);
+        $vars_cat = json_decode($result_cat, true);
+
+        $params['cat_opts'] = $vars_cat;
         $params['sent'] = $vars_from;
         $params['receive'] = $vars_to;
         $params['wh_opts'] = $vars_opt;
