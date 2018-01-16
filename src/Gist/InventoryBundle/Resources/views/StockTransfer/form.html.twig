@@ -111,7 +111,7 @@
                                         </thead>
                                         <tbody id="transfer_table_body">
                                         {% for e in entries|default('') %}
-                                            {% if object.status|default('') == 'arrived' and object.status|default('') == 'delivered' %}
+                                            {% if object.status|default('') == 'arrived' or object.status|default('') == 'delivered' %}
                                                 <tr>
                                                     <input type="hidden" class="product_item_code" name="product_item_code[]" value="{{ e.item_code }}">
                                                     <td><input type="text"  class='form-control' value="{{ e.item_code|default('N/A') }}" readonly></td>
