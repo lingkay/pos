@@ -64,6 +64,17 @@ class UserManager
         );
     }
 
+    public function getUserFullNameOptions($filter = array())
+    {
+        return $this->getOptionsArray(
+            'GistUserBundle:User',
+            $filter,
+            array('username' => 'ASC'),
+            'getID',
+            'getDisplayName'
+        );
+    }
+
     public function getGroupOptions($filter = array())
     {
         return $this->getOptionsArray(
