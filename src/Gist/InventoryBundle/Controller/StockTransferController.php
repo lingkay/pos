@@ -203,22 +203,27 @@ class StockTransferController extends CrudController
             if ($uid == '' || $uid == null) {
                 $uid = 1;
             }
+
+            $entries = [];
+            foreach ($data['product_item_code'] as $index => $value) {
+                $prod_item_code = $value;
+                $qty = $data['quantity'][$index];
+
+                $entries[] = array(
+                    'code'=>$prod_item_code,
+                    'quantity'=> $qty,
+                    'st_entry'=> $data['st_entry'][$index],
+                    'received_quantity'=> $data['received_quantity'][$index],
+                );
+            }
+
+            $entries = http_build_query($entries);
+
             if ($data['status'] == 'to_update') {
                 $source_iacc = $pos_loc_id = $conf->get('gist_sys_pos_loc_id');;
                 $destination_iacc = $data['destination'];
 
-                $entries = [];
-                foreach ($data['product_item_code'] as $index => $value) {
-                    $prod_item_code = $value;
-                    $qty = $data['quantity'][$index];
 
-                    $entries[] = array(
-                        'code'=>$prod_item_code,
-                        'quantity'=> $qty,
-                    );
-                }
-
-                $entries = http_build_query($entries);
                 $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/add_new/".$source_iacc."/".$destination_iacc."/".$this->getUser()->getERPID()."/".$data['description']."/".$entries."/".$data['status']."/".$data['id'];
                 $result = file_get_contents($url);
                 $vars = json_decode($result, true);
@@ -233,7 +238,7 @@ class StockTransferController extends CrudController
                     $uid = $data['selected_user'];
                 }
 
-                $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
+                $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status']."/".$entries;
                 $result = file_get_contents($url);
                 $vars = json_decode($result, true);
 
