@@ -70,7 +70,7 @@ class UserManager
             'GistUserBundle:User',
             $filter,
             array('username' => 'ASC'),
-            'getID',
+            'getERPID',
             'getDisplayName'
         );
     }

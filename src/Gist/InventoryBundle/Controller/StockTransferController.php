@@ -103,6 +103,9 @@ class StockTransferController extends CrudController
         $conf = $this->get('gist_configuration');
         $inv = $this->get('gist_inventory');
 
+        $um = $this->get('gist_user');
+        $params['user_opts'] = $um->getUserFullNameOptions();
+
         $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
         $url_from= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/from/".$pos_loc_id;
         $result_from = file_get_contents($url_from);
@@ -225,6 +228,11 @@ class StockTransferController extends CrudController
                     return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
                 }
             } else {
+
+                if (isset($data['selected_user'])) {
+                    $uid = $data['selected_user'];
+                }
+
                 $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status'];
                 $result = file_get_contents($url);
                 $vars = json_decode($result, true);
