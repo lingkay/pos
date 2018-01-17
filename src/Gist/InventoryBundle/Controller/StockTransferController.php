@@ -128,6 +128,7 @@ class StockTransferController extends CrudController
         $params['receive'] = $vars_to;
         $params['wh_opts'] = $vars_opt;
         $params['item_opts'] = array('000'=>'-- Select Product --') + $inv->getProductOptionsTransfer();
+        $params['pos_loc_id'] = $pos_loc_id;
 
         return $params;
     }
