@@ -97,6 +97,11 @@ class StockTransferController extends CrudController
         );
     }
 
+    public function editRollbackFormAction()
+    {
+        
+    }
+
     protected function padFormParams(&$params, $object = NULL)
     {
         header("Access-Control-Allow-Origin: *");
