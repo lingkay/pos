@@ -14,10 +14,13 @@
                         <div class="form-body">
                             <div class="row">
                                 <div class="col-md-6">
+                                    <input type="hidden" id="status" name="status" value="{{ object.status|default('none') }}">
+                                    <input type="hidden" id="id" name="id" value="{{ object.id|default('none') }}">
+                                    <input type="hidden" id="rollback_flag" name="rollback_flag" value="{{ is_rolled_back|default('false') }}">
                                     <h4 class="form-section">Information</h4>
                                     <input type="hidden" id="sp_flag" name="sp_flag" value="false">
                                     {% if object.main_status|default('') == '' %}
-                                        {{ form.group_select("Destination", "destination", wh_opts, object.destination|default(-1), 3, 5, readonly) }}
+                                        {{ form.group_select_legacy2("Destination", "destination", wh_opts, object.destination|default(-1), 3, 5, readonly) }}
                                         {{ form.group_textarea('Description', 'description',object.description|default(''),3,3,5)}}
                                     {% else %}
                                         {{ form.group_text('Destination', 'destination', object.destination, 3, 5, true) }}
@@ -37,7 +40,7 @@
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
                                                 <span class="ProgressBar-stepLabel">
                                                     Requested
-                                                    {% if object.main_status == 'requested' and is_rolled_back|default('') != 'true' %}
+                                                    {% if object.main_status|default('') == 'requested' and object.is_rolled_back|default('') != 'true' %}
                                                         <a href="{{ path('gist_inv_stock_transfer_edit_rollback_form', { 'id': object.id}) }}"><i class="fa fa-edit"></i></a>
                                                     {% endif %}
                                                     <br>
@@ -52,7 +55,7 @@
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
                                                 <span class="ProgressBar-stepLabel">
                                                     Processed
-                                                    {% if object.main_status == 'processed' and is_rolled_back|default('') != 'true' %}
+                                                    {% if object.main_status|default('') == 'processed' and object.is_rolled_back|default('') != 'true' %}
                                                         <a href="{{ path('gist_inv_stock_transfer_edit_rollback_form', { 'id': object.id}) }}"><i class="fa fa-edit"></i></a>
                                                     {% endif %}
                                                     <br>
@@ -144,12 +147,16 @@
                                             <td>
                                                 <input type="text"  class='form-control' value="{{ e.product_name|default('N/A') }}" readonly>
                                             </td>
-                                            {% if object.main_status|default('') == 'requested' or object.main_status|default('') == 'processed' %}
+                                            {% if object.main_status|default('') == 'requested' or object.main_status|default('') == '' %}
+                                                <td>
+                                                    <input type="number"  class='form-control' name="quantity[]" value="{{ e.quantity|default(0) }}">
+                                                </td>
+                                            {% elseif object.main_status|default('') == 'processed' %}
                                                 <td>
                                                     <input type="number"  class='form-control' name="quantity[]" value="{{ e.quantity|default(0) }}" readonly>
                                                 </td>
                                             {% endif %}
-                                            {% if object.main_status|default('') == 'requested' or object.main_status|default('') == '' %}
+                                            {% if object.main_status|default('') == 'requested' %}
                                                 <td>
                                                     <input type="number"  class='form-control' name="processed_quantity[]" value="{{ e.processed_quantity|default(e.quantity) }}">
                                                 </td>
@@ -214,7 +221,7 @@
                     <form id="entry-form">
                         <div class="row form-horizontal form">
                             <div class="form-body">
-                                {{ form.group_select_legacy("Product Category", "product_category", cat_opts, 0, 3, 5, readonly) }}
+                                {{ form.group_select_legacy("Product Category", "product_category", cat_opts, 0, 3, 5, false) }}
                                 <hr>
                                 <table class="table table-striped table-bordered table-hover" id="search_table">
                                     <thead>
@@ -241,6 +248,23 @@
 
 {% block js %}
     <script>
+
+        function generatePath() {
+
+            var product_category = $('#cform-product_category').val();
+            var path = "{{ path('gist_inv_damaged_items_search_ajax_grid', {
+                'category' : 'CATEGORY'}
+            ) }}";
+
+
+            if (product_category == null || product_category == '') {
+                path = path.replace('CATEGORY', null);
+            } else {
+                path = path.replace('CATEGORY', product_category);
+            }
+            console.log(path);
+            return path;
+        }
 
         function validateTransfers() {
             var rowCount = $('#list_table tr').length;
@@ -302,7 +326,7 @@
 
             dTable = $('#search_table').dataTable({
                 "bProcessing": true,
-                "bServerSide": true,
+                "bServerSide": false,
                 "sAjaxSource": path,
                 "iDisplayLength": 5,
                 "bLengthChange": false,

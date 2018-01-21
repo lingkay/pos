@@ -52,4 +52,4 @@ gist_inv_stock_transfer_edit_rollback_form:
 gist_inv_stock_transfer_edit_rollback_submit:
     pattern: /edit_rollback/{id}
     methods: [POST]
-    defaults: { _controller: GistInventoryBundle:StockTransfer:editSubmit }
+    defaults: { _controller: GistInventoryBundle:StockTransfer:editRollbackSubmit }

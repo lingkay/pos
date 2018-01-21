@@ -97,9 +97,33 @@ class StockTransferController extends CrudController
         );
     }
 
-    public function editRollbackFormAction()
+    public function editRollbackFormAction($id)
     {
-        
+        $conf = $this->get('gist_configuration');
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+        $this->checkAccess($this->route_prefix . '.view');
+        $this->hookPreAction();
+
+        $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data_rollback/".$id."/".$pos_loc_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        $url_ent= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/data_entries/".$id;
+        $result_ent = file_get_contents($url_ent);
+        $vars_ent = json_decode($result_ent, true);
+
+        $session = $this->getRequest()->getSession();
+        $session->set('csrf_token', md5(uniqid()));
+
+        $params = $this->getViewParams('Edit');
+        $params['object'] = $vars[0];
+        $params['entries'] = $vars_ent;
+        $params['o_label'] = null;
+        $params['readonly'] = true;
+
+        $this->padFormParams($params, $vars);
+
+        return $this->render('GistTemplateBundle:Object:edit.html.twig', $params);
     }
 
     protected function padFormParams(&$params, $object = NULL)
@@ -215,11 +239,22 @@ class StockTransferController extends CrudController
                 $prod_item_code = $value;
                 $qty = $data['quantity'][$index];
 
+                $r_qty = 0;
+                if (isset($data['received_quantity'][$index])) {
+                    $r_qty = $data['received_quantity'][$index];
+                }
+
+                $p_qty = 0;
+                if (isset($data['processed_quantity'][$index])) {
+                    $p_qty = $data['processed_quantity'][$index];
+                }
+
                 $entries[] = array(
                     'code'=>$prod_item_code,
                     'quantity'=> $qty,
                     'st_entry'=> $data['st_entry'][$index],
-                    'received_quantity'=> $data['received_quantity'][$index],
+                    'received_quantity'=> $r_qty,
+                    'processed_quantity'=> $p_qty,
                 );
             }
 
@@ -253,7 +288,78 @@ class StockTransferController extends CrudController
                     return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
                 }
             }
-            
+
+            $this->addFlash('success', 'Stock transfer updated successfully.');
+            if($this->submit_redirect){
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $id)).$this->url_append);
+            }else{
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+        }
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+        }
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.');
+            error_log($e->getMessage());
+        }
+    }
+
+    public function editRollbackSubmitAction($id)
+    {
+        $conf = $this->get('gist_configuration');
+        $data = $this->getRequest()->request->all();
+
+        try
+        {
+            $uid = $this->getUser()->getERPID();
+            if ($uid == '' || $uid == null) {
+                $uid = 1;
+            }
+
+            $entries = [];
+            foreach ($data['product_item_code'] as $index => $value) {
+                $prod_item_code = $value;
+                $qty = $data['quantity'][$index];
+
+                $r_qty = 0;
+                if (isset($data['received_quantity'][$index])) {
+                    $r_qty = $data['received_quantity'][$index];
+                }
+
+                $p_qty = 0;
+                if (isset($data['processed_quantity'][$index])) {
+                    $p_qty = $data['processed_quantity'][$index];
+                }
+
+                $entries[] = array(
+                    'code'=>$prod_item_code,
+                    'quantity'=> $qty,
+                    'st_entry'=> $data['st_entry'][$index],
+                    'received_quantity'=> $r_qty,
+                    'processed_quantity'=> $p_qty,
+                );
+            }
+
+            $entries = http_build_query($entries);
+
+
+            if (isset($data['selected_user'])) {
+                $uid = $data['selected_user'];
+            }
+
+            $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/pos/update_rollback/".$uid."/".$data['status']."/".$id;
+            $result = file_get_contents($url);
+            $vars = json_decode($result, true);
+
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+
+
             $this->addFlash('success', 'Stock transfer updated successfully.');
             if($this->submit_redirect){
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getEdit(), array('id' => $id)).$this->url_append);
