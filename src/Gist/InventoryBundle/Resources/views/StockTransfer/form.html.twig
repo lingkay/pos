@@ -26,9 +26,9 @@
                                         {{ form.group_text('Destination', 'destination', object.destination, 3, 5, true) }}
                                         {{ form.group_textarea('Description', 'description',object.description|default(''),3,3,5, true)}}
                                         {% if object.main_status|default('') == 'requested' %}
-                                            {{ form.group_select_no_default("Processing User", "selected_user", user_opts, 0, 3, 5, false) }}
+                                            {{ form.group_select_no_default("Processing User", "selected_user", user_opts, 1, 3, 5, false) }}
                                         {% elseif object.main_status|default('') == 'processed' %}
-                                            {{ form.group_select_no_default("Delivery Personnel", "selected_user", user_opts, 0, 3, 5, false) }}
+                                            {{ form.group_select_no_default("Delivery Personnel", "selected_user", user_opts, 1, 3, 5, false) }}
                                         {% endif %}
                                     {% endif %}
                                 </div>
@@ -147,11 +147,11 @@
                                             <td>
                                                 <input type="text"  class='form-control' value="{{ e.product_name|default('N/A') }}" readonly>
                                             </td>
-                                            {% if object.main_status|default('') == 'requested' or object.main_status|default('') == '' %}
+                                            {% if object.main_status|default('') == '' %}
                                                 <td>
                                                     <input type="number"  class='form-control' name="quantity[]" value="{{ e.quantity|default(0) }}">
                                                 </td>
-                                            {% elseif object.main_status|default('') == 'processed' %}
+                                            {% elseif object.main_status|default('') == 'requested' or object.main_status|default('') == 'processed' %}
                                                 <td>
                                                     <input type="number"  class='form-control' name="quantity[]" value="{{ e.quantity|default(0) }}" readonly>
                                                 </td>
