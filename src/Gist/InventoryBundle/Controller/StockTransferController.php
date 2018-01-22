@@ -201,11 +201,15 @@ class StockTransferController extends CrudController
                 return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
             }
 
-            $this->addFlash('success', 'Stock transfer updated successfully.');
-            if($this->submit_redirect){
-                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
-            }else{
-                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            if ($data['sp_flag'] == 'true') {
+                return $this->redirect($this->generateUrl('gist_inv_stock_transfer_print',array('id'=>$vars[0]['id'])));
+            } else {
+                $this->addFlash('success', 'Stock transfer updated successfully.');
+                if ($this->submit_redirect) {
+                    return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+                } else {
+                    return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+                }
             }
         }
         catch (ValidationException $e)
