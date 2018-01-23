@@ -26,9 +26,14 @@ class DamagedItemsController extends CrudController
     public function indexAction()
     {
         $this->checkAccess($this->route_prefix . '.view');
-
+        $conf = $this->get('gist_configuration');
         $this->hookPreAction();
-        $gl = $this->setupGridLoader();
+
+        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/grid_loader";
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        $gl = $vars;
 
         $params = $this->getViewParams('List', 'gist_inv_damaged_items_index');
 
@@ -46,23 +51,7 @@ class DamagedItemsController extends CrudController
         return $this->render($twig_file, $params);
     }
 
-    public function callbackGrid($id)
-    {
-        $params = array(
-            'id' => $id,
-            'route_edit' => $this->getRouteGen()->getEdit(),
-            'route_delete' => $this->getRouteGen()->getDelete(),
-            'prefix' => $this->route_prefix,
-        );
 
-        $this->padGridParams($params, $id);
-
-        $engine = $this->get('templating');
-        return $engine->render(
-            'GistInventoryBundle:DamagedItems:action.html.twig',
-            $params
-        );
-    }
 
     protected function getObjectLabel($obj)
     {
@@ -78,22 +67,6 @@ class DamagedItemsController extends CrudController
         return new Product();
     }
 
-    protected function getGridJoins()
-    {
-        $grid = $this->get('gist_grid');
-        return array(
-        );
-    }
-
-
-    protected function getGridColumns()
-    {
-        $grid = $this->get('gist_grid');
-        return array(
-            $grid->newColumn('ID','getID','id'),
-        );
-    }
-
     /**
      * @param $params
      * @param null $object
@@ -102,11 +75,8 @@ class DamagedItemsController extends CrudController
     protected function padFormParams(&$params, $object = NULL)
     {
         header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
         $conf = $this->get('gist_configuration');
         $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
-
-        $inv = $this->get('gist_inventory');
 
         $url_from= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/from/".$pos_loc_id;
         $result_from = file_get_contents($url_from);
