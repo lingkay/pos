@@ -287,10 +287,12 @@ class StockTransferController extends CrudController
             }
 
             $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/update_status/".$id."/".$uid."/".$data['status']."/".$entries;
-//            var_dump($url);
-//            die();
             $result = file_get_contents($url);
             $vars = json_decode($result, true);
+
+            if ($data['sp_flag'] == 'true') {
+                return $this->redirect($this->generateUrl('gist_inv_stock_transfer_print',array('id'=>$id)));
+            }
 
             if ($vars[0]['status'] == 'failed') {
                 $this->addFlash('error', 'Stock transfer failed to update. Please refresh/reload form.');

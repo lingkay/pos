@@ -39,7 +39,7 @@
     <table style="border: 1px solid black; border-collapse: collapse; font-size: 14px;" align="left" border="1">
         <tr>
             <th style="width: 160px;height: 20px;">Status</th>
-            <td style="width: 220px;">{{ all[0].status }}</td>
+            <td style="width: 220px;">{{ all[0].statusFMTD }}</td>
             <th style="width: 140px;">Document ID</th>
             <td style="width: 180px;">{{ all[0].id }}</td>
         </tr>
@@ -65,13 +65,25 @@
         <tr>
             <th width="180px" style="height: 20px;" align="center">Item Code</th>
             <th width="350px" align="center">Item Name</th>
-            <th width="120px" align="center">Quantity</th>
+            {% if all[0].status == 'requested' %}
+                <th width="100px" align="center">Requested QTY</th>
+                <th width="100px" align="center">Processed QTY</th>
+            {% elseif all[0].status == 'processed' %}
+                <th width="100px" align="center">Processed QTY</th>
+                <th width="100px" align="center">Requested QTY</th>
+            {% endif %}
         </tr>
         {% for e in entries|default('') %}
             <tr>
-                <td style="width: 220px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{e.item_code|default('-')}}</td>
-                <td style="width: 340px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{e.product_name|default('-')}}</td>
-                <td style="width: 140px; padding-top: 1px; padding-bottom: 1px; text-align: right;">{{e.quantity|default('-')}}</td>
+                <td style="width: 180px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{e.item_code|default('-')}}</td>
+                <td style="width: 270px; padding-top: 1px; padding-bottom: 1px; text-align: left;">{{e.product_name|default('-')}}</td>
+                {% if all[0].status == 'requested' %}
+                    <td style="width: 120px; padding-top: 1px; padding-bottom: 1px; text-align: right;">{{e.quantity|default('-')}}</td>
+                    <td style="width: 120px; padding-top: 1px; padding-bottom: 1px; text-align: right;">0</td>
+                {% elseif all[0].status == 'processed' %}
+                    <td style="width: 120px; padding-top: 1px; padding-bottom: 1px; text-align: right;">{{e.quantity|default('-')}}</td>
+                    <td style="width: 120px; padding-top: 1px; padding-bottom: 1px; text-align: right;">{{e.processed_quantity|default('-')}}</td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
