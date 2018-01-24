@@ -143,6 +143,72 @@ class DamagedItemsController extends CrudController
         }
     }
 
+    /** FOR RECEIVE */
+    public function viewFormReceiveAction($id)
+    {
+        $conf = $this->get('gist_configuration');
+        $source_loc_id = $conf->get('gist_sys_pos_loc_id');
+        $this->checkAccess($this->route_prefix . '.view');
+
+        $this->hookPreAction();
+        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/get_receive_form_data/".$id."/".$source_loc_id;
+        $result = file_get_contents($url, false);
+        $vars = json_decode($result, true);
+
+        $url_ent= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/get_receive_form_data_entries/".$id."/".$source_loc_id;
+        $result_ent = file_get_contents($url_ent, false);
+        $vars_ent = json_decode($result_ent, true);
+
+        $params = $this->getViewParams('Edit');
+        $params['object'] = $vars[0];
+        $params['entries'] = $vars_ent;
+        $params['o_label'] = null;
+        $params['readonly'] = true;
+
+        $this->padFormParams($params, $vars);
+
+        return $this->render('GistInventoryBundle:DamagedItems:receive_form.html.twig', $params);
+    }
+
+    public function submitFormReceiveAction($id)
+    {
+        $conf = $this->get('gist_configuration');
+        $source_loc_id = $conf->get('gist_sys_pos_loc_id');
+        //$dmgManager = $this->get('gist_inventory_damaged_items_managed');
+        $this->checkAccess($this->route_prefix . '.edit');
+        $this->hookPreAction();
+
+        try
+        {
+            $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/receive_items/".$source_loc_id."/".$this->getUser()->getERPID()."/".$id;
+            $result = file_get_contents($url, false);
+            $vars = json_decode($result, true);
+
+
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Damaged items form failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            } elseif ($vars[0]['status'] == 'success') {
+                $this->addFlash('success', 'Damaged items returned successfully.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            } else {
+                $this->addFlash('error', 'Damaged items form failed to save.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+        }
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occurred. Possible duplicate.'.$e);
+            return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+        }
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occurred. Possible duplicate.'.$e);
+            error_log($e->getMessage());
+            return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+        }
+    }
+
     /** FOR RETURN */
     public function addFormReturnAction($ids)
     {
