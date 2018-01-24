@@ -28,12 +28,13 @@ class DamagedItemsController extends CrudController
         $this->checkAccess($this->route_prefix . '.view');
         $conf = $this->get('gist_configuration');
         $this->hookPreAction();
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
 
-        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/grid_loader";
+        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/damaged_stocks/".$pos_loc_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
-
-        $gl = $vars;
+//
+        $gl = $this->setupGridLoader();
 
         $params = $this->getViewParams('List', 'gist_inv_damaged_items_index');
 
@@ -48,10 +49,220 @@ class DamagedItemsController extends CrudController
 
         $params['list_title'] = $this->list_title;
         $params['grid_cols'] = $gl->getColumns();
+        $params['dmg_stocks'] = $vars;
         return $this->render($twig_file, $params);
     }
 
+    /**
+     *
+     * This will show the form for user to add damaged products to damaged items container.
+     * All submissions from this page will be displayed on the index/grid page.
+     * NOTE: Will NOT SUM quantities of same product.
+     *
+     * @return mixed
+     */
+    public function addFormEntriesAction()
+    {
+        $this->checkAccess($this->route_prefix . '.add');
 
+        $this->hookPreAction();
+        $obj = $this->newBaseClass();
+
+
+        $session = $this->getRequest()->getSession();
+        $session->set('csrf_token', md5(uniqid()));
+
+        $params = $this->getViewParams('Add');
+        $params['object'] = $obj;
+
+        // check if we have access to form
+        $params['readonly'] = !$this->getUser()->hasAccess($this->route_prefix . '.add');
+        $this->padFormParams($params, $obj);
+
+        return $this->render('GistInventoryBundle:DamagedItems:add_entries.form.html.twig', $params);
+    }
+
+    /**
+     *
+     * This will save new damaged items to damaged items container.
+     * Initial status: damaged
+     *
+     * @return mixed
+     */
+    public function addSubmitEntriesAction()
+    {
+        $this->checkAccess($this->route_prefix . '.add');
+        $conf = $this->get('gist_configuration');
+        $this->hookPreAction();
+        $data = $this->getRequest()->request->all();
+
+        try
+        {
+            $source_loc_id = $conf->get('gist_sys_pos_loc_id');
+            $entries = [];
+            foreach ($data['product_item_code'] as $index => $value) {
+                $prod_item_code = $value;
+                $qty = $data['quantity'][$index];
+                $remarks = $data['remarks'][$index];
+
+                $entries[] = array(
+                    'item_code'=>$prod_item_code,
+                    'quantity'=> $qty,
+                    'remarks'=>$remarks
+                );
+            }
+
+            $entries = http_build_query($entries);
+
+            $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/add_entries2/".$source_loc_id."/".$this->getUser()->getERPID()."/".$entries."/posx";
+            $result = file_get_contents($url, false);
+            $vars = json_decode($result, true);
+
+
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Damaged items form failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            } elseif ($vars[0]['status'] == 'success') {
+                $this->addFlash('success', 'Damaged items added successfully.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            } else {
+                $this->addFlash('error', 'Damaged items form failed to save.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+        }
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.'.$e);
+            //return $this->addError($obj);
+        }
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.'.$e);
+            error_log($e->getMessage());
+            //return $this->addError($obj);
+        }
+    }
+
+    /** FOR RETURN */
+    public function addFormReturnAction($ids)
+    {
+        $this->checkAccess($this->route_prefix . '.add');
+        $em = $this->getDoctrine()->getManager();
+        $inv = $this->get('gist_inventory');
+        $config = $this->get('gist_configuration');
+
+
+        $this->hookPreAction();
+        $obj = $this->newBaseClass();
+
+        if (strpos($ids, ',') !== false) {
+            $product_ids = explode(',', $ids);
+        } else {
+            $product_ids = array($ids);
+        }
+
+        $session = $this->getRequest()->getSession();
+        $session->set('csrf_token', md5(uniqid()));
+
+        $params = $this->getViewParams('Add');
+        $params['object'] = $obj;
+
+        // check if we have access to form
+        $params['readonly'] = !$this->getUser()->hasAccess($this->route_prefix . '.add');
+        $this->padFormParams($params, $obj);
+
+        $url= $config->get('gist_sys_erp_url')."/inventory/damaged_items/pos/get_selected_for_return/".$ids."/posx";
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+
+        $params['selected_products'] = $vars;
+
+        return $this->render('GistTemplateBundle:Object:add.html.twig', $params);
+    }
+
+    public function addReturnSubmitAction($ids)
+    {
+        $config = $this->get('gist_configuration');
+        $this->checkAccess($this->route_prefix . '.add');
+        $data = $this->getRequest()->request->all();
+
+        $this->hookPreAction();
+        try
+        {
+            $source_loc_id = $config->get('gist_sys_pos_loc_id');
+            $destination_id = $data['destination'];
+            $description = $data['description'];
+            $entries = [];
+            foreach ($data['prod_item_code'] as $index => $value) {
+                $entry_id = $data['entry_id'][$index];
+                $entries[] = array(
+                    'entry_id'=>$entry_id,
+                );
+            }
+
+            $entries = http_build_query($entries);
+            $url= $config->get('gist_sys_erp_url')."/inventory/damaged_items/pos/save_for_return/".$description."/".$this->getUser()->getERPID()."/".$source_loc_id."/".$destination_id."/".$entries;
+            $result = file_get_contents($url);
+            $vars = json_decode($result, true);
+
+            if ($vars[0]['status'] == 'failed') {
+                $this->addFlash('error', 'Damaged items form failed to update. Please refresh/reload form.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            } elseif ($vars[0]['status'] == 'success') {
+                $this->addFlash('success', 'Damaged items set for return successfully.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            } else {
+                $this->addFlash('error', 'Damaged items form failed to save.');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+        }
+        catch (ValidationException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.'.$e);
+            //return $this->addError($obj);
+        }
+        catch (DBALException $e)
+        {
+            $this->addFlash('error', 'Database error occured. Possible duplicate.'.$e);
+            error_log($e->getMessage());
+            //return $this->addError($obj);
+        }
+    }
+    /** END FOR RETURN */
+
+    public function callbackGrid($id)
+    {
+        $params = array(
+            'id' => $id,
+            'route_edit' => $this->getRouteGen()->getEdit(),
+            'route_delete' => $this->getRouteGen()->getDelete(),
+            'prefix' => $this->route_prefix,
+        );
+
+        $this->padGridParams($params, $id);
+        $engine = $this->get('templating');
+        return $engine->render(
+            'GistInventoryBundle:DamagedItems:action.html.twig',
+            $params
+        );
+
+    }
+
+    protected function getGridJoins()
+    {
+        $grid = $this->get('gist_grid');
+        return array(
+        );
+    }
+
+    protected function getGridColumns()
+    {
+        $grid = $this->get('gist_grid');
+        return array(
+            $grid->newColumn('ID','getID','id'),
+        );
+    }
 
     protected function getObjectLabel($obj)
     {
@@ -90,24 +301,15 @@ class DamagedItemsController extends CrudController
         $result_opt = file_get_contents($url_opt);
         $vars_opt = json_decode($result_opt, true);
 
-        $params['sent'] = $vars_from;
-        $params['receive'] = $vars_to;
-        $params['wh_opts'] = $vars_opt;
-        $params['item_opts'] = null;
-
         $url_cat= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/prod_cats";
         $result_cat = file_get_contents($url_cat);
         $vars_cat = json_decode($result_cat, true);
 
+        $params['sent'] = $vars_from;
+        $params['receive'] = $vars_to;
+        $params['wh_opts'] = $vars_opt;
+        $params['item_opts'] = null;
         $params['cat_opts'] = $vars_cat;
-
-        $status_opts = array();
-        $status_opts['requested'] = 'Requested';
-        $status_opts['processed'] = 'Processed';
-        $status_opts['delivered'] = 'Delivered';
-        $status_opts['arrived'] = 'Arrived';
-
-        $params['status_opts'] = $status_opts;
 
         return $params;
     }
@@ -126,7 +328,6 @@ class DamagedItemsController extends CrudController
 
         $this->hookPreAction();
         $em = $this->getDoctrine()->getManager();
-
 
         $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/data/".$id."/".$pos_loc_id;
         $result = file_get_contents($url);

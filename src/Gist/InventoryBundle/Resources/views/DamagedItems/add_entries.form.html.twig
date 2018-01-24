@@ -1,0 +1,210 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form %}
+
+{% block content %}
+    <div class="page-content">
+        <form method="post" class="form-horizontal" id="transfer_form">
+            <div class="row" style="width: 100%;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h2 class="form-section">Add Damaged Items</h2>
+                    <br>
+                    <div class="portlet-body form">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="form-section">List of damaged items</h4>
+                                    {% if object.getID|default('') == '' %}
+                                        <a href="#add_entry_modal" class="btn green" data-toggle="modal" style="margin-bottom: 15px;">
+                                            Search Product
+                                        </a>
+                                    {% endif %}
+                                    <table class="table table-striped table-bordered table-hover" id="list_table">
+                                        <thead>
+                                        <tr>
+                                            <th width="20%">Item Code</th>
+                                            <th width="30%">Item Name</th>
+                                            <th width="10%">Quantity</th>
+                                            <th width="25%">Remarks</th>
+                                            <th width="15%"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="transfer_table_body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions fluid">
+                            <div class="col-md-9">
+                                <a href="javascript:void(0)" id="transfer_form_btn" class="btn blue">Submit</a>
+                                <a href="{{ path(route_list) }}" class="btn default">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="add_entry_modal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">Search Product</h4>
+                </div>
+                <div class="modal-body" style="">
+                    <form id="entry-form">
+                        <div class="row form-horizontal form">
+                            <div class="form-body">
+                                {{ form.group_select_legacy("Product Category", "product_category", cat_opts, 0, 3, 5, readonly) }}
+                                <hr>
+                                <table class="table table-striped table-bordered table-hover" id="search_table">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 140px">Item Code</th>
+                                        <th style="width: 140px">Barcode</th>
+                                        <th style="width: 180px">Name</th>
+                                        <th style="width: 80px"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                    <button id="add_entry_submit" type="button" class="btn green">Add Entry</button>
+                    <button type="button" data-dismiss="modal" class="btn default">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        function generatePath() {
+
+            var product_category = $('#cform-product_category').val();
+
+            var path = "{{ path('gist_inv_damaged_items_search_ajax_grid', {
+                'category' : 'CATEGORY'}
+            ) }}";
+
+            if (product_category == null || product_category == '') {
+                path = path.replace('CATEGORY', null);
+            } else {
+                path = path.replace('CATEGORY', product_category);
+            }
+            console.log(path);
+            return path;
+        }
+
+        $(document).ready(function() {
+
+            path = "{{ path('gist_inv_damaged_items_ajax_grid') }}";
+
+
+            dTable = $('#search_table').dataTable({
+                "bProcessing": true,
+                "bServerSide": false,
+                "sAjaxSource": path,
+                "iDisplayLength": 5,
+                "bLengthChange": false,
+                "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [3] },
+                ]
+            });
+
+            $(".form-horizontal").validate({
+                onfocusout: function(element) {
+                    this.element(element);
+                },
+                rules: {
+
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $('#transfer_form_btn').on('click', function(e){
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var rowCount = $('#list_table tr').length;
+
+                if (rowCount > 1) {
+                    var qty_passed = true;
+                    $('.quantity_row').each(function() {
+                        if ($(this).val() == '' || $(this).val() < 1) {
+                            qty_passed = false;
+                        }
+                    });
+
+                    if (qty_passed) {
+                        $('#transfer_form').submit();
+                    } else {
+                        toastr['error']('Please check quantities.', 'Form validation');
+                    }
+                } else {
+                    toastr['error']('No item/s to transfer', 'Form validation');
+                }
+            });
+
+            $(document).on("click",".remove_row", function(e){
+                e.preventDefault();
+                var tr = $(this).closest('tr');
+                tr.remove();
+                return false;
+            });
+
+
+            $('#filter_button').click(function (){
+                path = generatePath();
+                dTable.fnReloadAjax(path);
+            });
+
+            $(document).on("click",".add_to_table", function(e){
+                var row = $(this).closest('tr');
+                var item_code = row.find('.itemCode').val();
+                var item_name = row.find('.itemName').val();
+
+                var selected_item = item_code;
+                var selected_item_name = item_name;
+                var duplicates = false;
+                $(".product_item_code").each(function() {
+                    if (selected_item == $(this).val()) {
+                        duplicates = true;
+                    }
+                });
+
+                if (duplicates) {
+
+                }
+
+                if (selected_item == '000') {
+                    toastr['error']('Invalid selection!', 'Error');
+                } else {
+                    var tr = "<tr><input type='hidden' name='product_item_code[]' class='product_item_code' value='"+item_code+"'>" +
+                        "<td><input type='text'  class='form-control' value='"+item_code+"' readonly></td>" +
+                        "<td><input type='text'  class='form-control' value='"+item_name+"' readonly></td>" +
+                        "<td><input type='number' min='1' step='1' name='quantity[]' class='form-control quantity_row' required></td>" +
+                        "<td><textarea rows='2' class='form-control' style='resize: none;' name='remarks[]'></textarea></td>" +
+                        "<td><a href='javascript:void(0)' class='btn btn-xs red remove_row'>Remove</a></td></tr>";
+
+                    $('#transfer_table_body').append(tr);
+                    $('#add_entry_modal').modal('hide');
+                }
+            });
+        });
+    </script>
+{% endblock %}
