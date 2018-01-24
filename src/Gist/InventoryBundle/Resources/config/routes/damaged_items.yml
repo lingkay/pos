@@ -13,6 +13,11 @@ gist_inv_damaged_items_add_submit:
     methods: [POST]
     defaults: { _controller: GistInventoryBundle:DamagedItems:addSubmit }
 
+gist_inv_damaged_items_summary_ajax_grid:
+    path:    /summary_table/ajax
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:DamagedItems:gridSearchSummary }
+
 gist_inv_damaged_items_receive_return_form:
     pattern: /receive/{id}
     methods: [GET]

@@ -33,6 +33,10 @@ class DamagedItemsController extends CrudController
         $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/damaged_stocks/".$pos_loc_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
+
+        $url_summ= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/summary_table/".$pos_loc_id;
+        $result_summ = file_get_contents($url_summ);
+        $vars_summ = json_decode($result_summ, true);
 //
         $gl = $this->setupGridLoader();
 
@@ -49,8 +53,24 @@ class DamagedItemsController extends CrudController
 
         $params['list_title'] = $this->list_title;
         $params['grid_cols'] = $gl->getColumns();
+        $params['summ'] = $vars_summ;
         $params['dmg_stocks'] = $vars;
         return $this->render($twig_file, $params);
+    }
+
+    public function gridSearchSummaryAction()
+    {
+        $conf = $this->get('gist_configuration');
+        $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
+
+        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/summary_table/".$pos_loc_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+        $resp = new Response($result);
+        $resp->headers->set('Content-Type', 'application/json');
+
+        return $resp;
     }
 
     /**
