@@ -63,6 +63,8 @@
                                     <thead>
                                     <tr>
                                         <th>Date Create</th>
+                                        <th>Destination</th>
+                                        <th>Status</th>
                                         <th style="width: 165px"></th>
                                     </tr>
                                     </thead>
@@ -70,6 +72,8 @@
                                     {% for s in sent %}
                                         <tr>
                                             <td>{{ s.date_create }}</td>
+                                            <td>{{ s.destination }}</td>
+                                            <td>{{ s.status }}</td>
                                             <td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>
                                         </tr>
                                     {% endfor %}
@@ -81,6 +85,8 @@
                                     <thead>
                                     <tr>
                                         <th>Date Create</th>
+                                        <th>Source</th>
+                                        <th>Status</th>
                                         <th style="width: 165px"></th>
                                     </tr>
                                     </thead>
@@ -88,6 +94,8 @@
                                     {% for r in receive %}
                                         <tr>
                                             <td>{{ r.date_create }}</td>
+                                            <td>{{ r.source }}</td>
+                                            <td>{{ r.status }}</td>
                                             <td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': r.id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>
                                         </tr>
                                     {% endfor %}
@@ -121,7 +129,7 @@
                         "sNext": "Next"
                     }
                 },
-                "aaSorting": [[ 2, "desc" ]],
+                "aaSorting": [[ 0, "desc" ]],
                 "aoColumnDefs": [
                     { "bSortable": false, "aTargets": [{{ grid_cols|length - 1}}] },
                 ]
@@ -163,7 +171,7 @@
                         "sNext": "Next"
                     }
                 },
-                "aaSorting": [[ 2, "desc" ]],
+                "aaSorting": [[ 0, "desc" ]],
                 "aoColumnDefs": [
                     { "bSortable": false, "aTargets": [{{ grid_cols|length - 1}}] },
                 ]
