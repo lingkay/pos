@@ -40,7 +40,6 @@
                                                 <svg class="ProgressBar-icon"><use xlink:href="#checkmark-bold"/></svg>
                                                 <span class="ProgressBar-stepLabel">
                                                     Requested
-                                                    {{ pos_loc_id }}
                                                     {% if object.main_status|default('') == 'requested' and object.is_rolled_back|default('') != 'true' and object.source_id == object.pos_iacc_id %}
                                                         <a href="{{ path('gist_inv_stock_transfer_edit_rollback_form', { 'id': object.id}) }}"><i class="fa fa-edit"></i></a>
                                                     {% endif %}
