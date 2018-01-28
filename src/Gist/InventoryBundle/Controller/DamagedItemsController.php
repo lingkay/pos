@@ -63,7 +63,7 @@ class DamagedItemsController extends CrudController
         $conf = $this->get('gist_configuration');
         $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
 
-        $url= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/pos/summary_table/".$pos_loc_id;
+        $url= $conf->get('gist_sys_erp_url')."/inventory/open_tester/pos/summary_table/".$pos_loc_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 

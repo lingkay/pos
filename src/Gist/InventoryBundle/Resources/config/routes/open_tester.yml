@@ -42,3 +42,24 @@ gist_inv_open_tester_add_entries_submit:
     pattern: /add_entries
     methods: [POST]
     defaults: { _controller: GistInventoryBundle:OpenTester:addSubmitEntries }
+
+
+gist_inv_open_tester_summary_ajax_grid:
+    path:    /summary_table/ajax
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:OpenTester:gridSearchSummary }
+
+gist_inv_open_tester_consume_item:
+    path:    /consume/{id}
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:OpenTester:consumeItem }
+
+gist_inv_open_tester_ajax_grid:
+    path:    /search_product/ajax
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:OpenTester:gridSearchProduct }
+
+gist_inv_open_tester_search_ajax_grid:
+    path:    /search_product/ajax2/{category}
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:OpenTester:gridSearchProduct, category: null }
