@@ -54,6 +54,11 @@ gist_inv_open_tester_consume_item:
     methods: [GET]
     defaults: { _controller: GistInventoryBundle:OpenTester:consumeItem }
 
+gist_inv_open_tester_pickup_item:
+    path:    /pickup/{id}
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:OpenTester:pickupItem }
+
 gist_inv_open_tester_ajax_grid:
     path:    /search_product/ajax
     methods: [GET]
