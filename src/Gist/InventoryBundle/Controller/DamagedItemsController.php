@@ -391,11 +391,16 @@ class DamagedItemsController extends CrudController
         $result_cat = file_get_contents($url_cat);
         $vars_cat = json_decode($result_cat, true);
 
+        $url_reasons= $conf->get('gist_sys_erp_url')."/inventory/damaged_items/get/reasons";
+        $result_reasons = file_get_contents($url_reasons);
+        $vars_reasons = json_decode($result_reasons, true);
+
         $params['sent'] = $vars_from;
         $params['receive'] = $vars_to;
         $params['wh_opts'] = $vars_opt;
         $params['item_opts'] = null;
         $params['cat_opts'] = $vars_cat;
+        $params['reason_opts'] = $vars_reasons;
 
         return $params;
     }
