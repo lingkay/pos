@@ -100,6 +100,10 @@ gist_inv_oepn_tester:
     resource: "@GistInventoryBundle/Resources/config/routes/open_tester.yml"
     prefix: /open_tester
 
+gist_inv_existing_stock:
+    resource: "@GistInventoryBundle/Resources/config/routes/existing_stock.yml"
+    prefix: /existing_stock
+
 cat_inv_adjust_wh_products:
     pattern: /stock_adjustment/products/{wh_id}
     methods: [GET]
