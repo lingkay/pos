@@ -6,6 +6,8 @@ use Gist\TemplateBundle\Model\CrudController;
 use Gist\InventoryBundle\Entity\StockTransfer;
 use Gist\InventoryBundle\Entity\StockTransferEntry;
 use Gist\CoreBundle\Template\Controller\TrackCreate;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
 
 class StockTransferController extends CrudController
@@ -316,6 +318,22 @@ class StockTransferController extends CrudController
             $this->addFlash('error', 'Database error occured. Possible duplicate.');
             error_log($e->getMessage());
         }
+    }
+
+
+    public function getCurrentStockAction($item_code, $source_id)
+    {
+        $inv = $this->get('gist_inventory');
+        $em = $this->getDoctrine()->getManager();
+        $conf = $this->get('gist_configuration');
+        $config = $this->get('gist_configuration');
+
+        $url= $conf->get('gist_sys_erp_url')."/inventory/stock_transfer/get/current_stock/".$item_code."/".$source_id;
+        $result = file_get_contents($url);
+        $vars = json_decode($result, true);
+
+
+        return new JsonResponse($vars);
     }
 
     public function editRollbackSubmitAction($id)

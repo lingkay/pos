@@ -3,7 +3,6 @@
 
 {% block content %}
     <div class="page-content">
-        <form method="post" class="form-horizontal" id="transfer_form">
             <div class="row" style="width: 100%;">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
@@ -15,6 +14,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h4 class="form-section">Information</h4>
+                                    <input type="hidden" id="cform-source" name="source" value="{{ pos_loc_id|default('none') }}">
                                     <input type="hidden" id="status" name="status" value="{{ object.status|default('none') }}">
                                     <input type="hidden" id="id" name="id" value="{{ object.id|default('none') }}">
                                     <input type="hidden" id="rollback_flag" name="rollback_flag" value="{{ is_rolled_back|default('false') }}">
@@ -112,7 +112,12 @@
                                         <tr>
                                             <td width="20%">Item Code</td>
                                             <td width="40%">Item Name</td>
+                                            {% if object.id|default('') == '' %}
+                                            <td width="10%">Current Stock</td>
+                                            {% endif %}
+
                                             {% if object.main_status|default('') == '' or object.main_status|default('') == 'requested' or object.main_status|default('') == 'processed' %}
+
                                                 <td width="20%">
                                                     Requested Quantity
                                                 </td>
@@ -252,6 +257,23 @@
 
 {% block js %}
     <script>
+        function refreshCurrentStocks() {
+
+            $('.quantity_row').each(function() {
+                var row = $(this).closest('tr');
+                //var prod_id = row.find('.row_prod_id').val();
+                var item_code = row.find('.product_item_code').val();
+                var source_id = $('#cform-source').val();
+                var url = "{{ path('gist_inv_stock_transfer_get_current_stock', { item_code: ':item_code', source_id: ':source_id'}) }}";
+                url = url.replace(":item_code", item_code).replace(':source_id', source_id);
+
+
+                $.getJSON(url, function(json){
+                    //alert(json.stock_qty);
+                    row.find('.current_stock').val(json.stock_qty);
+                });
+            });
+        }
 
         function generatePath() {
 
@@ -313,6 +335,10 @@
         }
 
         $(document).ready(function() {
+
+            $('#cform-source').change(function() {
+                refreshCurrentStocks();
+            });
 
             path = "{{ path('gist_inv_damaged_items_ajax_grid') }}";
 
@@ -438,6 +464,7 @@
                     var tr = "<tr><input type='hidden' name='product_item_code[]' class='product_item_code' value='"+item_code+"'>" +
                         "<td><input type='text'  class='form-control' value='"+item_code+"' readonly></td>" +
                         "<td><input type='text'  class='form-control' value='"+item_name+"' readonly></td>" +
+                        "<td><input type='text'  class='form-control current_stock' value='' readonly></td>" +
                         "<td><input type='number' min='1' step='1' name='quantity[]' class='form-control quantity_row' value='1'></td>" +
                         "<td><a href='javascript:void(0)' class='btn btn-xs red remove_row'>Remove</a></td></tr>";
 
@@ -449,6 +476,8 @@
                             $(this).val(1);
                         }
                     });
+
+                    refreshCurrentStocks();
                 }
             });
         });
