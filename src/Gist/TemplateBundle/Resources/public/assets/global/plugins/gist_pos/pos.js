@@ -64,7 +64,7 @@ function ajaxGetProductCategories()
 {
     var url_pos = $('#url_pos').val();
     var url_erp = $('#url_erp').val();
-
+    var pos_loc_id = $('#pos_loc_id').val();
 
     $( "#prod_cats" ).empty();
     $( "#prods" ).empty();
@@ -96,12 +96,13 @@ function ajaxGetProducts(cid)
 {
     var url_pos = $('#url_pos').val();
     var url_erp = $('#url_erp').val();
+    var pos_loc_id = $('#pos_loc_id').val();
     $( "#prods" ).empty();
     $("#prods").append("<div class=\"col-md-12\"><h2>&nbsp;&nbsp;&nbsp;Loading products...</h2></div>");
     $("#cat_btn_"+cid).css({'background-color': '#484c50'});
     $( "#prods" ).empty();
 
-    var url = url_erp+"/inventory/pos/get/products/"+cid;
+    var url = url_erp+"/inventory/pos/get/products/"+pos_loc_id+"/"+cid;
     $.getJSON(url, function(json){
         var count = 0;
        $.each(json, function(i, item) {

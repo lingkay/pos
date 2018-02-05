@@ -1,6 +1,7 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
+<input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
 <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
 <input type="hidden" id="url_erp" value="{{sys_erp_url}}">
 <input type="hidden" id="float_cart_minimum_total" value="0">
