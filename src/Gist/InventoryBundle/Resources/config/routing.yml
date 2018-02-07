@@ -104,6 +104,10 @@ gist_inv_existing_stock:
     resource: "@GistInventoryBundle/Resources/config/routes/existing_stock.yml"
     prefix: /existing_stock
 
+gist_inv_counting:
+    resource: "@GistInventoryBundle/Resources/config/routes/counting.yml"
+    prefix: /counting
+
 cat_inv_adjust_wh_products:
     pattern: /stock_adjustment/products/{wh_id}
     methods: [GET]

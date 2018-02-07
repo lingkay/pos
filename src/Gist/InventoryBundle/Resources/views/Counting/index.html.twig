@@ -1,0 +1,356 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% block content %}
+    <div class="page-content">
+        <form method="post" class="form-horizontal" id="counting_form">
+            <div class="row" style="width: 100%;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h2 class="form-section">{{ list_title }}</h2>
+                    <br>
+                    <div class="tabbable tabbable-custom tabbable-full-width">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#tab_list" data-toggle="tab">
+                                    Submitted Counting Forms </a>
+                            </li>
+                            <li>
+                                <a href="#tab_counting" data-toggle="tab">
+                                    Counting </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_list">
+                                <table class="table table-striped table-bordered table-hover" id="summary_table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Submitted by</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th style="width: 165px"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for s in submissions %}
+                                        <tr>
+                                            <td>{{ s.id }}</td>
+                                            <td>{{ s.submitted_by }}</td>
+                                            <td>{{ s.date_create }}</td>
+                                            <td>{{ s.type }}</td>
+                                            <td>{{ s.status }}</td>
+                                            <td><a href="" class="btn default btn-xs blue-madison"><i class="fa fa-edit"></i> View</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    {#{% for s in dmg_stocks|default('') %}#}
+                                        {#<tr>#}
+                                            {#<td>{{ s.product_name }}</td>#}
+                                            {#<td>{{ s.quantity }}</td>#}
+                                            {#<td>{{ s.date_create }}</td>#}
+                                            {#<td>{{ s.user_create }}</td>#}
+                                            {#<td>{{ s.statusFMTD }}</td>#}
+                                            {#{% if s.status == 'damaged' %}#}
+                                                {#<td><a href="{{ path('gist_inv_damaged_items_add_return_form', { 'ids': s.id }) }}" class="btn default btn-xs blue-madison"><i class="fa fa-edit"></i> Return</a></td>#}
+                                            {#{% elseif s.status == 'for return' %}#}
+                                                {#<td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.parent_id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>#}
+                                            {#{% else %}#}
+                                                {#<td></td>#}
+                                            {#{% endif %}#}
+                                        {#</tr>#}
+                                    {#{% endfor %}#}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="tab_counting">
+                                {% if form_disabled %}
+                                    <div class="note note-warning">
+                                        <h4 class="block">Form disabled!</h4>
+                                        <p> <strong>{{ detected_submission_timeslot }}</strong> count already submitted. Please wait for the next time slot. </p>
+                                    </div>
+                                {% endif %}
+                                {% if not form_disabled %}
+                                <table class="table table-bordered" id="counting_table">
+                                    <thead>
+                                    <tr>
+                                        <th width="10%">Item Code</th>
+                                        <th width="20%">Item Name</th>
+                                        <th width="15%">Current Stock</th>
+                                        <th width="15%">Count</th>
+                                        <th width="10%">+/-</th>
+                                        <th width="5%"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for s in form_fields %}
+                                        <tr>
+                                            <input type="hidden" name="product_id[]" value="{{ s.product_id }}">
+                                            <td>{{ s.item_code }}</td>
+                                            <td>{{ s.item_name }}</td>
+                                            <td><input type="number" step="1" class="existingCount form-control" name="existingCount[]" value="{{ s.current_stock|default('')|number_format(0) }}" readonly></td>
+                                            <td><input type="number" step="1" class="currentCount form-control" name="currentCount[]" value="{{ s.current_stock|default('')|number_format(0) }}" {{ form_disabled ? 'disabled ' : '' }}></td>
+                                            <td><input type="text" class="diffCount form-control" name="diffCount[]" value="+0" readonly></td>
+                                            <td class="text-center"><i class="fa fa-check center-block text-center rowMarker"></i></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                    <button type="submit" class="btn blue"><i class="fa fa-save"></i> Submit</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        function updateColors() {
+            $('.currentCount').each(function(e) {
+                var tr = $(this).closest('tr');
+                var existingCount = tr.find('.existingCount').val();
+                var rowMarker = tr.find('.rowMarker');
+                var diffCount = tr.find('.diffCount');
+
+                if (this.value != '') {
+                    if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                        flag_discrepancy = true;
+                        tr.css("background-color","yellow");
+                        rowMarker.removeClass('fa-check');
+                        rowMarker.addClass('fa-times');
+                    } else {
+                        tr.css("background-color","");
+                        rowMarker.addClass('fa-check');
+                        rowMarker.removeClass('fa-times');
+                    }
+
+                    var count = parseInt(tr.find('.currentCount').val());
+                    var sys = parseInt(tr.find('.existingCount').val());
+                    var diff = Math.abs(sys - count);
+                    if (sys > count) {
+                        diffCount.val('-'+diff);
+                    } else {
+                        diffCount.val('+'+diff);
+                    }
+                } else {
+                    var tr = $(this).closest('tr');
+                    tr.css("background-color","#ff5959");
+                    rowMarker.removeClass('fa-check');
+                    rowMarker.addClass('fa-times');
+                    diffCount.val('0');
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            var flag_discrepancy = false;
+            var flag_form_valid = false;
+            path = "{{ path('gist_inv_damaged_items_summary_ajax_grid') }}";
+
+            var summTable;
+            summTable = $('#summary_table').dataTable({
+                "bProcessing": true,
+                "bServerSide": false,
+                //"sAjaxSource": path,
+                "iDisplayLength": 5,
+                "bLengthChange": false,
+                "bInfo": false,
+                "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [3] },
+                ]
+            });
+
+
+            var counting_table;
+            counting_table = $('#counting_table').dataTable({
+                "bProcessing": true,
+                "bServerSide": false,
+                "iDisplayLength": 10,
+                "bFilter" : false,
+                "bInfo" : false,
+                "bLengthChange": false,
+                "sPaginationType": "bootstrap",
+                "fnDrawCallback": function( oSettings ) {
+                    $('.currentCount').on('keyup keypress', function(e) {
+                        var tr = $(this).closest('tr');
+                        var existingCount = tr.find('.existingCount').val();
+                        var rowMarker = tr.find('.rowMarker');
+                        var diffCount = tr.find('.diffCount');
+
+                        if (this.value != '') {
+                            if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                                flag_discrepancy = true;
+                                tr.css("background-color","yellow");
+                                rowMarker.removeClass('fa-check');
+                                rowMarker.addClass('fa-times');
+                            } else {
+                                tr.css("background-color","");
+                                rowMarker.addClass('fa-check');
+                                rowMarker.removeClass('fa-times');
+                            }
+
+                            var count = parseInt(tr.find('.currentCount').val());
+                            var sys = parseInt(tr.find('.existingCount').val());
+
+                            var diff = Math.abs(sys - count);
+                            if (sys > count) {
+                                diffCount.val('-'+diff);
+                            } else {
+                                diffCount.val('+'+diff);
+                            }
+
+                        } else {
+                            var tr = $(this).closest('tr');
+                            tr.css("background-color","#ff5959");
+                            rowMarker.removeClass('fa-check');
+                            rowMarker.addClass('fa-times');
+                            diffCount.val('0');
+                        }
+                    });
+                },
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aaSorting": [[ 0, "desc" ]],
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [2,3,4,5] }
+                ]
+            });
+
+            $('#counting_form').on('submit', function(e){
+                var $form = $(this);
+                flag_discrepancy = false;
+                flag_form_valid = true;
+                $('input[name^="currentCount"]').each(function(){
+                    var tr = $(this).closest('tr');
+                    var existingCount = tr.find('.existingCount').val();
+
+                    if ($(this).val() == '') {
+                        tr.css("background-color","#ff5959");
+                        flag_form_valid = false;
+                    } else if (this.value != existingCount) {
+                        flag_discrepancy = true;
+                        tr.css("background-color","yellow");
+                    }
+                });
+
+                if (!flag_discrepancy && flag_form_valid) {
+
+
+                } else {
+                    if (!flag_form_valid) {
+                        toastr['error']('Please check highlighted rows!');
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    if (flag_discrepancy) {
+                        if (confirm('Discrepancy in counting. Continue?')) {
+
+                        } else {
+
+                            toastr['warning']('Quantities have been reverted. Recount stock.');
+                            $('input[name^="currentCount"]').each(function(){
+                                var tr = $(this).closest('tr');
+                                var existingCount = tr.find('.existingCount').val();
+                                $(this).val(existingCount);
+                            });
+                            updateColors();
+                            e.preventDefault();
+                            return false;
+                        }
+                    } else {
+                        toastr['error']('Please check highlighted rows!');
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                counting_table.$('input[name^="product_id"]').each(function(){
+                    if(!$.contains(document, this)){
+                        $form.append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', this.name)
+                                .val(this.value)
+                        );
+                    }
+                });
+
+                counting_table.$('input[name^="currentCount"]').each(function(){
+                    if(!$.contains(document, this)){
+                        $form.append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', this.name)
+                                .val(this.value)
+                        );
+                    }
+                });
+
+                counting_table.$('input[name^="existingCount"]').each(function(){
+                    if(!$.contains(document, this)){
+                        $form.append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', this.name)
+                                .val(this.value)
+                        );
+                    }
+                });
+
+            });
+
+            $('.currentCount').on('keyup keypress', function(e) {
+                var tr = $(this).closest('tr');
+                var existingCount = tr.find('.existingCount').val();
+                var rowMarker = tr.find('.rowMarker');
+                var diffCount = tr.find('.diffCount');
+
+                if (this.value != '') {
+                    if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                        flag_discrepancy = true;
+                        tr.css("background-color","yellow");
+                        rowMarker.removeClass('fa-check');
+                        rowMarker.addClass('fa-times');
+                    } else {
+                        tr.css("background-color","");
+                        rowMarker.addClass('fa-check');
+                        rowMarker.removeClass('fa-times');
+                    }
+
+                    var count = parseInt(tr.find('.currentCount').val());
+                    var sys = parseInt(tr.find('.existingCount').val());
+                    var diff = Math.abs(sys - count);
+                    if (sys > count) {
+                        diffCount.val('-'+diff);
+                    } else {
+                        diffCount.val('+'+diff);
+                    }
+                } else {
+                    var tr = $(this).closest('tr');
+                    tr.css("background-color","#ff5959");
+                    rowMarker.removeClass('fa-check');
+                    rowMarker.addClass('fa-times');
+                    diffCount.val('0');
+                }
+            });
+
+        });
+    </script>
+{% endblock %}

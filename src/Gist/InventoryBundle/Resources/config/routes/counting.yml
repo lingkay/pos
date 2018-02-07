@@ -1,0 +1,9 @@
+gist_inv_counting_index:
+    pattern: /list
+    methods: [GET]
+    defaults: { _controller: GistInventoryBundle:Counting:index }
+
+gist_inv_counting_index_submit:
+    pattern: /list
+    methods: [POST]
+    defaults: { _controller: GistInventoryBundle:Counting:indexSubmit }
