@@ -2,7 +2,7 @@
 <div class="form-body">
     <div class="row">
         <div class="col-md-6">
-            {{ form.group_date_range('daterange', 'Date Range', 'date_from', 'date_to', '01/01/2017', '12/31/2017', 4, 7) }}
+            {{ form.group_date_range('daterange', 'Date Range', 'date_from', 'date_to', '01/01/2018', '12/31/2018', 4, 7) }}
             {{ form.group_text('Receipt Number', 'receipt_number', '', 4, 7, false) }}
             {{ form.group_selectx('Type', 'transaction_mode', modes, mode|default(''), 4, 7, false) }}
         </div>

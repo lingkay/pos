@@ -339,15 +339,20 @@ class POSController extends Controller
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id'=>$cust_id));
 
-        if ($customer->getGCNumber() == null) {
-            $list_opts[] = array('gc_number'=>'N/A','gc_balance'=>'0.00','gc_expiry'=>'', 'gc_balance_formatted'=>'0,00','gc_name'=>'N/A');
-            return new JsonResponse($list_opts);
-        }
+        if ($customer->getGCNumber()) {
+            if ($customer->getGCNumber() == null) {
+                $list_opts[] = array('gc_number'=>'N/A','gc_balance'=>'0.00','gc_expiry'=>'', 'gc_balance_formatted'=>'0,00','gc_name'=>'N/A');
+                return new JsonResponse($list_opts);
+            }
 
-        $gc_balance = $customer->getGCBalance();
-        if ($gc_balance == null) {
+            $gc_balance = $customer->getGCBalance();
+            if ($gc_balance == null) {
+                $gc_balance = 0;
+            }
+        } else {
             $gc_balance = 0;
         }
+
 
         $gc_balance_formatted = number_format($gc_balance, 2);
 
@@ -509,15 +514,17 @@ class POSController extends Controller
 
 
         // GC Balance manipulation
-        if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {
-            $current_balance = floatval($customer_object->getGCBalance());
-            $gcCredit = floatval($gcCredit);
-            $gcDebit = floatval($gcDebit);
-            $new_balance = $current_balance - $gcDebit;
-            $new_balance = $new_balance + $gcCredit;
-            $customer_object->setGCBalance($new_balance);
-            $em->persist($customer_object);
+        if ($customer_object->getGCNumber()) {
+            if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {
+                $current_balance = floatval($customer_object->getGCBalance());
+                $gcCredit = floatval($gcCredit);
+                $gcDebit = floatval($gcDebit);
+                $new_balance = $current_balance - $gcDebit;
+                $new_balance = $new_balance + $gcCredit;
+                $customer_object->setGCBalance($new_balance);
+                $em->persist($customer_object);
 
+            }
         }
 
         $em->persist($transaction);
@@ -663,6 +670,7 @@ class POSController extends Controller
         $transaction_item->setDiscountValue($discount_value);
         $transaction_item->setBarcode($barcode);
         $transaction_item->setItemCode($item_code);
+        $transaction_item->setReturned(false);
 
         if ($refund_issued == 'true') {
             $transaction_item->setReturned(true);
@@ -787,7 +795,18 @@ class POSController extends Controller
             }
 
             foreach ($items as $item) {
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue());
+
+                $isRet = 'false';
+                if ($item->getReturned()) {
+                    $isRet = 'true';
+                }
+
+                $isNew = 'false';
+                if ($item->getIsNewItem()) {
+                    $isNew = 'true';
+                }
+
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue()."/".$isRet."/".$isNew);
             }
 
         }

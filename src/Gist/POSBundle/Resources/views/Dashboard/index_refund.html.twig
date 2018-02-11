@@ -1,6 +1,7 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
+    <input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
     <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
     <input type="hidden" id="url_erp" value="{{sys_erp_url}}">
     <input type="hidden" id="float_cart_minimum_total" value="0">
@@ -139,7 +140,7 @@
 
                                                     <input type="hidden" name="is_issued[]" class="existing_is_issued" value="{{item.getIssued|default(0)}}" >
                                                     <input type="hidden" name="issued_on[]" class="existing_issued_on" value="{{item.getItemIssuedOn.getID|default('0')}}" >
-                                                    <input type="hidden" name="product_id[]" class="existing_product_id" value="{{item.getID}}" >
+                                                    <input type="hidden" name="product_id[]" class="existing_product_id" value="{{item.getProductId}}" >
                                                     <input type="hidden" name="barcode[]" class="existing_barcode" value="{{item.getBarcode}}" >
                                                     <input type="hidden" name="item_code[]" class="existing_item_code" value="{{item.getItemCode}}" >
                                                     <input type="hidden" name="min_price[]" class="existing_min_price" value="{{item.getMinimumPrice}}" >
