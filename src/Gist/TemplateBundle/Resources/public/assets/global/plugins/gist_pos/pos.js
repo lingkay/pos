@@ -1102,6 +1102,7 @@ function freezeTransaction(is_final)
     var payments_saved = false;
     var count_cart_items = $('#cart_items .product_row').length;
     var count_payments = $('#payments_table .init_row_payment').length;
+    var pos_loc_id = $('#pos_loc_id').val();
     var transaction_total = $('#float_trans_amount').val();
     var transaction_ea = $('#float_trans_ea').val();
     var transaction_balance = $('#float_trans_balance').val();
@@ -1177,7 +1178,7 @@ function freezeTransaction(is_final)
     }
     var customer_id = $('#transaction_customer_id').val();
 
-    var url = url_pos+"/pos/save_transaction/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell+"/"+refund_method+"/"+refund_amount+"/"+exchange_flag+"/"+gc_credit+"/"+gc_debit+"/"+refund_reason;
+    var url = url_pos+"/pos/save_transaction/"+pos_loc_id+"/"+transaction_total+"/"+transaction_balance+"/"+transaction_type+"/"+customer_id+"/"+status+"/"+transaction_tax_rate+"/"+transaction_orig_vat_amt+"/"+transaction_new_vat_amt+"/"+transaction_orig_vat_amt_net+"/"+transaction_new_vat_amt_net+"/"+transaction_tax_coverage+"/"+transaction_cart_min_total+"/"+transaction_cart_orig_total+"/"+transaction_cart_new_total+"/"+bulk_type+"/"+transaction_mode+"/"+transaction_cc_interest+"/"+transaction_ea+"/"+deposit_amount+"/"+deposit_amt_net_vat+"/"+deposit_vat_amt+"/"+balance_amt_net_vat+"/"+balance_vat_amt+"/"+transaction_reference_sys_id+"/"+sel_bulk_type+"/"+sel_bulk_amount+"/"+flag_upsell+"/"+refund_method+"/"+refund_amount+"/"+exchange_flag+"/"+gc_credit+"/"+gc_debit+"/"+refund_reason;
     var x_new_id = '';
 
     $.getJSON(url, function(json){

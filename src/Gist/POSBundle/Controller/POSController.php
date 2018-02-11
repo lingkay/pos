@@ -441,7 +441,7 @@ class POSController extends Controller
      * @param $refundReason
      * @return JsonResponse
      */
-    public function saveTransactionAction($total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag, $gcCredit, $gcDebit, $refundReason)
+    public function saveTransactionAction($pos_loc_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag, $gcCredit, $gcDebit, $refundReason)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -474,7 +474,7 @@ class POSController extends Controller
         $transaction->setSyncedToErp('false');
         $transaction->setTransactionMode($transaction_mode);
         $transaction->setExtraAmount($transaction_ea);
-
+        $transaction->setLocation($pos_loc_id);
         $transaction->setRefundMethod($refundMethod);
         $transaction->setRefundAmount($refundAmount);
 
@@ -758,6 +758,7 @@ class POSController extends Controller
             $mode = $transaction->getTransactionMode();
             $cc_interest = $transaction->getTransactionCCInterest();
             $ea = $transaction->getExtraAmount();
+            $pos_loc_id = $transaction->getLocation();
 
             if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n-a'; }
             if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n-a'; }
@@ -773,7 +774,7 @@ class POSController extends Controller
             if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
             if (trim($ea) == '' || $ea == null) { $ea = 'n-a'; }
 
-            file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea);
+            file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea);
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
