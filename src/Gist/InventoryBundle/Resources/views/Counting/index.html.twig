@@ -185,6 +185,7 @@
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,
+                // "aaSorting" : false,
                 "bLengthChange": false,
                 "sPaginationType": "bootstrap",
                 "fnDrawCallback": function( oSettings ) {
@@ -260,7 +261,7 @@
 
                 } else {
                     if (!flag_form_valid) {
-                        toastr['error']('Please check highlighted rows!');
+                        toastr['error']('Please check highlighted rows on all pages!');
                         e.preventDefault();
                         return false;
                     }
@@ -270,13 +271,13 @@
 
                         } else {
 
-                            toastr['warning']('Fix highlighted rows. Recount stock.');
+                            toastr['warning']('Fix highlighted rows. Check all pages.');
                             //revertColors();
                             e.preventDefault();
                             return false;
                         }
                     } else {
-                        toastr['error']('Please check highlighted rows!');
+                        toastr['error']('Please check highlighted rows on all pages!');
                         e.preventDefault();
                         return false;
                     }
