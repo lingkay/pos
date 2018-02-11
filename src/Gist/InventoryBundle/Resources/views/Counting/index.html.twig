@@ -75,9 +75,13 @@
                                     <tr>
                                         <th width="10%">Item Code</th>
                                         <th width="20%">Item Name</th>
-                                        <th width="15%">Current Stock</th>
+                                        {% if sysCountVisibility == 'shown' %}
+                                            <th width="15%">Current Stock</th>
+                                        {% endif %}
                                         <th width="15%">Count</th>
-                                        <th width="10%">+/-</th>
+                                        {% if sysCountVisibility == 'shown' %}
+                                            <th width="10%">+/-</th>
+                                        {% endif %}
                                         <th width="5%"></th>
                                     </tr>
                                     </thead>
@@ -87,9 +91,17 @@
                                             <input type="hidden" name="product_id[]" value="{{ s.product_id }}">
                                             <td>{{ s.item_code }}</td>
                                             <td>{{ s.item_name }}</td>
-                                            <td><input type="number" step="1" class="existingCount form-control" name="existingCount[]" value="{{ s.current_stock|default('')|number_format(0) }}" readonly></td>
-                                            <td><input type="number" step="1" class="currentCount form-control" name="currentCount[]" value="{{ s.current_stock|default('')|number_format(0) }}" {{ form_disabled ? 'disabled ' : '' }}></td>
-                                            <td><input type="text" class="diffCount form-control" name="diffCount[]" value="+0" readonly></td>
+                                            {% if sysCountVisibility == 'shown' %}
+                                                <td><input type="number" step="1" class="existingCount form-control" name="existingCount[]" value="{{ s.current_stock|default('')|number_format(0) }}" readonly></td>
+                                            {% else %}
+                                                <input type="hidden" class="existingCount" value="{{ s.current_stock|default('')|number_format(0) }}">
+                                            {% endif %}
+                                            <td><input type="number" step="1" class="currentCount form-control" name="currentCount[]" value="0.00" {{ form_disabled ? 'disabled ' : '' }}></td>
+                                            {% if sysCountVisibility == 'shown' %}
+                                                <td><input type="text" class="diffCount form-control" name="diffCount[]" value="+0" readonly></td>
+                                            {% else %}
+                                                <input type="hidden" class="diffCount" value="x">
+                                            {% endif %}
                                             <td class="text-center"><i class="fa fa-check center-block text-center rowMarker"></i></td>
                                         </tr>
                                     {% endfor %}
@@ -226,10 +238,7 @@
                         "sNext": "Next"
                     }
                 },
-                "aaSorting": [[ 0, "desc" ]],
-                "aoColumnDefs": [
-                    { "bSortable": false, "aTargets": [2,3,4,5] }
-                ]
+                "aaSorting": [[ 0, "desc" ]]
             });
 
             $('#counting_form').on('submit', function(e){

@@ -45,6 +45,8 @@ class CountingController extends CrudController
         $result_fields = file_get_contents($url_fields);
         $vars_fields = json_decode($result_fields, true);
 
+        $params['sysCountVisibility'] = $vars_fields[0]['sys_stock_visibility'];
+
         $params['form_fields'] = $vars_fields;
 
         $url_subs = $conf->get('gist_sys_erp_url') . "/inventory/counting/pos/grid_data/" . $pos_loc_id;
