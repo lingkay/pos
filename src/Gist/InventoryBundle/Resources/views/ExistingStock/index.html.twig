@@ -8,6 +8,8 @@
                 <div class="col-md-10">
                     <br>
                     <h2 class="form-section">{{ list_title }}</h2>
+                    <a href="{{ path('gist_inventory_menu_index') }}">Return to Inventory Menu</a>
+                    <br>
                     <hr>
                     {{ form_tools.group_select_no_default('Inventory Type', 'inv_type', inv_type_opts, inv_type, 3, 2, false) }}
                     <table class="table table-striped table-bordered table-hover" id="stock_table">
