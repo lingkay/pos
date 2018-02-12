@@ -9,6 +9,7 @@
                 <div class="col-md-10">
                     <h2 class="form-section">{{ list_title }}</h2>
                     <a href="{{ path('gist_inventory_menu_index') }}">Return to Inventory Menu</a>
+                    <input type="hidden" id="countingRule" value="{{ sysCountVisibility }}">
                     <br>
                     <br>
                     <div class="tabbable tabbable-custom tabbable-full-width">
@@ -46,22 +47,6 @@
                                             {#<td></td>#}
                                         </tr>
                                     {% endfor %}
-                                    {#{% for s in dmg_stocks|default('') %}#}
-                                        {#<tr>#}
-                                            {#<td>{{ s.product_name }}</td>#}
-                                            {#<td>{{ s.quantity }}</td>#}
-                                            {#<td>{{ s.date_create }}</td>#}
-                                            {#<td>{{ s.user_create }}</td>#}
-                                            {#<td>{{ s.statusFMTD }}</td>#}
-                                            {#{% if s.status == 'damaged' %}#}
-                                                {#<td><a href="{{ path('gist_inv_damaged_items_add_return_form', { 'ids': s.id }) }}" class="btn default btn-xs blue-madison"><i class="fa fa-edit"></i> Return</a></td>#}
-                                            {#{% elseif s.status == 'for return' %}#}
-                                                {#<td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.parent_id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>#}
-                                            {#{% else %}#}
-                                                {#<td></td>#}
-                                            {#{% endif %}#}
-                                        {#</tr>#}
-                                    {#{% endfor %}#}
                                     </tbody>
                                 </table>
                             </div>
@@ -78,14 +63,14 @@
                                     <tr>
                                         <th width="10%">Item Code</th>
                                         <th width="20%">Item Name</th>
-                                        {% if sysCountVisibility == 'shown' %}
+                                        {% if sysCountVisibility == '3' %}
                                             <th width="15%">Current Stock</th>
                                         {% endif %}
                                         <th width="15%">Count</th>
-                                        {% if sysCountVisibility == 'shown' %}
+                                        {% if sysCountVisibility == '3' %}
                                             <th width="10%">+/-</th>
+                                            <th width="5%"></th>
                                         {% endif %}
-                                        <th width="5%"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -94,23 +79,24 @@
                                             <input type="hidden" name="product_id[]" value="{{ s.product_id }}">
                                             <td>{{ s.item_code }}</td>
                                             <td>{{ s.item_name }}</td>
-                                            {% if sysCountVisibility == 'shown' %}
+                                            {% if sysCountVisibility == '3' %}
                                                 <td><input type="number" step="1" class="existingCount form-control" name="existingCount[]" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" readonly></td>
                                             {% else %}
                                                 <input type="hidden" class="existingCount" value="{{ s.current_stock|default('') }}" name="existingCount[]">
                                             {% endif %}
-                                            <td><input type="number" step="1" class="currentCount form-control" name="currentCount[]" value="0" {{ form_disabled ? 'disabled ' : '' }}></td>
-                                            {% if sysCountVisibility == 'shown' %}
+                                            <td><input type="number" step="1" class="currentCount form-control" name="currentCount[]" value="" {{ form_disabled ? 'disabled ' : '' }}></td>
+                                            {% if sysCountVisibility == '3' %}
                                                 <td><input type="text" class="diffCount form-control" name="diffCount[]" value="+0" readonly></td>
+                                                <td class="text-center"><i class="fa fa-check center-block text-center rowMarker"></i></td>
                                             {% else %}
                                                 <input type="hidden" class="diffCount" value="x" name="diffCount[]">
                                             {% endif %}
-                                            <td class="text-center"><i class="fa fa-check center-block text-center rowMarker"></i></td>
+
                                         </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                    <button type="submit" class="btn blue"><i class="fa fa-save"></i> Submit</button>
+                                    <button type="submit" class="btn blue" id="submit_counts"><i class="fa fa-save"></i> Submit</button>
                                 {% endif %}
                             </div>
                         </div>
@@ -120,41 +106,52 @@
             </div>
         </form>
     </div>
+
+    <div id="discr_modal_alert" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h2 id="form_title" class="modal-title">Discrepancy detected!</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row form-horizontal form">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="javascript:;" class="btn green" id="recountBtn">Recount</a>
+                                        <a href="javascript:;" class="btn red" id="continueBtn">Continue</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block js %}
     <script>
-        // function revertColors() {
-        //     var counting_table;
-        //     counting_table = $('#counting_table').dataTable();
-        //     $(counting_table.fnGetNodes()).each(function(){
-        //         var tr = $(this).closest('tr');
-        //         var currentCount = tr.find('.currentCount');
-        //         var rowMarker = tr.find('.rowMarker');
-        //         var diffCount = tr.find('.diffCount');
-        //
-        //         tr.css("background-color","");
-        //         rowMarker.addClass('fa-check');
-        //         rowMarker.removeClass('fa-times');
-        //
-        //         var count = parseInt(tr.find('.currentCount').val());
-        //         var sys = parseInt(tr.find('.existingCount').val());
-        //         var diff = Math.abs(sys - count);
-        //         if (sys > count) {
-        //             diffCount.val('-'+diff);
-        //         } else {
-        //             diffCount.val('+'+diff);
-        //         }
-        //
-        //         currentCount.val('0.00');
-        //     });
-        // }
-
-
-
         $(document).ready(function() {
             var flag_discrepancy = false;
             var flag_form_valid = false;
+            var sysCountVisibility = $('#countingRule').val();
             path = "{{ path('gist_inv_damaged_items_summary_ajax_grid') }}";
+
+            $('#recountBtn').on('click', function() {
+                if (sysCountVisibility == '2') {
+                    toastr['warning']('Recount stocks then submit form again!');
+                } else {
+                    toastr['warning']('Fix highlighted rows. Check all pages.');
+                }
+                $('#discr_modal_alert').modal('hide');
+            });
+
+            $('#continueBtn').on('click', function() {
+                $('#counting_form').submit();
+            });
 
             var summTable;
             summTable = $('#summary_table').dataTable({
@@ -189,7 +186,7 @@
                 "bLengthChange": false,
                 "sPaginationType": "bootstrap",
                 "fnDrawCallback": function( oSettings ) {
-                    $('.currentCount').on('keyup keypress', function(e) {
+                    $('.currentCount').on('keyup', function(e) {
                         var tr = $(this).closest('tr');
                         var existingCount = tr.find('.existingCount').val();
                         var rowMarker = tr.find('.rowMarker');
@@ -197,10 +194,18 @@
 
                         if (this.value != '') {
                             if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
-                                flag_discrepancy = true;
-                                tr.css("background-color","yellow");
-                                rowMarker.removeClass('fa-check');
-                                rowMarker.addClass('fa-times');
+                                if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                    flag_discrepancy = true;
+                                    if (sysCountVisibility == '3') {
+                                        tr.css("background-color", "yellow");
+                                        rowMarker.removeClass('fa-check');
+                                        rowMarker.addClass('fa-times');
+                                    } else {
+                                        tr.css("background-color","");
+                                    }
+                                } else {
+                                    tr.css("background-color","");
+                                }
                             } else {
                                 tr.css("background-color","");
                                 rowMarker.addClass('fa-check');
@@ -209,20 +214,20 @@
 
                             var count = parseInt(tr.find('.currentCount').val());
                             var sys = parseInt(tr.find('.existingCount').val());
-
                             var diff = Math.abs(sys - count);
                             if (sys > count) {
                                 diffCount.val('-'+diff);
                             } else {
                                 diffCount.val('+'+diff);
                             }
-
                         } else {
                             var tr = $(this).closest('tr');
+
                             tr.css("background-color","#ff5959");
                             rowMarker.removeClass('fa-check');
                             rowMarker.addClass('fa-times');
                             diffCount.val('0');
+
                         }
                     });
                 },
@@ -236,7 +241,7 @@
                 "aaSorting": [[ 0, "desc" ]]
             });
 
-            $('#counting_form').on('submit', function(e){
+            $('#submit_counts').on('click', function(e){
                 var $form = $(this);
                 flag_discrepancy = false;
                 flag_form_valid = true;
@@ -247,13 +252,21 @@
                     var tr = $(this).closest('tr');
                     var existingCount = tr.find('.existingCount').val();
 
-                    if (currentCount.val() == '') {
-                        tr.css("background-color","#ff5959");
-                        flag_form_valid = false;
-                    } else if (currentCount.val() != existingCount) {
-                        flag_discrepancy = true;
-                        tr.css("background-color","yellow");
-                    }
+
+                        if (currentCount.val() == '') {
+                            tr.css("background-color", "#ff5959");
+                            flag_form_valid = false;
+                        } else if (currentCount.val() != existingCount) {
+                            if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                flag_discrepancy = true;
+                                if (sysCountVisibility == '3') {
+                                    tr.css("background-color", "yellow");
+                                }
+                            } else {
+                                tr.css("background-color", "");
+                            }
+                        }
+
                 });
 
                 if (!flag_discrepancy && flag_form_valid) {
@@ -267,15 +280,9 @@
                     }
 
                     if (flag_discrepancy) {
-                        if (confirm('Discrepancy in counting. Continue?')) {
-
-                        } else {
-
-                            toastr['warning']('Fix highlighted rows. Check all pages.');
-                            //revertColors();
-                            e.preventDefault();
-                            return false;
-                        }
+                        $('#discr_modal_alert').modal('show');
+                        e.preventDefault();
+                        return false;
                     } else {
                         toastr['error']('Please check highlighted rows on all pages!');
                         e.preventDefault();
@@ -318,7 +325,7 @@
 
             });
 
-            $('.currentCount').on('keyup keypress', function(e) {
+            $('.currentCount').on('keyup', function(e) {
                 var tr = $(this).closest('tr');
                 var existingCount = tr.find('.existingCount').val();
                 var rowMarker = tr.find('.rowMarker');
@@ -326,10 +333,18 @@
 
                 if (this.value != '') {
                     if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
-                        flag_discrepancy = true;
-                        tr.css("background-color","yellow");
-                        rowMarker.removeClass('fa-check');
-                        rowMarker.addClass('fa-times');
+                        if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                            flag_discrepancy = true;
+                            if (sysCountVisibility == '3') {
+                                tr.css("background-color", "yellow");
+                                rowMarker.removeClass('fa-check');
+                                rowMarker.addClass('fa-times');
+                            } else {
+                                tr.css("background-color","");
+                            }
+                        } else {
+                            tr.css("background-color","");
+                        }
                     } else {
                         tr.css("background-color","");
                         rowMarker.addClass('fa-check');
@@ -350,6 +365,7 @@
                     rowMarker.removeClass('fa-check');
                     rowMarker.addClass('fa-times');
                     diffCount.val('0');
+
                 }
             });
 
