@@ -82,7 +82,7 @@
                                             {% if sysCountVisibility == '3' %}
                                                 <td><input type="number" step="1" class="existingCount form-control" name="existingCount[]" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" readonly></td>
                                             {% else %}
-                                                <input type="hidden" class="existingCount" value="{{ s.current_stock|default('') }}" name="existingCount[]">
+                                                <input type="hidden" class="existingCount" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" name="existingCount[]">
                                             {% endif %}
                                             <td><input type="number" step="1" min="0" class="currentCount form-control" name="currentCount[]" value="" {{ form_disabled ? 'disabled ' : '' }}></td>
                                             {% if sysCountVisibility == '3' %}
@@ -150,6 +150,43 @@
             });
 
             $('#continueBtn').on('click', function() {
+                var $form = $('#counting_form');
+                var counting_table;
+                counting_table = $('#counting_table').dataTable();
+
+                counting_table.$('input[name^="product_id"]').each(function(){
+                    if(!$.contains(document, this)){
+                        $form.append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', this.name)
+                                .val(this.value)
+                        );
+                    }
+                });
+
+                counting_table.$('input[name^="currentCount"]').each(function(){
+                    if(!$.contains(document, this)){
+                        $form.append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', this.name)
+                                .val(this.value)
+                        );
+                    }
+                });
+
+                counting_table.$('input[name^="existingCount"]').each(function(){
+                    if(!$.contains(document, this)){
+                        $form.append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', this.name)
+                                .val(this.value)
+                        );
+                    }
+                });
+
                 $('#counting_form').submit();
             });
 
@@ -250,7 +287,7 @@
             });
 
             $('#submit_counts').on('click', function(e){
-                var $form = $(this);
+                var $form = $('#counting_form');
                 flag_discrepancy = false;
                 flag_form_valid = true;
 

@@ -79,6 +79,7 @@ class CountingController extends CrudController
         $this->hookPreAction();
         $pos_loc_id = $conf->get('gist_sys_pos_loc_id');
 
+
         try
         {
             $source_loc_id = $conf->get('gist_sys_pos_loc_id');
