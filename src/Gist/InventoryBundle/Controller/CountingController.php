@@ -46,6 +46,7 @@ class CountingController extends CrudController
         $vars_fields = json_decode($result_fields, true);
 
         $params['sysCountVisibility'] = $vars_fields[0]['sys_stock_visibility'];
+        $params['counting_rule'] = $vars_fields[0]['counting_rule'];
 
         $params['form_fields'] = $vars_fields;
 
@@ -89,11 +90,13 @@ class CountingController extends CrudController
                 $count = $data['currentCount'][$index];
                 $current = $data['existingCount'][$index];
 
-                $entries[] = array(
-                    'product_id'=>$product_id,
-                    'count'=> $count,
-                    'current'=>$current
-                );
+                if ($count != '') {
+                    $entries[] = array(
+                        'product_id'=>$product_id,
+                        'count'=> $count,
+                        'current'=>$current
+                    );
+                }
             }
 
             $entries = http_build_query($entries);

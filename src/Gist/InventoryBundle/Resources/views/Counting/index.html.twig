@@ -2,29 +2,29 @@
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
     <div class="page-content">
-        <input type="hidden" value="sysCountVisibility" id="sysCountVisibility">
         <form method="post" class="form-horizontal" id="counting_form">
             <div class="row" style="width: 100%;">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
                     <h2 class="form-section">{{ list_title }}</h2>
                     <a href="{{ path('gist_inventory_menu_index') }}">Return to Inventory Menu</a>
-                    <input type="hidden" id="countingRule" value="{{ sysCountVisibility }}">
+                    <input type="hidden" id="sysCountVisibility" value="{{ sysCountVisibility }}">
+                    <input type="hidden" id="countingRule" value="{{ counting_rule }}">
                     <br>
                     <br>
                     <div class="tabbable tabbable-custom tabbable-full-width">
                         <ul class="nav nav-tabs">
-                            <li class="active">
+                            <li>
                                 <a href="#tab_list" data-toggle="tab">
                                     Submitted Counting Forms </a>
                             </li>
-                            <li>
+                            <li class="active">
                                 <a href="#tab_counting" data-toggle="tab">
                                     Counting </a>
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane active" id="tab_list">
+                            <div class="tab-pane" id="tab_list">
                                 <table class="table table-striped table-bordered table-hover" id="summary_table">
                                     <thead>
                                     <tr>
@@ -50,7 +50,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="tab-pane" id="tab_counting">
+                            <div class="tab-pane active" id="tab_counting">
                                 {% if form_disabled %}
                                     <div class="note note-warning">
                                         <h4 class="block">Form disabled!</h4>
@@ -137,7 +137,9 @@
         $(document).ready(function() {
             var flag_discrepancy = false;
             var flag_form_valid = false;
-            var sysCountVisibility = $('#countingRule').val();
+            var sysCountVisibility = $('#sysCountVisibility').val();
+            var countingRule = $('#countingRule').val();
+
             path = "{{ path('gist_inv_damaged_items_summary_ajax_grid') }}";
 
             $('#recountBtn').on('click', function() {
@@ -230,8 +232,53 @@
                         var rowMarker = tr.find('.rowMarker');
                         var diffCount = tr.find('.diffCount');
 
-                        if (this.value != '') {
-                            if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                        if (countingRule == 'all') {
+                            if (this.value != '') {
+                                if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                                    if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                        flag_discrepancy = true;
+                                        if (sysCountVisibility == '3') {
+                                            tr.css("background-color", "yellow");
+                                            rowMarker.removeClass('fa-check');
+                                            rowMarker.addClass('fa-times');
+                                        } else {
+                                            tr.css("background-color","");
+                                        }
+                                    } else {
+                                        tr.css("background-color","");
+                                    }
+                                } else {
+                                    tr.css("background-color","");
+                                    rowMarker.addClass('fa-check');
+                                    rowMarker.removeClass('fa-times');
+                                }
+
+                                var count = parseInt(tr.find('.currentCount').val());
+                                var sys = parseInt(tr.find('.existingCount').val());
+                                var diff = Math.abs(sys - count);
+                                if (sys > count) {
+                                    diffCount.val('-'+diff);
+                                } else {
+                                    diffCount.val('+'+diff);
+                                }
+
+                                if (currentCountInt < 0) {
+                                    var tr = $(this).closest('tr');
+                                    tr.css("background-color","#ff5959");
+                                    rowMarker.removeClass('fa-check');
+                                    rowMarker.addClass('fa-times');
+                                    diffCount.val('+0');
+                                }
+                            } else {
+                                var tr = $(this).closest('tr');
+                                tr.css("background-color","#ff5959");
+                                rowMarker.removeClass('fa-check');
+                                rowMarker.addClass('fa-times');
+                                diffCount.val('+0');
+
+                            }
+                        } else {
+                            if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e' && this.value != '') {
                                 if (sysCountVisibility == '3' || sysCountVisibility == '2') {
                                     flag_discrepancy = true;
                                     if (sysCountVisibility == '3') {
@@ -244,19 +291,20 @@
                                 } else {
                                     tr.css("background-color","");
                                 }
+
+                                var count = parseInt(tr.find('.currentCount').val());
+                                var sys = parseInt(tr.find('.existingCount').val());
+                                var diff = Math.abs(sys - count);
+                                if (sys > count) {
+                                    diffCount.val('-'+diff);
+                                } else {
+                                    diffCount.val('+'+diff);
+                                }
                             } else {
                                 tr.css("background-color","");
                                 rowMarker.addClass('fa-check');
                                 rowMarker.removeClass('fa-times');
-                            }
-
-                            var count = parseInt(tr.find('.currentCount').val());
-                            var sys = parseInt(tr.find('.existingCount').val());
-                            var diff = Math.abs(sys - count);
-                            if (sys > count) {
-                                diffCount.val('-'+diff);
-                            } else {
-                                diffCount.val('+'+diff);
+                                diffCount.val('+0');
                             }
 
                             if (currentCountInt < 0) {
@@ -264,15 +312,8 @@
                                 tr.css("background-color","#ff5959");
                                 rowMarker.removeClass('fa-check');
                                 rowMarker.addClass('fa-times');
-                                diffCount.val('0');
+                                diffCount.val('+0');
                             }
-                        } else {
-                            var tr = $(this).closest('tr');
-                            tr.css("background-color","#ff5959");
-                            rowMarker.removeClass('fa-check');
-                            rowMarker.addClass('fa-times');
-                            diffCount.val('0');
-
                         }
                     });
                 },
@@ -298,21 +339,36 @@
                     var existingCount = tr.find('.existingCount').val();
                     var currentCountInt = parseInt(tr.find('.currentCount').val());
 
-
-                        if (currentCount.val() == ''  || currentCountInt < 0) {
-                            tr.css("background-color", "#ff5959");
-                            flag_form_valid = false;
-                        } else if (currentCount.val() != existingCount) {
-                            if (sysCountVisibility == '3' || sysCountVisibility == '2') {
-                                flag_discrepancy = true;
-                                if (sysCountVisibility == '3') {
-                                    tr.css("background-color", "yellow");
+                        if (countingRule == 'all') {
+                            if (currentCount.val() == ''  || currentCountInt < 0) {
+                                tr.css("background-color", "#ff5959");
+                                flag_form_valid = false;
+                            } else if (currentCount.val() != existingCount) {
+                                if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                    flag_discrepancy = true;
+                                    if (sysCountVisibility == '3') {
+                                        tr.css("background-color", "yellow");
+                                    }
+                                } else {
+                                    tr.css("background-color", "");
                                 }
-                            } else {
-                                tr.css("background-color", "");
+                            }
+                        } else {
+                            //selective
+                            if (currentCountInt < 0) {
+                                tr.css("background-color", "#ff5959");
+                                flag_form_valid = false;
+                            } else if (currentCount.val() != existingCount) {
+                                if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                    flag_discrepancy = true;
+                                    if (sysCountVisibility == '3') {
+                                        tr.css("background-color", "yellow");
+                                    }
+                                } else {
+                                    tr.css("background-color", "");
+                                }
                             }
                         }
-
                 });
 
                 if (!flag_discrepancy && flag_form_valid) {
@@ -378,8 +434,53 @@
                 var rowMarker = tr.find('.rowMarker');
                 var diffCount = tr.find('.diffCount');
 
-                if (this.value != '') {
-                    if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                if (countingRule == 'all') {
+                    if (this.value != '') {
+                        if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e') {
+                            if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                flag_discrepancy = true;
+                                if (sysCountVisibility == '3') {
+                                    tr.css("background-color", "yellow");
+                                    rowMarker.removeClass('fa-check');
+                                    rowMarker.addClass('fa-times');
+                                } else {
+                                    tr.css("background-color","");
+                                }
+                            } else {
+                                tr.css("background-color","");
+                            }
+                        } else {
+                            tr.css("background-color","");
+                            rowMarker.addClass('fa-check');
+                            rowMarker.removeClass('fa-times');
+                        }
+
+                        var count = parseInt(tr.find('.currentCount').val());
+                        var sys = parseInt(tr.find('.existingCount').val());
+                        var diff = Math.abs(sys - count);
+                        if (sys > count) {
+                            diffCount.val('-'+diff);
+                        } else {
+                            diffCount.val('+'+diff);
+                        }
+
+                        if (currentCountInt < 0) {
+                            var tr = $(this).closest('tr');
+                            tr.css("background-color","#ff5959");
+                            rowMarker.removeClass('fa-check');
+                            rowMarker.addClass('fa-times');
+                            diffCount.val('+0');
+                        }
+                    } else {
+                        var tr = $(this).closest('tr');
+                        tr.css("background-color","#ff5959");
+                        rowMarker.removeClass('fa-check');
+                        rowMarker.addClass('fa-times');
+                        diffCount.val('+0');
+
+                    }
+                } else {
+                    if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e' && this.value != '') {
                         if (sysCountVisibility == '3' || sysCountVisibility == '2') {
                             flag_discrepancy = true;
                             if (sysCountVisibility == '3') {
@@ -392,19 +493,20 @@
                         } else {
                             tr.css("background-color","");
                         }
+
+                        var count = parseInt(tr.find('.currentCount').val());
+                        var sys = parseInt(tr.find('.existingCount').val());
+                        var diff = Math.abs(sys - count);
+                        if (sys > count) {
+                            diffCount.val('-'+diff);
+                        } else {
+                            diffCount.val('+'+diff);
+                        }
                     } else {
                         tr.css("background-color","");
                         rowMarker.addClass('fa-check');
                         rowMarker.removeClass('fa-times');
-                    }
-
-                    var count = parseInt(tr.find('.currentCount').val());
-                    var sys = parseInt(tr.find('.existingCount').val());
-                    var diff = Math.abs(sys - count);
-                    if (sys > count) {
-                        diffCount.val('-'+diff);
-                    } else {
-                        diffCount.val('+'+diff);
+                        diffCount.val('+0');
                     }
 
                     if (currentCountInt < 0) {
@@ -412,15 +514,8 @@
                         tr.css("background-color","#ff5959");
                         rowMarker.removeClass('fa-check');
                         rowMarker.addClass('fa-times');
-                        diffCount.val('0');
+                        diffCount.val('+0');
                     }
-                } else {
-                    var tr = $(this).closest('tr');
-                    tr.css("background-color","#ff5959");
-                    rowMarker.removeClass('fa-check');
-                    rowMarker.addClass('fa-times');
-                    diffCount.val('0');
-
                 }
             });
 
