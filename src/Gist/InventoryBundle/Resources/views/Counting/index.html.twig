@@ -221,7 +221,7 @@
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,
-                // "aaSorting" : false,
+                "bSort" : false,
                 "bLengthChange": false,
                 "sPaginationType": "bootstrap",
                 "fnDrawCallback": function( oSettings ) {
@@ -323,8 +323,7 @@
                         "sPrevious": "Prev",
                         "sNext": "Next"
                     }
-                },
-                "aaSorting": [[ 0, "desc" ]]
+                }
             });
 
             $('#submit_counts').on('click', function(e){
