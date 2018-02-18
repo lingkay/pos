@@ -8,9 +8,13 @@
                 <div class="col-md-10">
                     <br>
                     <h2 class="form-section">{{ list_title }}</h2>
+                    <input type="hidden" id="other_stocks_visible" value="{{ other_stocks_visible }}">
                     <a href="{{ path('gist_inventory_menu_index') }}">Return to Inventory Menu</a>
                     <br>
                     <hr>
+                    {% if other_stocks_visible == 'yes' %}
+                    {{ form_tools.group_select_no_default('POS Location', 'pos_loc_id', wh_opts, pos_id, 3, 2, false) }}
+                    {% endif %}
                     {{ form_tools.group_select_no_default('Inventory Type', 'inv_type', inv_type_opts, inv_type, 3, 2, false) }}
                     <table class="table table-striped table-bordered table-hover" id="stock_table">
                         <thead>
@@ -39,15 +43,28 @@
 {% block js %}
     <script>
         function generatePath() {
+            var other_stocks_visible = $('#other_stocks_visible').val();
             var inv_type = $('#cform-inv_type').val();
 
+            if (other_stocks_visible == 'yes') {
+                var pos_loc_id = $('#cform-pos_loc_id').val();
+                var path = "{{ path('gist_inv_existing_stock_index', {
+                    'inv_type' : 'INV_TYPE',
+                    'pos_loc_id' : 'POS_LOC_ID',
+                }
+                ) }}";
 
-            var path = "{{ path('gist_inv_existing_stock_index', {
-                'inv_type' : 'INV_TYPE',
+                path = path.replace('INV_TYPE', inv_type);
+                path = path.replace('POS_LOC_ID', pos_loc_id);
+            } else {
+                var path = "{{ path('gist_inv_existing_stock_index', {
+                    'inv_type' : 'INV_TYPE',
+                }
+                ) }}";
+
+                path = path.replace('INV_TYPE', inv_type);
             }
-            ) }}";
 
-            path = path.replace('INV_TYPE', inv_type);
 
             return path;
         }
@@ -75,6 +92,11 @@
             });
 
             $("#cform-inv_type").live('change', function(){
+                path = generatePath();
+                location.replace(path);
+            });
+
+            $("#cform-pos_loc_id").live('change', function(){
                 path = generatePath();
                 location.replace(path);
             });
