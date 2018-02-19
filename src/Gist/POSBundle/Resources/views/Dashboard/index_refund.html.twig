@@ -4,6 +4,7 @@
     <input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
     <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
     <input type="hidden" id="url_erp" value="{{sys_erp_url}}">
+    <input type="hidden" id="refund_code" value="{{refund_code|default('')}}">
     <input type="hidden" id="float_cart_minimum_total" value="0">
     <input type="hidden" id="float_cart_new_price" value="0">
     <input type="hidden" id="erp_gc_id" value="{{ erp_gc_id|default('null') }}">
@@ -413,13 +414,16 @@
         }
 
 
+
+
         $(document).ready(function() {
 
-            var restrict = "{{restrict}}";
+
+            var restrict = "{{restrict|default('false')}}";
             if (restrict == 'true') {
                 swal({
                         title: "Cannot load transaction!",
-                        text: "The trasaction you are trying to access is not valid for reloading",
+                        text: "The transaction you are trying to access is not valid for reloading",
                         type: "error",
                         confirmButtonColor: "green",
                         confirmButtonText: "Okay",
@@ -428,7 +432,26 @@
                         location.replace('/pos');
 
                     });
+            } else if (restrict == 'expired') {
+                swal({
+                        title: "Cannot load transaction!",
+                        text: "The transaction you are trying to access exceeded the allowed days to refund",
+                        type: "error",
+                        confirmButtonColor: "green",
+                        confirmButtonText: "Okay",
+                    },
+                    function(){
+                        location.replace('/pos');
+
+                    });
+            } else if (restrict == 'false') {
+                $('#refundModal').modal('show');
             }
+
+            $(document).on("click", ".closeAuthModal", function (e) {
+                swal('Failed to authenticate refund. Redirecting to normal POS','','error');
+                location.replace('/pos');
+            });
 
 
             $(document).on("click", ".select_all_return", function (e) {
@@ -438,6 +461,34 @@
                 });
 
                 recompute();
+            });
+
+            $(document).on("click", ".auth_refund_btn", function (e) {
+                $('#refundModal').modal('hide');
+            });
+
+
+            $(document).on("click", ".auth_refund_btn", function (e) {
+                var code = $('#refund_code').val();
+                var entered_code = $('#cform-refund_code').val();
+                $('#cform-refund_code').val('');
+
+                if (code === entered_code) {
+                    $('#refundModal').modal('hide');
+                    swal('Success!','Authentication passed','success');
+                } else {
+                    swal({
+                            title: "Error!",
+                            text: "Incorrect authentication code",
+                            type: "error",
+                            confirmButtonColor: "green",
+                            confirmButtonText: "Retry",
+                        },
+                        function(){
+                            $('#refundModal').modal('show');
+                        });
+                }
+
             });
 
             $(document).on("click", ".unselect_all_return", function (e) {

@@ -117,6 +117,7 @@ class POSController extends Controller
      */
     public function indexLoadRefundAction($transaction_display_id)
     {
+        $conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
         $this->title = 'Dashboard Loaded';
         $params = $this->getViewParams('', 'gist_dashboard_index');
@@ -141,7 +142,24 @@ class POSController extends Controller
             $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
         }
 
-        return $this->render('GistPOSBundle:Dashboard:index_refund.html.twig', $params);
+        // check if selected transaction is still within upsell time limit
+        $url_refund_days = $conf->get('gist_sys_erp_url')."/inventory/pos/get/refund_days";
+        $result_refund_days = file_get_contents($url_refund_days);
+        $refund_days = json_decode($result_refund_days, true);
+        $date_orig = new DateTime();
+        $date_orig = $date_orig->format('m/d/Y H:i:s');
+        $date_end = $transaction_object->getDateCreate()->add(new DateInterval('P'.$refund_days.'D'))->format('m/d/Y H:i:s'); // adds 674165 secs
+
+        if ($date_end > $date_orig) {
+            $url_refund_code = $conf->get('gist_sys_erp_url')."/inventory/pos/get/refund_code";
+            $result_refund_code = file_get_contents($url_refund_code);
+            $refund_code = json_decode($result_refund_code, true);
+            $params['refund_code'] = $refund_code;
+            return $this->render('GistPOSBundle:Dashboard:index_refund.html.twig', $params);
+        } else {
+            $params['restrict'] = 'expired';
+            return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
+        }
     }
 
     /**

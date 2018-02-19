@@ -4,6 +4,7 @@
 <input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
 <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
 <input type="hidden" id="url_erp" value="{{sys_erp_url}}">
+<input type="hidden" id="refund_code" value="{{refund_code|default('')}}">
 <input type="hidden" id="float_cart_minimum_total" value="0">
 <input type="hidden" id="float_cart_new_price" value="0">
 <input type="hidden" id="erp_gc_id" value="{{ erp_gc_id|default('null') }}">
@@ -393,6 +394,18 @@ $(document).ready(function() {
         swal({
                 title: "Cannot load transaction!",
                 text: "The trasaction you are trying to access is not valid for reloading",
+                type: "error",
+                confirmButtonColor: "green",
+                confirmButtonText: "Okay",
+            },
+            function(){
+                location.replace('/pos');
+
+            });
+    } else if (restrict == 'expired') {
+        swal({
+                title: "Cannot load transaction!",
+                text: "The transaction you are trying to access exceeded the allowed days to refund",
                 type: "error",
                 confirmButtonColor: "green",
                 confirmButtonText: "Okay",
