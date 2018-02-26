@@ -800,7 +800,7 @@ class POSController extends Controller
             if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
             if (trim($ea) == '' || $ea == null) { $ea = 'n-a'; }
 
-            file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea."/".$transaction->getUserCreate()->getID());
+            file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea."/".$transaction->getUserCreate()->getERPID());
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
