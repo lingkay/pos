@@ -99,6 +99,11 @@ class CountingController extends CrudController
                 }
             }
 
+            if (count($entries) <= 0) {
+                $this->addFlash('error', 'No count(s) to process!');
+                return $this->redirect($this->generateUrl($this->getRouteGen()->getList()));
+            }
+
             $entries = http_build_query($entries);
 
             $url= $conf->get('gist_sys_erp_url')."/inventory/counting_form/pos/submit/".$source_loc_id."/".$this->getUser()->getERPID()."/".$entries;
