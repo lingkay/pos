@@ -280,7 +280,7 @@
                             }
                         } else {
                             if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e' && this.value != '') {
-                                if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                if ((sysCountVisibility == '3' || sysCountVisibility == '2') && this.value != '') {
                                     flag_discrepancy = true;
                                     if (sysCountVisibility == '3') {
                                         tr.css("background-color", "yellow");
@@ -359,7 +359,7 @@
                                 tr.css("background-color", "#ff5959");
                                 flag_form_valid = false;
                             } else if (currentCount.val() != existingCount) {
-                                if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                if ((sysCountVisibility == '3' || sysCountVisibility == '2') && currentCount.val() != '') {
                                     flag_discrepancy = true;
                                     if (sysCountVisibility == '3') {
                                         tr.css("background-color", "yellow");
@@ -481,7 +481,7 @@
                     }
                 } else {
                     if (this.value != existingCount && this.value != '-'  && this.value != '+' && this.value != 'e' && this.value != '') {
-                        if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                        if ((sysCountVisibility == '3' || sysCountVisibility == '2') && tr.find('.currentCount').val() != '') {
                             flag_discrepancy = true;
                             if (sysCountVisibility == '3') {
                                 tr.css("background-color", "yellow");
