@@ -661,8 +661,10 @@ class POSController extends Controller
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($trans_sys_id);
 
         if (trim($adjusted_price) == '' || $adjusted_price == null) {
-            $adjusted_price = '0';
+            $adjusted_price = $orig_price;
         }
+
+        $transaction_item->setTotalAmount($adjusted_price);
 
         if (trim($discount_type) == '' || $discount_type == null) {
             $discount_type = 'none';
@@ -824,7 +826,7 @@ class POSController extends Controller
                     $isNew = 'true';
                 }
 
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getDiscountType()."/".$item->getDiscountValue()."/".$isRet."/".$isNew);
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getTotalAmount()."/".$item->getDiscountType()."/".$item->getDiscountValue()."/".$isRet."/".$isNew);
             }
 
         }
