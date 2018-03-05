@@ -56,6 +56,8 @@ class POSTransaction
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $synced_to_erp;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $erp_id;
 
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $tax_rate;
@@ -355,6 +357,18 @@ class POSTransaction
 
         return 0;
         
+    }
+
+    public function setERPID($erp_id)
+    {
+        $this->erp_id = $erp_id;
+
+        return $this;
+    }
+
+    public function getERPID()
+    {
+        return $this->erp_id;
     }
     
 

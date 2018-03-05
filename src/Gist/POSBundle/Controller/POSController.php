@@ -492,6 +492,7 @@ class POSController extends Controller
         $transaction->setCustomerId($customer_id);
         $transaction->setTransactionBalance($balance);
         $transaction->setTransactionTotal($total);
+
         $transaction->setTransactionType($type);
         $transaction->setStatus($status);
         $transaction->setSyncedToErp('false');
@@ -788,6 +789,14 @@ class POSController extends Controller
             $ea = $transaction->getExtraAmount();
             $pos_loc_id = $transaction->getLocation();
 
+            if ($transaction->getReferenceTransaction() != null) {
+                $referenceTransaction = $transaction->getReferenceTransaction();
+                $referenceTransaction = $referenceTransaction->getERPID();
+            } else {
+                $referenceTransaction = 'n-a';
+            }
+
+
             if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n-a'; }
             if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n-a'; }
             if (trim($NewVatAmt) == '' || $NewVatAmt == null) { $NewVatAmt = 'n-a'; }
@@ -802,7 +811,10 @@ class POSController extends Controller
             if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
             if (trim($ea) == '' || $ea == null) { $ea = 'n-a'; }
 
-            file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea."/".$transaction->getUserCreate()->getERPID());
+            $result1 = file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea."/".$transaction->getUserCreate()->getERPID()."/".$referenceTransaction);
+            $result2 = json_decode($result1, true);
+
+            $transaction->setERPID($result2[0]['new_id']);
 
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
