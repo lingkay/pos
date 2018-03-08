@@ -665,7 +665,43 @@ class POSController extends Controller
             $adjusted_price = $orig_price;
         }
 
-        $transaction_item->setTotalAmount($adjusted_price);
+
+
+        if ($transaction->getTransactionType() == 'bulk') {
+
+            $transactionTotalAmount = floatval($transaction->gettransactiontotal());
+            $transactionOrigAmount = floatval($transaction->getCartOrigTotal());
+
+            if ($transaction->getSelectedBulkDiscountType() == 'bdisc') {
+                $bulkDiscountAmount = $transaction->getSelectedBulkDiscountAmount();
+
+                $bulkDiscountedTotalAmount = floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountAmount)/100));
+                $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
+
+            } elseif ($transaction->getSelectedBulkDiscountType() == 'bdiscamt') {
+
+                $bulkDiscountAmount = floatval($transaction->getSelectedBulkDiscountAmount());
+                $bulkDiscountPCTAmount = ($bulkDiscountAmount/$transactionOrigAmount) * 100;
+
+                $bulkDiscountedTotalAmount = floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountPCTAmount)/100));
+                $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
+
+            } elseif ($transaction->getSelectedBulkDiscountType() == 'bamt') {
+
+                $bulkDiscountAmount = floatval($transaction->getSelectedBulkDiscountAmount());
+                $bulkDiscountPCTAmount = ($bulkDiscountAmount/$transactionOrigAmount) * 100;
+
+                $bulkDiscountedTotalAmount = floatval($adjusted_price) * (floatval($bulkDiscountPCTAmount)/100);
+                $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
+
+            } elseif ($transaction->getSelectedBulkDiscountType() == 'bgift') {
+                $transaction_item->setTotalAmount(0.00);
+            } else {
+                $transaction_item->setTotalAmount($adjusted_price);
+            }
+        } else {
+            $transaction_item->setTotalAmount($adjusted_price);
+        }
 
         if (trim($discount_type) == '' || $discount_type == null) {
             $discount_type = 'none';
