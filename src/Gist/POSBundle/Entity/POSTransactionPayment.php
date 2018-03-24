@@ -79,6 +79,12 @@ class POSTransactionPayment
     /** @ORM\Column(type="string", length=50, nullable=true) */
     protected $payor;
 
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $check_type;
+
+    /** @ORM\Column(type="string", length=50, nullable=true) */
+    protected $check_date;
+
     /**
      * @ORM\ManyToOne(targetEntity="POSTransaction")
      * @ORM\JoinColumn(name="payment_issued_on", referencedColumnName="id")
@@ -103,6 +109,54 @@ class POSTransactionPayment
         $this->dataHasGeneratedID($data);
         $this->dataTrackCreate($data);
         return $data;
+    }
+
+    /**
+     * Set type
+     *
+     * @param $check_type
+     * @return $this
+     * @internal param string $type
+     */
+    public function setCheckDate($check_date)
+    {
+        $this->check_date = $check_date;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getCheckDate()
+    {
+        return $this->check_date;
+    }
+
+    /**
+     * Set type
+     *
+     * @param $check_type
+     * @return $this
+     * @internal param string $type
+     */
+    public function setCheckType($check_type)
+    {
+        $this->check_type = $check_type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getCheckType()
+    {
+        return $this->check_type;
     }
 
     /**

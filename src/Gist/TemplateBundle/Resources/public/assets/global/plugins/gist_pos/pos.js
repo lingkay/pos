@@ -143,7 +143,7 @@ function ajaxGetProducts(cid)
     });
 }
 
-function addToPayments(payment_type, amount, details, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, account_number, payee, payor, expiry, cvv)
+function addToPayments(payment_type, amount, details, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, account_number, payee, payor, expiry, cvv, check_date, check_type)
 {
     cc_bank = cc_bank || "";
     cc_interest = cc_interest || "";
@@ -155,6 +155,8 @@ function addToPayments(payment_type, amount, details, cc_number, cc_bank, cc_ter
     payor = payor || "";
     expiry = expiry || "";
     cvv = cvv || "";
+    check_date = check_date || "";
+    check_type = check_type || "";
 
     $('.init_row_payment').remove();
 
@@ -171,6 +173,8 @@ function addToPayments(payment_type, amount, details, cc_number, cc_bank, cc_ter
         field += '<input type=\"hidden\" name=\"payor\" class=\"payor\" value=\"'+payor+'\">';
         field += '<input type=\"hidden\" name=\"cc_expiry\" class=\"cc_expiry\" value=\"'+expiry+'\">';
         field += '<input type=\"hidden\" name=\"cc_cvv\" class=\"cc_cvv\" value=\"'+cvv+'\">';
+        field += '<input type=\"hidden\" name=\"check_type\" class=\"check_type\" value=\"'+check_type+'\">';
+        field += '<input type=\"hidden\" name=\"check_date\" class=\"check_date\" value=\"'+check_date+'\">';
         field += '<input type=\"hidden\" name=\"payment_details_array[]\" class=\"payment_details_array\" value=\"'+details+'\" >';
         field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
         field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
@@ -1374,8 +1378,10 @@ function freezeTransaction(is_final)
                     var cc_expiry = "%20"; if($(this).find('.cc_expiry').val() != ''){cc_expiry = $(this).find('.cc_expiry').val()};
                     var cc_cvv = "%20"; if($(this).find('.cc_cvv').val() != ''){cc_cvv = $(this).find('.cc_cvv').val()};
 
+                    var check_type = "%20"; if($(this).find('.check_type').val() != ''){check_type = $(this).find('.check_type').val()};
+                    var check_date = "%20"; if($(this).find('.check_date').val() != ''){check_date = $(this).find('.check_date').val()};
 
-                    var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv+"/"+payment_issued_on;
+                    var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv+"/"+payment_issued_on+"/"+check_type+"/"+check_date;
 
                     $.getJSON(url3, function(json){
                         var count = 0;

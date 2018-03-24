@@ -329,6 +329,10 @@
                                                     <input type="hidden" name="cc_cvv" class="cc_cvv" value="{{p.getCardCvv|default('')}}">
                                                     <input type="hidden" name="payment_details_array[]" class="payment_details_array" value="null" >
                                                     <input type="hidden" name="payment_amt_float[]" class="payment_amt_float" value="{{p.amount|default('')}}" >
+
+                                                    <input type="hidden" name="check_type[]" class="check_type" value="{{p.getCheckType|default('')}}" >
+                                                    <input type="hidden" name="check_date[]" class="check_date" value="{{p.getCheckDate|default('')}}" >
+
                                                     <td><input type="text" style="font-size: 12px !important;" name="payment_type[]" value="{{p.getType|default('')}}" readonly="true" class="form-control payment_type"></td>
                                                     <td><input type="text" style="font-size: 10px !important;" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="{{p.amount|number_format(2)|default('')}}"></td>  
                                                     <td ><a href="javascript:void(0)" class="btn btn-xs default red x_remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
@@ -538,7 +542,7 @@
                                             <div class="form-group posgrp_check_date">
                                                 <label class="col-md-5 control-label">Check Date</label>
                                                 <div class ="col-md-6">
-                                                    <input type="date" class="check_date">
+                                                    <input type="date" class="check_date" id="xform-check_date">
                                                 </div>
                                             </div>
                                             {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
@@ -1081,7 +1085,7 @@
                     <div class="form-group posgrp_check_date">
                         <label class="col-md-5 control-label">Check Date</label>
                         <div class ="col-md-6">
-                            <input type="date" class="check_date">
+                            <input type="date" class="check_date" id="xform-check_date">
                         </div>
                     </div>
                     {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}

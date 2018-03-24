@@ -760,7 +760,7 @@ class POSController extends Controller
      * Save transaction payments
      * (AJAX)
      */
-    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv, $issued_on)
+    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv, $issued_on, $check_type, $check_date)
     {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
@@ -780,6 +780,8 @@ class POSController extends Controller
         $transaction_payment->setPayor($payor);
         $transaction_payment->setCardExpiry($expiry);
         $transaction_payment->setCardCvv($cvv);
+        $transaction_payment->setCheckDate($check_date);
+        $transaction_payment->setCheckType($check_type);
 
         $em->persist($transaction_payment);
         $em->flush();
@@ -860,7 +862,23 @@ class POSController extends Controller
             $splits = $em->getRepository('GistPOSBundle:POSTransactionSplit')->findBy(array('transaction'=>$transaction));
 
             foreach ($payments as $payment) {
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
+
+                $bank = $payment->getBank();
+                $acct_num = $payment->getAccountNumber();
+                $terminal = $payment->getCardTerminalOperator();
+                $check_type = $payment->getCheckType();
+                $check_date = $payment->getCheckDate();
+                $control_number = $payment->getControlNumber();
+
+
+                if (trim($bank) == '' || $bank == null) { $bank = 'n-a'; }
+                if (trim($acct_num) == '' || $acct_num == null) { $acct_num = 'n-a'; }
+                if (trim($terminal) == '' || $terminal == null) { $terminal = 'n-a'; }
+                if (trim($check_type) == '' || $check_type == null) { $check_type = 'n-a'; }
+                if (trim($check_date) == '' || $check_date == null) { $check_date = 'n-a'; }
+                if (trim($control_number) == '' || $control_number == null) { $control_number = 'n-a'; }
+
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount()."/".$bank."/".$terminal."/".$check_type."/".$check_date."/".$control_number."/".$acct_num);
             }
 
             foreach ($items as $item) {

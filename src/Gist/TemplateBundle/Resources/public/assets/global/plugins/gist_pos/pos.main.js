@@ -2638,7 +2638,7 @@ $(document).ready(function(){
                 var cc_terms = $(this).find('#form-cc_terms option:selected').text();
                 var cc_details = cc_number + "," + cc_name + "," + cc_bank;
 
-                addToPayments('Credit Card', parseFloat(payment_amt), null, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, null, null, cc_name, cc_expiry, cc_cvv);
+                addToPayments('Credit Card', parseFloat(payment_amt), null, cc_number, cc_bank, cc_terminal_opt, cc_interest, cc_terms, null, null, cc_name, cc_expiry, cc_cvv, null, null);
                 clearCreditCardModal();
             });
 
@@ -2681,9 +2681,11 @@ $(document).ready(function(){
                 var payment_amt = $(this).find('#cform-check_amount').val(); 
                 var bank = $(this).find('#form-check_bank option:selected').text(); 
                 var payee = $(this).find('#cform-check_payee_name').val(); 
-                var payor = $(this).find('#cform-check_payor_name').val(); 
+                var payor = $(this).find('#cform-check_payor_name').val();
+                var check_date = $(this).find('#xform-check_date').val();
+                var check_type = $(this).find('.check_is_pdc').val();
 
-                addToPayments('Check', parseFloat(payment_amt), null, check_number, bank, null, null, null, account_number, payee, payor, null, null);
+                addToPayments('Check', parseFloat(payment_amt), null, check_number, bank, null, null, null, account_number, payee, payor, null, null, check_date, check_type);
                 clearCheckModal();
             });
 
