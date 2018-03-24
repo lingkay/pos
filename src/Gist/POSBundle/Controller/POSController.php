@@ -579,7 +579,7 @@ class POSController extends Controller
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$trans_sys_id));
 
         if ($transaction->getTransactionMode() == 'exchange' || $transaction->getTransactionMode() == 'refund') {
-            $split_trans_total = $transaction->getBalance();
+            $split_trans_total = $transaction->getPaymentIssued();
             $split_entry = new POSTransactionSplit();
             $split_entry->setConsultant($this->getUser());
             $split_entry->setTransaction($transaction);
@@ -857,6 +857,7 @@ class POSController extends Controller
 
             $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
             $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
+            $splits = $em->getRepository('GistPOSBundle:POSTransactionSplit')->findBy(array('transaction'=>$transaction));
 
             foreach ($payments as $payment) {
                 file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount());
@@ -875,6 +876,10 @@ class POSController extends Controller
                 }
 
                 file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getTotalAmount()."/".$item->getDiscountType()."/".$item->getDiscountValue()."/".$isRet."/".$isNew);
+            }
+
+            foreach ($splits as $split) {
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_split/".$transaction->getTransDisplayId()."/".$split->getConsultant()->getERPID()."/".$split->getAmount()."/".$split->getPercent());
             }
 
         }
