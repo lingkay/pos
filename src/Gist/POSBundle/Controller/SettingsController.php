@@ -49,6 +49,7 @@ class SettingsController extends CrudController
         $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
         $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
         $params['sys_pos_loc_id'] = $conf->get('gist_sys_pos_loc_id');
+        $params['gist_sys_pos_name'] = $conf->get('gist_sys_pos_name');
         $params['erp_gc_id'] = $conf->get('erp_gc_id');
         $params['users'] = $user_exist;
         $params['products'] = $products;
@@ -80,6 +81,7 @@ class SettingsController extends CrudController
             $conf->set('gist_sys_pos_url', $data['sys_pos_url']);
             $conf->set('gist_sys_erp_url', $data['sys_erp_url']);
             $conf->set('gist_sys_pos_loc_id', $data['sys_pos_loc_id']);
+            $conf->set('gist_sys_pos_name', $data['gist_sys_pos_name']);
             $conf->set('erp_gc_id', $data['erp_gc_id']);
             $em->flush(); 
             if($this->submit_redirect){

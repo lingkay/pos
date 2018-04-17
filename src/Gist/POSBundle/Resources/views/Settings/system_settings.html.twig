@@ -16,6 +16,7 @@
                     <p><b>Area ID</b> is used to filter the users to sync with this POS</p>
                 </div>
             </div>
+            {{ form.group_text_orig('POS Name', 'gist_sys_pos_name', gist_sys_pos_name|default(''), 3, 6, false) }}
             {{ form.group_text_orig('POS URL', 'sys_pos_url', sys_pos_url|default(''), 3, 6, false) }}
             {{ form.group_text_orig('ERP URL', 'sys_erp_url', sys_erp_url|default(''), 3, 6, false) }}
             {{ form.group_text_orig('GC Product ID', 'erp_gc_id', erp_gc_id|default(''), 3, 6, false) }}

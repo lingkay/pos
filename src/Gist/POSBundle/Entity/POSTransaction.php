@@ -183,7 +183,18 @@ class POSTransaction
 
     public function getPercentOfSale()
     {
-        return round((($this->transaction_total/$this->cart_orig_total)*100),2)."%";
+        $tt = $this->transaction_total;
+        $co = $this->cart_orig_total;
+
+        if ($tt < 1) {
+            $tt = 1;
+        }
+
+        if ($co < 1) {
+            $co = 1;
+        }
+
+        return round((($tt/$co)*100),2)."%";
     }
 
     public function hasItems()

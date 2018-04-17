@@ -161,7 +161,8 @@ class ReportsController extends CrudController
         $params['customer_creator'] = $this->getCustomerCreator($obj->getCustomerId());
         $params['customer'] = $this->getCustomer($obj->getCustomerId());
         $params['o_label'] = $this->getObjectLabel($obj);
-
+        $conf = $this->get('gist_configuration');
+        $params['x']=$conf->get('gist_sys_pos_name');
         // check if we have access to form
         $params['readonly'] = !$this->getUser()->hasAccess($this->route_prefix . '.edit');
 
@@ -187,6 +188,9 @@ class ReportsController extends CrudController
         $params['customer_creator'] = $this->getCustomerCreator($obj->getCustomerId());
         $params['customer'] = $this->getCustomer($obj->getCustomerId());
         $params['o_label'] = $this->getObjectLabel($obj);
+
+        $conf = $this->get('gist_configuration');
+        $params['x']=$conf->get('gist_sys_pos_name');
 
         $employee = $em->getRepository('GistUserBundle:User')->findAll();
 
