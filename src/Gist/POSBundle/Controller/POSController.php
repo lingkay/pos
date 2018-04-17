@@ -524,7 +524,7 @@ class POSController extends Controller
         $transaction->setGCDebit($gcDebit);
 
         // GC Balance manipulation
-        if ($customer_object) {
+        if ($customer_object && $status != 'Frozen') {
             if ($customer_object->getGCNumber()) {
                 if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {
                     $current_balance = floatval($customer_object->getGCBalance());
