@@ -524,16 +524,18 @@ class POSController extends Controller
         $transaction->setGCDebit($gcDebit);
 
         // GC Balance manipulation
-        if ($customer_object->getGCNumber()) {
-            if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {
-                $current_balance = floatval($customer_object->getGCBalance());
-                $gcCredit = floatval($gcCredit);
-                $gcDebit = floatval($gcDebit);
-                $new_balance = $current_balance - $gcDebit;
-                $new_balance = $new_balance + $gcCredit;
-                $customer_object->setGCBalance($new_balance);
-                $em->persist($customer_object);
+        if ($customer_object) {
+            if ($customer_object->getGCNumber()) {
+                if ($customer_object->getGCNumber() != '' && $customer_object->getGCNumber() != null) {
+                    $current_balance = floatval($customer_object->getGCBalance());
+                    $gcCredit = floatval($gcCredit);
+                    $gcDebit = floatval($gcDebit);
+                    $new_balance = $current_balance - $gcDebit;
+                    $new_balance = $new_balance + $gcCredit;
+                    $customer_object->setGCBalance($new_balance);
+                    $em->persist($customer_object);
 
+                }
             }
         }
 
