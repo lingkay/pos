@@ -117,19 +117,13 @@ class SettingsController extends CrudController
 
         foreach ($vars as $u) {
             //check if user already saved
-            // echo $u['id']."<br>";
-
             $user_exist = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id' => $u['id']));
             if ($user_exist) {
                 //user found. update record
-                //$user_exist->setID($u['id']); 
-                $user_exist->setUsername($u['username']); 
-                //$user_exist->setUsernameCanonical($u['username_canonical']); 
+                $user_exist->setUsername($u['username']);
                 $user_exist->setSalt($u['salt']); 
                 $user_exist->setEmail($u['email']); 
-                $user_exist->setPassword($u['password']); 
-                //$user_exist->setPlainPassword($u['plainPassword']); 
-                //$user_exist->setConfirmationToken($u['confirmationToken']); 
+                $user_exist->setPassword($u['password']);
                 $user_exist->setEnabled($u['enabled']); 
                 $user_exist->setFirstName($u['first_name']); 
                 $user_exist->setMiddleName($u['middle_name']); 
@@ -145,13 +139,10 @@ class SettingsController extends CrudController
                 //user not found. create record
                 $user_new = new User;
                 $user_new->setERPID($u['id']); 
-                $user_new->setUsername($u['username']); 
-                //$user_new->setUsernameCanonical($u['username_canonical']); 
+                $user_new->setUsername($u['username']);
                 $user_new->setSalt($u['salt']); 
                 $user_new->setEmail($u['email']); 
-                $user_new->setPassword($u['password']); 
-                //$user_new->setPlainPassword($u['plainPassword']); 
-                //$user_new->setConfirmationToken($u['confirmationToken']); 
+                $user_new->setPassword($u['password']);
                 $user_new->setEnabled($u['enabled']); 
                 $user_new->setFirstName($u['first_name']); 
                 $user_new->setMiddleName($u['middle_name']); 
@@ -162,28 +153,22 @@ class SettingsController extends CrudController
                 $user_new->setCommissionType($u['commission_type']); 
                 $user_new->setContactNumber($u['contact_number']);
                 $em->persist($user_new);
-
             }
         }
-
-        // die();`
         try
         {
             $em->flush();
         }
         catch (UniqueConstraintViolationException $e) {
-            var_dump($e->getMessage());
-            die();
+
         }
         catch (ValidationException $e)
         {
-            var_dump($e->getMessage());
-            die();
+
         }
         catch (DBALException $e)
         {
-            var_dump($e->getMessage());
-            die();
+
         }
         
 
@@ -194,30 +179,22 @@ class SettingsController extends CrudController
     public function syncCustomersAction()
     {
         header("Access-Control-Allow-Origin: *");
-        //$conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
-        //$area_id = $conf->get('gist_sys_area_id');
         $conf = $this->get('gist_configuration');
 
         $url= $conf->get('gist_sys_erp_url')."/customer/get/all";
-        // $url= $conf->get('gist_sys_erp_url')."/pos_erp/get/users/".$area_id;
-        // $url="http://m55e.erp/pos_erp/get/users/".$area_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
         foreach ($vars as $u) {
-            //check if user already saved
-            // echo $u['id']."<br>";
-
             $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('erp_id' => $u['id']));
             $user = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id' => $u['created_by']));
             if ($customer) {
-                //user found. update record
+                //customer found. update record
                 $customer->setFirstName($u['first_name']);
                 $customer->setLastName($u['last_name']);
                 $customer->setCEmailAddress($u['email']);
                 $customer->setMobileNumber($u['mobile_number']);
-                //$customer->setERPID($u['id']);
                 $customer->setMiddleName($u['middle_name']);
                 $customer->setGender($u['gender']);
                 $customer->setMaritalStatus($u['marital_status']);
@@ -238,7 +215,7 @@ class SettingsController extends CrudController
                 $em->persist($customer);
 
             } else {
-                //user not found. create record
+                //customer not found. create record
                 $new_customer = new POSCustomer;
                 $new_customer->setFirstName($u['first_name']);
                 $new_customer->setLastName($u['last_name']);
@@ -263,30 +240,23 @@ class SettingsController extends CrudController
                     $new_customer->setUserCreate($user);
                 }
                 $em->persist($new_customer);
-
             }
         }
-
-        // die();`
         try
         {
             $em->flush();
         }
         catch (UniqueConstraintViolationException $e) {
-            var_dump($e->getMessage());
-            die();
+
         }
         catch (ValidationException $e)
         {
-            var_dump($e->getMessage());
-            die();
+
         }
         catch (DBALException $e)
         {
-            var_dump($e->getMessage());
-            die();
+
         }
-        
 
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
@@ -298,18 +268,15 @@ class SettingsController extends CrudController
         $conf = $this->get('gist_configuration');
         $em = $this->getDoctrine()->getManager();
         $area_id = $conf->get('gist_sys_pos_loc_id');
-
         $url= $conf->get('gist_sys_erp_url')."/pos_erp/get/products/".$area_id;
         $result = file_get_contents($url);
         $vars = json_decode($result, true);
 
         foreach ($vars as $u) {
-            //check if user already saved
-            // echo $u['id']."<br>";
-
+            //check if product already saved
             $product_exist = $em->getRepository('GistInventoryBundle:Product')->findOneBy(array('id' => $u['id']));
             if ($product_exist) {
-                //user found. update record
+                //product found. update record
                 $product_exist->setName($u['name']);
                 $product_exist->setBarcode($u['bar_code']);
                 $product_exist->setItemCode($u['item_code']);
@@ -317,7 +284,7 @@ class SettingsController extends CrudController
                 $em->persist($product_exist);
 
             } else {
-                //user not found. create record
+                //product not found. create record
                 $product_new = new Product;
                 $product_new->setID($u['id']);
                 $product_new->setName($u['name']);
@@ -325,7 +292,6 @@ class SettingsController extends CrudController
                 $product_new->setItemCode($u['item_code']);
                 $product_new->setBrand($u['brand']);
                 $em->persist($product_new);
-
             }
         }
 
@@ -351,5 +317,4 @@ class SettingsController extends CrudController
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
     }
-
 }

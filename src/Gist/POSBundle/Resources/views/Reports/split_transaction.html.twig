@@ -12,7 +12,6 @@
 
                 <div class="portlet-body form">
                     <!-- BEGIN FORM-->
-
                         <div class="form-body">
                             <h4 class="form-section">Information</h4>
                             <div class="row">
@@ -37,7 +36,6 @@
                                 {% endif %}
 
                             </h4>
-
                             <table class="table table-striped table-bordered table-hover" style="margin-top: 20px;" id="list_table">
                                 <thead>
                                     <tr>
@@ -114,7 +112,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                    
                     <!-- END FORM-->
             </div>
         </div>
@@ -147,7 +144,6 @@
         }
 
         var new_percent = parseFloat(percent, 10);
-        // var fina_percent = new_percent.toFixed(2);
 
         $('.percent_allocation').each(function () {
             $(this).val(new_percent.toFixed(2));
@@ -186,7 +182,6 @@
             $('#partition_entries').append(field);
            autoCompute();
            computeAutoTotals();
-
         }
 
         function computeTotals() {
@@ -196,7 +191,6 @@
 
             var arr = [];
             i = 0;
-
 
             $('.percent_allocation').each(function() {
                 if ($(this).val() != '') {
@@ -315,7 +309,6 @@
             } else {
                 return false;
             }
-            
         }
 
         $(document).ready(function() {
@@ -377,7 +370,7 @@
                 }
 
             });
-            // $('.percent_allocation').on("change", function()
+
             $(document).on('keyup change', '.percent_allocation', function()
             {
                 var allocation = parseFloat($(this).val());

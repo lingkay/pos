@@ -16,10 +16,6 @@
 		                        <a href="#tab_sales_history" data-toggle="tab">
 		                            Sales History </a>
 		                    </li>
-		                    {#<li>
-		                        <a href="#tab_sync_settings" data-toggle="tab">
-		                            Users</a>
-		                    </li>#}
 		                </ul>
 		                <!-- END MAIN TABS -->
 		                <div class="tab-content">
@@ -111,12 +107,8 @@ $(document).ready(function(){
           showCancelButton: true
         },
         function(){
-                // alert('hello');
-                //location.reload();
             	syncUsers();
         });
-		//update users here
-		// syncUsers();
 	});
 
   $('#daterange').daterangepicker(
@@ -144,8 +136,6 @@ $(document).ready(function(){
         $('#cform-transaction_mode').val([]);
   });
 
-
-
   $('#filter_button').click(function (){
 
         var date_to = $('#cform-date_to').val();
@@ -170,10 +160,7 @@ $(document).ready(function(){
             mode = null;
         }
 
-        pathx = pathx.replace('RECEIPT_NUMBER', receipt_number).replace('DATE_FROM', date_from).replace('DATE_TO', date_to).replace('MODE', mode);  
-      
-
-        // path = generatePath();
+        pathx = pathx.replace('RECEIPT_NUMBER', receipt_number).replace('DATE_FROM', date_from).replace('DATE_TO', date_to).replace('MODE', mode);
         dTable.fnReloadAjax(pathx);
     });
 
@@ -181,7 +168,6 @@ $(document).ready(function(){
     if (mode != '') {
         $('#filter_button').trigger('click');
     }
-    
 });
 </script>
 {% endblock %}

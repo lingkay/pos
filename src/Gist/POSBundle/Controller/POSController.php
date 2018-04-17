@@ -90,9 +90,7 @@ class POSController extends Controller
         $params['restrict'] = 'false';
         $params['flag_upsell'] = 'true';
         $params['upsell_parent'] = $upsell_parent;
-
         $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
-
         $params['ea'] = $transaction_object->getExtraAmount();
 
         // check if selected transaction is still within upsell time limit
@@ -277,7 +275,6 @@ class POSController extends Controller
         $params['tax_rate'] = $var_tax_rate;
         $params['min_deposit_pct'] = $var_min_deposit;
         $params['exchange_limit'] = $var_exchange_limit;
-
         $params['cust_required_fields'] = $vars_req;
         $params['cust_visible_fields'] = $vars_visible;
         $params['bank_options'] = $vars;
@@ -341,7 +338,6 @@ class POSController extends Controller
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $frozen_transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('status'=>'Frozen'));
-
         $transactions = array();
 
         foreach ($frozen_transactions as $ft) {
@@ -492,7 +488,6 @@ class POSController extends Controller
         $transaction->setCustomerId($customer_id);
         $transaction->setTransactionBalance($balance);
         $transaction->setTransactionTotal($total);
-
         $transaction->setTransactionType($type);
         $transaction->setStatus($status);
         $transaction->setSyncedToErp('false');
@@ -501,17 +496,14 @@ class POSController extends Controller
         $transaction->setLocation($pos_loc_id);
         $transaction->setRefundMethod($refundMethod);
         $transaction->setRefundAmount($refundAmount);
-
         $transaction->setSelectedBulkDiscountType($selected_bulk_discount_type);
         $transaction->setSelectedBulkDiscountAmount($selected_bulk_discount_amount);
-
         $transaction->setDepositVatAmt($deposit_vat_amt);
         $transaction->setDepositAmtNetVat($deposit_vat_amt);
         $transaction->setBalanceVatAmt($balance_vat_amt);
         $transaction->setBalanceAmtNetVat($balance_amt_net_vat);
         $transaction->setBalance($balance);
         $transaction->setDepositAmount($deposit_amount);
-
         $transaction->setTaxRate($tax_rate);
         $transaction->setOrigVatAmt($orig_vat_amt);
         $transaction->setNewVatAmt($new_vat_amt);
@@ -530,7 +522,6 @@ class POSController extends Controller
         $transaction->setUserCreate($this->getUser());
         $transaction->setGCCredit($gcCredit);
         $transaction->setGCDebit($gcDebit);
-
 
         // GC Balance manipulation
         if ($customer_object->getGCNumber()) {
@@ -559,9 +550,6 @@ class POSController extends Controller
         $transaction->setTransDisplayId($new_display_id);
         $em->persist($transaction);
         $em->flush();
-
-
-
         $list_opts[] = array('status'=>$transaction->getStatus(),'new_id'=>$transaction->getID());
         return new JsonResponse($list_opts);
     }
@@ -665,35 +653,24 @@ class POSController extends Controller
             $adjusted_price = $orig_price;
         }
 
-
-
         if ($transaction->getTransactionType() == 'bulk') {
 
             $transactionTotalAmount = floatval($transaction->gettransactiontotal());
             $transactionOrigAmount = floatval($transaction->getCartOrigTotal());
-
             if ($transaction->getSelectedBulkDiscountType() == 'bdisc') {
                 $bulkDiscountAmount = $transaction->getSelectedBulkDiscountAmount();
-
                 $bulkDiscountedTotalAmount = floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountAmount)/100));
                 $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
-
             } elseif ($transaction->getSelectedBulkDiscountType() == 'bdiscamt') {
-
                 $bulkDiscountAmount = floatval($transaction->getSelectedBulkDiscountAmount());
                 $bulkDiscountPCTAmount = ($bulkDiscountAmount/$transactionOrigAmount) * 100;
-
                 $bulkDiscountedTotalAmount = floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountPCTAmount)/100));
                 $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
-
             } elseif ($transaction->getSelectedBulkDiscountType() == 'bamt') {
-
                 $bulkDiscountAmount = floatval($transaction->getSelectedBulkDiscountAmount());
                 $bulkDiscountPCTAmount = ($bulkDiscountAmount/$transactionOrigAmount) * 100;
-
                 $bulkDiscountedTotalAmount = floatval($adjusted_price) * (floatval($bulkDiscountPCTAmount)/100);
                 $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
-
             } elseif ($transaction->getSelectedBulkDiscountType() == 'bgift') {
                 $transaction_item->setTotalAmount(0.00);
             } else {
@@ -737,8 +714,6 @@ class POSController extends Controller
             $transaction_item->setReturned(false);
         }
 
-
-
         $em->persist($transaction_item);
         $em->flush();
 
@@ -751,7 +726,6 @@ class POSController extends Controller
 
         $em->persist($transaction_item);
         $em->flush();
-
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
     }
@@ -765,7 +739,6 @@ class POSController extends Controller
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction_payment = new POSTransactionPayment();
-
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($trans_sys_id);
         $transaction_payment->setTransaction($transaction);
         $transaction_payment->setType($payment_type);
@@ -782,7 +755,6 @@ class POSController extends Controller
         $transaction_payment->setCardCvv($cvv);
         $transaction_payment->setCheckDate($check_date);
         $transaction_payment->setCheckType($check_type);
-
         $em->persist($transaction_payment);
         $em->flush();
 
@@ -810,7 +782,6 @@ class POSController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('synced_to_erp'=>'false'));
-
         foreach ($transactions as $transaction) {
             $tax_rate = $transaction->getTaxRate();
             $OrigVatAmt = $transaction->getOrigVatAmt();
@@ -834,7 +805,6 @@ class POSController extends Controller
                 $referenceTransaction = 'n-a';
             }
 
-
             if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n-a'; }
             if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n-a'; }
             if (trim($NewVatAmt) == '' || $NewVatAmt == null) { $NewVatAmt = 'n-a'; }
@@ -851,38 +821,30 @@ class POSController extends Controller
 
             $result1 = file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea."/".$transaction->getUserCreate()->getERPID()."/".$referenceTransaction);
             $result2 = json_decode($result1, true);
-
             $transaction->setERPID($result2[0]['new_id']);
-
             $transaction->setSyncedToErp('true');
             $em->persist($transaction);
-
             $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
             $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
             $splits = $em->getRepository('GistPOSBundle:POSTransactionSplit')->findBy(array('transaction'=>$transaction));
 
             foreach ($payments as $payment) {
-
                 $bank = $payment->getBank();
                 $acct_num = $payment->getAccountNumber();
                 $terminal = $payment->getCardTerminalOperator();
                 $check_type = $payment->getCheckType();
                 $check_date = $payment->getCheckDate();
                 $control_number = $payment->getControlNumber();
-
-
                 if (trim($bank) == '' || $bank == null) { $bank = 'n-a'; }
                 if (trim($acct_num) == '' || $acct_num == null) { $acct_num = 'n-a'; }
                 if (trim($terminal) == '' || $terminal == null) { $terminal = 'n-a'; }
                 if (trim($check_type) == '' || $check_type == null) { $check_type = 'n-a'; }
                 if (trim($check_date) == '' || $check_date == null) { $check_date = 'n-a'; }
                 if (trim($control_number) == '' || $control_number == null) { $control_number = 'n-a'; }
-
                 file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount()."/".$bank."/".$terminal."/".$check_type."/".$check_date."/".$control_number."/".$acct_num);
             }
 
             foreach ($items as $item) {
-
                 $isRet = 'false';
                 if ($item->getReturned()) {
                     $isRet = 'true';
@@ -899,7 +861,6 @@ class POSController extends Controller
             foreach ($splits as $split) {
                 file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_split/".$transaction->getTransDisplayId()."/".$split->getConsultant()->getERPID()."/".$split->getAmount()."/".$split->getPercent());
             }
-
         }
 
         $em->flush();
@@ -913,8 +874,6 @@ class POSController extends Controller
      */
     public function printReceiptAction($id)
     {
-        $data = $this->getRequest()->request->all();
-        
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         
@@ -930,7 +889,6 @@ class POSController extends Controller
         $twig = 'GistPOSBundle:POS:receipt.html.twig';
         $pdf = $this->get('gist_pdf');
         $pdf->newPdf('pos_receipt');
-
         $html = $this->render($twig, $params);
         return $pdf->printPdf($html->getContent());
     }
@@ -943,14 +901,11 @@ class POSController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $clock = new POSClock();
-
         $clock->setDate(new DateTime);
         $clock->setType($type);
         $clock->setUserId($this->getUser()->getId());
-
         $em->persist($clock);
         $em->flush();
-
         $list_opts[] = array('status'=>'ok');
         return new JsonResponse($list_opts);
     }
@@ -962,18 +917,15 @@ class POSController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
-
         $new_transaction = clone $transaction;
         $new_transaction->setReferenceTransaction($transaction);
         $em->persist($new_transaction);
         $em->flush();
-
         $new_display_id = strtoupper('N').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
         $new_transaction->setTransDisplayId($new_display_id);
         $new_transaction->setTransactionMode('normal');
         $em->persist($new_transaction);
         $em->flush();
-
         $this->addFlash('success', 'Quotation converted to sale '.$new_transaction->getTransDisplayId());
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
@@ -985,12 +937,10 @@ class POSController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
-
         $new_transaction = clone $transaction;
         $new_transaction->setReferenceTransaction($transaction);
         $em->persist($new_transaction);
         $em->flush();
-
         $new_display_id = strtoupper('U').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
         $new_transaction->setTransDisplayId($new_display_id);
         $new_transaction->setTransactionMode('upsell');
@@ -1007,8 +957,6 @@ class POSController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $transaction_id = '';
-
-
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         if ($transaction) {
             $transaction_id = $transaction->getTransDisplayId();
@@ -1025,7 +973,6 @@ class POSController extends Controller
 
             $em->remove($transaction);
             $em->flush();
-
             $this->addFlash('success', 'Transaction ' . $transaction_id . ' deleted!');
             return $this->redirect($this->generateUrl('gist_pos_reports'));
         }
@@ -1034,4 +981,3 @@ class POSController extends Controller
         return $this->redirect($this->generateUrl('gist_pos_reports'));
     }
 }
-

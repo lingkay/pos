@@ -59,10 +59,7 @@
         }
 
         $(document).ready(function(){
-
             var dTable;
-
-
             dTable = $('#list_table').dataTable({
                 "bProcessing": true,
                 "bLengthChange": false,
@@ -109,12 +106,8 @@
                         showCancelButton: true
                     },
                     function(){
-                        // alert('hello');
-                        //location.reload();
                         syncUsers();
                     });
-                //update users here
-                // syncUsers();
             });
 
             $('#daterange').daterangepicker(
@@ -150,8 +143,6 @@
                 }
                 $(this).val(foo);
             });
-
-
 
             $('#filter_button').click(function (){
 
@@ -197,9 +188,6 @@
                 }
 
                 pathx = pathx.replace('RECEIPT_NUMBER', receipt_number).replace('DATE_FROM', date_from).replace('DATE_TO', date_to).replace('MODE', mode).replace('CUST_NAME', cust_name).replace('CUST_ID', cust_id).replace('CUST_NUMBER', cust_number);
-
-
-                // path = generatePath();
                 dTable.fnReloadAjax(pathx);
             });
 
@@ -207,7 +195,6 @@
             if (mode != '') {
                 $('#filter_button').trigger('click');
             }
-
         });
     </script>
 {% endblock %}

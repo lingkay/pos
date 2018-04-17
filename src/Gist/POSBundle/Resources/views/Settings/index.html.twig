@@ -70,7 +70,6 @@ function syncUsers()
             	location.reload();
                 
             });
-
         });
     });
 }
@@ -91,7 +90,6 @@ function syncProducts()
                     location.reload();
 
                 });
-
         });
     });
 }
@@ -112,7 +110,6 @@ function syncCustomers()
             	location.reload();
                 
             });
-
         });
     });
 }
@@ -129,12 +126,8 @@ $(document).ready(function(){
           showCancelButton: true
         },
         function(){
-                // alert('hello');
-                //location.reload();
             	syncUsers();
         });
-		//update users here
-		// syncUsers();
 	});
 
     $(document).on("click",".sync_products", function(e){
@@ -147,12 +140,8 @@ $(document).ready(function(){
                 showCancelButton: true
             },
             function(){
-                // alert('hello');
-                //location.reload();
                 syncProducts();
             });
-        //update users here
-        // syncUsers();
     });
 
 	$(document).on("click",".sync_customers", function(e){
@@ -165,12 +154,8 @@ $(document).ready(function(){
           showCancelButton: true
         },
         function(){
-                // alert('hello');
-                //location.reload();
             	syncCustomers();
         });
-		//update users here
-		// syncUsers();
 	});
     
 });

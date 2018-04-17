@@ -2,15 +2,10 @@
 
 namespace Gist\POSBundle\Controller;
 
-// use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Gist\GridBundle\Model\Grid\Exception;
 use Gist\TemplateBundle\Model\CrudController;
-use Gist\POSBundle\Entity\POSTransaction;
-use Gist\POSBundle\Entity\POSTransactionItem;
 use Gist\POSBundle\Entity\POSTransactionSplit;
 use Gist\POSBundle\Entity\POSClock;
-use Gist\UserBundle\Entity\User;
-use Gist\POSBundle\Entity\POSTransactionPayment;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
@@ -22,7 +17,6 @@ class ReportsController extends CrudController
     {
         $this->route_prefix = 'gist_pos_reports';
         $this->title = 'Reports';
-
         $this->list_title = 'Reports';
         $this->list_type = 'static';
     }
@@ -218,8 +212,6 @@ class ReportsController extends CrudController
         try
         {
             $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id'=>$id));
-
-            //remove previous splits
             if ($transaction->hasSplit()) {
                 foreach ($transaction->getSplits() as $split) {
                     $em->remove($split);
@@ -230,14 +222,13 @@ class ReportsController extends CrudController
             foreach ($data['consultant_id'] as $key => $value) {
                 $split_entry = new POSTransactionSplit();
                 $consultant = $em->getRepository('GistUserBundle:User')->findOneBy(array('erp_id'=>$value));
-
                 $split_entry->setConsultant($consultant);
                 $split_entry->setTransaction($transaction);
                 $split_entry->setAmount($data['amount_allocation'][$key]);
                 $split_entry->setPercent($data['percent_allocation'][$key]);
                 $em->persist($split_entry);
             }
-            //die();
+
             $em->flush();
             $this->addFlash('success', 'Transaction split for '.$transaction->getTransDisplayId().' saved!');
             return $this->redirect($this->generateUrl('gist_pos_split_transaction_form',array('id'=>$id)).$this->url_append);
@@ -261,10 +252,8 @@ class ReportsController extends CrudController
         return array(
             $grid->newColumn('ID', 'getID', 'id'),
             $grid->newColumn('Receipt Number', 'getTransDisplayId', 'trans_display_id'),
-            // $grid->newColumn('Reference', 'getReferenceTransactionDisplayID', 'id'),
             $grid->newColumn('Reference', 'getID', 'id','o',array($this,'formatReferenceLink')),
             $grid->newColumn('Transaction Date','getDateCreateFormattedPOS','date_create'),
-            //$grid->newColumn('Location', 'null', 'null'),
             $grid->newColumn('EA', 'getExtraAmount', 'extra_amount'),
             $grid->newColumn('Type', 'getTransactionModeFormatted', 'mode'),
         );
@@ -322,10 +311,6 @@ class ReportsController extends CrudController
             'frozen' => 'Frozen'
         );
         $params['grid_cols'] = $gl->getColumns();
-
-        //$params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
-
-
         return $this->render('GistPOSBundle:Reports:index.html.twig', $params);
     }
 
@@ -335,7 +320,6 @@ class ReportsController extends CrudController
         $em = $this->getDoctrine()->getManager();
         $this->title = 'Dashboard';
         $gl = $this->setupGridLoader();
-
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
         $params['sys_area_id'] = $conf->get('gist_sys_area_id');
@@ -349,10 +333,6 @@ class ReportsController extends CrudController
         );
         $params['grid_cols'] = $gl->getColumns();
         $params['mode'] = $mode;
-
-        //$params['sales_records'] = $em->getRepository('GistPOSBundle:POSTransaction')->findAll();
-
-
         return $this->render('GistPOSBundle:Reports:index.html.twig', $params);
     }
 
@@ -360,9 +340,6 @@ class ReportsController extends CrudController
     {
         $this->title = 'Dashboard';
         $params = $this->getViewParams('', 'gist_dashboard_index');
-
-
-
         return $this->render('GistPOSBundle:Dashboard:main.html.twig', $params);
     }
 
@@ -374,7 +351,6 @@ class ReportsController extends CrudController
         $this->hookPreAction();
         try
         {
-
             $conf->set('gist_sys_area_id', $data['sys_area_id']);
             $em->flush();
             if($this->submit_redirect){
@@ -393,22 +369,16 @@ class ReportsController extends CrudController
             error_log($e->getMessage());
             return $this->addError($obj);
         }
-
     }
-
-
 
     public function gridSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null)
     {
         $this->hookPreAction();
-
         $gloader = $this->setupGridLoader();
-
         $gloader->setQBFilterGroup($this->filterSalesHistory($receipt_number,$date_from,$date_to, $mode));
         $gres = $gloader->load();
         $resp = new Response($gres->getJSON());
         $resp->headers->set('Content-Type', 'application/json');
-
         return $resp;
     }
 
@@ -417,11 +387,9 @@ class ReportsController extends CrudController
         $grid = $this->get('gist_grid');
         $fg = $grid->newFilterGroup();
         $date = new DateTime();
-
         $date_from = $date_from=='null'? new DateTime($date->format('Ym01')):new DateTime($date_from);
         $date_to = $date_to=='null'? new DateTime($date->format('Ymt')):new DateTime($date_to);
         $date_to = $date_to->modify('+1 day');
-
         $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
 
 
@@ -444,7 +412,6 @@ class ReportsController extends CrudController
     }
 
 //    REFUND
-
     public function indexRefundAction()
     {
         $conf = $this->get('gist_configuration');
@@ -502,9 +469,7 @@ class ReportsController extends CrudController
     public function gridRefundSalesHistoryAction($receipt_number = null, $date_from = null, $date_to = null, $mode = null, $cust_name = null, $cust_id = null, $cust_number = null)
     {
         $this->hookPreAction();
-
         $gloader = $this->setupRefundGridLoader();
-
         $gloader->setQBFilterGroup($this->filterRefundHistory($receipt_number,$date_from,$date_to, $mode, $cust_name, $cust_id, $cust_number));
         $gres = $gloader->load();
         $resp = new Response($gres->getJSON());
@@ -533,13 +498,10 @@ class ReportsController extends CrudController
         $grid = $this->get('gist_grid');
         $fg = $grid->newFilterGroup();
         $date = new DateTime();
-
         $date_from = $date_from=='null'? new DateTime($date->format('Ym01')):new DateTime($date_from);
         $date_to = $date_to=='null'? new DateTime($date->format('Ymt')):new DateTime($date_to);
         $date_to = $date_to->modify('+1 day');
-
         $qry[] = "(o.date_create >= '".$date_from->format('Y-m-d')."' AND o.date_create < '".$date_to->format('Y-m-d')."')";
-
 
         if ($receipt_number != null and $receipt_number != 'null')
         {
@@ -571,8 +533,6 @@ class ReportsController extends CrudController
         {
             $filter = implode(' AND ', $qry);
         }
-
         return $fg->where($filter);
     }
-
 }

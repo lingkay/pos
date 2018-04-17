@@ -30,7 +30,6 @@
         </div>
     </div>
 </div>
-
 <div id="pos_modal" class="modal fade" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog" style="width: 800px !important;">
             <div class="modal-content">
@@ -59,10 +58,6 @@
                             </div>
                         </div>
                     </div>
-                    {#<div class="modal-footer">
-                        <a class="btn default green proceed_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
-                    </div>#}
                 </form>
             </div>
         </div>
@@ -74,24 +69,20 @@
 function ajaxGetProductCategories()
 {
     $( "#prod_cats" ).empty();
-
     var url = "http://erp.purltech.co/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
-            // alert(item.name);
             $("#prod_cats").append("<button class=\"btn btn-md btn-block\" onclick=\"ajaxGetProductCategories("+item.id+")\" style=\"background-color: #556E93; color: #ffffff;\">"+item.name+"</button>");
         });
     });
 }
 function ajaxGetProductCategories(cid)
 {
-    
     var url = "http://erp.purltech.co/inventory/pos/get/products/{ cid: ':cid'}";
     url = url.replace(":cid", cid);
     $.getJSON(url, function(json){  
        $.each(json, function(i, item) {
             alert(item.name);
-
         });
     });
 }

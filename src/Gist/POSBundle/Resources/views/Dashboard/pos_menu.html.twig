@@ -106,8 +106,6 @@ function clock(type)
 }
 
 $(document).ready(function(){
-    //ajaxGetProductCategories();
-
     var dept = "{{app.user.getDepartment|escape('js')}}";
     if (dept == 'Sales') {
         $('#pos_modal').modal('show');
@@ -121,10 +119,6 @@ $(document).ready(function(){
             });
         });
     });
-
-    // $(document).on("click",".pos_button", function(e){
-    //     $('#pos_modal').modal('show');
-    // });
 });
 </script>
 {% endblock %}
