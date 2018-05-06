@@ -38,68 +38,96 @@ class AttendanceController extends CrudController
 
     public function indexAction($date = null)
     {
-        $conf = $this->get('gist_configuration');
-        $em = $this->getDoctrine()->getManager();
-        $this->title = 'Dashboard';
-        $params = $this->getViewParams('', 'gist_dashboard_index');
-        $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
-        $customers = $em->getRepository('GistPOSBundle:POSCustomer')->findAll();
-        $products = $em->getRepository('GistInventoryBundle:Product')->findAll();
-        $params['sys_area_id'] = $conf->get('gist_sys_area_id');
-        $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
-        $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
-        $params['sys_pos_loc_id'] = $conf->get('gist_sys_pos_loc_id');
-        $params['gist_sys_pos_name'] = $conf->get('gist_sys_pos_name');
-        $params['erp_gc_id'] = $conf->get('erp_gc_id');
-        $params['users'] = $user_exist;
-        $params['products'] = $products;
-        $params['customers'] = $customers;
+        try {
+            $conf = $this->get('gist_configuration');
+            $em = $this->getDoctrine()->getManager();
+            $this->title = 'Dashboard';
+            $params = $this->getViewParams('', 'gist_dashboard_index');
+            $user_exist = $em->getRepository('GistUserBundle:User')->findAll();
+            $customers = $em->getRepository('GistPOSBundle:POSCustomer')->findAll();
+            $products = $em->getRepository('GistInventoryBundle:Product')->findAll();
+            $params['sys_area_id'] = $conf->get('gist_sys_area_id');
+            $params['sys_pos_url'] = $conf->get('gist_sys_pos_url');
+            $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
+            $params['sys_pos_loc_id'] = $conf->get('gist_sys_pos_loc_id');
+            $params['gist_sys_pos_name'] = $conf->get('gist_sys_pos_name');
+            $params['erp_gc_id'] = $conf->get('erp_gc_id');
+            $params['users'] = $user_exist;
+            $params['products'] = $products;
+            $params['customers'] = $customers;
 
 
-        $params['erp_url'] = $conf->get('gist_sys_erp_url');
+            $params['erp_url'] = $conf->get('gist_sys_erp_url');
 
-        $params['employee_id'] = $this->getUser()->getERPID();
+            $params['employee_id'] = $this->getUser()->getERPID();
 
-        if ($date == null) {
-            $date = new DateTime();
-            $date = $date->format('m-d-Y');
-        }
-        $dateFMTD = DateTime::createFromFormat('m-d-Y', $date);
+            $dateToday = new DateTime();
+
+            if ($date == null) {
+                $date = new DateTime();
+                $date = $date->format('m-d-Y');
+            }
+            $dateFMTD = DateTime::createFromFormat('m-d-Y', $date);
 
 
-        $url= $conf->get('gist_sys_erp_url')."/workforce/pos_attendance/get_all_by_date/".$this->getUser()->getERPID()."/".$dateFMTD->format('Y-m-d');
-        $result = file_get_contents($url);
-        $params['attendance_entries'] = json_decode($result, true);
-        $params['date_filter'] = $dateFMTD->format('m/d/Y');
+            $url= $conf->get('gist_sys_erp_url')."/workforce/pos_attendance/get_all_by_date/".$this->getUser()->getERPID()."/".$dateFMTD->format('Y-m-d');
+            $result = file_get_contents($url);
+            $params['attendance_entries'] = json_decode($result, true);
+            $params['date_filter'] = $dateFMTD->format('m/d/Y');
 
-        $url2= $conf->get('gist_sys_erp_url')."/workforce/pos_attendance/get_last/".$this->getUser()->getERPID()."/".$dateFMTD->format('Y-m-d');
-        $result2 = file_get_contents($url2);
-        $lastEntry = json_decode($result2, true);
-        $params['last_entry'] = $lastEntry;
+            $url2= $conf->get('gist_sys_erp_url')."/workforce/pos_attendance/get_last/".$this->getUser()->getERPID()."/".$dateToday->format('Y-m-d');
+            $result2 = file_get_contents($url2);
+            $lastEntry = json_decode($result2, true);
+            $params['last_entry'] = $lastEntry;
 
-        if ($lastEntry != null) {
-            if ($lastEntry[0]['type'] == 'WORK') {
-                if ($lastEntry[0]['status'] == "IN") {
-                    $params['type_opts'] = array('WORK' => 'Work', 'BREAK' => 'Break');
-                } else {
-                    $params['type_opts'] = array('TRANSFER' => 'Transfer');
-                }
-            } elseif ($lastEntry[0]['type'] == 'BREAK') {
-                if ($lastEntry[0]['status'] == "OUT") {
-                    $params['type_opts'] = array('WORK' => 'Work');
-                } else {
-                    $params['type_opts'] = array('BREAK' => 'Break');
+            $params['form_disable'] = "false";
+
+            if ($lastEntry != null) {
+                if ($lastEntry[0]['type'] == 'WORK') {
+                    if ($lastEntry[0]['status'] == "IN") {
+                        $params['type_opts'] = array('WORK' => 'Work', 'BREAK' => 'Break', 'TRANSFER' => 'Transfer');
+                        $params['can_clock_in'] = "true";
+                        $params['can_clock_out'] = "true";
+                    } else {
+                        $params['type_opts'] = array();
+                        $params['form_disable'] = "true";
+                        $params['can_clock_in'] = "false";
+                        $params['can_clock_out'] = "false";
+                    }
+                } elseif ($lastEntry[0]['type'] == 'BREAK') {
+                    if ($lastEntry[0]['status'] == "OUT") {
+                        $params['type_opts'] = array('WORK' => 'Work', 'TRANSFER' => 'Transfer');
+                        $params['can_clock_in'] = "true";
+                        $params['can_clock_out'] = "true";
+                    } else {
+                        $params['type_opts'] = array('BREAK' => 'Break');
+                        $params['can_clock_in'] = "false";
+                        $params['can_clock_out'] = "true";
+                    }
+                } elseif ($lastEntry[0]['type'] == 'TRANSFER') {
+                    if ($lastEntry[0]['status'] == "IN") {
+                        $params['type_opts'] = array('TRANSFER' => 'Transfer');
+                        $params['can_clock_in'] = "false";
+                        $params['can_clock_out'] = "true";
+                    } else {
+                        $params['type_opts'] = array('WORK' => 'Work', 'BREAK' => 'Break');
+                        $params['can_clock_in'] = "true";
+                        $params['can_clock_out'] = "true";
+                    }
                 }
             } else {
-                $params['type_opts'] = array('TRANSFER' => 'Transfer', 'BREAK' => 'Break');
+                $params['type_opts'] = array('WORK' => 'Work');
+                $params['can_clock_in'] = "true";
+                $params['can_clock_out'] = "false";
             }
-        } else {
-            $params['type_opts'] = array('WORK' => 'Work');
+
+
+
+            return $this->render('GistPOSBundle:Attendance:index.html.twig', $params);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Cannot open attendance page! Contact administrator.');
+            return $this->redirect("/");
         }
-
-
-
-        return $this->render('GistPOSBundle:Attendance:index.html.twig', $params);
     }
 
     public function landingAction()

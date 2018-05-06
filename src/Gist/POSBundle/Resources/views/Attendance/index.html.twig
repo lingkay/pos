@@ -143,13 +143,22 @@
                         </ul>
                     </div>
                     <br>
-                    {{ form.group_select_no_default('Clock Type','type',type_opts,'',3,4) }}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <a href="javascript:;" class="form-control btn green" id="clock-in">Clock IN</a>
+                    <div id="att_controls_hidden">
+                        <div class="row" style="border: 1px solid black; height: 70px;">
+                            <div class="col-md-12" style="text-align: center; padding-top: 6px;">
+                                <h3><span style="text-align: center;">Controls disabled. Work OUT already submitted for <a href="/attendance">today</a>.</span></h3>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <a href="javascript:;" class="form-control btn red" id="clock-out">Clock OUT</a>
+                    </div>
+                    <div id="att_controls">
+                    {{ form.group_select_no_default('Clock Type','type',type_opts,'',3,4) }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="javascript:;" class="form-control btn green" id="clock-in">Clock IN</a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="javascript:;" class="form-control btn red" id="clock-out">Clock OUT</a>
+                            </div>
                         </div>
                     </div>
                     <br>
@@ -189,7 +198,16 @@
         $(document).ready(function(){
             var last_entry_status = "{{ last_entry[0]['status']|default('OUT') }}";
             var last_entry_type = "{{ last_entry[0]['type']|default('WORK') }}";
+            var can_clock_out = "{{ can_clock_out }}";
+            var can_clock_in = "{{ can_clock_in }}";
+            var form_disable = "{{ form_disable }}";
 
+            $('#att_controls_hidden').hide();
+
+            if (form_disable == "true") {
+                $('#att_controls').hide();
+                $('#att_controls_hidden').show();
+            }
 
             $('.calendar').prop('disabled', true);
             $('#cform-date').datepicker({
@@ -279,74 +297,97 @@
             $(document).on("click","#clock-in", function(e){
                 var type = $('#cform-type').val();
 
-                // if (last_entry_status == 'IN' && last_entry_type == type) {
-                //     e.preventDefault();
-                //     $('#clock-in').removeAttr("href");
-                //     toastr['error']('Cannot clock IN!', 'Error');
-                //     return 0;
-                // }
-                //
-                // if (last_entry_status == 'OUT' && last_entry_type == 'BREAK') {
-                //     e.preventDefault();
-                //     $('#clock-in').removeAttr("href");
-                //     toastr['error']('Cannot clock IN!', 'Error');
-                //     return 0;
-                // }
-
-
-                var d = new Date();
-                var month = d.getMonth()+1;
-                var day = d.getDate();
-                var output = d.getFullYear() + '-' +
-                    (month<10 ? '0' : '') + month + '-' +
-                    (day<10 ? '0' : '') + day + ' ' + (d.getHours()<10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes()<10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds()<10 ? '0' : '') + d.getSeconds();
-
-                var url = "{{ erp_url }}/workforce/pos_attendance/receive_pos/{{ employee_id }}/{{ sys_pos_loc_id }}/IN/"+ type + "/" + output;
-                $.getJSON(url, function(json) {
-                    console.log(json);
-                    if (json['success']) {
-                        toastr['success']('Attendance Submitted!', 'Success');
-                        location.reload();
-                    } else {
-                        toastr['error']('Cannot process request!', 'Error');
-                        location.reload();
+                if (can_clock_in == "true") {
+                    if (last_entry_type == "WORK" && last_entry_status == "IN") {
+                        if (type == "WORK") {
+                            toastr['error']('Cannot clock-in! Work IN already submitted.', 'Operation not allowed');
+                            return 0;
+                        }
+                    } else if (last_entry_type == "BREAK" && last_entry_status == "IN") {
+                        if (type == "BREAK") {
+                            toastr['error']('Cannot clock-in! Break IN already submitted.', 'Operation not allowed');
+                            return 0;
+                        }
+                    } else if (last_entry_type == "BREAK" && last_entry_status == "OUT") {
+                        if (type == "WORK") {
+                            toastr['error']('Cannot clock-in! Work IN already submitted.', 'Operation not allowed');
+                            return 0;
+                        }
+                    } else if (last_entry_type == "TRANSFER" && last_entry_status == "OUT") {
+                        if (type == "WORK") {
+                            toastr['error']('Cannot clock-in! Work IN already submitted.', 'Operation not allowed');
+                            return 0;
+                        }
                     }
-                });
+
+                    var d = new Date();
+                    var month = d.getMonth()+1;
+                    var day = d.getDate();
+                    var output = d.getFullYear() + '-' +
+                        (month<10 ? '0' : '') + month + '-' +
+                        (day<10 ? '0' : '') + day + ' ' + (d.getHours()<10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes()<10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds()<10 ? '0' : '') + d.getSeconds();
+
+                    var url = "{{ erp_url }}/workforce/pos_attendance/receive_pos/{{ employee_id }}/{{ sys_pos_loc_id }}/IN/"+ type + "/" + output;
+                    $.getJSON(url, function(json) {
+                        console.log(json);
+                        if (json['success']) {
+                            toastr['success']('Attendance Submitted!', 'Success');
+                            location.reload();
+                        } else {
+                            toastr['error']('Cannot process request!', 'Error');
+                            location.reload();
+                        }
+                    });
+                } else {
+                    toastr['error']('Cannot clock-in!', 'Operation not allowed');
+                }
             });
 
             $(document).on("click","#clock-out", function(e){
                 var type = $('#cform-type').val();
-                // if (last_entry_status == 'IN' && last_entry_type == 'WORK' && type == 'BREAK') {
-                //     e.preventDefault();
-                //     $('#clock-in').removeAttr("href");
-                //     toastr['error']('Cannot clock OUT!', 'Error');
-                //     return 0;
-                // } else if (last_entry_status == 'OUT' && (last_entry_type != 'WORK' && type == 'WORK')) {
-                //     e.preventDefault();
-                //     $('#clock-in').removeAttr("href");
-                //     toastr['error']('Cannot clock OUT!', 'Error');
-                //     return 0;
-                // }
 
-
-                var d = new Date();
-                var month = d.getMonth()+1;
-                var day = d.getDate();
-                var output = d.getFullYear() + '-' +
-                    (month<10 ? '0' : '') + month + '-' +
-                    (day<10 ? '0' : '') + day + ' ' + (d.getHours()<10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes()<10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds()<10 ? '0' : '') + d.getSeconds();
-
-                var url = "{{ erp_url }}/workforce/pos_attendance/receive_pos/{{ employee_id }}/{{ sys_pos_loc_id }}/OUT/"+ type + "/" + output;
-                $.getJSON(url, function(json) {
-                    console.log(json);
-                    if (json['success']) {
-                        toastr['success']('Attendance Submitted!', 'Success');
-                        location.reload();
-                    } else {
-                        toastr['error']('Cannot process request!', 'Error');
-                        location.reload();
+                if (can_clock_out == "true") {
+                    if (last_entry_type == "WORK" && last_entry_status == "IN") {
+                        if (type == "BREAK") {
+                            toastr['error']('Cannot clock-out! No Break IN submitted.', 'Operation not allowed');
+                            return 0;
+                        } else if (type == "TRANSFER") {
+                            toastr['error']('Cannot clock-out! No Transfer IN submitted.', 'Operation not allowed');
+                            return 0;
+                        }
+                    } else if (last_entry_type == "BREAK" && last_entry_status == "OUT") {
+                        if (type == "TRANSFER") {
+                            toastr['error']('Cannot clock-out! No Transfer IN submitted.', 'Operation not allowed');
+                            return 0;
+                        }
+                    } else if (last_entry_type == "TRANSFER" && last_entry_status == "OUT") {
+                        if (type == "BREAK") {
+                            toastr['error']('Cannot clock-out! No Break IN submitted.', 'Operation not allowed');
+                            return 0;
+                        }
                     }
-                });
+
+                    var d = new Date();
+                    var month = d.getMonth()+1;
+                    var day = d.getDate();
+                    var output = d.getFullYear() + '-' +
+                        (month<10 ? '0' : '') + month + '-' +
+                        (day<10 ? '0' : '') + day + ' ' + (d.getHours()<10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes()<10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds()<10 ? '0' : '') + d.getSeconds();
+
+                    var url = "{{ erp_url }}/workforce/pos_attendance/receive_pos/{{ employee_id }}/{{ sys_pos_loc_id }}/OUT/"+ type + "/" + output;
+                    $.getJSON(url, function(json) {
+                        console.log(json);
+                        if (json['success']) {
+                            toastr['success']('Attendance Submitted!', 'Success');
+                            location.reload();
+                        } else {
+                            toastr['error']('Cannot process request!', 'Error');
+                            location.reload();
+                        }
+                    });
+                } else {
+                    toastr['error']('Cannot clock-out!', 'Operation not allowed');
+                }
             });
 
         });
