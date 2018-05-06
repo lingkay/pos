@@ -1,0 +1,354 @@
+{% extends "GistTemplateBundle::base.html.twig" %}
+{% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% block css %}
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Rajdhani:500);
+
+    .container {
+        font-family: "Rajdhani", sans-serif;
+        /*opacity: 0.3;*/
+        center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        background-size: cover;
+        width: 960px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .clock {
+        background-color: rgba(0, 0, 0, 0.1);
+        width: 600px;
+        margin: 60px auto;
+        padding: 20px;
+        color: #000;
+        border: 1px solid #333;
+    }
+
+    #Date {
+        font-family: "Rajdhani", sans-serif;
+        font-size: 26px;
+        text-align: center;
+    }
+
+    #clock_ul {
+        width: 600px;
+        margin: 0 auto;
+        padding: 0px;
+        list-style: none;
+        text-align: center;
+    }
+
+    #clock_ul li {
+        display: inline;
+        font-size: 6em;
+        text-align: center;
+        font-family: "Rajdhani", sans-serif;
+    }
+
+    #col {
+        position: relative;
+        -moz-animation: mymove 1s ease infinite;
+        -webkit-animation: mymove 1s ease infinite;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Simple Animation */
+    @-webkit-keyframes mymove {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+            text-shadow: none;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @-moz-keyframes mymove {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+            text-shadow: none;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+
+
+    /*Night*/
+
+    .klick {
+        text-align: center;
+    }
+
+    .ghost {
+        color: #000;
+        background: black;
+        border: 1px solid #000;
+        font-size: 17px;
+        padding: 7px 12px;
+        font-weight: normal;
+        margin: 6px 0;
+        margin-right: 12px;
+        display: inline-block;
+        text-decoration: none;
+        font-family: "Open Sans", sans-serif;
+        min-width: 120px;
+        text-align: center;
+        border-radius: 2px;
+    }
+
+    .ghost:hover,
+    .ghost-button:active {
+        color: #fff;
+        background: #000;
+    }
+
+    @media all and (max-width: 600px) {
+        .klick {
+            float: left;
+        }
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+    <div class="page-content">
+        <form method="post" class="form-horizontal">
+            <div class="row" style="width: 100%;">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h2 class="form-section">Attendance</h2>
+                    <a href="/">Return to Main Menu</a>
+                    <div class="clock">
+                        <div id="Date"></div>
+                        <ul id="clock_ul">
+                            <li id="hrs"></li>
+                            <li id="col">:</li>
+                            <li id="min"></li>
+                            <li id="col">:</li>
+                            <li id="sec"></li>
+                        </ul>
+                    </div>
+                    <br>
+                    {{ form.group_select_no_default('Clock Type','type',type_opts,'',3,4) }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="javascript:;" class="form-control btn green" id="clock-in">Clock IN</a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="javascript:;" class="form-control btn red" id="clock-out">Clock OUT</a>
+                        </div>
+                    </div>
+                    <br>
+                    <h3>Attendance Entries</h3>
+                    <hr>
+                    <form method="get" id="filterForm">
+                        {{ form.group_date_pos('Filter Date','date', date_filter|default(''),4,6) }}
+                    </form>
+                    <table class="table table-striped" id="list_table">
+                        <thead>
+                        <tr>
+                            <th>Entry ID</th>
+                            <th>Date & Time</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for e in attendance_entries %}
+                        <tr>
+                            <td style="text-align: center">{{ e['id'] }}</td>
+                            <td style="text-align: center">{{ e['datetime'] }}</td>
+                            <td style="text-align: center">{{ e['type'] }}</td>
+                            <td style="text-align: center">{{ e['status'] }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        $(document).ready(function(){
+            var last_entry_status = "{{ last_entry[0]['status']|default('OUT') }}";
+            var last_entry_type = "{{ last_entry[0]['type']|default('WORK') }}";
+
+
+            $('.calendar').prop('disabled', true);
+            $('#cform-date').datepicker({
+                autoclose: true,
+                maxDate: new Date()
+            });
+
+            $('#cform-date').datepicker().on('changeDate', function (ev) {
+                if (ev.dates && !ev.date)
+                {
+                    $(this).datepicker('setDate',new Date());
+                }
+
+                var path = "{{ path('gist_pos_attendance', {
+                    'date' : 'DATE'}
+                ) }}";
+
+                path = path.replace('DATE', $('#cform-date').val().replace('/','-').replace('/','-'));
+                location.replace(path);
+            });
+
+            var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+            var dayNames= ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+
+            var newDate = new Date();
+            newDate.setDate(newDate.getDate());
+
+            $('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + ' ' + monthNames[newDate.getMonth()] + ' ' + newDate.getFullYear());
+
+            setInterval( function() {
+                var seconds = new Date().getSeconds();
+                $("#sec").html(( seconds < 10 ? "0" : "" ) + seconds);
+            },1000);
+
+            setInterval( function() {
+                var minutes = new Date().getMinutes();
+                $("#min").html(( minutes < 10 ? "0" : "" ) + minutes);
+            },1000);
+
+            setInterval( function() {
+                var hours = new Date().getHours();
+                $("#hrs").html(( hours < 10 ? "0" : "" ) + hours);
+            }, 1000);
+
+            //Made this Clock with Alessio Atzenis Tutorial on http://www.jqueryrain.com/?GFHGsTco
+
+
+            $(".night").click(function() {
+                $(".clock").css("background-color", "rgba(0,0,0, .9)");
+                $("ul, #Date").css("color", "#b1d4d4");
+            });
+
+            $(".day").click(function() {
+                $(".clock").css("background-color", "rgba(0,0,0, .1)");
+                $("ul, #Date").css("color", "#000");
+            });
+
+
+            var dTable;
+
+            dTable = $('#list_table').dataTable({
+                "bProcessing": true,
+                "bLengthChange": false,
+                "bFilter":false,
+                "bInfo":false,
+                "bServerSide": false,
+                "iDisplayLength": 8,
+                "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "Prev",
+                        "sNext": "Next"
+                    }
+                },
+                "aoColumnDefs": [
+                    {#{ "bSortable": false, "aTargets": [2,4,{{ grid_cols|length - 1}}] },#}
+                ],
+                "bAutoWidth": false ,
+                "aaSorting" : [[0, 'desc']]
+            });
+
+            $('#list_table_wrapper .dataTables_filter input').addClass("form-control input-small input-inline"); // modify table search input
+            $('#list_table_wrapper .dataTables_length select').addClass("form-control input-xsmall input-inline"); // modify table per page dropdown
+            $('#list_table_wrapper .dataTables_length select').select2(); // initialize select2 dropdown
+
+            $(document).on("click","#clock-in", function(e){
+                var type = $('#cform-type').val();
+
+                // if (last_entry_status == 'IN' && last_entry_type == type) {
+                //     e.preventDefault();
+                //     $('#clock-in').removeAttr("href");
+                //     toastr['error']('Cannot clock IN!', 'Error');
+                //     return 0;
+                // }
+                //
+                // if (last_entry_status == 'OUT' && last_entry_type == 'BREAK') {
+                //     e.preventDefault();
+                //     $('#clock-in').removeAttr("href");
+                //     toastr['error']('Cannot clock IN!', 'Error');
+                //     return 0;
+                // }
+
+
+                var d = new Date();
+                var month = d.getMonth()+1;
+                var day = d.getDate();
+                var output = d.getFullYear() + '-' +
+                    (month<10 ? '0' : '') + month + '-' +
+                    (day<10 ? '0' : '') + day + ' ' + (d.getHours()<10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes()<10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds()<10 ? '0' : '') + d.getSeconds();
+
+                var url = "{{ erp_url }}/workforce/pos_attendance/receive_pos/{{ employee_id }}/{{ sys_pos_loc_id }}/IN/"+ type + "/" + output;
+                $.getJSON(url, function(json) {
+                    console.log(json);
+                    if (json['success']) {
+                        toastr['success']('Attendance Submitted!', 'Success');
+                        location.reload();
+                    } else {
+                        toastr['error']('Cannot process request!', 'Error');
+                        location.reload();
+                    }
+                });
+            });
+
+            $(document).on("click","#clock-out", function(e){
+                var type = $('#cform-type').val();
+                // if (last_entry_status == 'IN' && last_entry_type == 'WORK' && type == 'BREAK') {
+                //     e.preventDefault();
+                //     $('#clock-in').removeAttr("href");
+                //     toastr['error']('Cannot clock OUT!', 'Error');
+                //     return 0;
+                // } else if (last_entry_status == 'OUT' && (last_entry_type != 'WORK' && type == 'WORK')) {
+                //     e.preventDefault();
+                //     $('#clock-in').removeAttr("href");
+                //     toastr['error']('Cannot clock OUT!', 'Error');
+                //     return 0;
+                // }
+
+
+                var d = new Date();
+                var month = d.getMonth()+1;
+                var day = d.getDate();
+                var output = d.getFullYear() + '-' +
+                    (month<10 ? '0' : '') + month + '-' +
+                    (day<10 ? '0' : '') + day + ' ' + (d.getHours()<10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes()<10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds()<10 ? '0' : '') + d.getSeconds();
+
+                var url = "{{ erp_url }}/workforce/pos_attendance/receive_pos/{{ employee_id }}/{{ sys_pos_loc_id }}/OUT/"+ type + "/" + output;
+                $.getJSON(url, function(json) {
+                    console.log(json);
+                    if (json['success']) {
+                        toastr['success']('Attendance Submitted!', 'Success');
+                        location.reload();
+                    } else {
+                        toastr['error']('Cannot process request!', 'Error');
+                        location.reload();
+                    }
+                });
+            });
+
+        });
+    </script>
+{% endblock %}

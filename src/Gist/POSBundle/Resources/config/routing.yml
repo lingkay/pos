@@ -164,3 +164,9 @@ gist_pos_split_transaction_form_submit:
     pattern: /reports/split_transaction/{id}
     methods: [POST]
     defaults: { _controller: GistPOSBundle:Reports:splitFormSubmit }
+
+# ATT
+gist_pos_attendance:
+    path:     /attendance/{date}
+    methods: [GET]
+    defaults: { _controller: GistPOSBundle:Attendance:index, date: null }
