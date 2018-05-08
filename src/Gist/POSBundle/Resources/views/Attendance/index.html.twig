@@ -359,6 +359,9 @@
                         if (type == "TRANSFER") {
                             toastr['error']('Cannot clock-out! No Transfer IN submitted.', 'Operation not allowed');
                             return 0;
+                        } else if (type == "BREAK") {
+                            toastr['error']('Cannot clock-out! No Break IN submitted.', 'Operation not allowed');
+                            return 0;
                         }
                     } else if (last_entry_type == "TRANSFER" && last_entry_status == "OUT") {
                         if (type == "BREAK") {
