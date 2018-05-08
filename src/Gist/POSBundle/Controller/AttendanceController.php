@@ -96,7 +96,7 @@ class AttendanceController extends CrudController
                     }
                 } elseif ($lastEntry[0]['type'] == 'BREAK') {
                     if ($lastEntry[0]['status'] == "OUT") {
-                        $params['type_opts'] = array('WORK' => 'Work', 'TRANSFER' => 'Transfer');
+                        $params['type_opts'] = array('WORK' => 'Work', 'TRANSFER' => 'Transfer', 'BREAK' => 'Break');
                         $params['can_clock_in'] = "true";
                         $params['can_clock_out'] = "true";
                     } else {
