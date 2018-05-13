@@ -51,6 +51,7 @@ class AttendanceController extends CrudController
             $params['sys_erp_url'] = $conf->get('gist_sys_erp_url');
             $params['sys_pos_loc_id'] = $conf->get('gist_sys_pos_loc_id');
             $params['gist_sys_pos_name'] = $conf->get('gist_sys_pos_name');
+            $params['sys_time_format'] = $conf->get('sys_time_format');
             $params['erp_gc_id'] = $conf->get('erp_gc_id');
             $params['users'] = $user_exist;
             $params['products'] = $products;

@@ -180,7 +180,12 @@
                         {% for e in attendance_entries %}
                         <tr>
                             <td style="text-align: center">{{ e['id'] }}</td>
-                            <td style="text-align: center">{{ e['datetime'] }}</td>
+                            {% if sys_time_format == '24' %}
+                                <td style="text-align: center">{{ e['datetime_24'] }}</td>
+                            {% else %}
+                                <td style="text-align: center">{{ e['datetime'] }}</td>
+                            {% endif %}
+                            
                             <td style="text-align: center">{{ e['type'] }}</td>
                             <td style="text-align: center">{{ e['status'] }}</td>
                         </tr>
@@ -221,9 +226,7 @@
                     $(this).datepicker('setDate',new Date());
                 }
 
-                var path = "{{ path('gist_pos_attendance', {
-                    'date' : 'DATE'}
-                ) }}";
+                var path = "{{ path('gist_pos_attendance', {'date' : 'DATE'}) }}";
 
                 path = path.replace('DATE', $('#cform-date').val().replace('/','-').replace('/','-'));
                 location.replace(path);
