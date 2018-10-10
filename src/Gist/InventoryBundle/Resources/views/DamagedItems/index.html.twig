@@ -1,151 +1,169 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
-    <div class="page-content">
-        <form method="post" class="form-horizontal">
-            <div class="row" style="width: 100%;">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    <h2 class="form-section">{{ list_title }}</h2>
-                    <a href="{{ path('gist_inventory_menu_index') }}">Return to Inventory Menu</a>
-                    <br>
-                    <br>
-                    <div class="tabbable tabbable-custom tabbable-full-width">
-                        <ul class="nav nav-tabs">
-                            <li class="active">
-                                <a href="#tab_list" data-toggle="tab">
-                                    Damaged Items List </a>
-                            </li>
-                            <li>
-                                <a href="#tab_sent" data-toggle="tab">
-                                    To Return </a>
-                            </li>
-                            <li>
-                                <a href="#tab_receive" data-toggle="tab">
-                                    To Receive </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="tab_list">
-                                <a href="{{ path('gist_inv_damaged_items_add_entries_form') }}" class="btn green">Add New</a>
-                                <a href="#summary_modal" class="btn blue" data-toggle="modal">View Summary</a>
-                                <table class="table table-striped table-bordered table-hover" id="dmg_list_table">
-                                    <thead>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th>Quantity</th>
-                                        <th>Date Create</th>
-                                        <th>Created by</th>
-                                        <th>Status</th>
-                                        <th style="width: 165px"></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for s in dmg_stocks|default('') %}
-                                        <tr>
-                                            <td>{{ s.product_name }}</td>
-                                            <td>{{ s.quantity }}</td>
-                                            <td>{{ s.date_create }}</td>
-                                            <td>{{ s.user_create }}</td>
-                                            <td>{{ s.statusFMTD }}</td>
-                                            {% if s.status == 'damaged' %}
-                                                <td><a href="{{ path('gist_inv_damaged_items_add_return_form', { 'ids': s.id }) }}" class="btn default btn-xs blue-madison"><i class="fa fa-edit"></i> Return</a></td>
-                                            {% elseif s.status == 'for return' %}
-                                                <td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.parent_id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>
-                                            {% else %}
-                                                <td></td>
-                                            {% endif %}
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+    <!-- CONTENT -->
+    <div class="row">
+        <div class="col-12">
+            <h2 class="page-title">Damaged Item</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-pills nav-pills-v1 mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <a aria-controls="pills-damaged_item_lists" aria-selected="false" class="nav-link active" data-toggle="pill" href="#pills-damaged_item_lists" id="pills-damaged_item_lists-tab" role="tab">Damaged Item Lists</a>
+                </li>
+                <li class="nav-item">
+                    <a aria-controls="pills-to_return" aria-selected="true" class="nav-link" data-toggle="pill" href="#pills-to_return" id="pills-to_return-tab" role="tab">To Return</a>
+                </li>
+                <li class="nav-item">
+                    <a aria-controls="pills-to_received" aria-selected="true" class="nav-link" data-toggle="pill" href="#pills-to_received" id="pills-to_received-tab" role="tab">To Received</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <!-- SUBMITTED COUTING FORMS -->
+                <div aria-labelledby="pills-damaged_item_lists-tab" class="tab-pane fade show active" id="pills-damaged_item_lists" role="tabpanel">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-inline-block">
+                                <a href="{{ path('gist_inv_damaged_items_add_entries_form') }}" class="btn btn-primary btn-v1 mr-3 mt-3 mb-3">+ Add New</a>
                             </div>
-                            <div class="tab-pane" id="tab_sent">
-                                <table class="table table-striped table-bordered table-hover" id="sent_table">
-                                    <thead>
-                                    <tr>
-                                        <th>Date Create</th>
-                                        <th>Destination</th>
-                                        <th>Status</th>
-                                        <th style="width: 165px"></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for s in sent %}
-                                        <tr>
-                                            <td>{{ s.date_create }}</td>
-                                            <td>{{ s.destination }}</td>
-                                            <td>{{ s.status }}</td>
-                                            <td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane" id="tab_receive">
-                                <table class="table table-striped table-bordered table-hover" id="receive_table">
-                                    <thead>
-                                    <tr>
-                                        <th>Date Create</th>
-                                        <th>Source</th>
-                                        <th>Status</th>
-                                        <th style="width: 165px"></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for r in receive %}
-                                        <tr>
-                                            <td>{{ r.date_create }}</td>
-                                            <td>{{ r.source }}</td>
-                                            <td>{{ r.status }}</td>
-                                            <td><a href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': r.id }) }}" class="btn default btn-xs green"><i class="fa fa-eye"></i> View</a></td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+                            <div class="d-inline-block">
+                                <a href="#summary_modal" class="btn btn-success btn-v1 mr-3 mt-3 mb-3" data-toggle="modal">View Summary</a>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-1"></div>
-            </div>
-        </form>
-    </div>
-    <div id="summary_modal" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h2 class="modal-title">Damaged Items Summary</h2>
-                </div>
-                <div class="modal-body" style="">
-                    <form id="entry-form">
-                        <div class="row form-horizontal form">
-                            <div class="form-body">
-                                <table class="table table-striped table-bordered table-hover" id="summary_table">
-                                    <thead>
+                    <div class="table-responsive table-v1">
+                        {#<table class="table table-bordered" data-data-table="true" id="table--submitted_counting" style="width:100%" data-page-length="5">#}
+                        <table id="table--submitted_counting" class="table table-bordered" data-data-table="true" style="width:100%" data-page-length="10">
+                            <thead>
+                            <tr>
+                                <th style="width: 20%">Item</th>
+                                <th style="width: 16%">Quantity</th>
+                                <th style="width: 16%">Date Created</th>
+                                <th style="width: 16%">Created By</th>
+                                <th style="width: 16%">Status</th>
+                                <th style="width: 16%"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for s in dmg_stocks|default('') %}
+                                <tr>
+                                    <td>{{ s.product_name }}</td>
+                                    <td>{{ s.quantity }}</td>
+                                    <td>{{ s.date_create }}</td>
+                                    <td>{{ s.user_create }}</td>
+                                    <td>{{ s.statusFMTD }}</td>
+                                    {% if s.status == 'damaged' %}
+                                        <td><span class="text-blue-1"><i class="fas fa-edit"></i> <a class="text-underline" href="{{ path('gist_inv_damaged_items_add_return_form', { 'ids': s.id }) }}">Return</a></span></td>
+                                    {% elseif s.status == 'for return' %}
+                                        <td><span class="text-blue-1"><i class="fas fa-eye"></i> <a class="text-underline" href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.parent_id }) }}">View</a></span></td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- COUNTING -->
+                <div aria-labelledby="pills-to_return-tab" class="tab-pane fade" id="pills-to_return" role="tabpanel">
+                    <form action="" id="form--counting" name="form--counting">
+                        <div class="table-responsive table-v1" data-has_submit="true">
+                            <table id="table--return" class="table table-bordered" data-data-table="true" style="width:100%" data-page-length="10">
+                                <thead>
+                                <tr>
+                                    <th>Date Create</th>
+                                    <th>Destination</th>
+                                    <th>Status</th>
+                                    <th style="width: 165px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for s in sent %}
                                     <tr>
-                                        <th style="width: 140px">Item Code</th>
-                                        <th style="width: 140px">Barcode</th>
-                                        <th style="width: 180px">Name</th>
-                                        <th style="width: 80px">Quantity</th>
+                                        <td>{{ s.date_create }}</td>
+                                        <td>{{ s.destination }}</td>
+                                        <td>{{ s.status }}</td>
+                                        <td><span class="text-blue-1"><i class="fas fa-eye"></i> <a class="text-underline" href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': s.id }) }}">View</a></span></td>
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for s in summ %}
-                                        <tr>
-                                            <td>{{ s.item_code }}</td>
-                                            <td>{{ s.barcode }}</td>
-                                            <td>{{ s.item_name }}</td>
-                                            <td>{{ s.quantity }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </form>
-                    <button type="button" data-dismiss="modal" class="btn default">Close</button>
+                </div><!-- COUNTING -->
+                <div aria-labelledby="pills-to_received-tab" class="tab-pane fade" id="pills-to_received" role="tabpanel">
+                    <form action="" id="form--counting" name="form--counting">
+                        <div class="table-responsive table-v1" data-has_submit="true">
+                            <table id="table--received" class="table table-bordered" data-data-table="true" style="width:100%" data-page-length="10">
+                                <thead>
+                                <tr>
+                                    <th>Date Create</th>
+                                    <th>Source</th>
+                                    <th>Status</th>
+                                    <th style="width: 165px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for r in receive %}
+                                    <tr>
+                                        <td>{{ r.date_create }}</td>
+                                        <td>{{ r.source }}</td>
+                                        <td>{{ r.status }}</td>
+                                        <td><span class="text-blue-1"><i class="fas fa-eye"></i> <a class="text-underline" href="{{ path('gist_inv_damaged_items_receive_return_form', { 'id': r.id }) }}">View</a></span></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block modal %}
+    <div class="modals">
+        <div aria-hidden="true" aria-labelledby="summaryLabel" class="modal modal--v1 fade " id="summary_modal" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Damaged Items Summary</h5>
+                    </div>
+                    <div class="modal-body pt-0">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive table-v1">
+                                    <table id="summary_table" class="table table-bordered" data-data-table="true" style="width:100%" data-page-length="5">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 140px">Item Code</th>
+                                            <th style="width: 140px">Barcode</th>
+                                            <th style="width: 180px">Name</th>
+                                            <th style="width: 80px">Quantity</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for s in summ %}
+                                            <tr>
+                                                <td>{{ s.item_code }}</td>
+                                                <td>{{ s.barcode }}</td>
+                                                <td>{{ s.item_name }}</td>
+                                                <td>{{ s.quantity }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-v1 btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,93 +171,95 @@
 {% endblock %}
 {% block js %}
     <script>
-        $(document).ready(function() {
+        jQuery(document).ready(function($) {
             path = "{{ path('gist_inv_damaged_items_summary_ajax_grid') }}";
 
-            var summTable;
-            summTable = $('#summary_table').dataTable({
+            submittedCountingTable = $('#table--submitted_counting').dataTable({
                 "bProcessing": true,
                 "bServerSide": false,
-                //"sAjaxSource": path,
-                "iDisplayLength": 5,
-                "bLengthChange": false,
+                // "sAjaxSource": path,
+                "iDisplayLength": 10,
                 "bInfo": false,
-                "sPaginationType": "bootstrap",
+                // "bSort" : false,
+                // "bLengthChange": false,
+                // "sPaginationType": "bootstrap",
                 "oLanguage": {
                     "sLengthMenu": "_MENU_ records",
                     "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
+                    }
+                },
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [5] },
+                ],
+                "aaSorting": [[0,'desc']]
+            });
+
+            returnTable = $('#table--return').dataTable({
+                "bProcessing": true,
+                "bServerSide": false,
+                // "sAjaxSource": path,
+                "iDisplayLength": 10,
+                "bInfo": false,
+                // "bSort" : false,
+                // "bLengthChange": false,
+                // "sPaginationType": "bootstrap",
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
                     }
                 },
                 "aoColumnDefs": [
                     { "bSortable": false, "aTargets": [3] },
-                ]
+                ],
+                "aaSorting": [[0,'desc']]
             });
 
-
-            var sent_dTable;
-            sent_dTable = $('#sent_table').dataTable({
+            receivedTable = $('#table--received').dataTable({
                 "bProcessing": true,
                 "bServerSide": false,
+                // "sAjaxSource": path,
                 "iDisplayLength": 10,
-                "bFilter" : false,
-                "bInfo" : false,
-                "bLengthChange": false,
-                "sPaginationType": "bootstrap",
+                "bInfo": false,
+                // "bSort" : false,
+                // "bLengthChange": false,
+                // "sPaginationType": "bootstrap",
                 "oLanguage": {
                     "sLengthMenu": "_MENU_ records",
                     "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
                     }
                 },
-                "aaSorting": [[ 0, "desc" ]],
                 "aoColumnDefs": [
-                    { "bSortable": false, "aTargets": [{{ grid_cols|length - 1}}] },
-                ]
+                    { "bSortable": false, "aTargets": [3] },
+                ],
+                "aaSorting": [[0,'desc']]
             });
 
-            dmg_list_table = $('#dmg_list_table').dataTable({
+            summaryTable = $('#summary_table').dataTable({
                 "bProcessing": true,
                 "bServerSide": false,
+                // "sAjaxSource": path,
                 "iDisplayLength": 10,
-                "bFilter" : false,
-                "bInfo" : false,
-                "bLengthChange": false,
-                "sPaginationType": "bootstrap",
+                "bInfo": false,
+                // "bSort" : false,
+                // "bLengthChange": false,
+                // "sPaginationType": "bootstrap",
                 "oLanguage": {
                     "sLengthMenu": "_MENU_ records",
                     "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
                     }
                 },
-                "aaSorting": [[ 2, "desc" ]],
                 "aoColumnDefs": [
-                    { "bSortable": false, "aTargets": [{{ grid_cols|length - 1}}] },
-                ]
-            });
-
-            receive_dTable = $('#receive_table').dataTable({
-                "bProcessing": true,
-                "bServerSide": false,
-                "iDisplayLength": 10,
-                "bFilter" : false,
-                "bInfo" : false,
-                "bLengthChange": false,
-                "sPaginationType": "bootstrap",
-                "oLanguage": {
-                    "sLengthMenu": "_MENU_ records",
-                    "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
-                    }
-                },
-                "aaSorting": [[ 0, "desc" ]],
-                "aoColumnDefs": [
-                    { "bSortable": false, "aTargets": [{{ grid_cols|length - 1}}] },
-                ]
+                    { "bSortable": false, "aTargets": [3] },
+                ],
+                "aaSorting": [[0,'desc']]
             });
         });
     </script>
