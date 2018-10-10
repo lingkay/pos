@@ -1,43 +1,27 @@
 <div class="row">
-    <div class="col-md-8">
-        <!-- BEGIN FORM-->
-        <div class="form-body">
-             <div class="form-group">
-                <label class="col-md-3 control-label"></label>
-                <div class="col-md-8">
-                    <a href="javascript:void(0)" class="btn blue sync_customers">Update Customers</a>
-                    <br>
-                    <table class="table table-striped table-bordered table-hover" style="margin-top: 10px; width: 100%;">
-                        <thead>
-                            <tr>
-                                <th width="10%">ID</th>
-                                <th width="30%">Last Name</th>
-                                <th width="30%">First Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for u in customers %}
-                                <tr>
-                                    <td><p>{{u.getDisplayID}}</p></td>
-                                    <td><p>{{u.getLastName}}</p></td>
-                                    <td><p>{{u.getFirstName}}</p></td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label"></label>
-                <div class="col-md-4">
-
-                </div>
-            </div>
+    <div class="col-12">
+        <div class="d-inline-block">
+            <a href="javascript:void(0)" class="btn btn-success btn-v1 mr-3 mt-3 mb-3 sync_customers" data-toggle="modal">Update Customers</a>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="form-body">
-
-        </div>
-    </div>
+</div>
+<div class="table-responsive table-v1">
+    <table id="table--sync_customers" class="table table-bordered" data-data-table="true" style="width:100%" data-page-length="10">
+        <thead>
+        <tr>
+            <th width="10%">ID</th>
+            <th width="30%">Last Name</th>
+            <th width="30%">First Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for u in customers %}
+            <tr>
+                <td><p>{{u.getDisplayID}}</p></td>
+                <td><p>{{u.getLastName}}</p></td>
+                <td><p>{{u.getFirstName}}</p></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
