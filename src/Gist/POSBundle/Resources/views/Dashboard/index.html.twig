@@ -11,6 +11,11 @@
             font-size: 12px;
         }
 
+        .category-list {
+            overflow-x: hidden;
+            max-height: 470px;
+        }
+
         .pos-products .item {
             padding: auto 15px;
             cursor: pointer;
@@ -28,6 +33,7 @@
 
         .item-content img {
             min-height: 60px;
+            max-height: 60px;
             width: 85px;
             /*border: 1px solid #000;*/
             margin-right: 10px;
@@ -290,7 +296,7 @@
                         <div class="box-gradient text-center">
                             PRODUCT CATEGORIES
                         </div>
-                        <ul class="nav nav-pills nav-pills-v2 mt-1 mb-3" id="prod_cats" role="tablist">
+                        <ul class="nav nav-pills nav-pills-v2 mt-1 mb-3 category-list" id="prod_cats" role="tablist">
                             <!-- PRODUCT CATEGORIES -->
                         </ul>
                     </div>
@@ -302,7 +308,7 @@
                             <!-- SUBMITTED COUTING FORMS -->
                             <div aria-labelledby="pills-anti_aging-tab" class="tab-pane fade show active" id="pills-anti_aging" role="tabpanel">
 
-                                <div style="overflow:scroll; overflow-x: hidden; height: 500px;">
+                                <div style="overflow-x: hidden; height: 500px;">
                                     <div class="row mt-1" id="prods">
                                         <!-- PRODUCTS -->
                                     </div>
@@ -322,7 +328,7 @@
                 <div class="box--cart">
                     <div class="box--cart__items mt-2">
                         <div class="table-responsive table-v1">
-                            <div style="overflow:scroll; overflow-x: hidden; height: 360px;">
+                            <div style="overflow-x: hidden; height: 360px;">
                                 <table class="table table-bordered" style="width:100%" id="cart_table">
                                     <thead>
                                     {% if transaction_object.getTransactionType|default('null') == 'per' %}
