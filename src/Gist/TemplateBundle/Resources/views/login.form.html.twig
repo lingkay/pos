@@ -1,49 +1,75 @@
 {% extends "GistUserBundle::layout.html.twig" %}
 
 {% block fos_user_content %}
-<!-- BEGIN LOGIN -->
-<div class="content">
-    <!-- BEGIN LOGIN FORM -->
-    <form class="login-form" action="/login_check" method="post">
-        
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
-        <h3 class="form-title">Login to your account</h3>
-        {% if error %}
-        <div class="alert alert-danger">
-            <button class="close" data-close="alert"></button>
-            <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
-            {# <span>{{ error|trans }}</span> #}
-        </div>
-        {% endif %}
-        <div class="alert alert-danger display-hide">
-            <button class="close" data-close="alert"></button>
-            <span>
-            Enter any username and password. </span>
-        </div>
-        <div class="form-group">
-            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-            <label class="control-label visible-ie8 visible-ie9">Username</label>
-            <div class="input-icon">
-                <i class="fa fa-user"></i>
-                <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="_username"/>
+    <!-- BEGIN LOGIN -->
+    <div class="container-fluid">
+
+        <div class="row box--fullvp [ align-items-center justify-content-center ]">
+            <div class="box--login-form col-11 col-sm-7">
+
+                <!-- HEADER -->
+                <div class="row lf__header">
+                    <div class="col h-100">
+                        <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/main/logo.png') }}" alt="CosmetiGroup Logo" class="lf__logo h-100">
+                    </div>
+                    <div class="col [ p-0 h-100 ] [ d-flex justify-content-end ]">
+                        <div class="[ lf__header__item active ] h-100 [ d-inline-flex align-items-center ]">
+                            Login
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM -->
+
+                <div class="row">
+                    <div class="col p-4 text-center">
+
+                        <p class="lf__welcome">Welcome</p>
+
+                        <div class="lf__box--form d-flex justify-content-center">
+                            <form id="form-login" class="w-75 w-sm-50" action="/login_check" method="post">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                <div class="form-group">
+                                    <div class="input-group input--v1">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="addon-username"></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="login_username" name="_username" placeholder="Username">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group input--v1">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="addon-password"></span>
+                                        </div>
+                                        <input type="password" class="form-control" id="login_password" name="_password" placeholder="Password">
+                                    </div>
+                                </div>
+
+                                <label class="checkbox"><input type="checkbox" name="remember" value="1"/> Remember me </label>
+
+                                {% if error %}
+                                    <div class="alert alert-danger">
+                                        <button class="close" data-close="alert"></button>
+                                        <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                                        {# <span>{{ error|trans }}</span> #}
+                                    </div>
+                                {% endif %}
+
+
+                                <div class="form-group">
+                                    <button type="submit" class="lf__btn--submit btn btn-primary btn-lg btn-v1">Enter</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label visible-ie8 visible-ie9">Password</label>
-            <div class="input-icon">
-                <i class="fa fa-lock"></i>
-                <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" name="_password"/>
-            </div>
-        </div>
-        <div class="form-actions">
-            <label class="checkbox">
-            <input type="checkbox" name="remember" value="1"/> Remember me </label>
-            <button type="submit" class="btn blue pull-right">
-            Login <i class="m-icon-swapright m-icon-white"></i>
-            </button>
-        </div>
-    </form>
-    <!-- END LOGIN FORM -->
-</div>
-<!-- END LOGIN -->
+
+    </div>
+    <!-- END LOGIN -->
 {% endblock %}

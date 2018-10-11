@@ -1,23 +1,23 @@
 {% macro options(fields, selected) %}
     <option></option>
-{% for value,display in fields %}
-    {% if (value == selected) %}
-        <option value="{{ value }}" selected="selected">{{ display }}</option>
-    {% else %}
-        <option value="{{ value }}">{{ display }}</option>
-    {% endif %}
-{% endfor %}
+    {% for value,display in fields %}
+        {% if (value == selected) %}
+            <option value="{{ value }}" selected="selected">{{ display }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ display }}</option>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro options2(fields, selected) %}
     <option value="none">None</option>
-{% for value,display in fields %}
-    {% if (value == selected) %}
-        <option value="{{ value }}" selected="selected">{{ display }}</option>
-    {% else %}
-        <option value="{{ value }}">{{ display }}</option>
-    {% endif %}
-{% endfor %}
+    {% for value,display in fields %}
+        {% if (value == selected) %}
+            <option value="{{ value }}" selected="selected">{{ display }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ display }}</option>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro group_select_only_legacy(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
@@ -39,6 +39,21 @@
         <div class="col-md-1">
             <a href="javascript:;" id="filter_button" class="btn blue">Apply Filter</a>
         </div>
+    </div>
+{% endmacro %}
+
+{% macro group_select_search(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="col-12 col-lg-8 d-flex flex-wrap justify-content-around align-items-center">
+        <label for="" class="text-blue-1" class="col-md-{{ label_size }}">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 {{ name }}" placeholder="-- Select {{label}} --" {{ disabled ? 'disabled ' : '' }}>
+                {{ self.options_legacy(options, value) }}
+            </select>
+        </div>
+    </div>
+    <div class="col-12 col-lg-4 text-center text-lg-left">
+        <button class="btn btn-v1 btn-primary btn-small" id="filter_button" type="button">Apply Filter</button>
     </div>
 {% endmacro %}
 
@@ -66,199 +81,199 @@
 
 {% macro options_split(fields, selected) %}
     <option value="none">-- Select Consultant --</option>
-{% for value,display in fields %}
-    {% if (value == selected) %}
-        <option value="{{ value }}" selected="selected">{{ display }}</option>
-    {% else %}
-        <option value="{{ value }}">{{ display }}</option>
-    {% endif %}
-{% endfor %}
+    {% for value,display in fields %}
+        {% if (value == selected) %}
+            <option value="{{ value }}" selected="selected">{{ display }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ display }}</option>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro multi_options(fields, selected) %}
     <option></option>
-{% for value,display in fields %}
-    {% if (value in selected) %}
-        <option value="{{ value }}" selected="selected">{{ display }}</option>
-    {% else %}
-        <option value="{{ value }}">{{ display }}</option>
-    {% endif %}
-{% endfor %}
+    {% for value,display in fields %}
+        {% if (value in selected) %}
+            <option value="{{ value }}" selected="selected">{{ display }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ display }}</option>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro autosuggest(label, name, label_size, body_size, readonly = false) %}
-<input id="{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>
+    <input id="{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>
 {% endmacro %}
 {% macro options_multiple(fields, selected) %}
-{% for value,display in fields %}
-    {% if (value in selected) %}
-        <option value="{{ value }}" selected="selected">{{ display }}</option>
-    {% else %}
-        <option value="{{ value }}">{{ display }}</option>
-    {% endif %}
-{% endfor %}
+    {% for value,display in fields %}
+        {% if (value in selected) %}
+            <option value="{{ value }}" selected="selected">{{ display }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ display }}</option>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro checkbox(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<label>
-{% if group == null %}
-    {% set grp = name %}
-{% else %}
-    {% set grp = group %}
-{% endif %}
-    <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
-    {{ display }}
-</label>
+    <label>
+        {% if group == null %}
+            {% set grp = name %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+        <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        {{ display }}
+    </label>
 {% endmacro %}
 
 
 
 {% macro checkbox_set(name, fields, checked_arr, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div class="checkbox-list">
-{% for id,display in fields %}
-    {{ self.checkbox(name ~ '[]', id, display, checked_arr[id] is defined ? true : false,name, disabled, prefix) }}
-{% endfor %}
-</div>
+    {% import _self as self %}
+    <div class="checkbox-list">
+        {% for id,display in fields %}
+            {{ self.checkbox(name ~ '[]', id, display, checked_arr[id] is defined ? true : false,name, disabled, prefix) }}
+        {% endfor %}
+    </div>
 {% endmacro %}
 
 {% macro group_checkbox_set(label, name, fields, check_opts, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        {{ self.checkbox_set(name, fields, check_opts, disabled, prefix) }}
+    {% import _self as self %}
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            {{ self.checkbox_set(name, fields, check_opts, disabled, prefix) }}
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_checkbox(label, name, value, display, checked, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        {{ self.checkbox(name, value, display, checked) }}
+    {% import _self as self %}
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            {{ self.checkbox(name, value, display, checked) }}
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 {% macro group_text(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_text_orig(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro checkbox_pos(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<div id="xgroup-pdc" class="form-group">
-    <label class="col-md-5 control-label">{{ display }}</label>
-    <div class="col-md-6">
-        {% if group == null %}
-            {% set grp = name %}
-        {% else %}
-            {% set grp = group %}
-        {% endif %}
+    <div id="xgroup-pdc" class="form-group">
+        <label class="col-md-5 control-label">{{ display }}</label>
+        <div class="col-md-6">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
             <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro checkbox_issued_item(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<div id="cgroup-issued" class="form-group">
-    <div class="col-md-6">
-        {% if group == null %}
-            {% set grp = name %}
-        {% else %}
-            {% set grp = group %}
-        {% endif %}
+    <div id="cgroup-issued" class="form-group">
+        <div class="col-md-6">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
             <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro checkbox_issued_item_checked(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<div id="cgroup-issued" class="form-group">
-    <div class="col-md-6">
-        {% if group == null %}
-            {% set grp = name %}
-        {% else %}
-            {% set grp = group %}
-        {% endif %}
+    <div id="cgroup-issued" class="form-group">
+        <div class="col-md-6">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
             <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" checked="checked" readonly="true" onclick="return false;"}}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro checkbox_pos2(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<div id="xgroup-pdc" class="form-group">
-    <label class="col-md-5 control-label">{{ display }}</label>
-    <div class="col-md-6">
-        {% if group == null %}
-            {% set grp = name %}
-        {% else %}
-            {% set grp = group %}
-        {% endif %}
+    <div id="xgroup-pdc" class="form-group">
+        <label class="col-md-5 control-label">{{ display }}</label>
+        <div class="col-md-6">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
             <input type="checkbox" id="" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro checkbox_pos_xs(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<div id="xgroup-pdc" class="form-group">
-    <label class="col-md-6 control-label">{{ display }}</label>
-    <div class="col-md-1">
-        {% if group == null %}
-            {% set grp = name %}
-        {% else %}
-            {% set grp = group %}
-        {% endif %}
+    <div id="xgroup-pdc" class="form-group">
+        <label class="col-md-6 control-label">{{ display }}</label>
+        <div class="col-md-1">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
             <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro checkbox_pos_white(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<div id="xgroup-pdc" class="form-group">
-    <label style="color: white !important;" class="col-md-5 control-label">{{ display }}</label>
-    <div class="col-md-6">
-        {% if group == null %}
-            {% set grp = name %}
-        {% else %}
-            {% set grp = group %}
-        {% endif %}
+    <div id="xgroup-pdc" class="form-group">
+        <label style="color: white !important;" class="col-md-5 control-label">{{ display }}</label>
+        <div class="col-md-6">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
             <input type="checkbox" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_text_pos(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_text_pos_white(label, name, value, label_size, body_size, placeholderx = null, readonly = false, class = '') %}
-<div id="cgroup-{{ name }}" class="form-group">
-    <label style="color: white !important;" class="col-md-{{ label_size }} label-{{class}} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="cform-{{ name }}" type="text" name="{{ name }}" class="form-control {{class}} {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+    <div id="cgroup-{{ name }}" class="form-group">
+        <label style="color: white !important;" class="col-md-{{ label_size }} label-{{class}} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="cform-{{ name }}" type="text" name="{{ name }}" class="form-control {{class}} {{name}} pos_field" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_text_ig(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
@@ -274,105 +289,110 @@
 {% endmacro %}
 
 {% macro group_text_nac(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" autocomplete="off" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
-    </div>
-</div>
-{% endmacro %}
-
-{% macro group_tip(label, value, label_size, body_size,  prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-       {{value}}
-    </div>
-</div>
-{% endmacro %}
-
-{% macro group_text_readonly(label, name, value, label_size, body_size, readonly = false) %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" readonly>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="{{ prefix }}form-{{ name }}" type="text" autocomplete="off" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
         </div>
     </div>
 {% endmacro %}
 
+{% macro group_tip(label, value, label_size, body_size,  prefix = 'c') %}
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            {{value}}
+        </div>
+    </div>
+{% endmacro %}
 
+{% macro group_text_readonly(label, name, value, label_size, body_size, readonly = false) %}
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" readonly>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro group_text_v1(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group form-group-v1 w-100">
+        <label for="{{ name }}" class="col-{{ label_size }}">{{ label }}</label>
+        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="col-{{ body_size }} input-v2" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} autocomplete="off">
+    </div>
+{% endmacro %}
 
 
 {% macro group_number(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input type="number" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} step="0.01">
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input type="number" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} step="0.01">
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 {% macro group_money(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input type="number" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} step="0.01">
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input type="number" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }} step="0.01">
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_price(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input type="text" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control numeric" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input type="text" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control numeric" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 {% macro group_password(label, name, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <div class="input-group">
-            <input id="{{ prefix }}form-{{ name }}" type="password"  name="{{ name }}" class="form-control" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>
-            <span class="input-group-addon">
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <div class="input-group">
+                <input id="{{ prefix }}form-{{ name }}" type="password"  name="{{ name }}" class="form-control" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>
+                <span class="input-group-addon">
             <i class="fa fa-lock"></i>
             </span>
+            </div>
         </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_text_readonly(label, name, value, label_size, body_size, readonly = false) %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" readonly>
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input type="text" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" readonly>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 
 {% macro group_email(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="email" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="{{ prefix }}form-{{ name }}" type="email" name="{{ name }}" class="form-control" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_textarea(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_textarea_bare(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
@@ -384,396 +404,464 @@
 {% endmacro %}
 
 {% macro group_textarea_white(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 {% macro textarea(name, value, row_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <div class="col-md-{{ body_size }}">
-        <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <div class="col-md-{{ body_size }}">
+            <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_textarea_readonly(label, name, value, row_size, label_size, body_size) %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <textarea name="{{ name }}" class="form-control" rows="{{ row_size }}" readonly>{{ value }}</textarea>
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <textarea name="{{ name }}" class="form-control" rows="{{ row_size }}" readonly>{{ value }}</textarea>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 
 
 {% macro select_bare(name, options, value, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div class="col-md-{{ body_size }}">
-    <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }}>
-    {{ self.options(options, value) }}
-    </select>
-</div>
+    {% import _self as self %}
+    <div class="col-md-{{ body_size }}">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }}>
+            {{ self.options(options, value) }}
+        </select>
+    </div>
 {% endmacro %}
 
 
 {% macro select(name, options, value, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }}>
-        {{ self.options(options, value) }}
-        </select>
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <div class="col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }}>
+                {{ self.options(options, value) }}
+            </select>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_select(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
-        {{ self.options(options, value) }}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro group_select_v2_no_default(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}">
+        <label for="{{ prefix }}form-{{ name }}" >{{ label }}</label>
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+            {{ self.options_legacy(options, value) }}
         </select>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_selectx(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" placeholder="-- Select {{label}} --">
-        {{ self.options(options, value) }}
-        </select>
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control {{name}}" placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_selectx2(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
-        {{ self.options(options, value) }}
-        </select>
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select class="form-control {{name}}" {{ disabled ? 'disabled ' : '' }} placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_selectx2_white(label, name, options, value, label_size, body_size, disabled = false, class = '') %}
-{% import _self as self %}
-<div id="cgroup-{{ name }}" class="form-group">
-    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <select class="form-control {{name}} {{class}}" placeholder="-- Select {{label}} --">
-        {{ self.options(options, value) }}
-        </select>
+    {% import _self as self %}
+    <div id="cgroup-{{ name }}" class="form-group">
+        <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select class="form-control {{name}} {{class}}" placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_select_approver(label, name, options, value, value2, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size/2 }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
-        {{ self.options(options, value) }}
-        </select>
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size/2 }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
+        <div class="col-md-{{ body_size/2 }}">
+            <input id="{{ prefix }}form-{{ name }}-code" type="text" name="{{ name }}_code" class="form-control" placeholder="{{ label }} Code" value="{{ value2 }}">
+        </div>
     </div>
-    <div class="col-md-{{ body_size/2 }}">
-    <input id="{{ prefix }}form-{{ name }}-code" type="text" name="{{ name }}_code" class="form-control" placeholder="{{ label }} Code" value="{{ value2 }}">
-    </div>
-</div>
 {% endmacro %}
 
 {% macro group_select_multiple(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2 select_2-multi" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" multiple="multiple">
-        {{ self.options(options, value) }}
-        </select>
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2 select_2-multi" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" multiple="multiple">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_select_only(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div class="col-md-{{ body_size }}">
-<select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
-{{ self.options(options, value) }}
-</select>
-</div>
+    {% import _self as self %}
+    <div class="col-md-{{ body_size }}">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
+            {{ self.options(options, value) }}
+        </select>
+    </div>
 {% endmacro %}
 
 {% macro group_select_only3(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div style="padding-left: 0px !important; padding-right: 0px !important;" class="col-md-{{ body_size }}">
-<select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control pos_indiv_discount_opt {{ name }}" onchange="apply_indiv(this);" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
-{{ self.options2(options, value) }}
-</select>
-</div>
+    {% import _self as self %}
+    <div style="padding-left: 0px !important; padding-right: 0px !important;" class="col-md-{{ body_size }}">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control pos_indiv_discount_opt {{ name }}" onchange="apply_indiv(this);" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
+            {{ self.options2(options, value) }}
+        </select>
+    </div>
 {% endmacro %}
 
 {% macro group_select_only_split(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div style="padding-left: 0px !important; padding-right: 0px !important;" class="col-md-{{ body_size }}">
-<select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control consultant_selection" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
-{{ self.options_split(options, value) }}
-</select>
-</div>
+    {% import _self as self %}
+    <div style="padding-left: 0px !important; padding-right: 0px !important;" class="col-md-{{ body_size }}">
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control consultant_selection" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
+            {{ self.options_split(options, value) }}
+        </select>
+    </div>
 {% endmacro %}
 
 {% macro group_select_only2(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
+    {% import _self as self %}
 
-<select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
-{{ self.options_legacy(options, value) }}
-</select>
+    <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --" style="margin=0;">
+        {{ self.options_legacy(options, value) }}
+    </select>
 
 {% endmacro %}
 
 
 {% macro group_selectmulti(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
-{% import _self as self %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <select id="{{ prefix }}form-{{ name }}" multiple="multiple" name="{{ name }}[]" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
-        {{ self.multi_options(options, value) }}
-        </select>
-    </div>
-</div>
-{% endmacro %}
-
-
-{% macro date( name, value, body_size, readonly = false, prefix = 'c') %}
-{% import _self as self %}
-{# {% if readonly %}
-    {{ self.text(name, value, label_size, body_size, readonly, prefix) }}
-{% else %} #}
-<div class="form-group">
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
-            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}"  value="{{ value }}" readonly>
-            <span class="input-group-btn">
-                <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
-            </span>
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" multiple="multiple" name="{{ name }}[]" class="form-control select_2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+                {{ self.multi_options(options, value) }}
+            </select>
         </div>
     </div>
-</div>
-{# {% endif %} #}
+{% endmacro %}
+
+{% macro group_select_pos(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group form-group-v1 w-100">
+        <label for="{{ name }}" class="col-{{ label_size }}">{{ label }}</label>
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="col-{{ body_size }} input-v2" {{ disabled ? 'disabled ' : '' }} data-placeholder="-- Select {{label}} --">
+            {{ self.multi_options(options, value) }}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro group_select_pos_no_default(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="form-group form-group-v1 w-100">
+        <label for="{{ name }}" class="col-{{ label_size }}">{{ label }}</label>
+        <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="col-{{ body_size }} input-v2" {{ disabled ? 'disabled ' : '' }}>
+            {{ self.options_legacy(options, value) }}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro date( name, value, body_size, readonly = false, prefix = 'c') %}
+    {% import _self as self %}
+    {# {% if readonly %}
+        {{ self.text(name, value, label_size, body_size, readonly, prefix) }}
+    {% else %} #}
+    <div class="form-group">
+        <div class ="col-md-{{ body_size }}">
+            <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
+                <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}"  value="{{ value }}" readonly>
+                <span class="input-group-btn">
+                <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+            </div>
+        </div>
+    </div>
+    {# {% endif %} #}
 {% endmacro %}
 
 {% macro group_date(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
-{% else %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
-            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="form-group">
+            <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class ="col-md-{{ body_size }}">
+                <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
+                    <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
 {% macro group_date_pos(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
-{% else %}
-<div class="form-group posgrp_{{name}}">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
-            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="form-group posgrp_{{name}}">
+            <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class ="col-md-{{ body_size }}">
+                <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
+                    <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
 {% macro group_date_pos2(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
-{% else %}
-<div class="form-group posgrp_{{name}}">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
-            <input id="" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="form-group posgrp_{{name}}">
+            <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class ="col-md-{{ body_size }}">
+                <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
+                    <input id="" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
 {% macro group_date_pos_white(label, name, value, label_size, body_size, readonly = false, class = '') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
-{% else %}
-<div class="form-group posgrp_{{name}}">
-    <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
-            <input id="cform-{{ name }}" type="text" class="form-control {{class}}" name="{{ name }} " placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="form-group posgrp_{{name}}">
+            <label style="color: white !important;" class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class ="col-md-{{ body_size }}">
+                <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
+                    <input id="cform-{{ name }}" type="text" class="form-control {{class}}" name="{{ name }} " placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
 {% macro group_date_pdc(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
-{% else %}
-<div class="form-group {{name}}_main_div">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
-            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control {{name}}" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="form-group {{name}}_main_div">
+            <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class ="col-md-{{ body_size }}">
+                <div class="input-group date date-picker" data-date-format="mm/dd/yyyy">
+                    <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control {{name}}" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
 {% macro group_date_range(id, label, from_name, to_name, value_from, value_to, label_size, body_size, format_display = 'm/d/Y', format_submit = 'Ymd', readonly = false, prefix ='c') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label,from_name, value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display), label_size, body_size, readonly, prefix) }}
-{% else %}
-<input type="hidden" id="{{ prefix }}form-{{ from_name }}" name="{{ from_name }}" value="{{ value_from|date(format_submit) }}">
-<input type="hidden" id="{{ prefix }}form-{{ to_name }}" name="{{ to_name }}" value="{{ value_to|date(format_submit) }}">
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <div class="input-group" id="{{ id }}">
-            <input type="text" name="{{from_name~'_'~to_name}}" class="form-control" placeholder="{{ label }}" value="{{ value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display) }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label,from_name, value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display), label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <input type="hidden" id="{{ prefix }}form-{{ from_name }}" name="{{ from_name }}" value="{{ value_from|date(format_submit) }}">
+        <input type="hidden" id="{{ prefix }}form-{{ to_name }}" name="{{ to_name }}" value="{{ value_to|date(format_submit) }}">
+        <div class="form-group">
+            <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class="col-md-{{ body_size }}">
+                <div class="input-group" id="{{ id }}">
+                    <input type="text" name="{{from_name~'_'~to_name}}" class="form-control" placeholder="{{ label }}" value="{{ value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display) }}" readonly>
+                    <span class="input-group-btn">
             <button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+                <div class="errorTxt"></div>
+            </div>
         </div>
-          <div class="errorTxt"></div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
+{% macro group_date_range_v1(id, label, from_name, to_name, value_from, value_to, label_size, body_size, format_display = 'm/d/Y', format_submit = 'Ymd', readonly = false, prefix ='c') %}
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label,from_name, value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display), label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <input type="hidden" id="{{ prefix }}form-{{ from_name }}" name="{{ from_name }}" value="{{ value_from|date(format_submit) }}">
+        <input type="hidden" id="{{ prefix }}form-{{ to_name }}" name="{{ to_name }}" value="{{ value_to|date(format_submit) }}">
+        <div class="form-group form-group-v1 w-100">
+
+            {#<div class="col-md-{{ body_size }}">#}
+            <div id="{{ id }}">
+                <label for="{{from_name~'_'~to_name}}" class="col-md-{{ label_size }} control-label">{{ label }}</label>
+                <input type="text" name="{{from_name~'_'~to_name}}" class="col-{{ body_size }} input-v2 input-date" placeholder="{{ label }}" value="{{ value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display) }}" readonly>
+
+            </div>
+            <div class="errorTxt"></div>
+            {#</div>#}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{#{% macro group_date_range_v1(id, label, from_name, to_name, value_from, value_to, label_size, body_size, format_display = 'm/d/Y', format_submit = 'Ymd', readonly = false, prefix ='c') %}#}
+    {#{% import _self as self %}#}
+    {#{% if readonly %}#}
+        {#{{ self.group_text(label,from_name, value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display), label_size, body_size, readonly, prefix) }}#}
+    {#{% else %}#}
+        {#<input type="hidden" id="{{ prefix }}form-{{ from_name }}" name="{{ from_name }}" value="{{ value_from|date(format_submit) }}">#}
+        {#<input type="hidden" id="{{ prefix }}form-{{ to_name }}" name="{{ to_name }}" value="{{ value_to|date(format_submit) }}">#}
+        {#<div class="form-group form-group-v1 w-100">#}
+            {#<label for="{{from_name~'_'~to_name}}" class="col-md-{{ label_size }} control-label">{{ label }}</label>#}
+            {#<input type="text" name="{{from_name~'_'~to_name}}" class="col-{{ body_size }} input-v2" placeholder="{{ label }}" value="{{ value_from|date(format_display) ~ '   -   ' ~ value_to|date(format_display) }}" readonly>#}
+            {#<span class="input-group-btn">#}
+                {#<button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>#}
+            {#</span>#}
+            {#<div class="errorTxt"></div>#}
+        {#</div>#}
+    {#{% endif %}#}
+{#{% endmacro %}#}
+
 {% macro group_datetime(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="control-label col-md-{{ label_size }}">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <div class="input-group date datetime">
-           <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    <div class="form-group">
+        <label class="control-label col-md-{{ label_size }}">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <div class="input-group date datetime">
+                <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                <span class="input-group-btn">
             <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
             </span>
-            <span class="input-group-btn">
+                <span class="input-group-btn">
             <button class="btn default date-set" type="button"><i class="fa fa-calendar"></i></button>
             </span>
 
+            </div>
         </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_time(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group">
-            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control timepicker timepicker-no-seconds" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class ="col-md-{{ body_size }}">
+            <div class="input-group">
+                <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control timepicker timepicker-no-seconds" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                <span class="input-group-btn">
             <button class="btn default" type="button"><i class="fa fa-clock-o"></i></button>
             </span>
+            </div>
         </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro group_day(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-{% import _self as self %}
-{% if readonly %}
-    {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
-{% else %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class ="col-md-{{ body_size }}">
-        <div class="input-group date date-picker" data-date-format="mm/dd">
-            <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
-            <span class="input-group-btn">
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="form-group">
+            <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+            <div class ="col-md-{{ body_size }}">
+                <div class="input-group date date-picker" data-date-format="mm/dd">
+                    <input id="{{ prefix }}form-{{ name }}" type="text" class="form-control" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
                 <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
             </span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{% endif %}
+    {% endif %}
 {% endmacro %}
 
 
 {% macro hidden(name, value, prefix = 'c') %}
-<input id="{{ prefix }}form-{{ name }}" type="hidden" name="{{ name }}" value="{{ value }}">
+    <input id="{{ prefix }}form-{{ name }}" type="hidden" name="{{ name }}" value="{{ value }}">
 {% endmacro %}
 
 
 {% macro hidden2(name, value, class, prefix = 'c') %}
-<input id="{{ prefix }}form-{{ name }}" type="hidden" name="{{ name }}" value="{{ value }}" class="{{class}}">
+    <input id="{{ prefix }}form-{{ name }}" type="hidden" name="{{ name }}" value="{{ value }}" class="{{class}}">
 {% endmacro %}
 
 {% macro radio(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<label class="radio-inline">
-{% if group == null %}
-    {% set grp = "radio-group" %}
-{% else %}
-    {% set grp = group %}
-{% endif %}
-    <input type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
-    {{ display }}
-</label>
+    <label class="radio-inline">
+        {% if group == null %}
+            {% set grp = "radio-group" %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+        <input type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
+        {{ display }}
+    </label>
 {% endmacro %}
 
 {% macro radio_set(name, fields, value, disabled = false) %}
-{% import _self as form %}
-<div class="radio-list"> 
-{% for id,display in fields %}
-    {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
-{% endfor %}
-</div>
+    {% import _self as form %}
+    <div class="radio-list">
+        {% for id,display in fields %}
+            {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
+        {% endfor %}
+    </div>
 {% endmacro %}
 
 {% macro group_select_transfer(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
@@ -804,425 +892,425 @@
 {% endmacro %}
 
 {% macro radio_set_pos(label, name, fields, value, disabled = false) %}
-{% import _self as form %}
-<div class="form-group">
-    <label class="col-md-4 control-label">{{ label }}</label>
-    <div class="col-md-7">
-        <div class="radio-list"> 
-        {% for id,display in fields %}
-            {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
-        {% endfor %}
+    {% import _self as form %}
+    <div class="form-group">
+        <label class="col-md-4 control-label">{{ label }}</label>
+        <div class="col-md-7">
+            <div class="radio-list">
+                {% for id,display in fields %}
+                    {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
 
 {% endmacro %}
 
 {% macro radio_set_pos_card(label, name, fields, value, disabled = false) %}
-{% import _self as form %}
-<div class="form-group">
-    <label class="col-md-5 control-label">{{ label }}</label>
-    <div class="col-md-6">
-        <div> 
-        {% for id,display in fields %}
-            {{ form.radio_card(name, id, display, value == id ? true : false, name, disabled) }}
-        {% endfor %}
+    {% import _self as form %}
+    <div class="form-group">
+        <label class="col-md-5 control-label">{{ label }}</label>
+        <div class="col-md-6">
+            <div>
+                {% for id,display in fields %}
+                    {{ form.radio_card(name, id, display, value == id ? true : false, name, disabled) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
 
 {% endmacro %}
 
 {% macro radio_card(name, value, display, checked, group, disabled = false, prefix = 'c') %}
-<label class="radio">
-{% if group == null %}
-    {% set grp = "radio-group" %}
-{% else %}
-    {% set grp = group %}
-{% endif %}
-    <input type="radio" name="{{ grp }}" class="{{ grp }}" value="{{ value }}">
-    {{ display }}
-</label>
+    <label class="radio">
+        {% if group == null %}
+            {% set grp = "radio-group" %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+        <input type="radio" name="{{ grp }}" class="{{ grp }}" value="{{ value }}">
+        {{ display }}
+    </label>
 {% endmacro %}
 
 
 {% macro radio_set_pos_white(label, name, fields, value, disabled = false, class = '') %}
-{% import _self as form %}
-<div class="form-group">
-    <label style="color: white !important;" class="col-md-4 control-label">{{ label }}</label>
-    <div class="col-md-7">
-        <div class="radio-list"> 
-        {% for id,display in fields %}
-            {{ form.radio_white(name, id, display, value == id ? true : false, name, disabled, 'c', class) }}
-        {% endfor %}
+    {% import _self as form %}
+    <div class="form-group">
+        <label style="color: white !important;" class="col-md-4 control-label">{{ label }}</label>
+        <div class="col-md-7">
+            <div class="radio-list">
+                {% for id,display in fields %}
+                    {{ form.radio_white(name, id, display, value == id ? true : false, name, disabled, 'c', class) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
 
 {% endmacro %}
 
 {% macro radio_white(name, value, display, checked, group, disabled = false, prefix = 'c',class) %}
-<label class="radio-inline">
-{% if group == null %}
-    {% set grp = "radio-group" %}
-{% else %}
-    {% set grp = group %}
-{% endif %}
-    <input  type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }} {{class}}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
-    <span style="color: white !important;">{{ display }}</span>
-</label>
+    <label class="radio-inline">
+        {% if group == null %}
+            {% set grp = "radio-group" %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+        <input  type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }} {{class}}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
+        <span style="color: white !important;">{{ display }}</span>
+    </label>
 {% endmacro %}
 
 {% macro radio_set_pos2(label, name, fields, value, disabled = false) %}
-{% import _self as form %}
-<div class="form-group">
-    <label class="col-md-2 control-label">{{ label }}</label>
-    <div class="col-md-8">
-        <div class="radio-list"> 
-        {% for id,display in fields %}
-            {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
-        {% endfor %}
+    {% import _self as form %}
+    <div class="form-group">
+        <label class="col-md-2 control-label">{{ label }}</label>
+        <div class="col-md-8">
+            <div class="radio-list">
+                {% for id,display in fields %}
+                    {{ form.radio(name, id, display, value == id ? true : false, name, disabled) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
 
 {% endmacro %}
 
 
 {% macro typeahead(label, name, display, value, path, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
         <div class="col-md-{{ body_size }}">
             <input type="hidden" name="{{name}}_id" id="{{prefix}}{{name}}_id" value="{{value}}">
             <input type="text" name="{{name}}" value="{{ display }}" placeholder="{{label}}" id="{{prefix}}{{name}}_typeahead" data-path="{{path}}" class="form-control typeahead" autocomplete="off" {{ readonly ? "readonly" : "" }}/>
         </div>
         {% if readonly %}
-    {% else %}
+        {% else %}
             <button class="btn red" type="button" onclick="clearTypeahead('{{name}}','{{prefix}}');">X</button>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro typeahead_noclear(label, name, display, value, path, label_size, body_size, readonly = false, prefix = 'c') %}
-<div class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+    <div class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
         <div class="col-md-{{ body_size }}">
             <input type="hidden" name="{{name}}_id" id="{{prefix}}{{name}}_id" value="{{value}}">
             <input type="text" name="{{name}}" value="{{ display }}" placeholder="{{label}}" id="{{prefix}}{{name}}_typeahead" data-path="{{path}}" class="form-control typeahead" autocomplete="off" {{ readonly ? "readonly" : "" }}/>
         </div>
-</div>
+    </div>
 {% endmacro %}
 
 
 {% macro group_upload_image(label,name,upload,label_size,body_size,readonly = false,prefix = 'c') %}
-<input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
-<div id="{{ prefix }}-{{name}}-dropzone" class="form-group x123">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <div id="real-container">
-            <div style="width:200px; overflow:hidden;">
-            <a id="main-image-link" class="dzp-image" href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}" data-lightbox="media-upload">
-                <img id="{{ prefix }}-{{name}}main-image" src="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg'))|replace({'\\': '/'}) }}" style="min-height:150px;max-height:150px;" data-id="{{ upload.getID|default('0') }}">
-            </a>
+    <input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
+    <div id="{{ prefix }}-{{name}}-dropzone" class="form-group x123">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <div id="real-container">
+                <div style="width:200px; overflow:hidden;">
+                    <a id="main-image-link" class="dzp-image" href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}" data-lightbox="media-upload">
+                        <img id="{{ prefix }}-{{name}}main-image" src="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg'))|replace({'\\': '/'}) }}" style="min-height:150px;max-height:150px;" data-id="{{ upload.getID|default('0') }}">
+                    </a>
+                </div>
+                <br>
             </div>
+            <div id="{{ prefix }}-{{name}}prev-container">
+            </div>
+            {% if upload.getURL|default('') == '' %}
+                <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Upload</a>
+            {% else %}
+                <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Replace</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="dz-preview" class="hidden">
+        <div>
+            <div style="width:200px; overflow:hidden;">
+                <a class="dzp-image" href="#" data-lightbox="donor">
+                    <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
+                </a>
+            </div>
+
+            <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <strong class="error text-danger dzp-error" data-dz-errormessage></strong>
+
             <br>
         </div>
-        <div id="{{ prefix }}-{{name}}prev-container">
-        </div>
-        {% if upload.getURL|default('') == '' %}
-        <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Upload</a>
-        {% else %}
-        <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Replace</a>
-        {% endif %}
     </div>
-</div>
-
-<div id="dz-preview" class="hidden">
-    <div>
-        <div style="width:200px; overflow:hidden;">
-        <a class="dzp-image" href="#" data-lightbox="donor">
-            <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
-        </a>
-        </div>
-
-        <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
-          <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-        </div>
-
-        <strong class="error text-danger dzp-error" data-dz-errormessage></strong>
-
-        <br>
-    </div>
-</div>
-<script>
-$(document).ready(function() {
-    var upload_config = {
-        'preview': '#dz-preview',
-        'url': '{{ path('cat_media_upload_file') }}',
-        'dropzone': '#{{ prefix }}-{{name}}-dropzone',
-        'preview_container': '#{{ prefix }}-{{name}}prev-container',
-        'accepted_files': 'image/*',
-        'clickable': '#{{ prefix }}-{{name}}dz-upload',
-        'display_image': '#{{ prefix }}-{{name}}main-image',
-        'form_field': '#{{ prefix }}form-{{ name }}'
-    };
-    setup_image_upload(upload_config);
-});
-</script>
+    <script>
+        $(document).ready(function() {
+            var upload_config = {
+                'preview': '#dz-preview',
+                'url': '{{ path('cat_media_upload_file') }}',
+                'dropzone': '#{{ prefix }}-{{name}}-dropzone',
+                'preview_container': '#{{ prefix }}-{{name}}prev-container',
+                'accepted_files': 'image/*',
+                'clickable': '#{{ prefix }}-{{name}}dz-upload',
+                'display_image': '#{{ prefix }}-{{name}}main-image',
+                'form_field': '#{{ prefix }}form-{{ name }}'
+            };
+            setup_image_upload(upload_config);
+        });
+    </script>
 {% endmacro %}
 
 
 {% macro group_upload_file(label,name,upload,label_size,body_size,readonly = false,prefix = 'c') %}
-<input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
-<div id="{{ prefix }}dropzone" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <div id="real-container">        
-            {% set uploadClass = '' %}
-            {% if upload != null %}
-                {% if upload.getFileType in ['doc','docx','odt'] %}
-                    {% set uploadClass = 'fa-file-word-o' %}
-                {% elseif upload.getFileType in ['ppt', 'pptx'] %}
-                    {% set uploadClass = 'fa-file-powerpoint-o' %}
-                {% elseif upload.getFileType in ['xls', 'xlsx'] %}
-                    {% set uploadClass = 'fa-file-excel-o' %}
-                {% elseif upload.getFileType in ['pdf'] %}
-                    {% set uploadClass = 'fa-file-pdf-o' %}
+    <input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
+    <div id="{{ prefix }}dropzone" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <div id="real-container">
+                {% set uploadClass = '' %}
+                {% if upload != null %}
+                    {% if upload.getFileType in ['doc','docx','odt'] %}
+                        {% set uploadClass = 'fa-file-word-o' %}
+                    {% elseif upload.getFileType in ['ppt', 'pptx'] %}
+                        {% set uploadClass = 'fa-file-powerpoint-o' %}
+                    {% elseif upload.getFileType in ['xls', 'xlsx'] %}
+                        {% set uploadClass = 'fa-file-excel-o' %}
+                    {% elseif upload.getFileType in ['pdf'] %}
+                        {% set uploadClass = 'fa-file-pdf-o' %}
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-            <a id="main-image-link"  href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}">
-                <i class="fa fa-4 upload-icon {{ uploadClass}}" id="{{ prefix }}main-image"  data-id="{{ upload.getID|default('0') }}">
-                </i>
-            </a>
+                <a id="main-image-link"  href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}">
+                    <i class="fa fa-4 upload-icon {{ uploadClass}}" id="{{ prefix }}main-image"  data-id="{{ upload.getID|default('0') }}">
+                    </i>
+                </a>
+                <br>
+            </div>
+            <div id="{{ prefix }}prev-container">
+            </div>
+            <a href="javascript:void(0)" id="{{ prefix }}dz-upload" class="btn btn-primary {{ readonly ? "disabled" : "" }}">Upload</a>
+        </div>
+    </div>
+
+    <div id="dz-preview" class="hidden">
+        <div>
+            <div style="width:200px; overflow:hidden;">
+                <a class="dzp-image" href="#" data-lightbox="donor">
+                    <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
+                </a>
+            </div>
+
+            <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+
+
             <br>
         </div>
-        <div id="{{ prefix }}prev-container">
-        </div>
-        <a href="javascript:void(0)" id="{{ prefix }}dz-upload" class="btn btn-primary {{ readonly ? "disabled" : "" }}">Upload</a>
     </div>
-</div>
-
-<div id="dz-preview" class="hidden">
-    <div>
-        <div style="width:200px; overflow:hidden;">
-        <a class="dzp-image" href="#" data-lightbox="donor">
-            <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
-        </a>
-        </div>
-
-        <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
-          <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-        </div>
-
-        
-
-        <br>
-    </div>
-</div>
-<script>
-$(document).ready(function() {
-    var upload_config = {
-        'preview': '#dz-preview',
-        'url': '{{ path('cat_media_upload_doc') }}',
-        'dropzone': '#{{ prefix }}dropzone',
-        'maxFilesize': '2',
-        'preview_container': '#{{ prefix }}prev-container',
-        'accepted_files': 'application/pdf, .pdf, .xls, .xlsx, .doc, .docx, .ppt, .jpg, .JPEG, .bmp, .png',
-        'clickable': '#{{ prefix }}dz-upload',
-        'display_image': '#{{ prefix }}main-image',
-        'form_field': '#{{ prefix }}form-{{ name }}'
-    };
-    setup_file_upload2(upload_config);
-});
-</script>
+    <script>
+        $(document).ready(function() {
+            var upload_config = {
+                'preview': '#dz-preview',
+                'url': '{{ path('cat_media_upload_doc') }}',
+                'dropzone': '#{{ prefix }}dropzone',
+                'maxFilesize': '2',
+                'preview_container': '#{{ prefix }}prev-container',
+                'accepted_files': 'application/pdf, .pdf, .xls, .xlsx, .doc, .docx, .ppt, .jpg, .JPEG, .bmp, .png',
+                'clickable': '#{{ prefix }}dz-upload',
+                'display_image': '#{{ prefix }}main-image',
+                'form_field': '#{{ prefix }}form-{{ name }}'
+            };
+            setup_file_upload2(upload_config);
+        });
+    </script>
 {% endmacro %}
 
 {% macro group_upload_file2(label,name,upload,label_size,body_size,readonly = false,prefix = 'c') %}
-<input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
-<div id="{{ prefix }}-{{name}}-dropzone" class="form-group x123">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <div id="real-container">        
-            {% set uploadClass = '' %}
-            {% if upload != null %}
-                {% if upload.getFileType in ['doc','docx','odt'] %}
-                    {% set uploadClass = 'fa-file-word-o' %}
-                {% elseif upload.getFileType in ['ppt', 'pptx'] %}
-                    {% set uploadClass = 'fa-file-powerpoint-o' %}
-                {% elseif upload.getFileType in ['xls', 'xlsx'] %}
-                    {% set uploadClass = 'fa-file-excel-o' %}
-                {% elseif upload.getFileType in ['pdf'] %}
-                    {% set uploadClass = 'fa-file-pdf-o' %}
-                {% else %}
-                    <div style="width:200px; overflow:hidden;">
-                    <a id="main-image-link" class="dzp-image" href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}" data-lightbox="media-upload">
-                        <img id="{{ prefix }}main-image" src="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg'))|replace({'\\': '/'}) }}" style="min-height:150px;max-height:150px;" data-id="{{ upload.getID|default('0') }}">
-                    </a>
-                    </div>
-                    <br>
+    <input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
+    <div id="{{ prefix }}-{{name}}-dropzone" class="form-group x123">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <div id="real-container">
+                {% set uploadClass = '' %}
+                {% if upload != null %}
+                    {% if upload.getFileType in ['doc','docx','odt'] %}
+                        {% set uploadClass = 'fa-file-word-o' %}
+                    {% elseif upload.getFileType in ['ppt', 'pptx'] %}
+                        {% set uploadClass = 'fa-file-powerpoint-o' %}
+                    {% elseif upload.getFileType in ['xls', 'xlsx'] %}
+                        {% set uploadClass = 'fa-file-excel-o' %}
+                    {% elseif upload.getFileType in ['pdf'] %}
+                        {% set uploadClass = 'fa-file-pdf-o' %}
+                    {% else %}
+                        <div style="width:200px; overflow:hidden;">
+                            <a id="main-image-link" class="dzp-image" href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}" data-lightbox="media-upload">
+                                <img id="{{ prefix }}main-image" src="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg'))|replace({'\\': '/'}) }}" style="min-height:150px;max-height:150px;" data-id="{{ upload.getID|default('0') }}">
+                            </a>
+                        </div>
+                        <br>
+                    {% endif %}
                 {% endif %}
+                <a id="main-image-link"  href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}">
+                    <i class="fa fa-4 upload-icon {{ uploadClass}}" id="{{ prefix }}-{{name}}main-image"  data-id="{{ upload.getID|default('0') }}">
+                    </i>
+                </a>
+                <br>
+            </div>
+            <div id="{{ prefix }}-{{name}}prev-container">
+            </div>
+            {% if upload.getURL|default('') == '' %}
+                <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Upload file</a>
+            {% else %}
+                <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Replace file</a>
             {% endif %}
-            <a id="main-image-link"  href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}">
-                <i class="fa fa-4 upload-icon {{ uploadClass}}" id="{{ prefix }}-{{name}}main-image"  data-id="{{ upload.getID|default('0') }}">
-                </i>
-            </a>
+        </div>
+    </div>
+
+    <div id="dz-preview" class="hidden">
+        <div>
+            <div style="width:200px; overflow:hidden;">
+                <a class="dzp-image" href="#" data-lightbox="donor">
+                    <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
+                </a>
+            </div>
+
+            <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <strong class="error text-danger dzp-error" data-dz-errormessage></strong>
+
             <br>
         </div>
-        <div id="{{ prefix }}-{{name}}prev-container">
-        </div>
-        {% if upload.getURL|default('') == '' %}
-        <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Upload file</a>
-        {% else %}
-        <a href="javascript:void(0)" id="{{ prefix }}-{{name}}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Replace file</a>
-        {% endif %}
     </div>
-</div>
-
-<div id="dz-preview" class="hidden">
-    <div>
-        <div style="width:200px; overflow:hidden;">
-        <a class="dzp-image" href="#" data-lightbox="donor">
-            <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
-        </a>
-        </div>
-
-        <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
-          <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-        </div>
-
-        <strong class="error text-danger dzp-error" data-dz-errormessage></strong>
-
-        <br>
-    </div>
-</div>
-<script>
-$(document).ready(function() {
-    var upload_config = {
-        'preview': '#dz-preview',
-        'url': '{{ path('cat_media_upload_doc') }}',
-        'dropzone': '#{{ prefix }}-{{name}}-dropzone',
-        'preview_container': '#{{ prefix }}-{{name}}prev-container',
-        'accepted_files': 'application/pdf, .pdf, .xls, .xlsx, .doc, .docx, .ppt, .png, .PNG',
-        'clickable': '#{{ prefix }}-{{name}}dz-upload',
-        'display_image': '#{{ prefix }}-{{name}}main-image',
-        'form_field': '#{{ prefix }}form-{{ name }}'
-    };
-    setup_file_upload2(upload_config);
-});
-</script>
+    <script>
+        $(document).ready(function() {
+            var upload_config = {
+                'preview': '#dz-preview',
+                'url': '{{ path('cat_media_upload_doc') }}',
+                'dropzone': '#{{ prefix }}-{{name}}-dropzone',
+                'preview_container': '#{{ prefix }}-{{name}}prev-container',
+                'accepted_files': 'application/pdf, .pdf, .xls, .xlsx, .doc, .docx, .ppt, .png, .PNG',
+                'clickable': '#{{ prefix }}-{{name}}dz-upload',
+                'display_image': '#{{ prefix }}-{{name}}main-image',
+                'form_field': '#{{ prefix }}form-{{ name }}'
+            };
+            setup_file_upload2(upload_config);
+        });
+    </script>
 {% endmacro %}
 
 
 {% macro group_upload_file3(label,name,upload,label_size,body_size,readonly = false,prefix = 'c') %}
-<input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
-<div id="{{ prefix }}dropzone" class="form-group">
+    <input type="hidden" id="{{ prefix }}form-{{ name }}" name="{{name}}" value="{{ upload.getID|default('0')}}">
+    <div id="{{ prefix }}dropzone" class="form-group">
 
-    <div class="col-md-{{ body_size }}">
-        <div id="real-container">        
-            {% set uploadClass = '' %}
-            {% if upload != null %}
-                {% if upload.getFileType in ['doc','docx','odt'] %}
-                    {% set uploadClass = 'fa-file-word-o' %}
-                {% elseif upload.getFileType in ['ppt', 'pptx'] %}
-                    {% set uploadClass = 'fa-file-powerpoint-o' %}
-                {% elseif upload.getFileType in ['xls', 'xlsx'] %}
-                    {% set uploadClass = 'fa-file-excel-o' %}
-                {% elseif upload.getFileType in ['pdf'] %}
-                    {% set uploadClass = 'fa-file-pdf-o' %}
+        <div class="col-md-{{ body_size }}">
+            <div id="real-container">
+                {% set uploadClass = '' %}
+                {% if upload != null %}
+                    {% if upload.getFileType in ['doc','docx','odt'] %}
+                        {% set uploadClass = 'fa-file-word-o' %}
+                    {% elseif upload.getFileType in ['ppt', 'pptx'] %}
+                        {% set uploadClass = 'fa-file-powerpoint-o' %}
+                    {% elseif upload.getFileType in ['xls', 'xlsx'] %}
+                        {% set uploadClass = 'fa-file-excel-o' %}
+                    {% elseif upload.getFileType in ['pdf'] %}
+                        {% set uploadClass = 'fa-file-pdf-o' %}
+                    {% endif %}
                 {% endif %}
+                <a id="main-image-link"  href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}">
+                    <i class="fa fa-4 upload-icon {{ uploadClass}}" id="{{ prefix }}main-image"  data-id="{{ upload.getID|default('0') }}">
+                    </i>
+                </a>
+                <br>
+            </div>
+            <div id="{{ prefix }}prev-container">
+            </div>
+            {% if upload.getURL|default('') == '' %}
+                <a href="javascript:void(0)" id="{{ prefix }}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Upload file</a>
+            {% else %}
+                <a href="javascript:void(0)" id="{{ prefix }}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Replace file</a>
             {% endif %}
-            <a id="main-image-link"  href="{{ upload.getURL|default(asset('bundles/gistmedia/img/no_image.jpg')) }}">
-                <i class="fa fa-4 upload-icon {{ uploadClass}}" id="{{ prefix }}main-image"  data-id="{{ upload.getID|default('0') }}">
-                </i>
-            </a>
+        </div>
+    </div>
+
+    <div id="dz-preview" class="hidden">
+        <div>
+            <div style="width:200px; overflow:hidden;">
+                <a class="dzp-image" href="#" data-lightbox="donor">
+                    <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
+                </a>
+            </div>
+
+            <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <strong class="error text-danger dzp-error" data-dz-errormessage></strong>
+
             <br>
         </div>
-        <div id="{{ prefix }}prev-container">
-        </div>
-        {% if upload.getURL|default('') == '' %}
-        <a href="javascript:void(0)" id="{{ prefix }}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Upload file</a>
-        {% else %}
-        <a href="javascript:void(0)" id="{{ prefix }}dz-upload" class="btn btn-primary btn-sm {{ readonly ? "disabled" : "" }}">Replace file</a>
-        {% endif %}
     </div>
-</div>
-
-<div id="dz-preview" class="hidden">
-    <div>
-        <div style="width:200px; overflow:hidden;">
-        <a class="dzp-image" href="#" data-lightbox="donor">
-            <img data-dz-thumbnail style="min-height:150px;max-height:150px;">
-        </a>
-        </div>
-
-        <div class="dzp-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:200px">
-          <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-        </div>
-
-        <strong class="error text-danger dzp-error" data-dz-errormessage></strong>
-
-        <br>
-    </div>
-</div>
-<script>
-$(document).ready(function() {
-    var upload_config = {
-        'preview': '#dz-preview',
-        'url': '{{ path('cat_media_upload_doc') }}',
-        'dropzone': '#{{ prefix }}-{{name}}-dropzone',
-        'preview_container': '#{{ prefix }}prev-container',
-        'accepted_files': 'application/pdf, .pdf, .xls, .xlsx, .doc, .docx, .ppt, .png, .PNG',
-        'clickable': '#{{ prefix }}dz-upload',
-        'display_image': '#{{ prefix }}main-image',
-        'form_field': '#{{ prefix }}form-{{ name }}'
-    };
-    setup_file_upload(upload_config);
-});
-</script>
+    <script>
+        $(document).ready(function() {
+            var upload_config = {
+                'preview': '#dz-preview',
+                'url': '{{ path('cat_media_upload_doc') }}',
+                'dropzone': '#{{ prefix }}-{{name}}-dropzone',
+                'preview_container': '#{{ prefix }}prev-container',
+                'accepted_files': 'application/pdf, .pdf, .xls, .xlsx, .doc, .docx, .ppt, .png, .PNG',
+                'clickable': '#{{ prefix }}dz-upload',
+                'display_image': '#{{ prefix }}main-image',
+                'form_field': '#{{ prefix }}form-{{ name }}'
+            };
+            setup_file_upload(upload_config);
+        });
+    </script>
 {% endmacro %}
 
 
 {% macro group_textnew(label, name, value, label_size, body_size, options = {} ) %}
-{% set options = options|merge({'prefix' : options.prefix is defined ? options.prefix  : 'c' }) %}
-{% set options = options|merge({'readonly' : ( options.readonly is defined ? options.readonly : false )}) %}
-{% set options = options|merge({'class' : ( options.class is defined ? options.class : '' )}) %}
-{% set options = options|merge({'required' : ( options.required is defined ? options.required : false )}) %}
+    {% set options = options|merge({'prefix' : options.prefix is defined ? options.prefix  : 'c' }) %}
+    {% set options = options|merge({'readonly' : ( options.readonly is defined ? options.readonly : false )}) %}
+    {% set options = options|merge({'class' : ( options.class is defined ? options.class : '' )}) %}
+    {% set options = options|merge({'required' : ( options.required is defined ? options.required : false )}) %}
 
-<div id="{{ options.prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class="col-md-{{ body_size }}">
-        <input id="{{ options.prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{ options.class }}" placeholder="{{ label }}" value="{{ value }}" {{ options.readonly ? 'readonly ' : '' }} {{ options.required ? 'required' : '' }}>
+    <div id="{{ options.prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class="col-md-{{ body_size }}">
+            <input id="{{ options.prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control {{ options.class }}" placeholder="{{ label }}" value="{{ value }}" {{ options.readonly ? 'readonly ' : '' }} {{ options.required ? 'required' : '' }}>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 
 {% macro group_color(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
-    <div class=" input-group colorpicker-group col-md-{{ body_size }}">
-        <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control " placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
-        <span class="input-group-addon"><i></i></span>
+    <div id="{{ prefix }}group-{{ name }}" class="form-group">
+        <label class="col-md-{{ label_size }} control-label">{{ label }}</label>
+        <div class=" input-group colorpicker-group col-md-{{ body_size }}">
+            <input id="{{ prefix }}form-{{ name }}" type="text" name="{{ name }}" class="form-control " placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+            <span class="input-group-addon"><i></i></span>
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro wysiwyg(label, name, value, row_size, body_size, readonly = false, prefix = 'c') %}
-{% if readonly == true %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <div class=" col-md-{{ body_size }}">
-        <label class="control-label">{{ label }}</label>
-        <br/>
-        {{value|raw}}
-    </div>
-</div>
-{% else %}
-<div id="{{ prefix }}group-{{ name }}" class="form-group">
-    <div class=" col-md-{{ body_size }}">
-        <label class="control-label">{{ label }}</label>
-        <br/>
-        <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control summernote" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
-    </div>
-</div>
-{% endif %}
+    {% if readonly == true %}
+        <div id="{{ prefix }}group-{{ name }}" class="form-group">
+            <div class=" col-md-{{ body_size }}">
+                <label class="control-label">{{ label }}</label>
+                <br/>
+                {{value|raw}}
+            </div>
+        </div>
+    {% else %}
+        <div id="{{ prefix }}group-{{ name }}" class="form-group">
+            <div class=" col-md-{{ body_size }}">
+                <label class="control-label">{{ label }}</label>
+                <br/>
+                <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control summernote" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+            </div>
+        </div>
+    {% endif %}
 {% endmacro %}

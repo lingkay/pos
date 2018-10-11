@@ -1,39 +1,35 @@
+<br><br>
 <div class="row">
-    <div class="col-md-6">
-        <!-- BEGIN FORM-->
-        <div class="form-body">
-            {{ form.group_text_orig('POS Location ID', 'sys_pos_loc_id', sys_pos_loc_id|default(''), 3, 6, false) }}
-            <div class="form-group">
-                <label class="col-md-3 control-label"></label>
-                <div class="col-md-6">
-                    <p><b>POS Location ID</b> is the unique ID of this machine</p>
-                </div>
-            </div>
-            {{ form.group_text_orig('Area ID', 'sys_area_id', sys_area_id|default(''), 3, 6, false) }}
-            <div class="form-group">
-                <label class="col-md-3 control-label"></label>
-                <div class="col-md-6">
-                    <p><b>Area ID</b> is used to filter the users to sync with this POS</p>
-                </div>
-            </div>
-            {{ form.group_text_orig('POS Name', 'gist_sys_pos_name', gist_sys_pos_name|default(''), 3, 6, false) }}
-            {{ form.group_text_orig('POS URL', 'sys_pos_url', sys_pos_url|default(''), 3, 6, false) }}
-            {{ form.group_text_orig('ERP URL', 'sys_erp_url', sys_erp_url|default(''), 3, 6, false) }}
-            {{ form.group_select_no_default('Time Format', 'sys_time_format', sys_time_format_options, sys_time_format|default(''), 3, 6, false) }}
-            {{ form.group_text_orig('GC Product ID', 'erp_gc_id', erp_gc_id|default(''), 3, 6, false) }}
-
-        </div>
-        <div class="form-actions fluid">
-            <div class="form-group">
-                <label class="col-md-3 control-label"></label>
-                <div class="col-md-6">
-                    <button type="submit" class="btn blue">Save</button>
-                </div>
-            </div>
-        </div>
+    <div class="col-12 col-md-6">
+        <row>
+            {{ form.group_text_v1('POS Location ID', 'sys_pos_loc_id', sys_pos_loc_id|default(''), 4, 7, false) }}
+            <p class="ml-5"><b>POS Location ID</b> is the unique ID of this machine</p>
+        </row>
+        <row>
+            {{ form.group_text_v1('Area ID', 'sys_area_id', sys_area_id|default(''), 4, 7, false) }}
+            <p class="ml-5"><b>Area ID</b> is used to filter the users to sync with this POS</p>
+        </row>
+        <row>
+            {{ form.group_text_v1('POS Name', 'gist_sys_pos_name', gist_sys_pos_name|default(''), 4, 7, false) }}
+        </row>
+        <row>
+            {{ form.group_text_v1('POS URL', 'sys_pos_url', sys_pos_url|default(''), 4, 7, false) }}
+        </row>
+        <row>
+            {{ form.group_text_v1('ERP URL', 'sys_erp_url', sys_erp_url|default(''), 4, 7, false) }}
+        </row>
+        <row>
+            {{ form.group_select_pos_no_default('Time Format', 'sys_time_format', sys_time_format_options, sys_time_format|default(''), 4, 7, false) }}
+        </row>
+        <row>
+            {{ form.group_text_v1('GC Product ID', 'erp_gc_id', erp_gc_id|default(''), 4, 7, false) }}
+        </row>
     </div>
-    <div class="col-md-6">
-        <div class="form-body">
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="d-inline-block">
+            <button type="submit" class="btn btn-success btn-v1 mr-3 mt-3 mb-3">Save</button>
         </div>
     </div>
 </div>

@@ -1,137 +1,129 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
-    <div class="page-content">
-        <form method="post" class="form-horizontal" id="counting_form">
-            <div class="row" style="width: 100%;">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    <h2 class="form-section">{{ list_title }}</h2>
-                    <a href="{{ path('gist_inventory_menu_index') }}">Return to Inventory Menu</a>
-                    <input type="hidden" id="sysCountVisibility" value="{{ sysCountVisibility }}">
-                    <input type="hidden" id="countingRule" value="{{ counting_rule }}">
-                    <br>
-                    <br>
-                    <div class="tabbable tabbable-custom tabbable-full-width">
-                        <ul class="nav nav-tabs">
-                            <li>
-                                <a href="#tab_list" data-toggle="tab">
-                                    Submitted Counting Forms </a>
-                            </li>
-                            <li class="active">
-                                <a href="#tab_counting" data-toggle="tab">
-                                    Counting </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane" id="tab_list">
-                                <table class="table table-striped table-bordered table-hover" id="summary_table">
-                                    <thead>
+    <!-- CONTENT -->
+    <form method="post" class="form-horizontal" id="counting_form">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="page-title">Counting</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-pills nav-pills-v1 mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <a aria-controls="pills-home" aria-selected="false" class="nav-link" data-toggle="pill" href="#pills-home" id="pills-home-tab" role="tab">Submitted Counting Forms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a aria-controls="pills-profile" aria-selected="true" class="nav-link active" data-toggle="pill" href="#pills-profile" id="pills-profile-tab" role="tab">Counting</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <!-- SUBMITTED COUTING FORMS -->
+                    <div aria-labelledby="pills-home-tab" class="tab-pane fade" id="pills-home" role="tabpanel">
+                        <div class="table-responsive table-v1">
+                            <table class="table table-bordered" data-data-table="true" id="summary_table" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th style="width: 10%">ID</th>
+                                    <th style="width: 50%">Submitted By</th>
+                                    <th style="width: 25%">Date</th>
+                                    <th style="width: 15%">Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for s in submissions %}
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Submitted by</th>
-                                        <th>Date</th>
-                                        {#<th>Type</th>#}
-                                        <th>Status</th>
-                                        {#<th style="width: 165px"></th>#}
+                                        <td>{{ s.id }}</td>
+                                        <td>{{ s.submitted_by }}</td>
+                                        <td>{{ s.date_create }}</td>
+                                        {#<td>{{ s.type }}</td>#}
+                                        <td>{{ s.status }}</td>
+                                        {#<td></td>#}
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for s in submissions %}
-                                        <tr>
-                                            <td>{{ s.id }}</td>
-                                            <td>{{ s.submitted_by }}</td>
-                                            <td>{{ s.date_create }}</td>
-                                            {#<td>{{ s.type }}</td>#}
-                                            <td>{{ s.status }}</td>
-                                            {#<td></td>#}
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="tab-pane active" id="tab_counting">
-                                {% if form_disabled %}
-                                    <div class="note note-warning">
-                                        <h4 class="block">Form disabled!</h4>
-                                        <p> <strong>{{ detected_submission_timeslot }}</strong> count already submitted. Please wait for the next time slot. </p>
-                                    </div>
-                                {% endif %}
-                                {% if not form_disabled %}
-                                <table class="table table-bordered" id="counting_table">
-                                    <thead>
-                                    <tr>
-                                        <th width="10%">Item Code</th>
-                                        <th width="20%">Item Name</th>
-                                        {% if sysCountVisibility == '3' %}
-                                            <th width="15%">Current Stock</th>
-                                        {% endif %}
-                                        <th width="15%">Count</th>
-                                        {% if sysCountVisibility == '3' %}
-                                            <th width="10%">+/-</th>
-                                            <th width="5%"></th>
-                                        {% endif %}
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for s in form_fields %}
-                                        <tr>
-                                            <input type="hidden" name="product_id[]" value="{{ s.product_id }}">
-                                            <td>{{ s.item_code }}</td>
-                                            <td>{{ s.item_name }}</td>
-                                            {% if sysCountVisibility == '3' %}
-                                                <td><input type="number" step="1" class="existingCount form-control" name="existingCount[]" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" readonly></td>
-                                            {% else %}
-                                                <input type="hidden" class="existingCount" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" name="existingCount[]">
-                                            {% endif %}
-                                            <td><input type="number" step="1" min="0" class="currentCount form-control" name="currentCount[]" value="" {{ form_disabled ? 'disabled ' : '' }}></td>
-                                            {% if sysCountVisibility == '3' %}
-                                                <td><input type="text" class="diffCount form-control" name="diffCount[]" value="+0" readonly></td>
-                                                <td class="text-center"><i class="fa fa-check center-block text-center rowMarker"></i></td>
-                                            {% else %}
-                                                <input type="hidden" class="diffCount" value="x" name="diffCount[]">
-                                            {% endif %}
-
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                                    <button type="submit" class="btn blue" id="submit_counts"><i class="fa fa-save"></i> Submit</button>
-                                {% endif %}
-                            </div>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                    <!-- COUNTING -->
+                    <div aria-labelledby="pills-profile-tab" class="tab-pane fade show active" id="pills-profile" role="tabpanel">
+                        {#<form action="" id="form--counting" name="form--counting">#}
+                        <input type="hidden" id="sysCountVisibility" value="{{ sysCountVisibility }}">
+                        <input type="hidden" id="countingRule" value="{{ counting_rule }}">
+                        <div class="table-responsive table-v1" data-has_submit="true">
+                            {% if form_disabled %}
+                                <div class="note note-warning">
+                                    <h4 class="block">Form disabled!</h4>
+                                    <p> <strong>{{ detected_submission_timeslot }}</strong> count already submitted. Please wait for the next time slot. </p>
+                                </div>
+                            {% endif %}
+                            <table class="table table-bordered" data-data-table="true" id="counting_table" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th style="width: 15%">Item Code</th>
+                                    <th style="width: 35%">Item Name</th>
+                                    {% if sysCountVisibility == '3' %}
+                                        <th style="width: 15%">Current Stock</th>
+                                    {% endif %}
+                                    <th style="width: 15%">Count</th>
+                                    {% if sysCountVisibility == '3' %}
+                                        <th style="width: 15%">+/-</th>
+                                        <th style="width: 5%"></th>
+                                    {% endif %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for s in form_fields %}
+                                    <tr>
+                                        <input type="hidden" name="product_id[]" value="{{ s.product_id }}">
+                                        <td>{{ s.item_code }}</td>
+                                        <td>{{ s.item_name }}</td>
+                                        {% if sysCountVisibility == '3' %}
+                                            <td><input type="number" step="1" class="existingCount" name="existingCount[]" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" readonly></td>
+                                        {% else %}
+                                            <input type="hidden" class="existingCount" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" name="existingCount[]">
+                                        {% endif %}
+                                        <td><input type="number" step="1" min="0" class="currentCount" name="currentCount[]" value="{{ s.current_stock|default('')|replace({".00" : ""}) }}" {{ form_disabled ? 'disabled ' : '' }}></td>
+                                        {% if sysCountVisibility == '3' %}
+                                            <td><input type="text" class="diffCount" name="diffCount[]" value="+0" readonly></td>
+                                            <td class="text-center"><i class="fa fa-check rowMarker"></i></td>
+                                        {% else %}
+                                            <input type="hidden" class="diffCount" value="x" name="diffCount[]">
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn blue" id="submit_counts"><i class="fa fa-save"></i> Submit</button>
+                        </div>
+                        {#</form>#}
+                    </div>
                 </div>
-                <div class="col-md-1"></div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
+{% endblock %}
 
-    <div id="discr_modal_alert" class="modal fade" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+{% block modal %}
+    <div aria-hidden="true" class="modal modal--v1 fade" id="discr_modal_alert" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                        <h2 id="form_title" class="modal-title">Discrepancy detected!</h2>
+                        <h5 class="modal-title" id="form_title">Discrepancy detected!</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="form-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <a href="javascript:;" class="btn green" id="recountBtn">Recount</a>
-                                        <a href="javascript:;" class="btn red" id="continueBtn">Continue</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-v1 btn-small btn-primary" id="recountBtn" type="button">Recount</button>
+                        <button class="btn btn-v1 btn-small btn-success" id="continueBtn" type="button">Continue</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 {% endblock %}
+
 {% block js %}
     <script>
         $(document).ready(function() {
@@ -197,15 +189,16 @@
                 "bProcessing": true,
                 "bServerSide": false,
                 //"sAjaxSource": path,
-                "iDisplayLength": 5,
-                "bLengthChange": false,
+                "iDisplayLength": 10,
                 "bInfo": false,
-                "sPaginationType": "bootstrap",
+                // "bSort" : false,
+                // "bLengthChange": false,
+                // "sPaginationType": "bootstrap",
                 "oLanguage": {
                     "sLengthMenu": "_MENU_ records",
                     "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
                     }
                 },
                 "aoColumnDefs": [
@@ -214,7 +207,6 @@
                 "aaSorting": [[0,'desc']]
             });
 
-
             var counting_table;
             counting_table = $('#counting_table').dataTable({
                 "bProcessing": true,
@@ -222,9 +214,9 @@
                 "iDisplayLength": 10,
                 "bFilter" : false,
                 "bInfo" : false,
-                "bSort" : false,
-                "bLengthChange": false,
-                "sPaginationType": "bootstrap",
+                // "bSort" : false,
+                // "bLengthChange": false,
+                // "sPaginationType": "bootstrap",
                 "fnDrawCallback": function( oSettings ) {
                     $('.currentCount').on('keyup', function(e) {
                         var tr = $(this).closest('tr');
@@ -321,10 +313,13 @@
                 "oLanguage": {
                     "sLengthMenu": "_MENU_ records",
                     "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
                     }
-                }
+                },
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [5] },
+                ],
             });
 
             $('#submit_counts').on('click', function(e){
@@ -339,40 +334,39 @@
                     var existingCount = tr.find('.existingCount').val();
                     var currentCountInt = parseInt(tr.find('.currentCount').val());
 
-                        if (countingRule == 'all') {
-                            if (currentCount.val() == ''  || currentCountInt < 0) {
-                                tr.css("background-color", "#ff5959");
-                                flag_form_valid = false;
-                            } else if (currentCount.val() != existingCount) {
-                                if (sysCountVisibility == '3' || sysCountVisibility == '2') {
-                                    flag_discrepancy = true;
-                                    if (sysCountVisibility == '3') {
-                                        tr.css("background-color", "yellow");
-                                    }
-                                } else {
-                                    tr.css("background-color", "");
+                    if (countingRule == 'all') {
+                        if (currentCount.val() == ''  || currentCountInt < 0) {
+                            tr.css("background-color", "#ff5959");
+                            flag_form_valid = false;
+                        } else if (currentCount.val() != existingCount) {
+                            if (sysCountVisibility == '3' || sysCountVisibility == '2') {
+                                flag_discrepancy = true;
+                                if (sysCountVisibility == '3') {
+                                    tr.css("background-color", "yellow");
                                 }
-                            }
-                        } else {
-                            //selective
-                            if (currentCountInt < 0) {
-                                tr.css("background-color", "#ff5959");
-                                flag_form_valid = false;
-                            } else if (currentCount.val() != existingCount) {
-                                if ((sysCountVisibility == '3' || sysCountVisibility == '2') && currentCount.val() != '') {
-                                    flag_discrepancy = true;
-                                    if (sysCountVisibility == '3') {
-                                        tr.css("background-color", "yellow");
-                                    }
-                                } else {
-                                    tr.css("background-color", "");
-                                }
+                            } else {
+                                tr.css("background-color", "");
                             }
                         }
+                    } else {
+                        //selective
+                        if (currentCountInt < 0) {
+                            tr.css("background-color", "#ff5959");
+                            flag_form_valid = false;
+                        } else if (currentCount.val() != existingCount) {
+                            if ((sysCountVisibility == '3' || sysCountVisibility == '2') && currentCount.val() != '') {
+                                flag_discrepancy = true;
+                                if (sysCountVisibility == '3') {
+                                    tr.css("background-color", "yellow");
+                                }
+                            } else {
+                                tr.css("background-color", "");
+                            }
+                        }
+                    }
                 });
 
                 if (!flag_discrepancy && flag_form_valid) {
-
 
                 } else {
                     if (!flag_form_valid) {

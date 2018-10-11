@@ -1,224 +1,478 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% import "GistTemplateBundle::pos_form.html.twig" as pos_form_tools %}
+
+{% block css %}
+    <style>
+        .modal {
+            overflow-y:auto;
+        }
+        .page-pos .box-gradient {
+            font-size: 12px;
+        }
+
+        .pos-products .item {
+            padding: auto 15px;
+            cursor: pointer;
+        }
+
+        .item-content {
+            border: 1px solid #dadee7;
+            min-height: 35px;
+            margin: 3px 0;
+            display: flex;
+            padding: 25px 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .item-content img {
+            min-height: 60px;
+            width: 85px;
+            /*border: 1px solid #000;*/
+            margin-right: 10px;
+        }
+
+
+        .item-details .item-title {
+            text-transform: uppercase;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 150px;
+            white-space: nowrap;
+        }
+
+        .item-details .item-price {
+            color: #0059b0;
+            font-weight: 600;
+        }
+
+        .box--cart__items {
+            min-height: 150px;
+            border-bottom: 1px solid #bfbfbf;
+        }
+
+        .box--cart__amounts {
+            color: #9e9e9e;
+        }
+
+        .box--cart__amounts .cart__grand-total {
+            color: #00468b;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .box--cart__buttons {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+
+        .box--cart__buttons .btn {
+            flex: 1;
+            margin: 5px;
+            border-radius: 0;
+            color: white;
+            background: #cecece;
+            display: none;
+        }
+
+        .box--cart__buttons .btn--next {
+            background: #f89718;
+        }
+
+        .box--cart__buttons .btn--reset {
+            background: #00b05b;
+        }
+
+        .box--cart__buttons .btn--checkout {
+            background: #f89718;
+        }
+
+        #transaction_type_modal .transaction-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #transaction_type_modal .transaction-option .img--icon {
+            min-height: 70px;
+            position: relative;
+            max-width: 150px;
+        }
+
+        #transaction_type_modal .transaction-option .img--icon img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+
+        .checkout-amount {
+            color: #00468b;
+        }
+
+        #checkout_modal .payment_types .payment_type img {
+            max-width: 100px;
+        }
+
+        .card-detail {
+            margin: 5px auto;
+        }
+
+        .card-detail label {
+            color: #202020;
+        }
+
+        .amount-input-set .text-input input {
+            background: #fff;
+            padding: 20px 10px;
+            color: #7c7c7c;
+            border: 1px solid #dadee7;
+            border-radius: 10px;
+        }
+
+        .keypad {
+            padding-top: 15px;
+        }
+
+        .keypad .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+
+        .keypad .keypad__number {
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+
+        .keypad .keypad__number span {
+            background: #eeeeee;
+            border: 1px solid #b2b2b2;
+            color: #5f5f5f;
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .keypad .keypad__clear span{
+            background: #dc3545;
+            color: white;
+            border: #dc3545;
+        }
+
+        .keypad .keypad__del span{
+            background: #004692;
+            color: white;
+            border: #004692;
+
+        }
+
+        .box--cart__amounts--updated {
+            display: none;
+        }
+
+        .input_no_style{
+            background-color:rgba(0,0,0,0) !important;
+            border:none !important;
+        }
+
+        @media (min-width: 576px) {
+            .item:nth-child(odd) {
+                padding-right: 5px;
+            }
+            .item:nth-child(even) {
+                padding-left: 5px;
+            }
+
+            .box--cart__buttons {
+                flex-direction: row;
+            }
+
+            .box--cart__buttons .btn--next {
+                flex-basis: 40%;
+            }
+            /*           .box--cart__buttons .btn:first-child{
+                  margin-left: 0;
+                }
+
+                .box--cart__buttons .btn:last-child{
+                  margin-right: 0;
+                }*/
+        }
+
+        @media (min-width: 768px) {
+            .box--cart__items {
+                min-height: 350px;
+            }
+        }
+    </style>
+{% endblock %}
 {% block content %}
-<input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
-<input type="hidden" id="url_pos" value="{{sys_pos_url}}">
-<input type="hidden" id="url_erp" value="{{sys_erp_url}}">
-<input type="hidden" id="refund_code" value="{{refund_code|default('')}}">
-<input type="hidden" id="float_cart_minimum_total" value="0">
-<input type="hidden" id="float_cart_new_price" value="0">
-<input type="hidden" id="erp_gc_id" value="{{ erp_gc_id|default('null') }}">
-<input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
-<input type="hidden" id="float_cart_orig_price" name="float_cart_orig_price" value="0">
-<input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
-<input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
-<input type="hidden" id="float_static_trans_amount" name="float_static_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
-<input type="hidden" id="float_trans_refund_amount" name="float_trans_refund_amount" value="0">
-<input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
-<input type="hidden" id="float_trans_balance" name="transaction_balance" value="{{transaction_object.getBalance|default(0)}}">
-<input type="hidden" id="transaction_prev_balance" name="transaction_prev_balance" value="{{transaction_object.getBalance|default(0)}}">
-<input type="hidden" id="float_trans_ea" name="transaction_balance" value="0">
-<input type="hidden" id="string_trans_type" value="{{transaction_object.getTransactionType|default('none')}}">
-<input type="hidden" id="string_parent_trans_type" value="{{ transaction_object.getTransactionType|default('null') }}">
-<input type="hidden" id="string_refund_method" value="none">
-<input type="hidden" id="string_trans_main_type" value="Normal">
-<input type="hidden" id="string_trans_bulk_type" value="none">
-<input type="hidden" id="string_trans_mode" value="{{transaction_object.getTransactionMode|default('normal')}}">
-<input type="hidden" id="string_exchange_limit" value="{{ exchange_limit|default('False') }}">
-<input type="hidden" id="flag_refund" value="{{flag_refund|default('false')}}">
-<input type="hidden" id="flag_upsell" value="{{flag_upsell|default('false')}}">
-<input type="hidden" id="string_trans_cc_interest" value="true">
-<input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="{{customer.getERPID|default('0')}}">
-<input type="hidden" id="transaction_customer_display_id" name="transaction_customer_display_id" value="{{customer.getDisplayID|default('0')}}">
-<input type="hidden" id="transaction_customer_name" name="transaction_customer_name" value="{{customer.getNameFormatted|default('N/A')}}">
-<input type="hidden" id="transaction_system_id" name="transaction_system_id" value="">
-<input type="hidden" id="transaction_display_id" name="transaction_display_id" value="">
-<input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
-<input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
-<input type="hidden" id="transaction_parent_ea" name="transaction_parent_ea" value="{{ea|default(0)}}">
-<input type="hidden" id="transaction_upsell_parent" name="transaction_upsell_parent" value="{{upsell_parent|default(0)}}">
-<input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
-<input type="hidden" id="minimum_deposit_percent" name="minimum_deposit_percent" value="{{min_deposit_pct|default('null')}}">
-<input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
-<input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
-<input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
-<input type="hidden" id="hasItems" value="{{transaction_object.hasItems|default(false)}}">
-{# GIFT CARD DETAILS #}
-<input type="hidden" id="transaction_gc_number" value="{{customer.getGCNumber|default('0')}}">
-<input type="hidden" id="transaction_gc_expiry" value="null">
-<input type="hidden" id="transaction_gc_balance" value="null">
-<input type="hidden" id="float_trans_gc_credit" name="float_trans_gc_credit" value="0">
-<input type="hidden" id="float_trans_gc_debit" name="float_trans_gc_debit" value="0">
-{# END GIFT CARD DETAILS #}
-{# TAX VARS #}
-<input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
-<input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">
-<input type="hidden" id="float_orig_tax_vat_amt" value="0">
-<input type="hidden" id="float_new_tax_vat_amt" value="0">
-<input type="hidden" id="float_orig_tax_amt_net_vat" value="0">
-<input type="hidden" id="float_new_tax_amt_net_vat" value="0">
-<input type="hidden" id="string_tax_coverage" value="{{tax_coverage|default('none')}}">
-<input type="hidden" id="float_orig_excl_total" value="0">
-<input type="hidden" id="float_new_excl_total" value="0">
-<input type="hidden" id="float_deposit_tax_vat_amt" value="0">
-<input type="hidden" id="float_balance_tax_vat_amt" value="0">
-<input type="hidden" id="float_deposit_tax_amt_net_vat" value="0">
-<input type="hidden" id="float_balance_tax_amt_net_vat" value="0">
-<!-- END TAX VARS -->
-<div class="page-content">
-    <br>
-    <div class="row" style="margin-right: 0px !important;">
-        <div class="col-md-2" style="padding-right: 1px !important; border: 0px !important;">
-        	<div class="portlet box " style="background-color: #292929 !important;border: 0px !important;">
-                <div class="portlet-title">
-                    <div class="caption">Product Categories</div>
-                </div>
-                <div class="portlet-body form" id="prod_cats" style="height: 400px; overflow:scroll;overflow-x: hidden;">
-                	
-                </div>
-                <div style="background-color: #ffffff !important;">
-                &nbsp;&nbsp;
-                
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
-                <div class="portlet-title">
-                    <div class="caption">Products</div>
-                </div>
-                <div class="portlet-body">
-                    <br>
-                    <div  style="height: 410px;overflow:scroll; overflow-x: hidden;">
-                        <div class="row" id="prods">
-                    
+    <input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
+    <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
+    <input type="hidden" id="url_erp" value="{{sys_erp_url}}">
+    <input type="hidden" id="refund_code" value="{{refund_code|default('')}}">
+    <input type="hidden" id="float_cart_minimum_total" value="0">
+    <input type="hidden" id="float_cart_new_price" value="0">
+    <input type="hidden" id="erp_gc_id" value="{{ erp_gc_id|default('null') }}">
+    <input type="hidden" id="cart_min_price" name="cart_min_price" value="0">
+    <input type="hidden" id="float_cart_orig_price" name="float_cart_orig_price" value="0">
+    <input type="hidden" id="string_consultant_id" value="{{ app.user.getERPID|default('0') }}">
+    <input type="hidden" id="float_trans_amount" name="float_trans_amount" value="0">
+    <input type="hidden" id="float_static_trans_amount" name="float_static_trans_amount" value="{{ transaction_object.getTransactionTotal|default('0') }}">
+    <input type="hidden" id="float_trans_refund_amount" name="float_trans_refund_amount" value="0">
+    <input type="hidden" id="float_trans_deposit_amount" name="float_trans_deposit_amount" value="0">
+    <input type="hidden" id="float_trans_balance" name="transaction_balance" value="{{transaction_object.getBalance|default(0)}}">
+    <input type="hidden" id="transaction_prev_balance" name="transaction_prev_balance" value="{{transaction_object.getBalance|default(0)}}">
+    <input type="hidden" id="float_trans_ea" name="transaction_balance" value="0">
+    <input type="hidden" id="string_trans_type" value="{{transaction_object.getTransactionType|default('none')}}">
+    <input type="hidden" id="string_parent_trans_type" value="{{ transaction_object.getTransactionType|default('null') }}">
+    <input type="hidden" id="string_refund_method" value="none">
+    <input type="hidden" id="string_trans_main_type" value="Normal">
+    <input type="hidden" id="string_trans_bulk_type" value="none">
+    <input type="hidden" id="string_trans_mode" value="{{transaction_object.getTransactionMode|default('normal')}}">
+    <input type="hidden" id="string_exchange_limit" value="{{ exchange_limit|default('False') }}">
+    <input type="hidden" id="flag_refund" value="{{flag_refund|default('false')}}">
+    <input type="hidden" id="flag_upsell" value="{{flag_upsell|default('false')}}">
+    <input type="hidden" id="string_trans_cc_interest" value="true">
+    <input type="hidden" id="transaction_customer_id" name="transaction_customer_id" value="{{customer.getERPID|default('0')}}">
+    <input type="hidden" id="transaction_customer_display_id" name="transaction_customer_display_id" value="{{customer.getDisplayID|default('0')}}">
+    <input type="hidden" id="transaction_customer_name" name="transaction_customer_name" value="{{customer.getNameFormatted|default('N/A')}}">
+    <input type="hidden" id="transaction_system_id" name="transaction_system_id" value="">
+    <input type="hidden" id="transaction_display_id" name="transaction_display_id" value="">
+    <input type="hidden" id="transaction_reference_sys_id" name="transaction_reference_sys_id" value="{{transaction_object.getID|default(0)}}">
+    <input type="hidden" id="transaction_reference_sys_disp_id" name="transaction_reference_sys_disp_id" value="{{transaction_object.getTransDisplayId|default(0)}}">
+    <input type="hidden" id="transaction_parent_ea" name="transaction_parent_ea" value="{{ea|default(0)}}">
+    <input type="hidden" id="transaction_upsell_parent" name="transaction_upsell_parent" value="{{upsell_parent|default(0)}}">
+    <input type="hidden" id="transaction_status" name="transaction_status" value="{{status|default('null')}}">
+    <input type="hidden" id="minimum_deposit_percent" name="minimum_deposit_percent" value="{{min_deposit_pct|default('null')}}">
+    <input type="hidden" id="transaction_amt_to_pay" name="transaction_amt_to_pay" value="0">
+    <input type="hidden" id="bulk_opt_sel" name="bulk_opt_sel" value="{{transaction_object.getSelectedBulkDiscountType|default('none')}}">
+    <input type="hidden" id="bulk_opt_amt" name="bulk_opt_amt" value="{{transaction_object.getSelectedBulkDiscountAmount|default('0')}}">
+    <input type="hidden" id="hasItems" value="{{transaction_object.hasItems|default(false)}}">
+    {# GIFT CARD DETAILS #}
+    <input type="hidden" id="transaction_gc_number" value="{{customer.getGCNumber|default('0')}}">
+    <input type="hidden" id="transaction_gc_expiry" value="null">
+    <input type="hidden" id="transaction_gc_balance" value="null">
+    <input type="hidden" id="float_trans_gc_credit" name="float_trans_gc_credit" value="0">
+    <input type="hidden" id="float_trans_gc_debit" name="float_trans_gc_debit" value="0">
+    {# END GIFT CARD DETAILS #}
+    {# TAX VARS #}
+    <input type="hidden" id="tax_coverage" name="tax_coverage" value="{{tax_coverage|default('none')}}">
+    <input type="hidden" id="float_tax_rate" value="{{tax_rate|default('0')}}">
+    <input type="hidden" id="float_orig_tax_vat_amt" value="0">
+    <input type="hidden" id="float_new_tax_vat_amt" value="0">
+    <input type="hidden" id="float_orig_tax_amt_net_vat" value="0">
+    <input type="hidden" id="float_new_tax_amt_net_vat" value="0">
+    <input type="hidden" id="string_tax_coverage" value="{{tax_coverage|default('none')}}">
+    <input type="hidden" id="float_orig_excl_total" value="0">
+    <input type="hidden" id="float_new_excl_total" value="0">
+    <input type="hidden" id="float_deposit_tax_vat_amt" value="0">
+    <input type="hidden" id="float_balance_tax_vat_amt" value="0">
+    <input type="hidden" id="float_deposit_tax_amt_net_vat" value="0">
+    <input type="hidden" id="float_balance_tax_amt_net_vat" value="0">
+    <!-- END TAX VARS -->
+    <!-- CONTENT -->
+    <div class="row">
+        <div class="col-12 col-md-7 pr-md-0 pos-left">
+            <div class="box-shadow">
+                <div class="row">
+                    <div class="col-12 col-md-3 pr-md-0">
+                        <div class="box-gradient text-center">
+                            PRODUCT CATEGORIES
+                        </div>
+                        <ul class="nav nav-pills nav-pills-v2 mt-1 mb-3" id="prod_cats" role="tablist">
+                            <!-- PRODUCT CATEGORIES -->
+                        </ul>
+                    </div>
+                    <div class="col-12 col-md-9 pos-products">
+                        <div class="box-gradient text-center">
+                            PRODUCT
+                        </div>
+                        <div class="tab-content mt-1" id="pills-tabContent">
+                            <!-- SUBMITTED COUTING FORMS -->
+                            <div aria-labelledby="pills-anti_aging-tab" class="tab-pane fade show active" id="pills-anti_aging" role="tabpanel">
+
+                                <div style="overflow:scroll; overflow-x: hidden; height: 500px;">
+                                    <div class="row mt-1" id="prods">
+                                        <!-- PRODUCTS -->
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;"> 
-                <div class="portlet-title">
-                    <div class="caption">Cart</div>
+        <div class="col-12 col-md-5">
+            <div class="box-shadow">
+                <div class="box-gradient text-center">
+                    CART
                 </div>
-                <div class="portlet-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div style="overflow:scroll; overflow-x: hidden; height: 240px;">
-                                <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="cart_table">
+                <div class="box--cart">
+                    <div class="box--cart__items mt-2">
+                        <div class="table-responsive table-v1">
+                            <div style="overflow:scroll; overflow-x: hidden; height: 360px;">
+                                <table class="table table-bordered" style="width:100%" id="cart_table">
                                     <thead>
-                                        {% if transaction_object.getTransactionType|default('null') == 'per' %}
-                                            <tr>
-                                                <th width="60%" style="width: 118px;">Item</th>
-                                                <th width="25%" style="width: 88px;">Price</th>
-                                                <th style="width: 98px;">Discount Type</th>
-                                                <th style="width: 88px;">Value</th>
-                                                <th style="width: 88px;">Adjusted Price</th>
-                                                <th width="10%"></th>
-                                            </tr>
-                                        {% else %}
-                                            <tr>
-                                                <th width="60%">Item</th>
-                                                <th width="25%">Price</th>
-                                                <th width="10%"></th>
-                                            </tr>
-                                        {% endif %}
+                                    {% if transaction_object.getTransactionType|default('null') == 'per' %}
+                                        <tr>
+                                            <th style="width: 350px">Item</th>
+                                            <th>Price</th>
+                                            <th>Discount Type</th>
+                                            <th>Value</th>
+                                            <th>Adjusted Price</th>
+                                            <th></th>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <th style="width: 350px">Item</th>
+                                            <th style="width: 100px">Price</th>
+                                            <th></th>
+                                        </tr>
+                                    {% endif %}
                                     </thead>
                                     <tbody id="cart_items">
-                                        {% if transaction_object.hasItems|default(false) %}
-                                            {% for item in transaction_object.getItems|default(null) %}
-                                                <tr class="product_row existing_product"> 
-                                                    
-                                                    <input type="hidden" name="is_issued[]" class="is_issued" value="{{item.getIssued|default(0)}}" >
-                                                    <input type="hidden" name="issued_on[]" class="issued_on" value="{{item.getItemIssuedOn.getID|default('0')}}" >
-                                                    <input type="hidden" name="product_id[]" class="product_id" value="{{item.getProductId}}" >
-                                                    <input type="hidden" name="barcode[]" class="barcode" value="{{item.getBarcode}}" >
-                                                    <input type="hidden" name="item_code[]" class="item_code" value="{{item.getItemCode}}" >
-                                                    <input type="hidden" name="min_price[]" class="min_price" value="{{item.getMinimumPrice}}" >
-                                                    <input type="hidden" name="srp[]" class="srp" value="{{item.getOrigPrice}}" >
-                                                    <input type="hidden" name="product_amt[]" class="product_amt" value="{{item.getOrigPrice}}" >
-                                                    <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control item_name"></td>
-                                                    <td><input type="text" style="font-size: 10px !important;" name="display_price[]" class="form-control display_price" readonly="true" value="{{item.getOrigPrice}}"></td>  
-                                                    {% if transaction_object.getTransactionType|default('null') == 'per' %}
-                                                        <td style="font-size: 10px !important;">{{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, item.getDiscountType, 12, 12, item.getIssued) }}</td>
-                                                        <td style="font-size: 10px !important;\">
-                                                        <input type="number" step="0.01" style="font-size: 10px !important;" class="form-control per_item_discount_amt"  value="{{item.getDiscountValue}}" {{ item.getIssued == true ? 'readonly="true"' : '' }}></td>
-                                                        <td><input type="text" style="font-size: 10px !important;" class="form-control adjusted_price" readonly="true" value="{{item.getAdjustedPrice}}"></td>
-                                                    {% else %}
+                                    {% if transaction_object.hasItems|default(false) %}
+                                        {% for item in transaction_object.getItems|default(null) %}
+                                            <tr class="product_row existing_product">
 
-                                                    {% endif %}
-                                                    {% if item.getIssued|default(false) %}
-                                                        <td ><a href="javascript:void(0)" class="btn btn-xs default red false_remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
-                                                    {% else %}
-                                                        <td ><a href="javascript:void(0)" class="btn btn-xs default red remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
-                                                    {% endif %}
-                                                </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr class="init_row_prods">
-                                                <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
+                                                <input type="hidden" name="is_issued[]" class="is_issued" value="{{item.getIssued|default(0)}}" >
+                                                <input type="hidden" name="issued_on[]" class="issued_on" value="{{item.getItemIssuedOn.getID|default('0')}}" >
+                                                <input type="hidden" name="product_id[]" class="product_id" value="{{item.getProductId}}" >
+                                                <input type="hidden" name="barcode[]" class="barcode" value="{{item.getBarcode}}" >
+                                                <input type="hidden" name="item_code[]" class="item_code" value="{{item.getItemCode}}" >
+                                                <input type="hidden" name="min_price[]" class="min_price" value="{{item.getMinimumPrice}}" >
+                                                <input type="hidden" name="srp[]" class="srp" value="{{item.getOrigPrice}}" >
+                                                <input type="hidden" name="product_amt[]" class="product_amt" value="{{item.getOrigPrice}}" >
+                                                <td class="item_title"><input type="text" class="input_no_style item_name" value="{{item.getName}}" readonly="true"></td>
+                                                <td class="item_price"><input type="text" name="display_price[]" class="input_no_style display_price" readonly="true" value="{{item.getOrigPrice}}"></td>
+                                                {% if transaction_object.getTransactionType|default('null') == 'per' %}
+                                                    <td class="col-perdisc">{{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, item.getDiscountType, 12, 12, item.getIssued) }}</td>
+                                                    <td class="col-perdisc">
+                                                        <input type="number" step="0.01" style="font-size: 10px !important;" class="form-control per_item_discount_amt"  value="{{item.getDiscountValue}}" {{ item.getIssued == true ? 'readonly="true"' : '' }}></td>
+                                                    <td><input type="text" class="input_no_style adjusted_price" readonly="true" value="{{item.getAdjustedPrice}}"></td>
+                                                {% else %}
+
+                                                {% endif %}
+                                                {% if item.getIssued|default(false) %}
+                                                    <td class="item_action text-center"><a href="javascript:void(0)" class="link--del text-danger false_remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                                {% else %}
+                                                    <td class="item_action text-center"><a href="javascript:void(0)" class="link--del text-danger remove_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                                {% endif %}
                                             </tr>
-                                        {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr class="init_row_prods">
+                                            <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
+                                        </tr>
+                                    {% endif %}
                                     </tbody>
                                 </table>
                             </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-md-12" >
-                                    <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Next Step</a>
-                                    <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
-                                    <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout/Pay</a>
-                                    <a href="javascript:void(0)" class="btn proceed_deposit" style="background-color: green; color: #ffffff;">Proceed Deposit</a>
-                                    <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
-                                    <a href="/pos" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
-                                    <br>
-                                    <br>
-                                    <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
-                                    <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
+                        </div>
+                    </div>
+                    <div class="box--cart__amounts initial_totals">
+                        <div class="row">
+                            <div class="col-6 col-sm-6">
+                                <div>
+                                    <small>Amt Net of Vat:</small>
+                                </div>
+                                <div>
+                                    <small>Vat:</small>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <table class="table table-striped table-bordered table-hover" style="" id="cart_totals_table">
-                                        <thead>
-                                            <tr>
-                                                <th width="40%" style="font-size: 12px;">Amount</th>
-                                                <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
-                                                <th width="30%" style="font-size: 12px;">VAT</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="initial_totals">
-                                                <td><p style="font-size:12px;" class="cart_price_h3">Total <b>Php <span class="initial_cart_price" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0</span></b></p></td>
-                                            </tr>
-                                            <tr class="updated_totals_row">
-                                                <td><p style="font-size:12px;" class="updated_price_h3">Updated <b>Php <span class="updated_cart_price" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_vat_amt" value="0">0</span></b></p></td>
-                                            </tr>
-                                            <tr class="deposit_amount_totals_row">
-                                                <td><p style="font-size:12px;" class="deposit_amount_h3">Deposit <b>Php <span class="totals_deposit_amt" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_vat_amt" value="0">0</span></b></p></td>
-                                            </tr>
-                                            <tr class="balance_totals_row">
-                                                <td><p style="font-size:12px;" class="balance_amount_h3">Balance <b>Php <span class="totals_balance" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="balance_amt_vat"><b>Php <span id="balance_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="balance_vat"><b>Php <span id="balance_vat_amt" value="0">0</span></b></p></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="col-6 col-sm-6 text-right initial_totals">
+                                <div>
+                                    <small id="initial_amt_net_vat">0</small>
+                                </div>
+                                <div>
+                                    <small id="initial_vat_amt">0</small>
                                 </div>
                             </div>
                         </div>
+                        <div class="row cart__grand-total">
+                            <div class="col-6 col-sm-6">
+                                TOTAL:
+                            </div>
+                            <div class="col-6 col-sm-6 text-right initial_totals">
+                                <span class="txt--grand-total initial_cart_price">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box--cart__amounts updated_totals_row deposit_amount_totals_row balance_totals_row">
+                        <div class="row">
+                            <div class="col-6 col-sm-6">
+                                <div>
+                                    <small>Amt Net of Vat:</small>
+                                </div>
+                                <div>
+                                    <small>Vat:</small>
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-6 text-right updated_totals_row">
+                                <div>
+                                    <small id="updated_amt_net_vat">0</small>
+                                </div>
+                                <div>
+                                    <small id="updated_vat_amt">0</small>
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-6 text-right deposit_amount_totals_row">
+                                <div>
+                                    <small id="deposit_amt_net_vat">0</small>
+                                </div>
+                                <div>
+                                    <small id="deposit_vat_amt">0</small>
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-6 text-right balance_totals_row">
+                                <div>
+                                    <small id="balance_amt_net_vat">0</small>
+                                </div>
+                                <div>
+                                    <small id="balance_vat_amt">0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row cart__grand-total">
+                            <div class="col-6 col-sm-6">
+                                UPDATED:
+                            </div>
+                            <div class="col-6 col-sm-6 text-right updated_totals_row">
+                                <span class="txt--grand-total updated_cart_price">0</span>
+                            </div>
+                            <div class="col-6 col-sm-6 text-right deposit_amount_totals_row">
+                                <span class="txt--grand-total totals_deposit_amt">0</span>
+                            </div>
+                            <div class="col-6 col-sm-6 text-right balance_totals_row">
+                                <span class="txt--grand-total totals_balance">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box--cart__buttons">
+                        <button class="btn btn--bulk bulk_adj" data-toggle="modal" data-target="#bulkDiscount">Bulk Discount</button>
+                        <button class="btn btn--reset clear_discount">Reset Transaction Type</button>
+                        <button class="btn btn--deposit proceed_deposit">Proceed Deposit</button>
+                        <button class="btn btn--clear" style="display: initial;" onclick="location.href='';">Clear</button>
+                        <button class="btn btn--next next_step_btn"  style="display: initial;">Next Step</button>
+                        <button class="btn btn--checkout checkout_btn" data-toggle="modal" data-target="#checkout">Checkout</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <input type="hidden" id="url_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
     <input type="hidden" id="quote_png" value="{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}">
     <input type="hidden" id="normal_png" value="{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}">
@@ -226,196 +480,202 @@
     <input type="hidden" id="deposit_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}">
     <input type="hidden" id="path_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
     <input type="hidden" id="path_sync_data" value="{{ path('gist_main_sync_pos_data') }}">
-</div>
-{% include 'GistPOSBundle:Dashboard:modals.html.twig' %}
+    <!-- end-->
 {% endblock %}
+{% block modal %}
+    {% include 'GistPOSBundle:Dashboard:modals.html.twig' %}
+{% endblock %}
+
 {% block js %}
-<script type="text/javascript">
-function appendPerItemColumns()
-{
-    if ($('#string_trans_mode').val() == 'Deposit') {
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(2).after('<th>Discount Type</th>');
-        });
+    {#<script crossorigin="anonymous" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>#}
+    {#<script crossorigin="anonymous" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>#}
+    {#<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>#}
+    {#<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>#}
+    <script type="text/javascript">
+        function appendPerItemColumns()
+        {
+            if ($('#string_trans_mode').val() == 'Deposit') {
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(2).after('<th>Discount Type</th>');
+                });
 
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(3).after('<th>Value</th>');
-        });
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(3).after('<th>Value</th>');
+                });
 
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(4).after('<th>Adjusted Price</th>');
-        });
-        var ths = $('th');
-        var element = ths.eq(1);
-        element.width(100);
-        var element2 = ths.eq(2);
-        element2.width(70);
-        var element2 = ths.eq(3);
-        element2.width(80);
-        var element2 = ths.eq(4);
-        element2.width(70);
-        var element2 = ths.eq(5);
-        element2.width(70);
-    } else {
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(1).after('<th>Discount Type</th>');
-        });
-
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(2).after('<th>Value</th>');
-        });
-
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(3).after('<th>Adjusted Price</th>');
-        });
-        var ths = $('th');
-        var element = ths.eq(0);
-        element.width(100);
-        var element2 = ths.eq(1);
-        element2.width(70);
-        var element2 = ths.eq(2);
-        element2.width(80);
-        var element2 = ths.eq(3);
-        element2.width(70);
-        var element2 = ths.eq(4);
-        element2.width(70);
-    }
-}
-
-function appendPerItemFields()
-{
-    if ($('#string_trans_type').val() == "per") {
-        if ($('#string_trans_mode').val() == 'Deposit') {
-            $('#cart_table').find('tr').each(function(){
-                if ($(this).children('td').length < 5) {
-                    $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
-                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
-                    $(this).find('td').eq(3).after("<td style=\"font-size: 10px !important;\">\
-                        <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-                    $(this).find('td').eq(4).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
-
-                    var srp = $(this).find('.srp').val();
-                    var ap = $(this).find('.adjusted_price');
-                    ap.val(srp);
-                }
-            });
-        } else {
-            $('#cart_table').find('tr').each(function(){
-                if ($(this).children('td').length < 5) {
-                    $(this).find('td').eq(1).after("<td style=\"font-size: 10px !important;\">\
-                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
-                    $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
-                        <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
-                    $(this).find('td').eq(3).after('<td><input type="text" style=\"font-size: 10px !important;\" class="form-control adjusted_price" readonly="true" value="0.00"></td>');
-
-                    var srp = $(this).find('.srp').val();
-                    var ap = $(this).find('.adjusted_price');
-                    ap.val(srp);
-                }
-            });
-        }
-            
-    }
-}
-
-function appendDepositItemColumns()
-{
-    var proceed = true;
-    $('#cart_table').find('tr').each(function(){
-        if ($('#string_trans_type').val() == 'per') {
-            if ($(this).children('th').length == 7) {
-                proceed = false;
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(4).after('<th>Adjusted Price</th>');
+                });
+                var ths = $('th');
+                var element = ths.eq(1);
+                element.width(100);
+                var element2 = ths.eq(2);
+                element2.width(70);
+                var element2 = ths.eq(3);
+                element2.width(80);
+                var element2 = ths.eq(4);
+                element2.width(70);
+                var element2 = ths.eq(5);
+                element2.width(70);
             } else {
-                proceed = true;
-            }
-        } else {
-            if ($(this).children('th').length == 3) {
-                proceed = false;
-            } else {
-                proceed = true;
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(1).after('<th>Discount Type</th>');
+                });
+
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(2).after('<th>Value</th>');
+                });
+
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(3).after('<th>Adjusted Price</th>');
+                });
+                var ths = $('th');
+                var element = ths.eq(0);
+                element.width(100);
+                var element2 = ths.eq(1);
+                element2.width(70);
+                var element2 = ths.eq(2);
+                element2.width(80);
+                var element2 = ths.eq(3);
+                element2.width(70);
+                var element2 = ths.eq(4);
+                element2.width(70);
             }
         }
-    });
 
-    if (proceed) {
-        $('#cart_table').find('tr').each(function(){
-            $(this).find('th').eq(0).before('<th>Issue</th>');
-        });
+        function appendPerItemFields()
+        {
+            if ($('#string_trans_type').val() == "per") {
+                if ($('#string_trans_mode').val() == 'Deposit') {
+                    $('#cart_table').find('tr').each(function(){
+                        if ($(this).children('td').length < 5) {
+                            $(this).find('td').eq(2).after("<td class=\"col-perdisc\">\
+                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                            $(this).find('td').eq(3).after("<td style=\"font-size: 10px !important;\">\
+                        <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                            $(this).find('td').eq(4).after('<td><input type="text" class="input_no_style adjusted_price" readonly="true" value="0.00"></td>');
 
-        var ths = $('th');
-        var element = ths.eq(0);
-        element.width(10);
-    }
-}
-
-function appendDepositItemFields()
-{
-    if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
-        $('#cart_table').find('tr').each(function(){
-            if ($(this).children('td').length < 4) {
-                var issued = $(this).find('.is_issued').val();
-                if (issued == '1') {
-                    $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+                            var srp = $(this).find('.srp').val();
+                            var ap = $(this).find('.adjusted_price');
+                            ap.val(srp);
+                        }
+                    });
                 } else {
-                    $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+                    $('#cart_table').find('tr').each(function(){
+                        if ($(this).children('td').length < 5) {
+                            $(this).find('td').eq(1).after("<td class=\"col-perdisc\">\
+                        {{ form.group_select_only3('Type', 'indiv_disc_opt', indiv_options, '', 12, 12, false)|e('js') }}</td>");
+                            $(this).find('td').eq(2).after("<td style=\"font-size: 10px !important;\">\
+                        <input type=\"number\" step=\"0.01\" style=\"font-size: 10px !important;\" class=\"form-control per_item_discount_amt\" readonly=\"true\" value=\"\"></td>");
+                            $(this).find('td').eq(3).after('<td><input type="text" class="input_no_style adjusted_price" readonly="true" value="0.00"></td>');
+
+                            var srp = $(this).find('.srp').val();
+                            var ap = $(this).find('.adjusted_price');
+                            ap.val(srp);
+                        }
+                    });
                 }
-            } else {
+
+            }
+        }
+
+        function appendDepositItemColumns()
+        {
+            var proceed = true;
+            $('#cart_table').find('tr').each(function(){
                 if ($('#string_trans_type').val() == 'per') {
-                    if ($(this).children('td').length < 7) {
+                    if ($(this).children('th').length == 7) {
+                        proceed = false;
+                    } else {
+                        proceed = true;
+                    }
+                } else {
+                    if ($(this).children('th').length == 3) {
+                        proceed = false;
+                    } else {
+                        proceed = true;
+                    }
+                }
+            });
+
+            if (proceed) {
+                $('#cart_table').find('tr').each(function(){
+                    $(this).find('th').eq(0).before('<th>Issue</th>');
+                });
+
+                var ths = $('th');
+                var element = ths.eq(0);
+                element.width(10);
+            }
+        }
+
+        function appendDepositItemFields()
+        {
+            if ($('#cart_table tr').length > 1 && $('#cart_table .xrow').length == 0) {
+                $('#cart_table').find('tr').each(function(){
+                    if ($(this).children('td').length < 4) {
                         var issued = $(this).find('.is_issued').val();
-                        // issued = issued.find('.is_issued').val();
                         if (issued == '1') {
                             $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
                         } else {
                             $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
                         }
+                    } else {
+                        if ($('#string_trans_type').val() == 'per') {
+                            if ($(this).children('td').length < 7) {
+                                var issued = $(this).find('.is_issued').val();
+                                // issued = issued.find('.is_issued').val();
+                                if (issued == '1') {
+                                    $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item_checked('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+                                } else {
+                                    $(this).find('td').eq(0).before("<td style=\"font-size: 10px !important;\">{{ form.checkbox_issued_item('check_issued', 0, 'Post dated check', '', '')|e('js')}}</td>");
+                                }
+                            }
+                        }
                     }
-                }   
+                });
+            } else {
+                if ($('#string_trans_type').val() == 'per') {
+                    $('.xrow').each(function() {
+                        $(this).attr('colspan','7');
+                    });
+                } else {
+                    $('.xrow').each(function() {
+                        $(this).attr('colspan','4');
+                    });
+                }
+
+            }
+        }
+
+        $(document).ready(function() {
+
+            var restrict = "{{restrict}}";
+            if (restrict == 'true') {
+                swal({
+                        title: "Cannot load transaction!",
+                        text: "The trasaction you are trying to access is not valid for reloading",
+                        type: "error",
+                        confirmButtonColor: "green",
+                        confirmButtonText: "Okay",
+                    },
+                    function(){
+                        location.replace('/pos');
+
+                    });
+            } else if (restrict == 'expired') {
+                swal({
+                        title: "Cannot load transaction!",
+                        text: "The transaction you are trying to access exceeded the allowed days to refund",
+                        type: "error",
+                        confirmButtonColor: "green",
+                        confirmButtonText: "Okay",
+                    },
+                    function(){
+                        location.replace('/pos');
+
+                    });
             }
         });
-    } else {
-        if ($('#string_trans_type').val() == 'per') {
-            $('.xrow').each(function() {
-                $(this).attr('colspan','7');
-            });
-        } else {
-            $('.xrow').each(function() {
-                $(this).attr('colspan','4');
-            });
-        }
-            
-    }
-}
-
-$(document).ready(function() {
-
-    var restrict = "{{restrict}}";
-    if (restrict == 'true') {
-        swal({
-                title: "Cannot load transaction!",
-                text: "The trasaction you are trying to access is not valid for reloading",
-                type: "error",
-                confirmButtonColor: "green",
-                confirmButtonText: "Okay",
-            },
-            function(){
-                location.replace('/pos');
-
-            });
-    } else if (restrict == 'expired') {
-        swal({
-                title: "Cannot load transaction!",
-                text: "The transaction you are trying to access exceeded the allowed days to refund",
-                type: "error",
-                confirmButtonColor: "green",
-                confirmButtonText: "Okay",
-            },
-            function(){
-                location.replace('/pos');
-
-            });
-    }
-});
-</script>
+    </script>
 {% endblock %}
- 

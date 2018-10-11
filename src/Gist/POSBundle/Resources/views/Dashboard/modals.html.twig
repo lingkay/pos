@@ -1,77 +1,826 @@
-<div>
-    <div id="bulk_adjustment" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+<div class="modals">
+    <div aria-hidden="true" aria-labelledby="selectTransactionLabel" class="modal modal--v1 fade" id="transaction_type_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Select Transaction</h5>
+                    <!-- <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button> -->
+                </div>
+                <div class="modal-body">
+                    <div class="button-groups">
+                        <div class="row">
+                            <div class="col transaction-option transaction-option--regular" onclick="proceedToTransaction('reg')">
+                                <div class="img--icon">
+                                    <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/transaction-1.png') }}" alt="">
+                                </div>
+                                <span>Regular Transaction</span>
+                            </div>
+                            <div class="col transaction-option transaction-option--perdiscount" onclick="proceedToTransaction('per')">
+                                <div class="img--icon">
+                                    <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/transaction-2.png') }}" alt="">
+                                </div>
+                                <span>Per Item Discount</span>
+                            </div>
+                            <div class="col transaction-option transaction-option--bulkdiscount" onclick="proceedToTransaction('bulk')">
+                                <div class="img--icon">
+                                    <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/transaction-3.png') }}" alt="">
+                                </div>
+                                <span>Bulk Discount</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-v1 btn-secondary" data-dismiss="modal" type="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="checkoutLabel" class="modal modal--v1 fade" id="checkout_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Bulk Discount Form</h4>
+                        <h5 class="modal-title" id="exampleModalLabel">Checkout &amp; Payment</h5>
+                        <!-- <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button> -->
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-3" class="proceed_btn_reg" onclick="updateBulkForm('bgift')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk1.png') }}"></a>
-                                <h4>Gift</h4>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Amount to Pay:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--to_pay">Php <span class="co_amt_to_pay" value="0">0.00</span></div>
+                                </div>
                             </div>
-                            <div class="col-md-3" class="proceed_btn_per"  onclick="updateBulkForm('bdisc')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk2.png') }}"></a>
-                                <h4>Discount %</h4>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Balance:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--bal">Php <span class="co_balance" value="0">0.00</span></div>
+                                </div>
                             </div>
-                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="updateBulkForm('bdiscamt')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk3.png') }}"></a>
-                                <h4>Discount</h4>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-12 col-sm-3">
+                                Payment Type:
                             </div>
-                            <div class="col-md-3" class="proceed_btn_bulk"  onclick="updateBulkForm('bamt')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk4.png') }}"></a>
-                                <h4>Amount to Pay</h4>
+                            <div class="col-12 col-sm-9 payment_types">
+                                <div class="row">
+                                    <div class="col payment_type payment_type--cash" data-modal="#paymentCash">
+                                        <a href="javascript:void(0)" class="co_cash_payment"><img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/payment-1.png') }}" alt=""></a>
+                                    </div>
+                                    <div class="col payment_type payment_type--cc" data-modal="#paymentCard">
+                                        <a href="javascript:void(0)" class="co_cc_payment"><img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/payment-2.png') }}" alt=""></a>
+                                    </div>
+                                    <div class="col payment_type payment_type--check" data-modal="#paymentCheck">
+                                        <a href="javascript:void(0)" class="co_check_payment"><img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/payment-3.png') }}" alt=""></a>
+                                    </div>
+                                    <div class="col payment_type payment_type--gc" data-modal="#paymentGift">
+                                        <a href="javascript:void(0)" class="co_gc_payment"><img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/payment-4.png') }}" alt=""></a>
+                                    </div>
+                                </div>
                             </div>
-                            <div style="margin-bottom: 25px;">&nbsp;</div>
-                            {{ form.group_text('Selected Bulk Discount', 'selected_bulk', 'None', 4, 5, true) }}
-                            {{ form.group_text('New Price', 'new_total', transaction_object.getSelectedBulkDiscountAmount|default(0), 4, 5, false) }}
-                            {{ form.group_text('Less Amount', 'discount_amount', transaction_object.getSelectedBulkDiscountAmount|default(0), 4, 5, false) }}
-                            {{ form.group_text('Less %', 'discount_pct', transaction_object.getSelectedBulkDiscountAmount|default(0), 4, 5, false) }}
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="table-responsive table-v1">
+                                    <table id="table--payments" class="table table-bordered" style="width:100%">
+                                        <thead>
+                                        <tr>
+                                            <th style="">Type</th>
+                                            <th style="">Amount</th>
+                                            <th style=""></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="payments_list">
+                                        {% if transaction_object.hasPayments|default(null) %}
+                                            {% for p in transaction_object.getPayments %}
+                                                <tr class="d-none clone-row row_payment_{{ p.getID }}">
+                                                    <input type="hidden" name="control_number" class="control_number" value="{{p.getControlNumber|default('')}}">
+                                                    <input type="hidden" name="account_number" class="account_number" value="{{p.getAccountNumber|default('')}}">
+                                                    <input type="hidden" name="bank" class="bank" value="{{p.getBank|default('')}}">
+                                                    <input type="hidden" name="payment_issued_on" class="payment_issued_on" value="{{p.getPaymentIssuedOn.getID|default('0')}}">
+                                                    <input type="hidden" name="cc_terminal_opt" class="cc_terminal_opt" value="{{p.getCardTerminalOperator|default('')}}">
+                                                    <input type="hidden" name="cc_interest" class="cc_interest" value="{{p.getInterest|default('')}}">
+                                                    <input type="hidden" name="cc_terms" class="cc_terms" value="{{p.getCardTerms|default('')}}">
+                                                    <input type="hidden" name="payee" class="payee" value="{{p.getPayee|default('')}}">
+                                                    <input type="hidden" name="payor" class="payor" value="{{p.getPayor|default('')}}">
+                                                    <input type="hidden" name="cc_expiry" class="cc_expiry" value="{{p.getCardExpiry|default('')}}">
+                                                    <input type="hidden" name="cc_cvv" class="cc_cvv" value="{{p.getCardCvv|default('')}}">
+                                                    <input type="hidden" name="payment_details_array[]" class="payment_details_array" value="null" >
+                                                    <input type="hidden" name="payment_amt_float[]" class="payment_amt_float" value="{{p.amount|default('')}}" >
+
+                                                    <input type="hidden" name="check_type[]" class="check_type" value="{{p.getCheckType|default('')}}" >
+                                                    <input type="hidden" name="check_date[]" class="check_date" value="{{p.getCheckDate|default('')}}" >
+
+                                                    <td class="item_type"><input type="text" style="font-size: 12px !important;" name="payment_type[]" value="{{p.getType|default('')}}" readonly="true" class="form-control payment_type"></td>
+                                                    <td class="item_amount"><input type="text" style="font-size: 10px !important;" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="{{p.amount|number_format(2)|default('')}}"></td>
+                                                    <td ><a href="javascript:void(0)" class="btn btn-xs default red x_remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr class="init_row_payment">
+                                                <td colspan="3"><p>No payments added</p></td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green apply_bulk" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Apply</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <button class="btn btn-v1 btn-small btn-success finish_btn" data-dismiss="modal" type="button">Finish</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div id="transaction_type_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="bulkDiscountLabel" class="modal modal--v1 fade" id="bulk_adjustment" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Select Transaction Type</h4>
+                        <h5 class="modal-title" id="exampleModalLabel">Bulk Discount Form</h5>
+                        <!-- <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button> -->
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-4" class="proceed_btn_reg" onclick="proceedToTransaction('reg')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/regular_trans.png') }}"></a>
-                                <h4>Regular Transaction</h4>
-                            </div>
-                            <div class="col-md-4" class="proceed_btn_per"  onclick="proceedToTransaction('per')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/per_trans.png') }}"></a>
-                                <h4>Per Item Discount</h4>
-                            </div>
-                            <div class="col-md-4" class="proceed_btn_bulk"  onclick="proceedToTransaction('bulk')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/bulk_trans.png') }}"></a>
-                                <h4>Bulk Discount</h4>
-                            </div>
+                        <ul class="nav nav-pills nav-pills-v3 mb-3 nav-fill" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a aria-controls="pills-gift" aria-selected="false" class="nav-link" data-toggle="pill" href="#pills-gift" id="pills-gift-tab" role="tab" onclick="updateBulkForm('bgift')">
+                                    <span class="icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/checkout-1.png') }}" alt="">
+                                    </span>
+                                    <span class="text">Card</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a aria-controls="pills-discount_percent" aria-selected="false" class="nav-link" data-toggle="pill" href="#pills-discount_percent" id="pills-discount_percent-tab" role="tab" onclick="updateBulkForm('bdisc')">
+                                    <span class="icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/checkout-2.png') }}" alt="">
+                                    </span>
+                                    <span class="text">Discount %</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a aria-controls="pills-discount" aria-selected="false" class="nav-link" data-toggle="pill" href="#pills-discount" id="pills-discount-tab" role="tab" onclick="updateBulkForm('bdiscamt')">
+                                    <span class="icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/checkout-3.png') }}" alt="">
+                                    </span>
+                                    <span class="text">Discount</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a aria-controls="pills-amount_to_pay" aria-selected="false" class="nav-link active" data-toggle="pill" href="#pills-amount_to_pay" id="pills-amount_to_pay-tab" role="tab" onclick="updateBulkForm('bamt')">
+                                    <span class="icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/checkout-4.png') }}" alt="">
+                                    </span>
+                                    <span class="text">Amount to Pay</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <!-- SUBMITTED COUTING FORMS -->
+                            {{ pos_form_tools.group_text('Selected Bulk Discount', 'selected_bulk', 'None', 3, 5, true) }}
+                            {{ pos_form_tools.group_text('New Price', 'new_total', transaction_object.getSelectedBulkDiscountAmount|default(0), 3, 5, false) }}
+                            {{ pos_form_tools.group_text('Less Amount', 'discount_amount', transaction_object.getSelectedBulkDiscountAmount|default(0), 3, 5, false) }}
+                            {{ pos_form_tools.group_text('Less %', 'discount_pct', transaction_object.getSelectedBulkDiscountAmount|default(0), 3, 5, false) }}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <button class="btn btn-v1 btn-small btn-success apply_bulk" data-dismiss="modal" type="button">Apply</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <div aria-hidden="true" aria-labelledby="paymentCashLabel" class="modal modal--v1 fade" id="cash_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Cash Payment</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Amount to Pay:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--to_pay">Php <span class="co_amt_to_pay">0.00</span></div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Balance:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--bal">Php <span class="co_balance_disp" >0.00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-sm-5 col-12">
+                                <div class="amount-input-set">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <small class="text-blue-2">Receive Amount</small>
+                                        </div>
+                                        <div class="text-input col-12">
+                                            <input type="text" id="cform-cash_received_amt" name="cash_received_amt" class="w-100" readonly>
+                                            {#{{ form.group_text('Received Amount', 'cash_received_amt', '', 12, 12, false) }}#}
+                                        </div>
+                                    </div>
+                                    <div class="keypad">
+                                        <div class="row">
+                                            <div class="col-4 keypad__number numeric_key" data-value="7"><span>7</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="8"><span>8</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="9"><span>9</span></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4 keypad__number numeric_key" data-value="4"><span>4</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="5"><span>5</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="6"><span>6</span></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4 keypad__number numeric_key" data-value="1"><span>1</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="2"><span>2</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="3"><span>3</span></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-8 keypad__number numeric_key" data-value="0"><span>0</span></div>
+                                            <div class="col-4 keypad__number numeric_key" data-value="."><span>.</span></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-8 keypad__clear keypad__number numeric_key" data-value="CLEAR"><span>Clear</span></div>
+                                            <div class="col-4 keypad__del keypad__number numeric_key" data-value="DEL"><span>&lt;</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-12 col-lg-6">
+                            <div class="row">
+                                <div class="col-12 col-sm-3">Change:</div>
+                                <div class="col-12 col-sm-9 checkout-amount checkout-amount--change">Php <span id="cash_chg_amt" >0.00</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-3">Balance:</div>
+                                <div class="col-12 col-sm-9 checkout-amount checkout-amount--bal2">Php <span class="co_balance_static" value="0">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 [ d-flex flex-wrap justify-content-between justify-content-lg-end flex-column flex-md-row ]">
+                            <button class="btn btn-v1 btn-success cash_proceed_btn" type="button">Submit</button>
+                            <button class="btn btn-v1 btn-secondary cash_go_back" type="button">Go Back</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="paymentCardLabel" class="modal modal--v1 fade" id="cc_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Card Payment</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Amount to Pay:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--to_pay">Php <span class="co_amt_to_pay">0.00</span></div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Balance:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--bal">Php <span class="co_balance_disp" >0.00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                        <div class="cc_main_form">
+                            <div id="cc_form" style="overflow:scroll; overflow-x: hidden; height: 260px;">
+                                <div class="cc_field">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h6 class="text-blue-1" id="">Card Details</h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <a href="javascript:void(0)" class="remove_card"><i class="fa fa-times"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-details">
+                                        <div class="row">
+                                            <div class="col-12 col-md-6">
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 7, false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Charge Amount', 'cc_charge_amt', '', 5, 7, '', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Interest', 'interest_indiv', interest_opts, '', 5, 7, '',false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Payment Terms', 'cc_terms', charge_rates, '', 5, 7, '',false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Bank of card', 'cc_bank', bank_options, '', 5, 7, '',false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Card Class', 'cc_card_class', card_class, '', 5, 7, '',false) }}
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Card Type', 'cc_card_type', card_types, '', 5, 7, '',false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Card Number', 'cc_card_number', '', 5, 7, 'Card Number', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Name on Card', 'cc_card_name', '', 5, 7, 'Name on Card', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Expiry Date', 'cc_card_expiry', '', 5, 7, 'mm/yy', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('CVV', 'cc_card_cvv', '', 5, 7, 'CVV', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-12 text-right">
+                                                            <button class="btn btn-v1 btn-primary btn-small swipe_card">Swipe Card</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-12 col-lg-6">
+                            <div class="row">
+                                <div class="col-12 col-sm-3">Balance:</div>
+                                <div class="col-12 col-sm-9 [ checkout-amount checkout-amount--bal2 ] text-sm-right">Php <span class="co_balance_static" value="0">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 [ d-flex flex-wrap justify-content-between justify-content-lg-end flex-column flex-md-row ]">
+                            <button class="btn btn-v1 btn-small btn-primary add_card_btn" type="button">Add Card</button>
+                            <button class="btn btn-v1 btn-small btn-success card_proceed_btn" type="button">Submit</button>
+                            <button class="btn btn-v1 btn-small btn-secondary cc_go_back" type="button">Go Back</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="paymentCheckLabel" class="modal modal--v1 fade" id="check_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Check Payment</h5>
+                        <!-- <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button> -->
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Amount to Pay:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--to_pay">Php <span class="co_amt_to_pay">0.00</span></div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Balance:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--bal">Php <span class="co_balance_disp" >0.00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                        <div class="cc_main_form">
+                            <div class="col-md-12" id="check_form" style="height: 210px; overflow:scroll;overflow-x: hidden;">
+                                <div class="check_field">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h6 class="text-blue-1" id="">Check Details</h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <a href="javascript:void(0)" class="remove_check"><i class="fa fa-times"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="card-details">
+                                        <div class="row">
+                                            <div class="col-12 col-md-6">
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_select('Bank', 'check_bank', bank_options, '', 5, 7, false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Account Number', 'check_account_number', '', 5, 7, '', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Check Number', 'check_number', '', 5, 7, '', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text('Check Amount', 'check_amount', '', 5, 7, '', false) }}
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_checkbox_with_group('Post dated check', 'check_is_pdc', 0, 5, 7, '', '') }}
+                                                </div>
+                                                <div class="posgrp_check_date">
+                                                    <div class="row align-items-center control-label">
+                                                        <div class="col-12 col-sm-5"><small><label for="">Check Date</label></small></div>
+                                                        <div class="col-6 col-sm-7">
+                                                            <input type="date" id="xform-check_date" class="input-v2 w-100 check_date">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text("Payee's Name", 'check_payee_name', '', 5, 7, '', false) }}
+                                                </div>
+                                                <div class="card-detail">
+                                                    {{ pos_form_tools.payment_group_text("Payor's Name", 'check_payor_name', '', 5, 7, '', false) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-12 col-lg-6">
+                            <div class="row">
+                                <div class="col-12 col-sm-3">Balance:</div>
+                                <div class="col-12 col-sm-9 [ checkout-amount checkout-amount--bal2 ] text-sm-right">Php <span class="co_balance_static" value="0">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 [ d-flex flex-wrap justify-content-between justify-content-lg-end flex-column flex-md-row ]">
+                            <button class="btn btn-v1 btn-small btn-primary add_check_btn" type="button">Add Check</button>
+                            <button class="btn btn-v1 btn-small btn-success check_proceed_btn" type="button">Submit</button>
+                            <button class="btn btn-v1 btn-small btn-secondary check_go_back" type="button">Go Back</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="paymentGiftLabel" class="modal modal--v1 fade" id="gc_payment_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Gift Card Payment</h5>
+                        <!-- <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button> -->
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Amount to Pay:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--to_pay">Php <span class="co_amt_to_pay">0.00</span></div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6">Balance:</div>
+                                    <div class="col-12 col-sm-6 checkout-amount checkout-amount--bal">Php <span class="co_balance_disp" >0.00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                        <div class="col-md-12" id="gc_form">
+                            <div class="gc_field">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-blue-1" id="">Gift Card Details</h6>
+                                    </div>
+                                </div>
+                                <div class="card-details">
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="card-detail">
+                                                {{ pos_form_tools.payment_group_text('Amount to pay', 'gcp_pay_amt', '', 5, 7, '', false) }}
+                                            </div>
+                                            <div class="card-detail">
+                                                {{ pos_form_tools.payment_group_text('GC Balance', 'gcp_balance', '', 5, 7, '', true) }}
+                                            </div>
+                                            <div class="card-detail">
+                                                {{ pos_form_tools.payment_group_text('GC Debit Amount', 'gcp_debit_amt', '', 5, 7, '', true) }}
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="card-detail">
+                                                {{ pos_form_tools.payment_group_text('Card Number', 'gc_card_number', '', 5, 7, 'Card Number', false) }}
+                                            </div>
+                                            <div class="card-detail">
+                                                <div class="row align-items-center">
+                                                    <div class="col-12 text-right">
+                                                        <button class="btn btn-v1 btn-success btn-small gc_pay_search">Search Card</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-detail">
+                                                {{ pos_form_tools.payment_group_text('Name on Card', 'gcp_card_name', '', 5, 7, 'Name on Card', false) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-12 col-lg-6">
+                            <div class="row">
+                                <div class="col-12 col-sm-3">Balance:</div>
+                                <div class="col-12 col-sm-9 [ checkout-amount checkout-amount--bal2 ] text-sm-right">Php <span class="co_balance_static" value="0">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 [ d-flex flex-wrap justify-content-between justify-content-lg-end flex-column flex-md-row ]">
+                            <button class="btn btn-v1 btn-small btn-primary swipe_giftcard" type="button">Swipe Card</button>
+                            <button class="btn btn-v1 btn-small btn-success gc_payment_proceed_btn" type="button">Submit</button>
+                            <button class="btn btn-v1 btn-small btn-secondary gc_payment_go_back" type="button">Go Back</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="customerLabel" class="modal modal--v1 fade" id="customer_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search/Add Customer</h5>
+                    </div>
+                    <div class="modal-body" id="cust_formx">
+                        <hr class="divider--v1">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="card-detail">
+                                    {#{{ pos_form_tools.payment_group_text('Amount to pay', 'gcp_pay_amt', '', 5, 7, '', false) }}#}
+                                    {% if 'id' in cust_required_fields %}
+                                        {{ pos_form_tools.payment_group_text_with_class('Customer ID', 'cust_search_id', '', 4, 8, '', false, 'f_required') }}
+                                    {% else %}
+                                        {{ pos_form_tools.payment_group_text_with_class('Customer ID', 'cust_search_id', '', 4, 8, '', false, '') }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="card-detail">
+                                    {% if 'gender' in cust_visible_fields %}
+                                        {% if 'gender' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_radio_with_class('Gender*', 'cust_search_gender', gender_options, 4, 8, null, false, 'f_required_gender') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_radio_with_class('Gender', 'cust_search_gender', gender_options, 4, 8, null, false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="card-detail">
+                                    {% if 'marital_status' in cust_visible_fields %}
+                                        {% if 'marital_status' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_select_with_class('Status*', 'cust_search_marital', marital_options, '', 4, 8,  false ,'f_required_select') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_select_with_class('Status', 'cust_search_marital', marital_options, '', 4, 8,false,'') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="card-detail">
+                                    {{ pos_form_tools.payment_group_date('Married On','cust_search_marriage_date', '',4, 8) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-5">
+                                <div class="card-detail">
+                                    {% if 'first_name' in cust_visible_fields %}
+                                        {% if 'first_name' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('First Name*', 'cust_search_firstname', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('First Name', 'cust_search_firstname', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <div class="card-detail">
+                                    {% if 'middle_name' in cust_visible_fields %}
+                                        {% if 'middle_name' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('MI*', 'cust_search_middle_name', '', 3, 9, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('MI', 'cust_search_middle_name', '', 3, 9, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-5">
+                                <div class="card-detail">
+                                    {% if 'last_name' in cust_visible_fields %}
+                                        {% if 'last_name' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Last Name*', 'cust_search_lastname', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Last Name', 'cust_search_lastname', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="card-detail">
+                                    {% if 'home_phone' in cust_visible_fields %}
+                                        {% if 'home_phone' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Home #*', 'cust_search_home_phone', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Home #', 'cust_search_home_phone', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if 'c_email_address' in cust_visible_fields %}
+                                        {% if 'c_email_address' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Email*', 'cust_search_email', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Email', 'cust_search_email', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="card-detail">
+                                    {% if 'mobile_number' in cust_visible_fields %}
+                                        {% if 'mobile_number' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Mobile #*', 'cust_search_mobile', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Mobile #', 'cust_search_mobile', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if 'birthdate' in cust_visible_fields %}
+                                        {% if 'birthdate' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Birthday*', 'cust_search_birthdate', '', 4, 8, false, 'f_required_date') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Birthday', 'cust_search_birthdate', '', 4, 8, false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                <div class="card-detail">
+                                    {% if 'address1' in cust_visible_fields %}
+                                        {% if 'address1' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Address 1*', 'cust_search_address_1', '', 2, 10, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Address 1', 'cust_search_address_1', '', 2, 10, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                <div class="card-detail">
+                                    {% if 'address2' in cust_visible_fields %}
+                                        {% if 'address2' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Address 2*', 'cust_search_address_2', '', 2, 10, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Address 2', 'cust_search_address_2', '', 2, 10, '', false, '') }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            {% if 'city' in cust_visible_fields %}
+                                <div class="col-12 col-md-6">
+                                    <div class="card-detail">
+                                        {% if 'city' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('City*', 'cust_search_city', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('City', 'cust_search_city', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if 'country' in cust_visible_fields %}
+                                <div class="col-12 col-md-6">
+                                    <div class="card-detail">
+                                        {% if 'country' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Country*', 'cust_search_country', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Country', 'cust_search_country', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if 'country' in cust_visible_fields %}
+                                <div class="col-12 col-md-6">
+                                    <div class="card-detail">
+                                        {% if 'country' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('State*', 'cust_search_state', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('State', 'cust_search_state', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if 'zip' in cust_visible_fields %}
+                                <div class="col-12 col-md-6">
+                                    <div class="card-detail">
+                                        {% if 'zip' in cust_required_fields %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Zip*', 'cust_search_zip', '', 4, 8, '', false, 'f_required') }}
+                                        {% else %}
+                                            {{ pos_form_tools.payment_group_text_with_class('Zip', 'cust_search_zip', '', 4, 8, '', false, '') }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-12">
+                                <div class="card-detail">
+                                    {{ pos_form_tools.payment_group_textarea('Notes', 'cust_search_notes', '', 3, 2, 12, false) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row customer_seach_main_div">
+                            <div class="col-12 col-md-12">
+                                <h4 style="color: white;" id="form_title" class="modal-title">Search Results</h4>
+                                <hr style="margin-top: 2px; margin-bottom: 10px;">
+                                <div class="col-md-12" id="check_form" style="height: 160px; overflow:scroll;overflow-x: hidden;">
+                                    <table class="table table-bordered table-hover" id="customers_table" style="background-color: white !important;">
+                                        <thead>
+                                        <tr >
+                                            <th width="40%">Name</th>
+                                            <th width="40%">E-mail</th>
+                                            <th width="20%"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="customers_list">
+                                        <tr class="init_row_customer">
+                                            <td colspan="3"><p>No customer found</p></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="divider--v1">
+                    </div>
+                    <div class="modal-footer">
+                        <button id="switch_to_normal" class="btn btn-v1 btn-small btn-success pull-left quotation_continue_btn switch_to_normal_class" type="button">Switch to Normal Transaction</button>
+                        <button class="btn btn-v1 btn-small btn-danger customer_clear_search_btn" type="button">Clear Fields</button>
+                        <button class="btn btn-v1 btn-small btn-success customer_search_btn" type="button">Search</button>
+                        <button class="btn btn-v1 btn-small btn-primary save_customer_button" type="button">Add New Customer</button>
+                        <button class="btn btn-v1 btn-small btn-primary customer_search_again_btn" type="button">Search Again</button>
+                        <button class="btn btn-v1 btn-small btn-success customer_continue_btn" type="button">Select Customer</button>
+                        <button class="btn btn-v1 btn-small btn-secondary cancel_cust_search" type="button" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="freezeTransactionLabel" class="modal modal--v1 fade" id="freeze_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="form_title">Freeze Transaction</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Are you sure want to freeze this transaction?</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-v1 btn-small btn-success freeze_btn" type="button">Proceed</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="refund_type_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -109,100 +858,97 @@
         </div>
     </div>
     {# #}
-    <div id="refund_reason_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="refundReasonLabel" class="modal modal--v1 fade" id="refund_reason_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Reason for Exchange/Refund</h4>
+                        <h5 class="modal-title" id="form_title">Reason for Exchange/Refund</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                        <div class="row">
                             <div class="col-md-12">
-                                {{ form.group_textarea_bare('Reason', 'refund_reason', '', 5, 4, 12, false) }}
+                                {{ pos_form_tools.group_textarea_bare('Reason', 'refund_reason', '', 5, 4, 12, false) }}
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a href="javascript:void(0)" class="btn next_step_btn" style="background-color: #556E93; color: #ffffff;">Continue</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <button class="btn btn-v1 btn-small btn-success next_step_btn" type="button">Continue</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     {# #}
-    <div id="gc_refund_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="gcRefundLabel" class="modal modal--v1 fade" id="gc_refund_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Gift Card Refund</h4>
+                        <h5 class="modal-title" id="form_title">Gift Card Refund</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                        <div class="row">
                             <div class="col-md-12">
-                                {{ form.group_text('GC Number', 'gcr_card_number', '', 4, 4, true) }}
-                                {{ form.group_text('Refund Amount', 'gcr_refund_amt', '', 4, 4, true) }}
-                                {{ form.group_text('GC Credit Amount', 'gcr_credit_amt', '', 4, 4, true) }}
+                                {{ pos_form_tools.group_text('GC Number', 'gcr_card_number', '', 4, 7, true) }}
+                                {{ pos_form_tools.group_text('Refund Amount', 'gcr_refund_amt', '', 4, 7, true) }}
+                                {{ pos_form_tools.group_text('GC Credit Amount', 'gcr_credit_amt', '', 4, 7, true) }}
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green gc_refund_proceed_btn" style="margin=0" href="javascript:void(0)">Confirm</a>
-                        <a class="btn default gc_refund_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
+                        <button class="btn btn-v1 btn-small btn-success gc_refund_proceed_btn" type="button">Confirm</button>
+                        <button class="btn btn-v1 btn-small btn-secondary gc_refund_go_back" type="button">Go Back</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     {# #}
-    <div id="gc_avail_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="gcAvailLabel" class="modal modal--v1 fade" id="gc_avail_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Top-up Gift Card</h4>
+                        <h5 class="modal-title" id="form_title">Top-up Gift Card</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
+                        <div class="row">
                             <div class="col-md-12">
-                                {{ form.group_text('Load Amount', 'gc_load_amt', '', 4, 4, false) }}
+                                {{ pos_form_tools.group_text('Load Amount', 'gc_load_amt', '', 4, 7, false) }}
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green gc_avail_proceed_btn" style="margin=0" href="javascript:void(0)">Add to Cart</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <button class="btn btn-v1 btn-small btn-success gc_avail_proceed_btn" type="button">Add to Cart</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     {# #}
-    <div id="gc_avail_create_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width: 800px !important;">
+    <div aria-hidden="true" aria-labelledby="gcAvailCreateLabel" class="modal modal--v1 fade" id="gc_avail_create_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Buy Gift Card - New Card Details</h4>
+                        <h5 class="modal-title" id="form_title">Buy Gift Card - New Card Details</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form gc_main_form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="gca_form" style="height: 250px; overflow:scroll;overflow-x: hidden;">
+                        <div class="row form-horizontal form gc_main_form">
+                            <div class="col-md-12" id="gca_form">
                                 <div class="gca_field">
                                     <div class="row">
-                                        <div class="col-md-5">
-                                            {{ form.group_text('Load Amount', 'gca_load_amt', '', 5, 6, false) }}
-                                        </div>
-                                        <div class="col-md-7">
-                                            {{ form.group_text_pos('Card Number', 'gca_card_number', '', 4, 7, 'Card Number', false) }}
-                                            {{ form.group_text_pos('Name on Card', 'gca_card_name', '', 4, 7, 'Name on Card', false) }}
-                                            <a href="javascript:void(0)" class="btn blue swipe_new_giftcard pull-right">Swipe New Gift Card</a>
+                                        <div class="col-md-12">
+                                            {{ pos_form_tools.group_text('Load Amount', 'gca_load_amt', '', 4, 7, false) }}
+                                            {{ pos_form_tools.payment_group_text('Card Number', 'gca_card_number', '', 4, 7, 'Card Number', false) }}
+                                            {{ pos_form_tools.payment_group_text('Name on Card', 'gca_card_name', '', 4, 7, 'Name on Card', false) }}
                                         </div>
                                     </div>
                                 </div>
@@ -210,588 +956,63 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green gc_avail_create_proceed_btn" style="margin=0" href="javascript:void(0)">Add to Cart</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
+                        <button class="btn btn-v1 btn-small btn-primary swipe_new_giftcard" type="button">Swipe New Gift Card</button>
+                        <button class="btn btn-v1 btn-small btn-success gc_avail_create_proceed_btn" type="button">Add to Cart</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    {# GC PAYMENT #}
-    <div id="gc_payment_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width: 800px !important;">
+    {# #}
+    <div aria-hidden="true" aria-labelledby="finalModalLabel" class="modal modal--v1 fade" id="final_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Gift Card Payment</h4>
+                        <h5 class="modal-title" id="exampleModalLabel">Transaction complete!</h5>
                     </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6">
-                                <h4>Amount to pay <b>Php <span class="co_amt_to_pay">0.00</span></b></h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h4>Balance <b>Php <span class="co_balance_disp" >0.00</span></b></h4>
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form cc_main_form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="gc_form" style="height: 250px; overflow:scroll;overflow-x: hidden;">
-                                <div class="gc_field">
-                                    <h4 class="form-section">Gift Card Details</h4>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            {{ form.group_text_pos('Amount to pay', 'gcp_pay_amt', '', 5, 6, false) }}
-                                            {{ form.group_text('GC Balance', 'gcp_balance', '', 5, 6, true) }}
-                                            {{ form.group_text('GC Debit Amount', 'gcp_debit_amt', '', 5, 6, true) }}
-                                        </div>
-                                        <div class="col-md-6">
-                                            {{ form.group_text_pos('Card Number', 'gc_card_number', '', 4, 7, 'Card Number', false) }}
-                                            <div id="cgroup-x" class="form-group">
-                                                <label class="col-md-5 control-label"></label>
-                                                <div class="col-md-6">
-                                                    <a href="javascript:void(0)" class="btn green btn-xs pull-right gc_pay_search">Search Card</a>
-                                                </div>
-                                            </div>
-                                            {{ form.group_text_pos('Name on Card', 'gcp_card_name', '', 4, 7, 'Name on Card', false) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <h4 class="pull-left">Balance <b>Php <span class="co_balance_static" value="0">0.00</span></b></h4>
-                        <a href="javascript:void(0)" class="btn blue swipe_giftcard">Swipe Card</a>
-                        <a class="btn default green gc_payment_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
-                        <a class="btn default gc_payment_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="checkout_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Checkout & Payment</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6">
-                                <h4>Amount to pay <b>Php <span class="co_amt_to_pay" value="0">0.00</span></b></h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h4>Balance <b>Php <span class="co_balance" value="0">0.00</span></b></h4>
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-2">
-                                <div style="margin-top: 15px;"></div>
-                                <a href="javascript:void(0)" class="co_cash_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_cash.png') }}" width="70px" width="70px"></a>
-                                <a href="javascript:void(0)" class="co_cc_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_card.png') }}" width="70px"></a>
-                                <a href="javascript:void(0)" class="co_check_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_check.png') }}" width="70px"></a>
-                                <a href="javascript:void(0)" class="co_gc_payment"><img src="{{ asset('bundles/gisttemplate/assets/global/img/pay_gc.png') }}" width="70px"></a>
-                            </div>
-                            <div class="col-md-10">
-                                <div style="overflow:scroll; overflow-x: hidden; height: 250px;">
-                                    <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="payments_table">
-                                        <thead>
-                                            <tr>
-                                                <th width="40%">Type</th>
-                                                <th width="50%">Amount</th>
-                                                <th width="10%"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="payments_list">
-                                            {% if transaction_object.hasPayments|default(null) %}
-                                                {% for p in transaction_object.getPayments %}
-                                                    <tr class="row_payment_{{p.getID}}">     
-                                                    <input type="hidden" name="control_number" class="control_number" value="{{p.getControlNumber|default('')}}">
-                                                    <input type="hidden" name="account_number" class="account_number" value="{{p.getAccountNumber|default('')}}">
-                                                    <input type="hidden" name="bank" class="bank" value="{{p.getBank|default('')}}">
-                                                    <input type="hidden" name="payment_issued_on" class="payment_issued_on" value="{{p.getPaymentIssuedOn.getID|default('0')}}">
-                                                    <input type="hidden" name="cc_terminal_opt" class="cc_terminal_opt" value="{{p.getCardTerminalOperator|default('')}}">
-                                                    <input type="hidden" name="cc_interest" class="cc_interest" value="{{p.getInterest|default('')}}">
-                                                    <input type="hidden" name="cc_terms" class="cc_terms" value="{{p.getCardTerms|default('')}}">
-                                                    <input type="hidden" name="payee" class="payee" value="{{p.getPayee|default('')}}">
-                                                    <input type="hidden" name="payor" class="payor" value="{{p.getPayor|default('')}}">
-                                                    <input type="hidden" name="cc_expiry" class="cc_expiry" value="{{p.getCardExpiry|default('')}}">
-                                                    <input type="hidden" name="cc_cvv" class="cc_cvv" value="{{p.getCardCvv|default('')}}">
-                                                    <input type="hidden" name="payment_details_array[]" class="payment_details_array" value="null" >
-                                                    <input type="hidden" name="payment_amt_float[]" class="payment_amt_float" value="{{p.amount|default('')}}" >
-
-                                                    <input type="hidden" name="check_type[]" class="check_type" value="{{p.getCheckType|default('')}}" >
-                                                    <input type="hidden" name="check_date[]" class="check_date" value="{{p.getCheckDate|default('')}}" >
-
-                                                    <td><input type="text" style="font-size: 12px !important;" name="payment_type[]" value="{{p.getType|default('')}}" readonly="true" class="form-control payment_type"></td>
-                                                    <td><input type="text" style="font-size: 10px !important;" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="{{p.amount|number_format(2)|default('')}}"></td>  
-                                                    <td ><a href="javascript:void(0)" class="btn btn-xs default red x_remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td> 
-                                                    </tr>
-                                                {% endfor %}
-                                            {% else %}
-                                                <tr class="init_row_payment">
-                                                    <td colspan="3"><p>No payments added</p></td>
-                                                </tr>
-                                            {% endif %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn green default pull-left quotation_continue_btn switch_to_normal_class" id="switch_to_normal" style="margin=0" href="javascript:void(0)">Switch to Normal Transaction</a>
-                        <a class="btn default green finish_btn" style="margin=0" href="javascript:void(0)">Finish</a>
-                        <button type="button" data-dismiss="modal" class="btn default" data-toggle="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="cash_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Cash Payment</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6">
-                                <h4>Amount to pay <b>Php <span class="co_amt_to_pay">0.00</span></b></h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h4>Balance <b>Php <span class="co_balance_disp" >0.00</span></b></h4>
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
-                            <div class="col-md-12">
-                                {{ form.group_text('Received Amount', 'cash_received_amt', '', 4, 4, false) }}
-                                <div class="row">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="7">7</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="8">8</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="9">9</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                    </div>
-                                </div>
-                                <div class="row" style="margin-top: 5px !important;">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="4">4</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="5">5</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="6">6</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                    </div>
-                                </div>
-                                <div class="row" style="margin-top: 5px !important;">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="1">1</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="2">2</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="3">3</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                    </div>
-                                </div>
-                                <div class="row" style="margin-top: 5px !important; margin-bottom: 10px !important;">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="javascript:void(0)" class="btn btn-lg default white" style="color: white !important; background-color: white !important; cursor: default !important;">0</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value="0">0</a>
-                                        <a href="javascript:void(0)" class="btn btn-lg default blue numeric_key" data-value=".">.</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                    </div>
-                                </div>
-                                <div class="row" style="margin-top: 5px !important; margin-bottom: 10px !important;">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a href="javascript:void(0)" class="btn default red numeric_key" data-value="CLEAR">Clear</a>
-                                        <a href="javascript:void(0)" class="btn default red numeric_key" data-value="DEL"><</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                    </div>
-                                </div>
-                                <br>
-                                <h4>Change <b>Php <span id="cash_chg_amt" >0.00</span></b></h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <h4 class="pull-left">Balance <b>Php <span class="co_balance_static" value="0">0.00</span></b></h4>
-                        <a class="btn default green cash_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
-                        <a class="btn default cash_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="cc_modal"  class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width: 800px !important;">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-header">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h4 id="form_title" class="modal-title">Card Payment</h4>
-                            </div>
-                            <div class="col-md-4">
-                                <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6">
-                                <h4>Amount to pay <b>Php <span class="co_amt_to_pay">0.00</span></b></h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h4>Balance <b>Php <span class="co_balance_disp" >0.00</span></b></h4>
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form cc_main_form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="cc_form" style="height: 350px; overflow:scroll;overflow-x: hidden;">
-                                <div class="cc_field">
-                                    <h4 class="form-section">Card Details <a href="javascript:void(0)" class="btn btn-xs red remove_card pull-right"><i class="fa fa-remove"></i></a></h4>
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
-                                            {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
-                                            {{ form.group_selectx('Interest', 'interest_indiv', interest_opts, '', 5, 6, '',false) }}
-                                            {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
-                                            {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
-                                            {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
-                                        </div>
-                                        <div class="col-md-7">                            
-                                            {{ form.group_selectx('Card Type', 'cc_card_type', card_types, '', 4, 7, '', false) }}
-                                            {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
-                                            {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
-                                            {{ form.group_text_pos('Expiry Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
-                                            {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
-                                            <a href="javascript:void(0)" class="btn blue swipe_card pull-right">Swipe Card</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <h4 class="pull-left">Balance <b>Php <span class="co_balance_static" value="0">0.00</span></b></h4>
-                        <a href="javascript:void(0)" class="btn blue add_card_btn">Add Card</a>
-                        <a class="btn default green card_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
-                        <a class="btn default cc_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="check_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width: 800px !important;">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Check Payment</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6">
-                                <h4>Amount to pay <b>Php <span class="co_amt_to_pay">0.00</span></b></h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h4>Balance <b>Php <span class="co_balance_disp" >0.00</span></b></h4>
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form" style="margin-top: 20px;">
-                            <div class="col-md-12" id="check_form" style="height: 300px; overflow:scroll;overflow-x: hidden;">
-                                <div class="check_field">
-                                    <h4 class="form-section">Check Details <a href="javascript:void(0)" class="btn btn-xs red remove_check pull-right"><i class="fa fa-remove"></i></a></h4>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            {{ form.group_selectx('Bank', 'check_bank', bank_options, '', 5, 6, '',false) }}
-                                            {{ form.group_text_pos('Account Number', 'check_account_number', '', 5, 6, false) }}
-                                            {{ form.group_text_pos('Check Number', 'check_number', '', 5, 6, false) }}
-                                            {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
-                                        </div>
-                                        <div class="col-md-6">
-                                            {{ form.checkbox_pos2('check_is_pdc', 0, 'Post dated check', '', '')}}
-                                            <div class="form-group posgrp_check_date">
-                                                <label class="col-md-5 control-label">Check Date</label>
-                                                <div class ="col-md-6">
-                                                    <input type="date" class="check_date" id="xform-check_date">
-                                                </div>
-                                            </div>
-                                            {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
-                                            {{ form.group_text_pos("Payor's Name", 'check_payor_name', '', 5, 6, false) }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <h4 class="pull-left">Balance <b>Php <span class="co_balance_static" value="0">0.00</span></b></h4>
-                        <a href="javascript:void(0)" class="btn blue add_check_btn">Add Check</a>
-                        <a class="btn default green check_proceed_btn" style="margin=0" href="javascript:void(0)">Submit</a>
-                        <a class="btn default check_go_back" style="margin=0" href="javascript:void(0)">Go Back</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="freeze_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Freeze</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
+                        <div class="button-groups">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <h3>Are you sure want to freeze this transaction?</h3>
+                                <div class="col" onclick="finalModalAction('save')">
+                                    <div class="img--icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}" alt="">
+                                    </div>
+                                    <span>Save</span>
+                                </div>
+                                <div class="col" onclick="finalModalAction('save_print')">
+                                    <div class="img--icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/global/img/receipt.png') }}" alt="">
+                                    </div>
+                                    <span>Save & Print Receipt</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default blue freeze_btn" style="margin=0" href="javascript:void(0)">Proceed</a>
-                        <a class="btn default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Cancel</a>
+                        <p><i>Leaving this modal will reset the POS</i></p>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div id="customer_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width: 700px !important;">
-            <div class="modal-content" style="background-color: #0b114e;">
+    <div aria-hidden="true" aria-labelledby="finalModal2Label" class="modal modal--v1 fade" id="final_modal2" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a style="color: white;" type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 style="color: white;" id="form_title" class="modal-title">Search/Add customer</h4>
+                        <h5 class="modal-title" id="exampleModalLabel">Transaction complete!</h5>
                     </div>
-                    <div class="modal-body" id="cust_formx" style="height: 500px; overflow:scroll;overflow-x: hidden;">
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6" id="check_form">
-                                {% if 'id' in cust_required_fields %}
-                                    {{ form.group_text_pos_white('Customer ID', 'cust_search_id', '', 4, 7, '', false, 'f_required') }}
-                                {% else %}
-                                    {{ form.group_text_pos_white('Customer ID', 'cust_search_id', '', 4, 7, '', false, '') }}
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6" id="check_form">
-                                {% if 'gender' in cust_visible_fields %}
-                                    {% if 'gender' in cust_required_fields %}
-                                        {{ form.radio_set_pos_white('Gender*', 'cust_search_gender', gender_options, null, false, 'f_required_gender') }}
-                                    {% else %}
-                                        {{ form.radio_set_pos_white('Gender', 'cust_search_gender', gender_options, null, false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6" id="check_form">
-                                {% if 'marital_status' in cust_visible_fields %}
-                                    {% if 'marital_status' in cust_required_fields %}
-                                        {{ form.group_selectx2_white('Status*', 'cust_search_marital', marital_options, '', 4, 7,  false ,'f_required_select') }}
-                                    {% else %}
-                                        {{ form.group_selectx2_white('Status', 'cust_search_marital', marital_options, '', 4, 7,false,'') }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6" id="check_form">
-                            {{ form.group_date_pos_white('Married On','cust_search_marriage_date', '',4, 7) }}
-
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-5" id="check_form">
-                                {% if 'first_name' in cust_visible_fields %}
-                                    {% if 'first_name' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('First Name*', 'cust_search_firstname', '', 5, 6, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('First Name', 'cust_search_firstname', '', 5, 6, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="col-md-2" id="check_form">
-                                {% if 'middle_name' in cust_visible_fields %}
-                                    {% if 'middle_name' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('MI*', 'cust_search_middle_name', '', 2, 8, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('MI', 'cust_search_middle_name', '', 2, 8, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="col-md-5" id="check_form">
-                                {% if 'last_name' in cust_visible_fields %}
-                                    {% if 'last_name' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Last Name*', 'cust_search_lastname', '', 5, 6, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Last Name', 'cust_search_lastname', '', 5, 6, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6" id="check_form">
-                                {% if 'home_phone' in cust_visible_fields %}
-                                    {% if 'home_phone' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Home #*', 'cust_search_home_phone', '', 4,7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Home #', 'cust_search_home_phone', '', 4,7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                                {% if 'c_email_address' in cust_visible_fields %}
-                                    {% if 'c_email_address' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Email*', 'cust_search_email', '', 4,7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Email', 'cust_search_email', '', 4,7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6" id="check_form">
-                                {% if 'mobile_number' in cust_visible_fields %}
-                                    {% if 'mobile_number' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Mobile #*', 'cust_search_mobile', '', 4,7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Mobile #', 'cust_search_mobile', '', 4,7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                                {% if 'birthdate' in cust_visible_fields %}
-                                    {% if 'birthdate' in cust_required_fields %}
-                                        {{ form.group_date_pos_white('Birthday*', 'cust_search_birthdate', '', 4,7, false, 'f_required_date') }}
-                                    {% else %}
-                                        {{ form.group_date_pos_white('Birthday', 'cust_search_birthdate', '', 4,7, false, '') }}
-                                    {% endif %}
-                                {% endif %}           
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-12" id="check_form">
-                                {% if 'address1' in cust_visible_fields %}
-                                    {% if 'address1' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Address 1*', 'cust_search_address_1', '', 2, 9, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Address 1', 'cust_search_address_1', '', 2, 9, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}   
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-12" id="check_form">
-                                {% if 'address2' in cust_visible_fields %}
-                                    {% if 'address2' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Address 2*', 'cust_search_address_2', '', 2, 9, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Address 2', 'cust_search_address_2', '', 2, 9, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}   
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-6" id="check_form">
-                                {% if 'city' in cust_visible_fields %}
-                                    {% if 'city' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('City*', 'cust_search_city', '', 4, 7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('City', 'cust_search_city', '', 4, 7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}   
-                                {% if 'country' in cust_visible_fields %}
-                                    {% if 'country' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Country*', 'cust_search_country', '', 4, 7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Country', 'cust_search_country', '', 4, 7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}   
-                            </div>
-                            <div class="col-md-6" id="check_form">
-                                {% if 'country' in cust_visible_fields %}
-                                    {% if 'country' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('State*', 'cust_search_state', '', 4, 7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('State', 'cust_search_state', '', 4, 7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %}
-                                {% if 'zip' in cust_visible_fields %} 
-                                    {% if 'zip' in cust_required_fields %}
-                                        {{ form.group_text_pos_white('Zip*', 'cust_search_zip', '', 4, 7, '', false, 'f_required') }}
-                                    {% else %}
-                                        {{ form.group_text_pos_white('Zip', 'cust_search_zip', '', 4, 7, '', false, '') }}
-                                    {% endif %}
-                                {% endif %} 
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form">
-                            <div class="col-md-12" id="check_form">
-                                {{ form.group_textarea_white('Notes', 'cust_search_notes', '', 3, 2, 9, false) }}
-                            </div>
-                        </div>
-                        <div class="row form-horizontal form customer_seach_main_div" >
-                            <h4 style="color: white;" id="form_title" class="modal-title">Search Results</h4>
-                            <hr style="margin-top: 2px; margin-bottom: 10px;">
-                            <div class="col-md-12" id="check_form" style="height: 160px; overflow:scroll;overflow-x: hidden;">
-                            <table class="table table-bordered table-hover" id="customers_table" style="background-color: white !important;">
-                                    <thead>
-                                        <tr >
-                                            <th width="45%">Name</th>
-                                            <th width="40%">E-mail</th>
-                                            <th width="15%"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="customers_list">
-                                        <tr class="init_row_customer">
-                                            <td colspan="3"><p>No customer found</p></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn green default pull-left quotation_continue_btn switch_to_normal_class" id="switch_to_normal" style="margin=0" href="javascript:void(0)">Switch to Normal Transaction</a>
-                        <a class="btn default red customer_clear_search_btn" style="margin=0" href="javascript:void(0)">Clear Fields</a>
-                        <a class="btn default green customer_search_btn" style="margin=0" href="javascript:void(0)">Search</a>
-                        <a class="btn default blue save_customer_button" style="margin=0" href="javascript:void(0)">Add New Customer</a>
-                        <a class="btn default blue customer_search_again_btn" style="margin=0" href="javascript:void(0)">Search Again</a>
-                        <a class="btn default green customer_continue_btn" style="margin=0" href="javascript:void(0)">Select Customer</a>
-                        <button type="button" class="btn default cancel_cust_search" data-toggle="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="final_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Transaction complete!</h3>
-                            <br>
-                            <div class="col-md-4" class="proceed_btn_reg" onclick="finalModalAction('save')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}"></a>
-                                <h4>Save</h4>
-                            </div>
-                            <div class="col-md-4" class="proceed_btn_reg" onclick="finalModalAction('save_print')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/receipt.png') }}"></a>
-                                <h4>Save & Print Receipt</h4>
+                        <div class="button-groups">
+                            <div class="row">
+                                <div class="col transaction-option" onclick="finalModalAction('save')">
+                                    <div class="img--icon">
+                                        <img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}" alt="">
+                                    </div>
+                                    <span>Save</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -802,124 +1023,124 @@
             </div>
         </div>
     </div>
-    <div id="final_modal2" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="quotationModalLabel" class="modal modal--v1 fade" id="quotation_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="form_title">Enable quotation mode?</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Transaction complete!</h3>
-                            <br>
-                            <div class="col-md-4" class="proceed_btn_reg" onclick="finalModalAction('save')">
-                                <a href="javascript:void(0)"><img src="{{ asset('bundles/gisttemplate/assets/global/img/save.png') }}"></a>
-                                <h4>Save</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>To go back to normal mode, press the quotation icon again.</h3>
                             </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-v1 btn-small btn-success quotation_continue_btn" type="button">Yes</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">No</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div aria-hidden="true" aria-labelledby="revQuotationModalLabel" class="modal modal--v1 fade" id="rev_quotation_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="form_title">Disable quotation mode?</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>This will revert back to normal mode.</h3>
                             </div>
-                    </div>
-                    <div class="modal-footer">
-                        <p><i>Leaving this modal will reset the POS</i></p>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div id="quotation_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Enable quotation mode?</h3>
-                            <hr>
-                            <p style="font-size: 18px;">To go back to normal mode, press the quotation icon again.</p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a>
-                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">No</a>
+                        <button class="btn btn-v1 btn-small btn-success quotation_continue_btn" type="button">Yes</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">No</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div id="rev_quotation_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    {# #}
+    <div aria-hidden="true" aria-labelledby="depositConfLabel" class="modal modal--v1 fade" id="deposit_conf_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="form_title">Confirmation</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Disable quotation mode?</h3>
-                            <hr>
-                            <p style="font-size: 18px;">This will revert back to normal mode.</p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Proceed with deposit mode or complete an existing deposit transaction?</h3>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a>
-                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">No</a>
+                        <button class="btn btn-v1 btn-small btn-success proceed_dep_modal" type="button">Deposit Mode</button>
+                        <button class="btn btn-v1 btn-small btn-primary deposit_complete_btn" type="button">Complete Transaction</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <!--  -->
-    <div id="deposit_conf_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="depositModalLabel" class="modal modal--v1 fade" id="deposit_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="form_title">Enable deposit mode?</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Confirmation</h3>
-                            <hr>
-                            <p style="font-size: 18px;">Proceed with deposit mode or complete an existing deposit transaction?</p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>To go back to normal mode, press the deposit icon again.</h3>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green proceed_dep_modal" style="margin=0" href="javascript:void(0)">Deposit Mode</a>
-                        <a class="btn blue default deposit_complete_btn" style="margin=0" href="javascript:void(0)">Complete Transaction</a>
+                        <button class="btn btn-v1 btn-small btn-success deposit_continue_btn" type="button">Complete Transaction</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">No</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div id="deposit_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="revDepositModalLabel" class="modal modal--v1 fade" id="rev_deposit_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="form_title">Disable deposit mode?</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                    </div>
                     <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Enable deposit mode?</h3>
-                            <hr>
-                            <p style="font-size: 18px;">To go back to normal mode, press the deposit icon again.</p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>This will revert back to normal mode.</h3>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn default green deposit_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a>
-                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">No</a>
+                        <button class="btn btn-v1 btn-small btn-success deposit_continue_btn" type="button">Complete Transaction</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">No</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div id="rev_deposit_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="post" action="">
-                    <div class="modal-body">
-                        <div class="row form-horizontal form">
-                            <h3 id="form_title" class="modal-title">Disable deposit mode?</h3>
-                            <hr>
-                            <p style="font-size: 18px;">This will revert back to normal mode.</p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a class="btn default green deposit_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a>
-                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">No</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!--  -->
+    {# #}
     <div id="swipe_await" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -927,12 +1148,12 @@
                     <div class="modal-body">
                         <div class="row form-horizontal form">
                             <div class="row">
-                                <div class="col-md-3"></div>    
+                                <div class="col-md-3"></div>
                                 <div class="col-md-6" style="text-align: center;"><img height="200" width="300" src="{{ asset('bundles/gisttemplate/assets/global/img/swipe2.gif') }}"></div>
                                 <div class="col-md-3"></div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2"></div>    
+                                <div class="col-md-2"></div>
                                 <div class="col-md-8" style="text-align: center;"><h2 class="center">Waiting for card swipe...</h2></div>
                                 <div class="col-md-2"></div>
                             </div>
@@ -940,7 +1161,7 @@
                     </div>
                     <div class="modal-footer">
                         <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
-                        <a class="btn red default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Cancel</a>
+                        <a class="btn red default" data-dismiss="modal" href="javascript:void(0)">Cancel</a>
                     </div>
                 </form>
             </div>
@@ -953,12 +1174,12 @@
                     <div class="modal-body">
                         <div class="row form-horizontal form">
                             <div class="row">
-                                <div class="col-md-3"></div>    
+                                <div class="col-md-3"></div>
                                 <div class="col-md-6" style="text-align: center;"><img height="180" width="180" src="{{ asset('bundles/gisttemplate/assets/global/img/error.png') }}"></div>
                                 <div class="col-md-3"></div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3"></div>    
+                                <div class="col-md-3"></div>
                                 <div class="col-md-6" style="text-align: center;"><h2 class="center">Card not recognized</h2></div>
                                 <div class="col-md-3"></div>
                             </div>
@@ -966,7 +1187,7 @@
                     </div>
                     <div class="modal-footer">
                         <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
-                        <a class="btn green default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Okay</a>
+                        <a class="btn green default" data-dismiss="modal" href="javascript:void(0)">Okay</a>
                     </div>
                 </form>
             </div>
@@ -979,12 +1200,12 @@
                     <div class="modal-body">
                         <div class="row form-horizontal form">
                             <div class="row">
-                                <div class="col-md-3"></div>    
+                                <div class="col-md-3"></div>
                                 <div class="col-md-6" style="text-align: center;"><img height="180" width="180" src="{{ asset('bundles/gisttemplate/assets/global/img/error.png') }}"></div>
                                 <div class="col-md-3"></div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3"></div>    
+                                <div class="col-md-3"></div>
                                 <div class="col-md-6" style="text-align: center;"><h2 class="center">Card expired</h2></div>
                                 <div class="col-md-3"></div>
                             </div>
@@ -992,8 +1213,8 @@
                     </div>
                     <div class="modal-footer">
                         <!-- <a class="btn default green quotation_continue_btn" style="margin=0" href="javascript:void(0)">Yes</a> -->
-                        <a class="btn default cc_go_back2" style="margin=0" href="javascript:void(0)">Go back to payment options</a>
-                        <a class="btn green default" data-dismiss="modal" style="margin=0" href="javascript:void(0)">Edit card details</a>
+                        <a class="btn default cc_go_back2" href="javascript:void(0)">Go back to payment options</a>
+                        <a class="btn green default" data-dismiss="modal" href="javascript:void(0)">Edit card details</a>
                     </div>
                 </form>
             </div>
@@ -1018,94 +1239,154 @@
         </div>
     </div>
 </div>
-<div class="hidden">
+<!-- Hidden Fields -->
+<div class="d-none">
     <div id="cc_fields">
         <div class="cc_field">
-            <h4 class="form-section">Card Details <a href="javascript:void(0)" class="btn btn-xs red remove_card pull-right"><i class="fa fa-remove"></i></a></h4>
             <div class="row">
-                <div class="col-md-5">
-                    {{ form.group_selectx('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 6, false) }}
-                    {{ form.group_text_pos('Charge Amount', 'cc_charge_amt', '', 5, 6, '', false) }}
-                    {{ form.group_selectx('Interest', 'interest_indiv', interest_opts, '', 5, 6, '',false) }}
-                    {{ form.group_selectx('Payment Terms', 'cc_terms', charge_rates, '', 5, 6, '',false) }}
-                    {{ form.group_selectx('Bank of card', 'cc_bank', bank_options, '', 5, 6, '',false) }}
-                    {{ form.group_selectx('Card Class', 'cc_card_class', card_class, '', 5, 6, '',false) }}
+                <div class="col-6">
+                    <h6 class="text-blue-1" id="">Card Details</h6>
                 </div>
-                <div class="col-md-7">
-                    {{ form.group_selectx('Card Type', 'cc_card_type', card_types, '', 4, 7, 'Card Type', false) }}
-                    {{ form.group_text_pos('Card Number', 'cc_card_number', '', 4, 7, 'Card Number', false) }}
-                    {{ form.group_text_pos('Name on Card', 'cc_card_name', '', 4, 7, 'Name on Card', false) }}
-                    {{ form.group_text_pos('Expiry Date', 'cc_card_expiry', '', 4, 7, 'mm/yy', false) }}
-                    {{ form.group_text_pos('CVV', 'cc_card_cvv', '', 4, 7, 'CVV', false) }}
-                    <a href="javascript:void(0)" class="btn blue swipe_card pull-right">Swipe Card</a>
+                <div class="col-6 text-right">
+                    <a href="javascript:void(0)" class="remove_card"><i class="fa fa-times"></i></a>
                 </div>
             </div>
-        </div>
-    </div>
-    <div id="gc_fields">
-        <div class="cc_field">
-            <h4 class="form-section">Card Details <a href="javascript:void(0)" class="btn btn-xs red remove_card pull-right"><i class="fa fa-remove"></i></a></h4>
-            <div class="row">
-                <div class="col-md-5">
-                    {{ form.group_text_pos('Amount to pay', 'gcp_pay_amt', '', 5, 6, false) }}
-                    {{ form.group_text('GC Debit Amount', 'gcp_debit_amt', '', 5, 6, true) }}
-                </div>
-                <div class="col-md-7">
-                    {{ form.group_text_pos('Card Number', 'gc_card_number', '', 4, 7, 'Card Number', false) }}
-                    {{ form.group_text_pos('Name on Card', 'gc_card_name', '', 4, 7, 'Name on Card', false) }}
-                    {{ form.group_text_pos('Expiry Date', 'gc_card_expiry', '', 4, 7, 'mm/yy', false) }}
-                    <a href="javascript:void(0)" class="btn blue swipe_giftcard pull-right">Swipe Card</a>
+            <div class="card-details">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 7, false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Charge Amount', 'cc_charge_amt', '', 5, 7, '', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Interest', 'interest_indiv', interest_opts, '', 5, 7, '',false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Payment Terms', 'cc_terms', charge_rates, '', 5, 7, '',false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Bank of card', 'cc_bank', bank_options, '', 5, 7, '',false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Card Class', 'cc_card_class', card_class, '', 5, 7, '',false) }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Card Type', 'cc_card_type', card_types, '', 5, 7, '',false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Card Number', 'cc_card_number', '', 5, 7, 'Card Number', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Name on Card', 'cc_card_name', '', 5, 7, 'Name on Card', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Expiry Date', 'cc_card_expiry', '', 5, 7, 'mm/yy', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('CVV', 'cc_card_cvv', '', 5, 7, 'CVV', false) }}
+                        </div>
+                        <div class="card-detail">
+                            <div class="row align-items-center">
+                                <div class="col-12 text-right">
+                                    <button class="btn btn-v1 btn-primary btn-small swipe_card">Swipe Card</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div id="check_fields">
         <div class="check_field">
-            <h4 class="form-section">Check Details <a href="javascript:void(0)" class="btn btn-xs red remove_check pull-right"><i class="fa fa-remove"></i></a></h4>
             <div class="row">
-                <div class="col-md-6">
-                    {{ form.group_selectx('Bank', 'check_bank', bank_options, '', 5, 6, '',false) }}
-                    {{ form.group_text_pos('Account Number', 'check_account_number', '', 5, 6, false) }}
-                    {{ form.group_text_pos('Check Number', 'check_number', '', 5, 6, false) }}
-                    {{ form.group_text_pos('Check Amount', 'check_amount', '', 5, 6, false) }}
+                <div class="col-6">
+                    <h6 class="text-blue-1" id="">Check Details</h6>
                 </div>
-                <div class="col-md-6">
-                    {{ form.checkbox_pos2('check_is_pdc', 0, 'Post dated check', '', '')}}
-                    <div class="form-group posgrp_check_date">
-                        <label class="col-md-5 control-label">Check Date</label>
-                        <div class ="col-md-6">
-                            <input type="date" class="check_date" id="xform-check_date">
+                <div class="col-6 text-right">
+                    <a href="javascript:void(0)" class="remove_check"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="card-details">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_select('Bank', 'check_bank', bank_options, '', 5, 7, false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Account Number', 'check_account_number', '', 5, 7, '', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Check Number', 'check_number', '', 5, 7, '', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Check Amount', 'check_amount', '', 5, 7, '', false) }}
                         </div>
                     </div>
-                    {{ form.group_text_pos("Payee's Name", 'check_payee_name', '', 5, 6, false) }}
-                    {{ form.group_text_pos("Payor's Name", 'check_payor_name', '', 5, 6, false) }}
+                    <div class="col-12 col-md-6">
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_checkbox_with_group('Post dated check', 'check_is_pdc', 0, 5, 7, '', '') }}
+                        </div>
+                        <div class="posgrp_check_date">
+                            <div class="row align-items-center control-label">
+                                <div class="col-12 col-sm-5"><small><label for="">Check Date</label></small></div>
+                                <div class="col-6 col-sm-7">
+                                    <input type="date" id="xform-check_date" class="input-v2 w-100 check_date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text("Payee's Name", 'check_payee_name', '', 5, 7, '', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text("Payor's Name", 'check_payor_name', '', 5, 7, '', false) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="gc_fields">
+        <div class="gc_field">
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="text-blue-1" id="">Gift Card Details</h6>
+                </div>
+            </div>
+            <div class="card-details">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Amount to pay', 'gcp_pay_amt', '', 5, 7, '', false) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('GC Balance', 'gcp_balance', '', 5, 7, '', true) }}
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('GC Debit Amount', 'gcp_debit_amt', '', 5, 7, '', true) }}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Card Number', 'gc_card_number', '', 5, 7, 'Card Number', false) }}
+                        </div>
+                        <div class="card-detail">
+                            <div class="row align-items-center">
+                                <div class="col-12 text-right">
+                                    <button class="btn btn-v1 btn-success btn-small gc_pay_search">Search Card</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-detail">
+                            {{ pos_form_tools.payment_group_text('Name on Card', 'gcp_card_name', '', 5, 7, 'Name on Card', false) }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{# #}
-<div id="refundModal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="">
-                <div class="modal-header">
-                    <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                    <h4 id="form_title" class="modal-title">Authenticate Refund</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row form-horizontal form" style="margin-top: 20px;">
-                        <div class="col-md-12">
-                            {{ form.group_text('Refund Code', 'refund_code', '', 4, 4, false) }}
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a class="btn default green auth_refund_btn" style="margin=0" href="javascript:void(0)">Submit</a>
-                    <button type="button" data-dismiss="modal" class="btn default closeAuthModal" data-toggle="modal">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{# #}

@@ -1,0 +1,145 @@
+{% macro group_text(label, name, value, label_size, body_size, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="row mt-2">
+        <div class="col-6 col-sm-{{ label_size }}"><small><label class="text-blue-1">{{ label }}</label></small></div>
+        <div class="col-6 col-sm-{{ body_size }}">
+            <input type="text" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 no-style w-100" placeholder="{{ label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment_group_text(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-sm-{{ label_size }}"><small><label class="text-blue-1">{{ label }}</label></small></div>
+        <div class="col-6 col-sm-{{ body_size }}">
+            <input type="text" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 w-100 {{ name }}" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment_group_text_with_class(label, name, value, label_size, body_size, placeholderx = null, readonly = false, class = '', prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-sm-{{ label_size }}"><small><label class="text-blue-1">{{ label }}</label></small></div>
+        <div class="col-6 col-sm-{{ body_size }}">
+            <input type="text" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 w-100 {{ name }} {{class}}" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment_group_select(label, name, options, value, label_size, body_size, disabled = false, prefix = 'c') %}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-md-{{ label_size }}"><small><label for="">{{ label }}</label></small></div>
+        <div class="col-12 col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 w-100 {{name}}" placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment_group_select_with_class(label, name, options, value, label_size, body_size, disabled = false, class = null, prefix = 'c') %}
+    {% import _self as self %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-md-{{ label_size }}"><small><label for="">{{ label }}</label></small></div>
+        <div class="col-12 col-md-{{ body_size }}">
+            <select id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 w-100 {{name}} {{class}}" placeholder="-- Select {{label}} --">
+                {{ self.options(options, value) }}
+            </select>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment_group_checkbox_with_group(label, name, value, label_size, body_size, checked, group, disabled = false, prefix = 'c') %}
+    <div class="row align-items-center">
+        <div class="col-12 col-md-{{ label_size }}">
+            <small><label for="">{{ label }}</label></small>
+        </div>
+        <div class="col-12 col-md-{{ body_size }}">
+            {% if group == null %}
+                {% set grp = name %}
+            {% else %}
+                {% set grp = group %}
+            {% endif %}
+            <input type="checkbox" id="" name="{{ name }}" class="{{ grp }} {{name}}" value="{{ value }}" {{ checked == true ? 'checked="checked"' : '' }} {{ disabled == true ? 'disabled=""' : '' }}>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro payment_group_radio_with_class(label, name, fields, label_size, body_size, value, disabled = false, class = '') %}
+    {% import _self as self %}
+    <div class="row align-items-center">
+        <div class="col-12 col-md-{{ label_size }}">
+            <small><label for="">{{ label }}</label></small>
+        </div>
+        <div class="col-12 col-md-{{ body_size }} radio-list">
+            {% for id,display in fields %}
+                {{ self.radio(name, id, display, value == id ? true : false, name, disabled, 'c', class) }}
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro payment_group_date(label, name, value, label_size, body_size, readonly = false, class = '') %}
+    {% import _self as self %}
+    {% if readonly %}
+        {{ self.group_text(label, name, value, label_size, body_size, readonly, prefix) }}
+    {% else %}
+        <div class="row align-items-center posgrp_{{name}}">
+            <div class="col-12 col-sm-{{ label_size }}"><small><label class="text-blue-1">{{ label }}</label></small></div>
+            <div class="col-6 col-sm-{{ body_size }}">
+                {#<input type="text" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 w-100 {{ name }}" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>#}
+                <div class="input-group date date-picker" data-date-format="mm-dd-yyyy">
+                    <input id="cform-{{ name }}" type="text" class="input-v2 w-100 {{ name }} {{class}}" name="{{ name }}" placeholder="{{ label }}" value="{{ value }}" readonly>
+                    <span class="input-group-btn">
+                        <button class="btn default calendar" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro group_textarea_bare(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-md-{{ body_size }}">
+            <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro payment_group_textarea(label, name, value, row_size, label_size, body_size, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-md-{{ label_size }}"><small><label for="">{{ label }}</label></small></div>
+        <div class="col-12 col-md-{{ body_size }}">
+            <textarea id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="form-control" rows="{{ row_size }}" placeholder="{{ label }}" {{ readonly ? 'readonly ' : '' }}>{{ value }}</textarea>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro radio(name, value, display, checked, group, disabled = false, prefix = 'c',class) %}
+    <label class="radio-inline">
+        {% if group == null %}
+            {% set grp = "radio-group" %}
+        {% else %}
+            {% set grp = group %}
+        {% endif %}
+        <input  type="radio" id="{{prefix}}form-{{ name }}" name="{{ grp }}" class="{{ grp }} {{class}}" value="{{ value }}" {{ checked ? 'checked' : '' }} {{ disabled ? 'disabled' : '' }}>
+        <span>{{ display }}</span>
+    </label>
+{% endmacro %}
+
+{% macro options(fields, selected) %}
+    <option></option>
+    {% for value,display in fields %}
+        {% if (value == selected) %}
+            <option value="{{ value }}" selected="selected">{{ display }}</option>
+        {% else %}
+            <option value="{{ value }}">{{ display }}</option>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+<!-- END -->

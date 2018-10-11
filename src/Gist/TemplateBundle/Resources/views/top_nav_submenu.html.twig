@@ -1,0 +1,96 @@
+<!-- INVENTORY -->
+<div class="subnav row subnav--counting" {% if app.request.get('_route') not in
+    ['gist_inv_existing_stock_index','gist_inv_damaged_items_index','gist_inv_stock_transfer_index',
+        'gist_inv_counting_index','gist_inv_open_tester_index','gist_inv_stock_transfer_add_form',
+        'gist_inv_damaged_items_add_entries_form','gist_inv_open_tester_add_entries_form'
+    ] %}style="display:none;"{% endif %}>
+    <div class="col subnav__item {% if app.request.get('_route') == 'gist_inv_existing_stock_index' %}active{% endif %}">
+        <a href="{{ path('gist_inv_existing_stock_index') }}">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/inv-1.png') }})"></span> <span class="menu_item__text">Existing Stock</span>
+            </div></a>
+    </div>
+    <div class="col subnav__item {% if app.request.get('_route') in ['gist_inv_damaged_items_index','gist_inv_damaged_items_add_entries_form'] %}active{% endif %}">
+        <a href="{{ path('gist_inv_damaged_items_index') }}">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/inv-2.png') }})"></span> <span class="menu_item__text">Damaged Item</span>
+            </div></a>
+    </div>
+    <div class="col subnav__item {% if app.request.get('_route') in ['gist_inv_stock_transfer_index','gist_inv_stock_transfer_add_form'] %}active{% endif %}">
+        <a href="{{ path('gist_inv_stock_transfer_index') }}">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/inv-3.png') }})"></span> <span class="menu_item__text">Transfer</span>
+            </div></a>
+    </div>
+    <div class="col subnav__item {% if app.request.get('_route') == 'gist_inv_counting_index' %}active{% endif %}">
+        <a href="{{ path('gist_inv_counting_index') }}">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/inv-4.png') }})"></span> <span class="menu_item__text">Counting</span>
+            </div></a>
+    </div>
+    <div class="col subnav__item {% if app.request.get('_route') in ['gist_inv_open_tester_index','gist_inv_open_tester_add_entries_form'] %}active{% endif %}">
+        <a href="{{ path('gist_inv_open_tester_index') }}">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/inv-5.png') }})"></span> <span class="menu_item__text">Open Tester</span>
+            </div></a>
+    </div>
+</div>
+<!-- POS -->
+<div class="subnav row subnav--pos" {% if app.request.get('_route') not in ['gist_pos_index','gist_pos_refund_reports'] %}style="display:none;"{% endif %}>
+    <div class="col subnav__item">
+        <a href="javascript:void(0)" class="cp_customers">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-1.png') }})"></span>
+                <span class="menu_item__text">Search Customer</span>
+            </div>
+        </a>
+    </div>
+    <div class="col subnav__item {% if app.request.get('_route') == 'gist_pos_refund_reports' %}active{% endif %}">
+        <a href="{{ path('gist_pos_refund_reports') }}">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-2.png') }})"></span>
+                <span class="menu_item__text">Exchange/Refund</span>
+            </div>
+        </a>
+    </div>
+    <div class="col subnav__item">
+        <a href="javascript:void(0)" class="cp_drawer">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-3.png') }})"></span>
+                <span class="menu_item__text">Cash Drawer</span>
+            </div>
+        </a>
+    </div>
+    <div class="col subnav__item">
+        <a href="javascript:void(0)" class="cp_gc">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-4.png') }})"></span>
+                <span class="menu_item__text">Gift Card</span>
+            </div>
+        </a>
+    </div>
+    <div class="col subnav__item">
+        <a href="javascript:void(0)" class="cp_deposit">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-5.png') }})"></span>
+                <span class="menu_item__text">Deposit</span>
+            </div>
+        </a>
+    </div>
+    <div class="col subnav__item">
+        <a href="javascript:void(0)" class="cp_freeze">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-6.png') }})"></span>
+                <span class="menu_item__text">Freeze Transaction</span>
+            </div>
+        </a>
+    </div>
+    <div class="col subnav__item">
+        <a href="javascript:void(0)" class="cp_quotation">
+            <div class="subnav-item__container">
+                <span class="menu_item__icon" style="background-image: url({{ asset('bundles/gisttemplate/assets/admin/pages/media/icons/pos-7.png') }})"></span>
+                <span class="menu_item__text">Quotation Mode</span>
+            </div>
+        </a>
+    </div>
+</div>

@@ -1,163 +1,166 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
 {% block content %}
-<div class="page-content">
-	<form method="post" class="form-horizontal">
-		<div class="row">
-			<div class="col-md-1"></div>
-			<div class="col-md-10">
-				<h2 class="form-section">POS Settings</h2>
-				<br>
-				<!--BEGIN TABS-->
-		            <div class="tabbable tabbable-custom tabbable-full-width">
-		                <!-- MAIN TABS -->
-		                <ul class="nav nav-tabs">
-		                    <li class="active">
-		                        <a href="#tab_sys_settings" data-toggle="tab">
-		                            System Settings </a>
-		                    </li>
-		                    <li>
-		                        <a href="#tab_sync_settings" data-toggle="tab">
-		                            Users</a>
-		                    </li>
-		                    <li>
-		                        <a href="#tab_customer_settings" data-toggle="tab">
-		                            Customers</a>
-		                    </li>
-							<li>
-								<a href="#tab_product_settings" data-toggle="tab">
-									Products</a>
-							</li>
-		                </ul>
-		                <!-- END MAIN TABS -->
-		                <div class="tab-content">
-		                    <div class="tab-pane active" id="tab_sys_settings">
-		                        {% include 'GistPOSBundle:Settings:system_settings.html.twig' %}
-		                    </div>
-		                    <div class="tab-pane" id="tab_sync_settings">
-		                        {% include 'GistPOSBundle:Settings:user_settings.html.twig' %}
-		                    </div>
-		                    <div class="tab-pane" id="tab_customer_settings">
-		                        {% include 'GistPOSBundle:Settings:customer_settings.html.twig' %}
-		                    </div>
-							<div class="tab-pane" id="tab_product_settings">
-                                {% include 'GistPOSBundle:Settings:product_settings.html.twig' %}
-							</div>
-		                </div>
-		            </div>
-		            <!--END TABS-->
-			</div>
-			<div class="col-md-1"></div>
-		</div>
-	</form>
-</div>
+    <form method="post" class="form-horizontal">
+        <div class="row">
+            <div class="col-12 mt-5">
+                <h2 class="page-title">POS Settings</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-pills nav-pills-v1 mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <a aria-controls="sys_settings" aria-selected="false" class="nav-link active" data-toggle="pill" href="#sys_settings" id="sys_settings-tab" role="tab">System Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a aria-controls="sync_settings" aria-selected="true" class="nav-link" data-toggle="pill" href="#sync_settings" id="sync_settings-tab" role="tab">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a aria-controls="customer_settings" aria-selected="true" class="nav-link" data-toggle="pill" href="#customer_settings" id="customer_settings-tab" role="tab">Customers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a aria-controls="product_settings" aria-selected="true" class="nav-link" data-toggle="pill" href="#product_settings" id="product_settings-tab" role="tab">Products</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div aria-labelledby="sys_settings-tab" class="tab-pane fade show active" id="sys_settings" role="tabpanel">
+                        {% include 'GistPOSBundle:Settings:system_settings.html.twig' %}
+                    </div>
+                    <div aria-labelledby="sync_settings-tab" class="tab-pane fade" id="sync_settings" role="tabpanel">
+                        {% include 'GistPOSBundle:Settings:user_settings.html.twig' %}
+                    </div>
+                    <div aria-labelledby="customer_settings-tab" class="tab-pane fade" id="customer_settings" role="tabpanel">
+                        {% include 'GistPOSBundle:Settings:customer_settings.html.twig' %}
+                    </div>
+                    <div aria-labelledby="product_settings-tab" class="tab-pane fade" id="product_settings" role="tabpanel">
+                        {% include 'GistPOSBundle:Settings:product_settings.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 {% endblock %}
 {% block js %}
-<script>
-function syncUsers()
-{
-    var route = "{{ path('gist_pos_settings_sync_users')|escape('js') }}";
-    $.getJSON(route, function(json){  
-       $.each(json, function(i, x) {
-            swal({
-              title: "Users Data Updated!",
-              text: "The page will now reload",
-              type: "success",
-              confirmButtonColor: "green",
-              confirmButtonText: "Okay",
-            },
-            function(){
-            	location.reload();
-                
-            });
-        });
-    });
-}
+    <script>
+        function syncUsers()
+        {
+            var route = "{{ path('gist_pos_settings_sync_users')|escape('js') }}";
+            $.getJSON(route, function(json){
+                $.each(json, function(i, x) {
+                    swal({
+                            title: "Users Data Updated!",
+                            text: "The page will now reload",
+                            type: "success",
+                            confirmButtonColor: "green",
+                            confirmButtonText: "Okay",
+                        },
+                        function(){
+                            location.reload();
 
-function syncProducts()
-{
-    var route = "{{ path('gist_pos_settings_sync_products')|escape('js') }}";
-    $.getJSON(route, function(json){
-        $.each(json, function(i, x) {
-            swal({
-                    title: "Users Data Updated!",
-                    text: "The page will now reload",
-                    type: "success",
-                    confirmButtonColor: "green",
-                    confirmButtonText: "Okay",
-                },
-                function(){
-                    location.reload();
-
+                        });
                 });
-        });
-    });
-}
-
-function syncCustomers()
-{
-    var route = "{{ path('gist_pos_settings_sync_customers')|escape('js') }}";
-    $.getJSON(route, function(json){  
-       $.each(json, function(i, x) {
-            swal({
-              title: "Customers Data Updated!",
-              text: "The page will now reload",
-              type: "success",
-              confirmButtonColor: "green",
-              confirmButtonText: "Okay",
-            },
-            function(){
-            	location.reload();
-                
             });
-        });
-    });
-}
+        }
 
-$(document).ready(function(){ 
+        function syncProducts()
+        {
+            var route = "{{ path('gist_pos_settings_sync_products')|escape('js') }}";
+            $.getJSON(route, function(json){
+                $.each(json, function(i, x) {
+                    swal({
+                            title: "Users Data Updated!",
+                            text: "The page will now reload",
+                            type: "success",
+                            confirmButtonColor: "green",
+                            confirmButtonText: "Okay",
+                        },
+                        function(){
+                            location.reload();
 
-	$(document).on("click",".sync_users", function(e){
-		swal({
-          title: "Proceed with action?",
-          text: "This will manually update all user records on this machine",	
-          imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
-          imageSize: '100x100',
-          showConfirmButton: true,
-          showCancelButton: true
-        },
-        function(){
-            	syncUsers();
-        });
-	});
-
-    $(document).on("click",".sync_products", function(e){
-        swal({
-                title: "Proceed with action?",
-                text: "This will manually update all product records on this machine",
-                imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
-                imageSize: '100x100',
-                showConfirmButton: true,
-                showCancelButton: true
-            },
-            function(){
-                syncProducts();
+                        });
+                });
             });
-    });
+        }
 
-	$(document).on("click",".sync_customers", function(e){
-		swal({
-          title: "Proceed with action?",
-          text: "This will manually update all customer records on this machine",	
-          imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
-          imageSize: '100x100',
-          showConfirmButton: true,
-          showCancelButton: true
-        },
-        function(){
-            	syncCustomers();
+        function syncCustomers()
+        {
+            var route = "{{ path('gist_pos_settings_sync_customers')|escape('js') }}";
+            $.getJSON(route, function(json){
+                $.each(json, function(i, x) {
+                    swal({
+                            title: "Customers Data Updated!",
+                            text: "The page will now reload",
+                            type: "success",
+                            confirmButtonColor: "green",
+                            confirmButtonText: "Okay",
+                        },
+                        function(){
+                            location.reload();
+
+                        });
+                });
+            });
+        }
+
+        $(document).ready(function(){
+            $('.table-v1 table[data-data-table=true]').DataTable({
+                "bProcessing": true,
+                "bServerSide": false,
+                "iDisplayLength": 10,
+                "bInfo": false,
+                "oLanguage": {
+                    "sLengthMenu": "_MENU_ records",
+                    "oPaginate": {
+                        "sPrevious": "<span class=\"prev-icon\"><i class=\"fas fa-chevron-left\"></i></span>",
+                        "sNext": "<span class=\"next-icon\"><i class=\"fas fa-chevron-right\"></i></span>"
+                    }
+                },
+                "aaSorting": [[0,'desc']]
+            });
+
+            $(document).on("click",".sync_users", function(e){
+                swal({
+                        title: "Proceed with action?",
+                        text: "This will manually update all user records on this machine",
+                        imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
+                        imageSize: '100x100',
+                        showConfirmButton: true,
+                        showCancelButton: true
+                    },
+                    function(){
+                        syncUsers();
+                    });
+            });
+
+            $(document).on("click",".sync_products", function(e){
+                swal({
+                        title: "Proceed with action?",
+                        text: "This will manually update all product records on this machine",
+                        imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
+                        imageSize: '100x100',
+                        showConfirmButton: true,
+                        showCancelButton: true
+                    },
+                    function(){
+                        syncProducts();
+                    });
+            });
+
+            $(document).on("click",".sync_customers", function(e){
+                swal({
+                        title: "Proceed with action?",
+                        text: "This will manually update all customer records on this machine",
+                        imageUrl: '{{ asset('bundles/gisttemplate/assets/global/img/warning.png') }}',
+                        imageSize: '100x100',
+                        showConfirmButton: true,
+                        showCancelButton: true
+                    },
+                    function(){
+                        syncCustomers();
+                    });
+            });
+
         });
-	});
-    
-});
-</script>
+    </script>
 {% endblock %}

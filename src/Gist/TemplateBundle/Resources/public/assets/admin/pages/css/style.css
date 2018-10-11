@@ -1,0 +1,728 @@
+
+
+/*************** 1. TYPOGRAPHY ***************/
+
+*{
+    font-family: Roboto, sans-serif;
+}
+
+/*****---------- Text Color ----------*****/
+.text-green{
+    color: #00b05b;
+}
+
+.text-blue-1{
+    color: #0059b0;
+}
+
+.text-blue-2{
+    color: #00468b;
+}
+
+/*****----------Text Decoration ----------*****/
+
+.text-underline{
+    text-decoration: underline;
+}
+
+
+/*************** THEME STYLES ***************/
+
+/*****---------- INPUT STYLES	 ----------*****/
+
+input:not([type=submit]){
+    border: 1px solid #dadee7;
+    background: #f4f4f4;
+    color: #202020;
+    padding: 5px 10px;
+}
+
+select{
+    min-width: 80px;
+    padding: 5px 10px;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border: 1px solid #dadee7;
+    background-image: url('../media/main/select_arrows.png');
+    background-position: center right;
+    background-repeat: no-repeat;
+}
+
+/*************** INPUT VARIANTS ***************/
+/*****---------- INPUT GROUP VARIANT 1 ----------*****/
+.input--v1.input-group{
+    border-bottom: 1px solid #ccc;
+}
+
+.input--v1 input,
+.input--v1 textarea,
+.input--v1 .input-group-prepend,
+.input--v1 .input-group-text{
+    border: none;
+    background: transparent;
+}
+
+.input--v1 .form-control:focus{
+    box-shadow: none !important;
+    background: transparent;
+}
+
+/*****---------- INPUT GROUP VARIANT 2 ----------*****/
+.input-v2:not([type=submit]){
+    border-radius: 20px;
+    background-color: #fff;
+    border: 1px solid #dfe3ea ;
+    color: #555 ;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+select.input-v2{
+    background-image: url( '../media/main/select_arrow2.png' );
+}
+
+.input-v2:disabled{
+    background: #f4f4f4;
+    color: #000;
+}
+
+.input-v2.no-style{
+    font-style: initial;
+}
+
+.input-v2.input-date{
+    background: #f4f4f4 url('../media/icons/icon-cal.png') no-repeat right center;
+    font-style: initial;
+    color: #000;
+}
+
+.input-search{
+    background: url('../media/icons/icon-search.png') no-repeat left center;
+    background-size: auto auto;
+    padding-left: 50px;
+    background-size: 30px;
+}
+
+/*****---------- INPUT GROUP VARIANT 3 ----------*****/
+.input-v3:not([type=submit]){
+    border: none;
+}
+
+select.input-v3{
+    background-image: url( '../media/main/select_arrow3.png' );
+}
+
+
+/*************** BUTTONS ***************/
+/*****---------- BUTTON VARIANT 1 ----------*****/
+
+.btn{
+    margin: 2px;
+}
+
+.btn-v1{
+    border-radius: 90px;
+    padding: 10px 30px;
+    font-weight: 600;
+}
+
+.btn-v1.btn-icon{
+    padding: 2px 10px;
+}
+
+
+.btn-v1.btn-primary{
+    background: #00468b;
+    border: none;
+}
+
+.btn-v1.btn-lg{
+    padding: 10px 80px;
+}
+
+.btn-v1.btn-primary:hover{
+    background: #002d59;
+}
+
+.btn.btn-small{
+    font-size: 0.8em;
+    padding: 7px 25px;
+}
+
+/*************** HAMBURGERS ***************/
+/*****---------- HAMBURGER COLOR VARIANTS ----------*****/
+.hamburger.hamburger--white .hamburger-inner,
+.hamburger.hamburger--white .hamburger-inner:before,
+.hamburger.hamburger--white .hamburger-inner:after{
+    background: #fff;
+}
+
+/*************** 6. NAV PILLS ***************/
+/*****---------- 6.1 NAV PILL VARIANT 1 ----------*****/
+
+.nav-pills-v1 .nav-item{
+    border: 1px solid #d4d9e3;
+    border-width: 0 1px;
+}
+
+.nav-pills-v1 .nav-item .nav-link{
+    color: #000;
+    padding: 20px 40px;
+    font-size: 14px;
+}
+
+.nav-pills-v1 .nav-item .nav-link.active{
+    background: transparent;
+    color: #000;
+    border-radius: 0;
+    border-bottom: 5px solid #0059b0;
+}
+
+/*****---------- NAV PILL VARIANT 2 ----------*****/
+.nav-pills-v2 .nav-item{
+    border: none;
+    width: 100%;
+    margin: 3px 0;
+}
+
+.nav-pills-v2 .nav-item .nav-link{
+    color: #444444;
+    width: 100%;
+    font-size: 14px;
+    background: #c6f0f4;
+    border-radius: 0;
+    font-size: 12px;
+    text-align: center;
+}
+
+.nav-pills-v2 .nav-item .nav-link.active{
+    background: #0059b0;
+    color: #fff;
+}
+
+/*****---------- NAV PILL VARIANT 3 ----------*****/
+.nav-pills-v3{
+    justify-content: space-around;
+}
+
+.nav-pills-v3 .nav-item{
+    max-width: 100px;
+}
+
+.nav-pills-v3 .nav-item img{
+    width: 100%;
+    height: auto;
+}
+
+.nav-pills-v3.nav-pills .nav-link{
+    color: #000;
+}
+
+.nav-pills-v3.nav-pills .nav-link.active {
+    background: transparent;
+    color: #000;
+}
+
+@media (min-width: 768px) {
+    .nav-pills-v3 .nav-item{
+        max-width: 150px;
+    }
+}
+
+/***************  TABLE VARINAT ***************/
+/*****---------- TABLE VARIANT 1 ----------*****/
+.table-v1 .container-fluid{
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.table-v1 table {
+    border: 0;
+    border-color: #bcc4d3;
+    border-collapse:separate;
+    border-spacing:0px;
+}
+
+.table-v1 table td{
+    border-color: #bcc4d3;
+}
+
+.table-v1 table tr{
+    border: none;
+}
+
+.table-v1 table thead{
+    background: #a6def5;
+}
+
+.table-v1 table thead th{
+    text-align: center;
+    color: #00468b;
+    font-weight: 400;
+}
+
+.table-v1 table thead th:first-child,
+.table-v1 table tbody td:first-child {
+    border-left: 1px solid #bcc4d3;
+}
+
+.table-v1 table thead th:last-child,
+.table-v1 table tbody td:last-child {
+    border-right: 1px solid #bcc4d3 !important;
+}
+
+.table-v1 table tbody tr:last-child td{
+    border-bottom: 1px solid #bcc4d3;
+}
+
+.table-v1 table tfoot  th{
+    border: 0;
+}
+
+.table-v1 input,
+.table-v1 textarea,
+.table-v1 select{
+    width: 100%;
+}
+
+.table-v1 .paginate_button a{
+    border: 0;
+    margin: 1px;
+    color: #0e1a35;
+    box-shadow: 0em 0.3em 2px #d2d9e8;
+}
+
+.table-v1 .paginate_button.active a{
+    background: #00468b;
+    color: #fff;
+}
+
+.table-v1 .paginate_button.next a,
+.table-v1 .paginate_button.previous a{
+    box-shadow: none;
+}
+
+.table-v1 .paginate_button.disabled.next,
+.table-v1 .paginate_button.disabled.previous{
+    display:none;
+}
+
+.dataTables_wrapper .btn-container{
+    padding: 20px 0;
+}
+
+/*************** BOX VARIANT ***************/
+/*****---------- BOX VARIANT 1 (box shadow) ----------*****/
+
+.box-shadow{
+    background: #fff;
+    box-shadow: 0 0 1em #0002;
+    min-height: 400px;
+    padding: 15px;
+}
+
+/*****---------- 8.2 BOX VARIANT 2 (box gradient) ----------*****/
+.box-gradient{
+    background: linear-gradient(to right, #075f92 , #2887bf);
+    padding: 10px;
+    color: #fff;
+}
+
+/*****---------- MODAL VARIANT ----------*****/
+/**------------- MODAL VARIANT 1 -------------**/
+.modal--v1 .modal-header{
+    border: 0;
+    color: #00468b;
+}
+
+.modal--v1 .modal-footer{
+    border: 0;
+}
+
+/*****---------- DIVIDER VARIANT ----------*****/
+/**------------- DIVIDER VARIANT 1 -------------**/
+
+.divider--v1{
+    border-color: #474747;
+    border-width: 1px;
+}
+
+/*************** SIZING ***************/
+
+@media screen and ( min-width: 576px ) {
+    .h-sm-100{
+        height: 100% !important;
+    }
+}
+
+@media screen and ( min-width: 768px ) {
+    .h-md-100{
+        height: 100% !important;
+    }
+}
+@media screen and ( min-width: 992px ) {
+    .h-lg-100{
+        height: 100% !important;
+    }
+}
+@media screen and ( min-width: 1200px ) {
+    .h-xl-100{
+        height: 100% !important;
+    }
+}
+
+.boxed-container {
+    /*max-width:1140px;*/
+    max-width:1440px;
+    margin: 0 auto;
+    position: relative;
+    padding: 0 15px;
+}
+
+.fullwidth{
+    width: 100%;
+}
+
+
+/*************** LOGIN ***************/
+.page-login{
+    background: url('../media/main/bg-login.jpg') no-repeat;
+    background-size: cover;
+    background-position: center center;
+    min-height: 100vh;
+    position: relative;
+}
+
+.box--fullvp{
+    height: 100vh;
+}
+
+.box--login-form{
+    min-height: 350px;
+    background: url('../media/main/bg-login_form.jpg') no-repeat;
+    background-size: cover;
+    background-position: center top;
+
+}
+
+.box--login-form .lf__header{
+    background: #00468b;
+    height: 85px;
+}
+
+.lf__header__item{
+    padding: 0 40px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.lf__header__item.active{
+    border-bottom: 7px solid #5584ff;
+}
+
+.lf__welcome{
+    font-size: 48px;
+    font-weight: 200;
+}
+
+#form-login input{
+    font-size: 20px;
+    font-weight: 200;
+}
+
+#form-login .form-group{
+    margin-bottom: 30px;
+}
+
+#addon-username{
+    background: url('../media/icons/icon-user.png') no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+#addon-password{
+    background: url('../media/icons/icon-pass.png') no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.lf__btn--submit{
+    margin-top: 40px;
+}
+
+.lf__btn--submit:after{
+    content: '>';
+    position: relative;
+    left: 10px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    font-weight: 200;
+    font-size: 15px;
+    transition: all ease-in-out 0.5s, opacity 0.3s linear;
+}
+
+.lf__btn--submit:hover:after{
+    opacity: 1;
+    left: 40px
+}
+
+/*************** COMPONENTS ***************/
+/*****---------- DATETIME INFORMATION ----------*****/
+.info--datetime{
+    background: #000;
+    font-weight: 200;
+    color: #fff;
+}
+
+/*****---------- PAGE TITLE ----------*****/
+.page-title{
+    color: #00468b;
+    font-weight: 500;
+}
+
+/*****---------- PAGE CONTENT ----------*****/
+
+.page-content{
+    padding-bottom: 50px;
+    min-height: 80vh;
+}
+
+.footer{
+    background: linear-gradient(to right, #075f92 , #2887bf);
+    text-align: center;
+    color: #fff;
+    padding: 10px;
+}
+
+/*************** NAVIGATION ***************/
+/*****---------- Main Nav ----------*****/
+/**------------- Icons -------------**/
+
+/* +++++++++++++ Background Icons ++++++++++++++*/
+.menu_item__icon--appointments{
+    background: url('../media/icons/menu-appointment.png');
+}
+
+.menu_item__icon--competition{
+    background: url('../media/icons/menu-competition.png');
+}
+
+.menu_item__icon--clockinout{
+    background: url('../media/icons/menu-clockinout.png');
+}
+
+.menu_item__icon--chat{
+    background: url('../media/icons/menu-messaging.png');
+}
+
+.menu_item__icon--inventory{
+    background: url('../media/icons/menu-inventory.png');
+}
+
+.menu_item__icon--ticketing{
+    background: url('../media/icons/menu-ticketing.png');
+}
+
+.menu_item__icon--pos{
+    background: url('../media/icons/menu-pos.png');
+}
+
+.menu_item__icon--personalzone{
+    background: url('../media/icons/menu-personalzone.png');
+}
+
+.menu_item__icon--reports{
+    background: url('../media/icons/menu-reports.png');
+}
+
+/* +++++++++++++ Icon Setup ++++++++++++++*/
+.menu_item__icon{
+    width: 60px;
+    height: 60px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.menu__profile_picture{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.navbar-collapse.show .menu_item__icon{
+    width: 20px;
+    height: 20px;
+    margin: auto 10px;
+}
+
+.navbar-collapse.show .menu__profile_picture{
+    width: 20px;
+    height: 20px;
+}
+
+
+.nav--main__logo{
+    height: 95%;
+    width: auto;
+}
+/**------------- Components -------------**/
+/* ++++++++++++++ DEFAULT ++++++++++++++ */
+.main-nav-container{
+    background: linear-gradient(to right, #075f92 , #2887bf);
+}
+
+.nav--main{
+    /*background: linear-gradient(to right, #075f92 , #2887bf);*/
+    height: 125px;
+    color: #fff;
+    z-index: 999;
+}
+
+.nav--main .nav-item{
+    height: 100%;
+    border-width: 0 1px 0 0;
+    border-style: solid;
+    border-color: #0d547f;
+    transition: all ease-in-out 0.3s;
+}
+
+.nav--main .nav-item:first-child{
+    border-width: 0 1px 0 1px;
+}
+
+.nav--main .nav-item:hover,
+.nav--main .nav-item.active
+{
+    background: #0059b0;
+    border-top: 7px solid #a6def5;
+}
+
+.nav--main .nav-item a{
+    color: #fff;
+    height: 100%;
+}
+
+.nav--main .nav-item a:hover{
+    text-decoration: none;
+}
+
+.nav--main .nav-item .nav-item__container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav--main .navbar-brand{
+    padding-left: 20px;
+}
+
+@media screen and ( min-width: 1200px ) {
+    .dropdown--prof_pic{
+        left: -95px;
+        background: #0059b0;
+    }
+
+    .dropdown--prof_pic .dropdown-item:hover{
+        background: #116ba0;
+    }
+}
+/* ++++++++++++++ COLLAPSED ++++++++++++++ */
+
+.nav--main .navbar-collapse.show{
+    background: linear-gradient(to right, #075f92 , #2887bf);
+}
+
+.nav--main .navbar-collapse.show .navbar-nav .dropdown-menu{
+    background: transparent;
+    border: 1px 0 solid #ddd;
+    left: 0;
+    position: relative;
+    width: 95%;
+    margin: 0 auto;
+    background: rgba( 50, 50, 50, 0.2 );
+}
+
+.nav--main .navbar-collapse.show .navbar-nav .dropdown-menu .dropdown-item:hover{
+    color: #000;
+}
+
+.nav--main .navbar-collapse.show .nav-item{
+    padding: 5px 0;
+    border-bottom: 1px solid #125a86;
+}
+
+.nav--main .navbar-collapse.show .nav-item:hover,
+.nav--main .navbar-collapse.show .nav-item.active
+{
+    background: #0059b0;
+}
+
+.nav--main .navbar-collapse.show .nav-item .nav-item__container{
+    flex-direction: initial;
+}
+
+/*****----------Sub Nav ----------*****/
+
+
+/**------------- Icons -------------**/
+
+.subnav{
+    width: 100%;
+    min-height: 130px;
+    background: black;
+    margin: 10px auto;
+    max-width: 992px;
+    margin-bottom: 30px;
+}
+
+@media screen and (min-width: 768px){
+    .subnav{
+        width: 70%;
+    }
+}
+
+@media screen and (min-width: 992px){
+    .subnav{
+        width: 80%;
+    }
+}
+
+.subnav .subnav__item{
+    background: #0059b0;
+    border: 1px solid #024990;
+    flex-basis: 1 1 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+}
+
+.subnav .subnav__item.active{
+    background: #113e6b;
+}
+
+.subnav__item .menu_item__icon{
+    width: 50px;
+    height:50px;
+    display: block;
+}
+
+.subnav__item .menu_item__text {
+    color: #fff;
+    text-align: center;
+}
+
+.subnav-item__container{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+}
+
+

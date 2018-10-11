@@ -1,33 +1,34 @@
-<a href="{{ path(route_edit, { 'id': id }) }}" class="btn default btn-xs green-meadow" data-toggle="tooltip" data-placement="bottom" title="View"><i class="fa fa-eye"></i></a>
+<a href="{{ path(route_edit, { 'id': id }) }}" class="btn btn-v1 btn-icon btn-success" data-toggle="tooltip" title="View"><i class="fas fa-eye"></i></a>
 {% if mode == 'normal' or mode == 'upsell' or mode == 'refund' or mode == 'exchange' %}
-<a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
+    <a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fas fa-print"></i></a>
 {% endif %}
 {% if (mode == 'normal' or mode == 'upsell' or mode == 'refund' or mode == 'exchange') and child_type != 'Deposit' %}
-    <a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>
+    {#<a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>#}
+    <a href="{{ path('gist_pos_split_transaction_form', {'id':id})}}" class="btn btn-v1 btn-icon btn-danger" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fas fa-cut"></i></a>
 {% endif %}
 
 {% if mode == 'quotation' %}
-<a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
+    <a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
 {% endif %}
 
 {% if mode == 'quotation' and not hasChild %}
-<a href="{{ path('gist_pos_quote_to_sale', { 'id': id }) }}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Proceed to sale"><i class="fa fa-arrow-circle-right"></i></a>
+    <a href="{{ path('gist_pos_quote_to_sale', { 'id': id }) }}" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Proceed to sale"><i class="fa fa-arrow-circle-right"></i></a>
 {% endif %}
 
 {% if mode == 'frozen' and not hasChild %}
-<a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Continue transaction"><i class="fa fa-shopping-cart"></i></a>
-<a href="{{ path('gist_pos_delete_transaction', { 'id': id }) }}" class="btn default btn-xs red" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-times"></i></a>
+    <a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Continue transaction"><i class="fa fa-shopping-cart"></i></a>
+    <a href="{{ path('gist_pos_delete_transaction', { 'id': id }) }}" class="btn btn-v1 btn-icon btn-danger" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-times"></i></a>
 {% endif %}
 
 {% if mode == 'Deposit' %}
-<a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
-<a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>
+    <a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
+    <a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn btn-v1 btn-icon btn-danger" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>
 {% endif %}
 {% if mode == 'Deposit' and not hasChild %}
-<a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn default btn-xs blue" data-toggle="tooltip" data-placement="bottom" title="Complete transaction"><i class="fa fa-shopping-cart"></i></a>
+    <a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Complete transaction"><i class="fa fa-shopping-cart"></i></a>
 {% endif %}
 
 {% if (ea != '0' and ea != '') and (mode == 'normal' or mode == 'upsell') and not hasChild and canUpsell %}
-<a href="{{ path('gist_pos_index_load_upsell', {'upsell_parent':upsell_parent})}}" class="btn default btn-xs green" data-toggle="tooltip" data-placement="bottom" title="Upsell"><i class="fa fa-chevron-circle-up"></i></a>
+    <a href="{{ path('gist_pos_index_load_upsell', {'upsell_parent':upsell_parent})}}" class="btn btn-v1 btn-icon btn-success" data-toggle="tooltip" data-placement="bottom" title="Upsell"><i class="fa fa-chevron-circle-up"></i></a>
 {% endif %}
 
