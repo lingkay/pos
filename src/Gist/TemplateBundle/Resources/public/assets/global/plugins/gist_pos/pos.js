@@ -7,12 +7,16 @@ function revertDiscounts()
                 $(this).find('th').eq(3).remove();
                 $(this).find('th').eq(3).remove();
                 $(this).find('th').eq(3).remove();
+                $(this).find('td').eq(0).css('width','350px');
+                $(this).find('td').eq(1).css('width','100px');
             }
 
             if ($(this).children('td').length > 5) {
                 $(this).find('td').eq(3).remove();
                 $(this).find('td').eq(3).remove();
                 $(this).find('td').eq(3).remove();
+                $(this).find('td').eq(0).css('width','350px');
+                $(this).find('td').eq(1).css('width','100px');
             }
         });
     } else {
@@ -21,12 +25,16 @@ function revertDiscounts()
                 $(this).find('th').eq(2).remove();
                 $(this).find('th').eq(2).remove();
                 $(this).find('th').eq(2).remove();
+                $(this).find('td').eq(0).css('width','350px');
+                $(this).find('td').eq(1).css('width','100px');
             }
 
             if ($(this).children('td').length > 5) {
                 $(this).find('td').eq(2).remove();
                 $(this).find('td').eq(2).remove();
                 $(this).find('td').eq(2).remove();
+                $(this).find('td').eq(0).css('width','350px');
+                $(this).find('td').eq(1).css('width','100px');
             }
         });
     }
@@ -76,18 +84,20 @@ function ajaxGetProductCategories()
             if (item.image_url != null) {
                 img = item.image_url;
             }
-            $("#prod_cats").append("<button class=\"btn btn-md btn-block category_btn\" id=\"cat_btn_"+item.id+"\" onclick=\"ajaxGetProducts("+item.id+")\" style=\"background-color: #556E93; color: #ffffff; border-radius: 5px !important;\">"+item.name+"</button>");
+           $("#prod_cats").append("<li class=\"nav-item\">\
+                <a aria-controls=\"pills-"+item.id+"\" aria-selected=\"false\" class=\"nav-link\" data-toggle=\"pill\" href=\"#pills-"+item.id+"\" id=\"pills-"+item.id+"\" role=\"tab\" onclick=\"ajaxGetProducts("+item.id+")\">"+item.name+"</a>\
+            </li>");
 
-            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 1px !important\" >\
-                    <a href=\"javascript:void(0)\" class=\"category_btn2\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important;border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-                            <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                        </div>\
+           $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
+            <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
+                <div class=\"item-content\">\
+                    <img src="+img+">\
+                    <div class=\"item-details\">\
+                        <div class=\"item-title\">"+item.name+"</div>\
                     </div>\
-                    </a>\
-                </div>");
+                </div>\
+            </a>\
+            </div>");
         });
     });
 }
@@ -122,17 +132,17 @@ function ajaxGetProducts(cid)
             img = item.image_url;
         }
 
-            $("#prods").append("<div class=\"col-md-4\" style=\"margin: 0px !important; padding: 2px !important\" >\
-                    <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
-                    <div class=\"thumbnail\" style=\"margin: 0px !important; border-width: 1px !important; border-color: #5d5d5d !important; border-radius: 5px !important;\">\
-                        <img src="+img+" style=\"height: 60px; width: 50%; display: block;\">\
-                        <div class=\"caption\" style=\"font-size: 10px !important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">\
-                            <h3 style=\"font-size: 10px !important; margin: 0!important; text-overflow: ellipsis !important; white-space: nowrap; overflow: hidden;\">"+item.name+"</h3>\
-                            <h3 style=\"font-size: 12px !important; margin: 0!important;\"><b>PHP "+orig_srp+"</b></h3>\
-                        </div>\
+           $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
+            <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
+                <div class=\"item-content\" data-title="+item.name+" data-price="+orig_srp+">\
+                    <img src="+img+" alt="+item.name+">\
+                    <div class=\"item-details\">\
+                        <div class=\"item-title\">"+item.name+"</div>\
+                        <div class=\"item-price\">PHP "+orig_srp+"</div>\
                     </div>\
-                    </a>\
-                </div>");
+                </div>\
+            </a>\
+            </div>");
 
         });
 
