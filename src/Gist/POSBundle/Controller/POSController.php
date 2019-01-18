@@ -843,7 +843,7 @@ class POSController extends Controller
                 if (trim($check_type) == '' || $check_type == null) { $check_type = 'n-a'; }
                 if (trim($check_date) == '' || $check_date == null) { $check_date = 'n-a'; }
                 if (trim($control_number) == '' || $control_number == null) { $control_number = 'n-a'; }
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount()."/".$bank."/".$terminal."/".$check_type."/".$check_date."/".$control_number."/".$acct_num);
+                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount()."/".$bank."/".$terminal."/".$check_type."/".$check_date."/".$control_number."/".$acct_num."/n-a");
             }
 
             foreach ($items as $item) {

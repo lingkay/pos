@@ -16,6 +16,15 @@
     </div>
 {% endmacro %}
 
+{% macro payment_group_number(label, name, value, label_size, body_size, placeholderx = null, readonly = false, prefix = 'c') %}
+    <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
+        <div class="col-12 col-sm-{{ label_size }}"><small><label class="text-blue-1">{{ label }}</label></small></div>
+        <div class="col-6 col-sm-{{ body_size }}">
+            <input type="number" id="{{ prefix }}form-{{ name }}" name="{{ name }}" class="input-v2 w-100 {{ name }}" placeholder="{{ (placeholderx != '') ? placeholderx : label }}" value="{{ value }}" {{ readonly ? 'readonly ' : '' }}>
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro payment_group_text_with_class(label, name, value, label_size, body_size, placeholderx = null, readonly = false, class = '', prefix = 'c') %}
     <div id="{{ prefix }}group-{{ name }}" class="row align-items-center">
         <div class="col-12 col-sm-{{ label_size }}"><small><label class="text-blue-1">{{ label }}</label></small></div>
