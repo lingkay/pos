@@ -133,7 +133,7 @@ function ajaxGetProducts(cid)
         }
 
            $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
-            <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
+            <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name.replace(/'/g, "\'")+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
                 <div class=\"item-content\" data-title="+item.name+" data-price="+orig_srp+">\
                     <img src="+img+" alt="+item.name+">\
                     <div class=\"item-details\">\

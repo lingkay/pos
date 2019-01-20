@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use DateTime;
 use DateInterval;
 
+/**
+ * Class POSController
+ * @package Gist\POSBundle\Controller
+ */
 class POSController extends Controller
 {
     /**
@@ -47,6 +51,8 @@ class POSController extends Controller
 
     /**
      * Show the POS page with a loaded transaction
+     * @param $transaction_display_id
+     * @return
      */
     public function indexLoadAction($transaction_display_id)
     {
@@ -54,7 +60,8 @@ class POSController extends Controller
         $this->title = 'Dashboard Loaded';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
-        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('trans_display_id' => $transaction_display_id));
+        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')
+            ->findOneBy(array('trans_display_id' => $transaction_display_id));
         $params['transaction_object'] = null;
         $params['customer'] = null;
         $params['restrict'] = 'false';
@@ -65,7 +72,9 @@ class POSController extends Controller
             return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
             }
 
-            if ($transaction_object->getTransactionMode() != 'frozen' && $transaction_object->getTransactionMode() != 'Deposit' && $transaction_object->getTransactionMode() != 'normal') {
+            if ($transaction_object->getTransactionMode() != 'frozen' &&
+                $transaction_object->getTransactionMode() != 'Deposit' &&
+                $transaction_object->getTransactionMode() != 'normal') {
                 return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
             }
             $params['transaction_object'] = $transaction_object;
@@ -76,7 +85,9 @@ class POSController extends Controller
     }
 
     /**
-     * Show the POS page upsell mode
+     * @param $upsell_parent
+     * @return mixed
+     * @throws \Exception
      */
     public function indexLoadUpsellAction($upsell_parent)
     {
@@ -85,7 +96,8 @@ class POSController extends Controller
         $this->title = 'Dashboard Loaded';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
-        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('id' => $upsell_parent));
+        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')
+            ->findOneBy(array('id' => $upsell_parent));
         $params['transaction_object'] = null;
         $params['restrict'] = 'false';
         $params['flag_upsell'] = 'true';
@@ -93,13 +105,17 @@ class POSController extends Controller
         $params['customer'] = $this->getCustomer($transaction_object->getCustomerId());
         $params['ea'] = $transaction_object->getExtraAmount();
 
-        // check if selected transaction is still within upsell time limit
+        // NOTE: check if selected transaction is still within upsell time limit
         $url=$conf->get('gist_sys_erp_url')."/inventory/pos/get/upsell_time";
         $result = file_get_contents($url);
         $upsell_seconds = json_decode($result, true);
         $date_orig = new DateTime();
         $date_orig = $date_orig->format('m/d/Y H:i:s');
-        $date_end = $transaction_object->getDateCreate()->add(new DateInterval('PT'.$upsell_seconds.'S'))->format('m/d/Y H:i:s'); // adds 674165 secs
+        $date_end = $transaction_object
+            ->getDateCreate()
+            ->add(new DateInterval('PT'.$upsell_seconds.'S'))
+            ->format('m/d/Y H:i:s'); // adds 674165 secs
+
         if ($date_end > $date_orig) {
             return $this->render('GistPOSBundle:Dashboard:index.html.twig', $params);
         }
@@ -112,6 +128,7 @@ class POSController extends Controller
      * Show the POS page refund mode
      * @param $transaction_display_id
      * @return
+     * @throws \Exception
      */
     public function indexLoadRefundAction($transaction_display_id)
     {
@@ -120,7 +137,8 @@ class POSController extends Controller
         $this->title = 'Dashboard Loaded';
         $params = $this->getViewParams('', 'gist_dashboard_index');
         $params = $this->padFormParams($params);
-        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(array('trans_display_id' => $transaction_display_id));
+        $transaction_object = $em->getRepository('GistPOSBundle:POSTransaction')
+            ->findOneBy(array('trans_display_id' => $transaction_display_id));
         $params['transaction_object'] = null;
         $params['customer'] = null;
         $params['restrict'] = 'false';
@@ -133,7 +151,9 @@ class POSController extends Controller
                 return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
             }
 
-            if ($transaction_object->getTransactionMode() != 'frozen' && $transaction_object->getTransactionMode() != 'Deposit' && $transaction_object->getTransactionMode() != 'normal') {
+            if ($transaction_object->getTransactionMode() != 'frozen' &&
+                $transaction_object->getTransactionMode() != 'Deposit' &&
+                $transaction_object->getTransactionMode() != 'normal') {
                 return $this->redirect($this->generateUrl('gist_pos_index_invalid'));
             }
             $params['transaction_object'] = $transaction_object;
@@ -146,7 +166,10 @@ class POSController extends Controller
         $refund_days = json_decode($result_refund_days, true);
         $date_orig = new DateTime();
         $date_orig = $date_orig->format('m/d/Y H:i:s');
-        $date_end = $transaction_object->getDateCreate()->add(new DateInterval('P'.$refund_days.'D'))->format('m/d/Y H:i:s'); // adds 674165 secs
+        $date_end = $transaction_object
+            ->getDateCreate()
+            ->add(new DateInterval('P'.$refund_days.'D'))
+            ->format('m/d/Y H:i:s'); // adds 674165 secs
 
         if ($date_end > $date_orig) {
             $url_refund_code = $conf->get('gist_sys_erp_url')."/inventory/pos/get/refund_code";
@@ -341,7 +364,11 @@ class POSController extends Controller
         $transactions = array();
 
         foreach ($frozen_transactions as $ft) {
-            $transactions[] = array('id'=>$ft->getID(), 'disp_id'=>$ft->getTransDisplayId(),'date_created'=>$ft->getDateCreateFormatted3());
+            $transactions[] = array(
+                'id'=>$ft->getID(),
+                'disp_id'=>$ft->getTransDisplayId(),
+                'date_created'=>$ft->getDateCreateFormatted3()
+            );
         }
 
         return new JsonResponse($transactions);
@@ -355,7 +382,14 @@ class POSController extends Controller
 
         if ($customer->getGCNumber()) {
             if ($customer->getGCNumber() == null) {
-                $list_opts[] = array('gc_number'=>'N/A','gc_balance'=>'0.00','gc_expiry'=>'', 'gc_balance_formatted'=>'0,00','gc_name'=>'N/A');
+                $list_opts[] = array(
+                    'gc_number'=>'N/A',
+                    'gc_balance'=>'0.00',
+                    'gc_expiry'=>'',
+                    'gc_balance_formatted'=>'0,00',
+                    'gc_name'=>'N/A'
+                );
+
                 return new JsonResponse($list_opts);
             }
 
@@ -367,11 +401,16 @@ class POSController extends Controller
             $gc_balance = 0;
         }
 
-
         $gc_balance_formatted = number_format($gc_balance, 2);
 
+        $list_opts[] = array(
+            'gc_number'=>$customer->getGCNumber(),
+            'gc_balance'=>$gc_balance,
+            'gc_expiry'=>$customer->getGCExpiry(),
+            'gc_balance_formatted'=>$gc_balance_formatted,
+            'gc_name'=>$customer->getGCName()
+        );
 
-        $list_opts[] = array('gc_number'=>$customer->getGCNumber(),'gc_balance'=>$gc_balance,'gc_expiry'=>$customer->getGCExpiry(), 'gc_balance_formatted'=>$gc_balance_formatted,'gc_name'=>$customer->getGCName());
         return new JsonResponse($list_opts);
     }
 
@@ -393,8 +432,15 @@ class POSController extends Controller
 
         $gc_balance_formatted = number_format($gc_balance, 2);
 
-        $list_opts[] = array('gc_number'=>$customer->getGCNumber(),'gc_balance'=>$gc_balance,'gc_expiry'=>$customer->getGCExpiry(), 'customer_id'=>$customer->getERPID(),
-            'customer_name'=>$customer->getNameFormatted(),'gc_name'=>$customer->getGCName(),'gc_balance_formatted'=>$gc_balance_formatted);
+        $list_opts[] = array(
+            'gc_number'=>$customer->getGCNumber(),
+            'gc_balance'=>$gc_balance,
+            'gc_expiry'=>$customer->getGCExpiry(),
+            'customer_id'=>$customer->getERPID(),
+            'customer_name'=>$customer->getNameFormatted(),
+            'gc_name'=>$customer->getGCName(),
+            'gc_balance_formatted'=>$gc_balance_formatted
+        );
 
         return new JsonResponse($list_opts);
     }
@@ -460,20 +506,56 @@ class POSController extends Controller
      * @param $refundReason
      * @return JsonResponse
      */
-    public function saveTransactionAction($pos_loc_id, $total, $balance, $type, $customer_id, $status, $tax_rate, $orig_vat_amt, $new_vat_amt, $orig_amt_net_vat, $new_amt_net_vat, $tax_coverage, $cart_min, $orig_cart_total, $new_cart_total,$bulk_type,$transaction_mode,$transaction_cc_interest,$transaction_ea, $deposit_amount, $deposit_amt_net_vat ,$deposit_vat_amt, $balance_amt_net_vat, $balance_vat_amt, $transaction_reference_sys_id, $selected_bulk_discount_type, $selected_bulk_discount_amount, $flag_upsell, $refundMethod, $refundAmount, $exchangeFlag, $gcCredit, $gcDebit, $refundReason)
-    {
+    public function saveTransactionAction(
+        $pos_loc_id,
+        $total,
+        $balance,
+        $type,
+        $customer_id,
+        $status,
+        $tax_rate,
+        $orig_vat_amt,
+        $new_vat_amt,
+        $orig_amt_net_vat,
+        $new_amt_net_vat,
+        $tax_coverage,
+        $cart_min,
+        $orig_cart_total,
+        $new_cart_total,
+        $bulk_type,
+        $transaction_mode,
+        $transaction_cc_interest,
+        $transaction_ea,
+        $deposit_amount,
+        $deposit_amt_net_vat,
+        $deposit_vat_amt,
+        $balance_amt_net_vat,
+        $balance_vat_amt,
+        $transaction_reference_sys_id,
+        $selected_bulk_discount_type,
+        $selected_bulk_discount_amount,
+        $flag_upsell,
+        $refundMethod,
+        $refundAmount,
+        $exchangeFlag,
+        $gcCredit,
+        $gcDebit,
+        $refundReason
+    ) {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction = new POSTransaction();
 
         if ($flag_upsell == 'true' && $transaction_mode == "Deposit") {
 
-            $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$transaction_reference_sys_id]);
+            $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')
+                ->findOneBy(['id'=>$transaction_reference_sys_id]);
             $new_id = $this->normalToUpsellAction($ref_transaction->getID());
             $transaction->setReferenceTransaction($new_id);
         } else {
             if ($transaction_reference_sys_id != "0") {
-                $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')->findOneBy(['id'=>$transaction_reference_sys_id]);
+                $ref_transaction = $em->getRepository('GistPOSBundle:POSTransaction')
+                    ->findOneBy(['id'=>$transaction_reference_sys_id]);
                 $transaction->setReferenceTransaction($ref_transaction);
             }
         }
@@ -546,7 +628,9 @@ class POSController extends Controller
             $new_display_id = 'E-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
             $transaction->setTransactionMode('exchange');
         } else {
-            $new_display_id = strtoupper(substr($transaction_mode, 0,1)).'-'.str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
+            $new_display_id = strtoupper(substr($transaction_mode, 0,1)) .
+                '-' .
+                str_pad($transaction->getID(),6,'0',STR_PAD_LEFT);
         }
 
         $transaction->setTransDisplayId($new_display_id);
@@ -643,8 +727,21 @@ class POSController extends Controller
      * @param $refund_issued
      * @return JsonResponse
      */
-    public function saveTransactionItemsAction($trans_sys_id, $prod_id, $prod_name, $orig_price, $min_price, $adjusted_price, $discount_type, $discount_value, $barcode, $item_code, $is_issued, $issued_on, $refund_issued)
-    {
+    public function saveTransactionItemsAction(
+        $trans_sys_id,
+        $prod_id,
+        $prod_name,
+        $orig_price,
+        $min_price,
+        $adjusted_price,
+        $discount_type,
+        $discount_value,
+        $barcode,
+        $item_code,
+        $is_issued,
+        $issued_on,
+        $refund_issued
+    ) {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction_item = new POSTransactionItem();
@@ -661,12 +758,14 @@ class POSController extends Controller
             $transactionOrigAmount = floatval($transaction->getCartOrigTotal());
             if ($transaction->getSelectedBulkDiscountType() == 'bdisc') {
                 $bulkDiscountAmount = $transaction->getSelectedBulkDiscountAmount();
-                $bulkDiscountedTotalAmount = floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountAmount)/100));
+                $bulkDiscountedTotalAmount =
+                    floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountAmount)/100));
                 $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
             } elseif ($transaction->getSelectedBulkDiscountType() == 'bdiscamt') {
                 $bulkDiscountAmount = floatval($transaction->getSelectedBulkDiscountAmount());
                 $bulkDiscountPCTAmount = ($bulkDiscountAmount/$transactionOrigAmount) * 100;
-                $bulkDiscountedTotalAmount = floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountPCTAmount)/100));
+                $bulkDiscountedTotalAmount =
+                    floatval($adjusted_price) - (floatval($adjusted_price) * (floatval($bulkDiscountPCTAmount)/100));
                 $transaction_item->setTotalAmount($bulkDiscountedTotalAmount);
             } elseif ($transaction->getSelectedBulkDiscountType() == 'bamt') {
                 $bulkDiscountAmount = floatval($transaction->getSelectedBulkDiscountAmount());
@@ -735,9 +834,42 @@ class POSController extends Controller
     /**
      * Save transaction payments
      * (AJAX)
+     * @param $trans_sys_id
+     * @param $payment_type
+     * @param $amount
+     * @param $control_number
+     * @param $bank
+     * @param $terminal_operator
+     * @param $interest
+     * @param $terms
+     * @param $account_number
+     * @param $payee
+     * @param $payor
+     * @param $expiry
+     * @param $cvv
+     * @param $issued_on
+     * @param $check_type
+     * @param $check_date
+     * @return JsonResponse
      */
-    public function saveTransactionPaymentsAction($trans_sys_id, $payment_type, $amount, $control_number, $bank, $terminal_operator, $interest, $terms, $account_number, $payee, $payor, $expiry, $cvv, $issued_on, $check_type, $check_date)
-    {
+    public function saveTransactionPaymentsAction(
+        $trans_sys_id,
+        $payment_type,
+        $amount,
+        $control_number,
+        $bank,
+        $terminal_operator,
+        $interest,
+        $terms,
+        $account_number,
+        $payee,
+        $payor,
+        $expiry,
+        $cvv,
+        $issued_on,
+        $check_type,
+        $check_date
+    ) {
         header("Access-Control-Allow-Origin: *");
         $em = $this->getDoctrine()->getManager();
         $transaction_payment = new POSTransactionPayment();
@@ -776,105 +908,228 @@ class POSController extends Controller
 
     /**
      * Send POS transactions to ERP
+     * TODO: This should be a like a cron job and ERP should have PROPER API
      */
     public function syncDataAction()
     {
-        $conf = $this->get('gist_configuration');
-        header("Access-Control-Allow-Origin: *");
-        $em = $this->getDoctrine()->getManager();
+        try {
+            $conf = $this->get('gist_configuration');
+            header("Access-Control-Allow-Origin: *");
+            $em = $this->getDoctrine()->getManager();
 
-        $transactions = $em->getRepository('GistPOSBundle:POSTransaction')->findBy(array('synced_to_erp'=>'false'));
-        foreach ($transactions as $transaction) {
-            $tax_rate = $transaction->getTaxRate();
-            $OrigVatAmt = $transaction->getOrigVatAmt();
-            $NewVatAmt = $transaction->getNewVatAmt();
-            $OrigAmtNetVat = $transaction->getOrigAmtNetVat();
-            $NewAmtNetVat = $transaction->getNewAmtNetVat();
-            $TaxCoverage = $transaction->getTaxCoverage();
-            $CartMin = $transaction->getCartMin();
-            $CartOrigTotal = $transaction->getCartOrigTotal();
-            $CartNewTotal = $transaction->getCartNewTotal();
-            $bulk_type = $transaction->getBulkDiscountType();
-            $mode = $transaction->getTransactionMode();
-            $cc_interest = $transaction->getTransactionCCInterest();
-            $ea = $transaction->getExtraAmount();
-            $pos_loc_id = $transaction->getLocation();
+            $transactions = $em->getRepository('GistPOSBundle:POSTransaction')
+                ->findBy(array('synced_to_erp' => 'false'));
 
-            if ($transaction->getReferenceTransaction() != null) {
-                $referenceTransaction = $transaction->getReferenceTransaction();
-                $referenceTransaction = $referenceTransaction->getERPID();
-            } else {
-                $referenceTransaction = 'n-a';
-            }
+            foreach ($transactions as $transaction) {
+                $tax_rate = $transaction->getTaxRate();
+                $OrigVatAmt = $transaction->getOrigVatAmt();
+                $NewVatAmt = $transaction->getNewVatAmt();
+                $OrigAmtNetVat = $transaction->getOrigAmtNetVat();
+                $NewAmtNetVat = $transaction->getNewAmtNetVat();
+                $TaxCoverage = $transaction->getTaxCoverage();
+                $CartMin = $transaction->getCartMin();
+                $CartOrigTotal = $transaction->getCartOrigTotal();
+                $CartNewTotal = $transaction->getCartNewTotal();
+                $bulk_type = $transaction->getBulkDiscountType();
+                $mode = $transaction->getTransactionMode();
+                $cc_interest = $transaction->getTransactionCCInterest();
+                $ea = $transaction->getExtraAmount();
+                $pos_loc_id = $transaction->getLocation();
 
-            if (trim($tax_rate) == '' || $tax_rate == null) { $tax_rate = 'n-a'; }
-            if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) { $OrigVatAmt = 'n-a'; }
-            if (trim($NewVatAmt) == '' || $NewVatAmt == null) { $NewVatAmt = 'n-a'; }
-            if (trim($OrigAmtNetVat) == '' || $OrigAmtNetVat == null) { $OrigAmtNetVat = 'n-a'; }
-            if (trim($NewAmtNetVat) == '' || $NewAmtNetVat == null) { $NewAmtNetVat = 'n-a'; }
-            if (trim($TaxCoverage) == '' || $TaxCoverage == null) { $TaxCoverage = 'n-a'; }
-            if (trim($CartMin) == '' || $CartMin == null) { $CartMin = 'n-a'; }
-            if (trim($CartOrigTotal) == '' || $CartOrigTotal == null) { $CartOrigTotal = 'n-a'; }
-            if (trim($CartNewTotal) == '' || $CartNewTotal == null) { $CartNewTotal = 'n-a'; }
-            if (trim($bulk_type) == '' || $bulk_type == null) { $bulk_type = 'n-a'; }
-            if (trim($mode) == '' || $mode == null) { $mode = 'n-a'; }
-            if (trim($cc_interest) == '' || $cc_interest == null) { $cc_interest = 'n-a'; }
-            if (trim($ea) == '' || $ea == null) { $ea = 'n-a'; }
-
-            $result1 = file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_transaction/".$pos_loc_id."/".$transaction->getID()."/".$transaction->getTransDisplayId()."/".$transaction->getTransactionTotal()."/".$transaction->getTransactionBalance()."/".$transaction->getTransactionType()."/".$transaction->getCustomerId()."/".$transaction->getStatus()."/".$tax_rate."/".$OrigVatAmt."/".$NewVatAmt."/".$OrigAmtNetVat."/".$NewAmtNetVat."/".$TaxCoverage."/".$CartMin."/".$CartOrigTotal."/".$CartNewTotal."/".$bulk_type."/".$mode."/".$cc_interest."/".$ea."/".$transaction->getUserCreate()->getERPID()."/".$referenceTransaction);
-            $result2 = json_decode($result1, true);
-            $transaction->setERPID($result2[0]['new_id']);
-            $transaction->setSyncedToErp('true');
-            $em->persist($transaction);
-            $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
-            $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
-            $splits = $em->getRepository('GistPOSBundle:POSTransactionSplit')->findBy(array('transaction'=>$transaction));
-
-            foreach ($payments as $payment) {
-                $bank = $payment->getBank();
-                $acct_num = $payment->getAccountNumber();
-                $terminal = $payment->getCardTerminalOperator();
-                $check_type = $payment->getCheckType();
-                $check_date = $payment->getCheckDate();
-                $control_number = $payment->getControlNumber();
-                if (trim($bank) == '' || $bank == null) { $bank = 'n-a'; }
-                if (trim($acct_num) == '' || $acct_num == null) { $acct_num = 'n-a'; }
-                if (trim($terminal) == '' || $terminal == null) { $terminal = 'n-a'; }
-                if (trim($check_type) == '' || $check_type == null) { $check_type = 'n-a'; }
-                if (trim($check_date) == '' || $check_date == null) { $check_date = 'n-a'; }
-                if (trim($control_number) == '' || $control_number == null) { $control_number = 'n-a'; }
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_payment/".$transaction->getTransDisplayId()."/".$payment->getType()."/".$payment->getAmount()."/".$bank."/".$terminal."/".$check_type."/".$check_date."/".$control_number."/".$acct_num."/n-a");
-            }
-
-            foreach ($items as $item) {
-                $isRet = 'false';
-                if ($item->getReturned()) {
-                    $isRet = 'true';
+                if ($transaction->getReferenceTransaction() != null) {
+                    $referenceTransaction = $transaction->getReferenceTransaction();
+                    $referenceTransaction = $referenceTransaction->getERPID();
+                } else {
+                    $referenceTransaction = 'n-a';
                 }
 
-                $isNew = 'false';
-                if ($item->getIsNewItem()) {
-                    $isNew = 'true';
+                if (trim($tax_rate) == '' || $tax_rate == null) {
+                    $tax_rate = 'n-a';
+                }
+                if (trim($OrigVatAmt) == '' || $OrigVatAmt == null) {
+                    $OrigVatAmt = 'n-a';
+                }
+                if (trim($NewVatAmt) == '' || $NewVatAmt == null) {
+                    $NewVatAmt = 'n-a';
+                }
+                if (trim($OrigAmtNetVat) == '' || $OrigAmtNetVat == null) {
+                    $OrigAmtNetVat = 'n-a';
+                }
+                if (trim($NewAmtNetVat) == '' || $NewAmtNetVat == null) {
+                    $NewAmtNetVat = 'n-a';
+                }
+                if (trim($TaxCoverage) == '' || $TaxCoverage == null) {
+                    $TaxCoverage = 'n-a';
+                }
+                if (trim($CartMin) == '' || $CartMin == null) {
+                    $CartMin = 'n-a';
+                }
+                if (trim($CartOrigTotal) == '' || $CartOrigTotal == null) {
+                    $CartOrigTotal = 'n-a';
+                }
+                if (trim($CartNewTotal) == '' || $CartNewTotal == null) {
+                    $CartNewTotal = 'n-a';
+                }
+                if (trim($bulk_type) == '' || $bulk_type == null) {
+                    $bulk_type = 'n-a';
+                }
+                if (trim($mode) == '' || $mode == null) {
+                    $mode = 'n-a';
+                }
+                if (trim($cc_interest) == '' || $cc_interest == null) {
+                    $cc_interest = 'n-a';
+                }
+                if (trim($ea) == '' || $ea == null) {
+                    $ea = 'n-a';
                 }
 
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_item/".$transaction->getTransDisplayId()."/".$item->getProductId()."/".$item->getName()."/".$item->getOrigPrice()."/".$item->getMinimumPrice()."/".$item->getAdjustedPrice()."/".$item->getTotalAmount()."/".$item->getDiscountType()."/".$item->getDiscountValue()."/".$isRet."/".$isNew);
+                // TODO: This MUST be converted to API
+                $result1 = file_get_contents(
+                    $conf->get('gist_sys_erp_url') .
+                    "/pos_erp/save_transaction/" .
+                    $pos_loc_id . "/" . $transaction->getID() .
+                    "/" . $transaction->getTransDisplayId() .
+                    "/" . $transaction->getTransactionTotal() .
+                    "/" . $transaction->getTransactionBalance() .
+                    "/" . $transaction->getTransactionType() .
+                    "/" . $transaction->getCustomerId() .
+                    "/" . $transaction->getStatus() .
+                    "/" . $tax_rate .
+                    "/" . $OrigVatAmt .
+                    "/" . $NewVatAmt .
+                    "/" . $OrigAmtNetVat .
+                    "/" . $NewAmtNetVat .
+                    "/" . $TaxCoverage .
+                    "/" . $CartMin .
+                    "/" . $CartOrigTotal .
+                    "/" . $CartNewTotal .
+                    "/" . $bulk_type .
+                    "/" . $mode .
+                    "/" . $cc_interest .
+                    "/" . $ea .
+                    "/" . $transaction->getUserCreate()->getERPID() .
+                    "/" . $referenceTransaction
+                );
+
+                $result2 = json_decode($result1, true);
+
+                $transaction->setERPID($result2[0]['new_id']);
+
+                $transaction->setSyncedToErp('true');
+
+                $em->persist($transaction);
+
+                $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')
+                    ->findBy(array('transaction' => $transaction));
+
+                $items = $em->getRepository('GistPOSBundle:POSTransactionItem')
+                    ->findBy(array('transaction' => $transaction));
+
+                $splits = $em->getRepository('GistPOSBundle:POSTransactionSplit')
+                    ->findBy(array('transaction' => $transaction));
+
+                foreach ($payments as $payment) {
+                    $bank = $payment->getBank();
+                    $acct_num = $payment->getAccountNumber();
+                    $terminal = $payment->getCardTerminalOperator();
+                    $check_type = $payment->getCheckType();
+                    $check_date = $payment->getCheckDate();
+                    $control_number = $payment->getControlNumber();
+                    $card_terms = $payment->getCardTerms();
+                    if (trim($bank) == '' || $bank == null) {
+                        $bank = 'n-a';
+                    }
+                    if (trim($acct_num) == '' || $acct_num == null) {
+                        $acct_num = 'n-a';
+                    }
+                    if (trim($terminal) == '' || $terminal == null) {
+                        $terminal = 'n-a';
+                    }
+                    if (trim($check_type) == '' || $check_type == null) {
+                        $check_type = 'n-a';
+                    }
+                    if (trim($check_date) == '' || $check_date == null) {
+                        $check_date = 'n-a';
+                    }
+                    if (trim($control_number) == '' || $control_number == null) {
+                        $control_number = 'n-a';
+                    }
+                    if (trim($card_terms) == '' || $card_terms == null) {
+                        $card_terms = 'n-a';
+                    }
+                    // TODO: This MUST be converted to API
+                    file_get_contents(
+                        $conf->get('gist_sys_erp_url') . "/pos_erp/save_payment/" .
+                        $transaction->getTransDisplayId() .
+                        "/" . $payment->getType() .
+                        "/" . $payment->getAmount() .
+                        "/" . $bank .
+                        "/" . $terminal .
+                        "/" . $check_type .
+                        "/" . $check_date .
+                        "/" . $control_number .
+                        "/" . $acct_num .
+                        "/" . $card_terms
+                    );
+                }
+
+                foreach ($items as $item) {
+                    $isRet = 'false';
+                    if ($item->getReturned()) {
+                        $isRet = 'true';
+                    }
+
+                    $isNew = 'false';
+                    if ($item->getIsNewItem()) {
+                        $isNew = 'true';
+                    }
+                    // TODO: This MUST be converted to API
+                    file_get_contents(
+                        $conf->get('gist_sys_erp_url') .
+                        "/pos_erp/save_item/" .
+                        $transaction->getTransDisplayId() .
+                        "/" . $item->getProductId() .
+                        "/" . $item->getName() .
+                        "/" . $item->getOrigPrice() .
+                        "/" . $item->getMinimumPrice() .
+                        "/" . $item->getAdjustedPrice() .
+                        "/" . $item->getTotalAmount() .
+                        "/" . $item->getDiscountType() .
+                        "/" . $item->getDiscountValue() .
+                        "/" . $isRet .
+                        "/" . $isNew
+                    );
+                }
+
+                foreach ($splits as $split) {
+                    // TODO: This MUST be converted to API
+                    file_get_contents(
+                        $conf->get('gist_sys_erp_url') .
+                        "/pos_erp/save_split/" .
+                        $transaction->getTransDisplayId() .
+                        "/" . $split->getConsultant()->getERPID() .
+                        "/" . $split->getAmount() .
+                        "/" . $split->getPercent()
+                    );
+                }
             }
 
-            foreach ($splits as $split) {
-                file_get_contents($conf->get('gist_sys_erp_url')."/pos_erp/save_split/".$transaction->getTransDisplayId()."/".$split->getConsultant()->getERPID()."/".$split->getAmount()."/".$split->getPercent());
-            }
+            $em->flush();
+
+            $list_opts[] = array('status' => 'ok');
+            return new JsonResponse($list_opts);
+        } catch (\Exception $exception) {
+            // TODO: Create flow for failed to sync.
+            $list_opts[] = array('status' => 'ok');
+            return new JsonResponse($list_opts);
         }
-
-        $em->flush();
-        
-        $list_opts[] = array('status'=>'ok');
-        return new JsonResponse($list_opts);
     }
 
     /**
-     * Print transaction receipt
+     * @param int $id
+     * @return mixed
      */
-    public function printReceiptAction($id)
+    public function printReceiptAction(int $id)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
@@ -898,6 +1153,9 @@ class POSController extends Controller
     /**
      * Top Nav clock
      * (transfer to dashboard controller)
+     * @param $type
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function clockAction($type)
     {
@@ -923,7 +1181,8 @@ class POSController extends Controller
         $new_transaction->setReferenceTransaction($transaction);
         $em->persist($new_transaction);
         $em->flush();
-        $new_display_id = strtoupper('N').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
+        $new_display_id =
+            strtoupper('N').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
         $new_transaction->setTransDisplayId($new_display_id);
         $new_transaction->setTransactionMode('normal');
         $em->persist($new_transaction);
@@ -934,8 +1193,10 @@ class POSController extends Controller
 
     /**
      * Generates upsell transaction from normal
+     * @param int $id
+     * @return
      */
-    public function normalToUpsellAction($id)
+    public function normalToUpsellAction(int $id)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
@@ -943,7 +1204,8 @@ class POSController extends Controller
         $new_transaction->setReferenceTransaction($transaction);
         $em->persist($new_transaction);
         $em->flush();
-        $new_display_id = strtoupper('U').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
+        $new_display_id =
+            strtoupper('U').'-'.str_pad($new_transaction->getID(),6,'0',STR_PAD_LEFT);
         $new_transaction->setTransDisplayId($new_display_id);
         $new_transaction->setTransactionMode('upsell');
         $em->persist($new_transaction);
@@ -954,16 +1216,20 @@ class POSController extends Controller
     /**
      * Deletes a transaction
      * (must not delete, use tagging instead)
+     * @param int $id
+     * @return
      */
-    public function deleteTransactionAction($id)
+    public function deleteTransactionAction(int $id)
     {
         $em = $this->getDoctrine()->getManager();
         $transaction_id = '';
         $transaction = $em->getRepository('GistPOSBundle:POSTransaction')->find($id);
         if ($transaction) {
             $transaction_id = $transaction->getTransDisplayId();
-            $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')->findBy(array('transaction'=>$transaction));
-            $items = $em->getRepository('GistPOSBundle:POSTransactionItem')->findBy(array('transaction'=>$transaction));
+            $payments = $em->getRepository('GistPOSBundle:POSTransactionPayment')
+                ->findBy(array('transaction'=>$transaction));
+            $items = $em->getRepository('GistPOSBundle:POSTransactionItem')
+                ->findBy(array('transaction'=>$transaction));
 
             foreach ($payments as $payment) {
                 $em->remove($payment);
