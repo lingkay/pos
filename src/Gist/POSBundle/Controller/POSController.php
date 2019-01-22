@@ -420,7 +420,7 @@ class POSController extends Controller
         $em = $this->getDoctrine()->getManager();
         $customer = $em->getRepository('GistPOSBundle:POSCustomer')->findOneBy(array('gc_number'=>$gc_number));
 
-        if (count($customer) < 1) {
+        if ($customer) {
             $list_opts[] = array('gc_number'=>'none','gc_balance'=>'0.00','gc_expiry'=>'');
             return new JsonResponse($list_opts);
         }
