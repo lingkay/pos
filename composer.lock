@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e40ff51259d662c2192e8381624eeb5",
+    "content-hash": "63f54a140a37d00cd8a47d0670a9c482",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -831,12 +831,12 @@
             "version": "v2.5.14",
             "source": {
                 "type": "git",
-                "url": "https://github.com/doctrine/doctrine2.git",
+                "url": "https://github.com/doctrine/orm.git",
                 "reference": "810a7baf81462a5ddf10e8baa8cb94b6eec02754"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/810a7baf81462a5ddf10e8baa8cb94b6eec02754",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/810a7baf81462a5ddf10e8baa8cb94b6eec02754",
                 "reference": "810a7baf81462a5ddf10e8baa8cb94b6eec02754",
                 "shasum": ""
             },
@@ -954,25 +954,26 @@
         },
         {
             "name": "ensepar/html2pdf-bundle",
-            "version": "v2.0.0",
+            "version": "v4.0.0",
             "target-dir": "Ensepar/Html2pdfBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OwlyCode/EnseparHtml2pdfBundle.git",
-                "reference": "25666fa8349b55acb2f958f45eb96fd74f9f058b"
+                "reference": "ccfcea3984f971ae61b9caca77b1ad22f8f8dc65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OwlyCode/EnseparHtml2pdfBundle/zipball/25666fa8349b55acb2f958f45eb96fd74f9f058b",
-                "reference": "25666fa8349b55acb2f958f45eb96fd74f9f058b",
+                "url": "https://api.github.com/repos/OwlyCode/EnseparHtml2pdfBundle/zipball/ccfcea3984f971ae61b9caca77b1ad22f8f8dc65",
+                "reference": "ccfcea3984f971ae61b9caca77b1ad22f8f8dc65",
                 "shasum": ""
             },
             "require": {
-                "ensepar/html2pdf": "1.0.1",
-                "php": ">=5.3.2",
+                "php": ">=5.4",
+                "spipu/html2pdf": "~5.2",
                 "symfony/symfony": ">=2.0"
             },
             "require-dev": {
+                "phpunit/phpunit": "^7.2 || ^6.5 || ^4.8",
                 "sensio/framework-extra-bundle": "~3.0"
             },
             "type": "symfony-bundle",
@@ -998,7 +999,7 @@
                 "html2pdf",
                 "pdf"
             ],
-            "time": "2014-10-25T18:03:13+00:00"
+            "time": "2018-09-24T10:23:42+00:00"
         },
         {
             "name": "ensepar/tcpdf",
@@ -1707,6 +1708,60 @@
             "time": "2017-11-21T06:48:52+00:00"
         },
         {
+            "name": "spipu/html2pdf",
+            "version": "v5.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spipu/html2pdf.git",
+                "reference": "7dca57b61fdb2d6920635ff2332dbc82d4be19f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/7dca57b61fdb2d6920635ff2332dbc82d4be19f3",
+                "reference": "7dca57b61fdb2d6920635ff2332dbc82d4be19f3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^5.4 || ^7.0",
+                "tecnickcom/tcpdf": "^6.2"
+            },
+            "require-dev": {
+                "phake/phake": "^2.0",
+                "phpunit/phpunit": "^4.0 || ^5.0",
+                "squizlabs/php_codesniffer": "^3.0"
+            },
+            "suggest": {
+                "ext-gd": "Allows to embed images into the PDF",
+                "fagundes/zff-html2pdf": "if you need to integrate Html2Pdf with Zend Framework 2 (zf2)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spipu\\Html2Pdf\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Spipu",
+                    "homepage": "https://github.com/spipu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Html2Pdf is a HTML to PDF converter written in PHP5 (it uses TCPDF). OFFICIAL PACKAGE",
+            "homepage": "http://html2pdf.fr/",
+            "keywords": [
+                "html",
+                "html2pdf",
+                "pdf"
+            ],
+            "time": "2018-10-26T13:33:18+00:00"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v5.4.12",
             "source": {
@@ -2308,6 +2363,68 @@
             "time": "2017-06-07T18:50:53+00:00"
         },
         {
+            "name": "tecnickcom/tcpdf",
+            "version": "6.2.26",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tecnickcom/TCPDF.git",
+                "reference": "367241059ca166e3a76490f4448c284e0a161f15"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/367241059ca166e3a76490f4448c284e0a161f15",
+                "reference": "367241059ca166e3a76490f4448c284e0a161f15",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "config",
+                    "include",
+                    "tcpdf.php",
+                    "tcpdf_parser.php",
+                    "tcpdf_import.php",
+                    "tcpdf_barcodes_1d.php",
+                    "tcpdf_barcodes_2d.php",
+                    "include/tcpdf_colors.php",
+                    "include/tcpdf_filters.php",
+                    "include/tcpdf_font_data.php",
+                    "include/tcpdf_fonts.php",
+                    "include/tcpdf_images.php",
+                    "include/tcpdf_static.php",
+                    "include/barcodes/datamatrix.php",
+                    "include/barcodes/pdf417.php",
+                    "include/barcodes/qrcode.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "role": "lead"
+                }
+            ],
+            "description": "TCPDF is a PHP class for generating PDF documents and barcodes.",
+            "homepage": "http://www.tcpdf.org/",
+            "keywords": [
+                "PDFD32000-2008",
+                "TCPDF",
+                "barcodes",
+                "datamatrix",
+                "pdf",
+                "pdf417",
+                "qrcode"
+            ],
+            "time": "2018-10-16T17:24:05+00:00"
+        },
+        {
             "name": "twig/extensions",
             "version": "v1.5.2",
             "source": {
@@ -2440,7 +2557,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.3"
+        "php": "7.2.10",
+        "ext-json": "*"
     },
     "platform-dev": []
 }
