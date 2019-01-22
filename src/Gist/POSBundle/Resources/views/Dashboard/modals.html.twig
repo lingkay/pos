@@ -319,7 +319,7 @@
                                                     {{ pos_form_tools.payment_group_select('Terminal Operator', 'cc_terminal_operator', terminal_operators, '', 5, 7, false) }}
                                                 </div>
                                                 <div class="card-detail">
-                                                    {{ pos_form_tools.payment_group_text('Charge Amount', 'cc_charge_amt', '', 5, 7, '', false) }}
+                                                    {{ pos_form_tools.payment_group_number('Charge Amount', 'cc_charge_amt', '', 5, 7, '', false) }}
                                                 </div>
                                                 <div class="card-detail">
                                                     {{ pos_form_tools.payment_group_select('Interest', 'interest_indiv', interest_opts, '', 5, 7, '',false) }}
@@ -339,7 +339,7 @@
                                                     {{ pos_form_tools.payment_group_select('Card Type', 'cc_card_type', card_types, '', 5, 7, '',false) }}
                                                 </div>
                                                 <div class="card-detail">
-                                                    {{ pos_form_tools.payment_group_text('Card Number', 'cc_card_number', '', 5, 7, 'Card Number', false) }}
+                                                    {{ pos_form_tools.payment_group_number('Card Number', 'cc_card_number', '', 5, 7, 'Card Number', false) }}
                                                 </div>
                                                 <div class="card-detail">
                                                     {{ pos_form_tools.payment_group_text('Name on Card', 'cc_card_name', '', 5, 7, 'Name on Card', false) }}
@@ -353,7 +353,7 @@
                                                 <div class="card-detail">
                                                     <div class="row align-items-center">
                                                         <div class="col-12 text-right">
-                                                            <button class="btn btn-v1 btn-primary btn-small swipe_card">Swipe Card</button>
+                                                            <button type="button" class="btn btn-v1 btn-primary btn-small swipe_card">Swipe Card</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -424,13 +424,13 @@
                                                     {{ pos_form_tools.payment_group_select('Bank', 'check_bank', bank_options, '', 5, 7, false) }}
                                                 </div>
                                                 <div class="card-detail">
-                                                    {{ pos_form_tools.payment_group_text('Account Number', 'check_account_number', '', 5, 7, '', false) }}
+                                                    {{ pos_form_tools.payment_group_number('Account Number', 'check_account_number', '', 5, 7, '', false) }}
                                                 </div>
                                                 <div class="card-detail">
-                                                    {{ pos_form_tools.payment_group_text('Check Number', 'check_number', '', 5, 7, '', false) }}
+                                                    {{ pos_form_tools.payment_group_number('Check Number', 'check_number', '', 5, 7, '', false) }}
                                                 </div>
                                                 <div class="card-detail">
-                                                    {{ pos_form_tools.payment_group_text('Check Amount', 'check_amount', '', 5, 7, '', false) }}
+                                                    {{ pos_form_tools.payment_group_number('Check Amount', 'check_amount', '', 5, 7, '', false) }}
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6">
@@ -511,7 +511,7 @@
                                     <div class="row">
                                         <div class="col-12 col-md-6">
                                             <div class="card-detail">
-                                                {{ pos_form_tools.payment_group_text('Amount to pay', 'gcp_pay_amt', '', 5, 7, '', false) }}
+                                                {{ pos_form_tools.payment_group_number('Amount to pay', 'gcp_pay_amt', '', 5, 7, '', false) }}
                                             </div>
                                             <div class="card-detail">
                                                 {{ pos_form_tools.payment_group_text('GC Balance', 'gcp_balance', '', 5, 7, '', true) }}
@@ -522,12 +522,12 @@
                                         </div>
                                         <div class="col-12 col-md-6">
                                             <div class="card-detail">
-                                                {{ pos_form_tools.payment_group_text('Card Number', 'gc_card_number', '', 5, 7, 'Card Number', false) }}
+                                                {{ pos_form_tools.payment_group_number('Card Number', 'gc_card_number', '', 5, 7, 'Card Number', false) }}
                                             </div>
                                             <div class="card-detail">
                                                 <div class="row align-items-center">
                                                     <div class="col-12 text-right">
-                                                        <button class="btn btn-v1 btn-success btn-small gc_pay_search">Search Card</button>
+                                                        <button type="button" class="btn btn-v1 btn-success btn-small gc_pay_search">Search Card</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -549,9 +549,9 @@
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 [ d-flex flex-wrap justify-content-between justify-content-lg-end flex-column flex-md-row ]">
-                            <button class="btn btn-v1 btn-small btn-primary swipe_giftcard" type="button">Swipe Card</button>
-                            <button class="btn btn-v1 btn-small btn-success gc_payment_proceed_btn" type="button">Submit</button>
-                            <button class="btn btn-v1 btn-small btn-secondary gc_payment_go_back" type="button">Go Back</button>
+                            <button type="button" class="btn btn-v1 btn-small btn-primary swipe_giftcard" type="button">Swipe Card</button>
+                            <button type="button" class="btn btn-v1 btn-small btn-success gc_payment_proceed_btn" type="button">Submit</button>
+                            <button type="button" class="btn btn-v1 btn-small btn-secondary gc_payment_go_back" type="button">Go Back</button>
                         </div>
                     </div>
                 </form>
@@ -931,7 +931,6 @@
             </div>
         </div>
     </div>
-    {# #}
     <div aria-hidden="true" aria-labelledby="gcAvailCreateLabel" class="modal modal--v1 fade" id="gc_avail_create_modal" role="dialog" tabindex="-1">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -946,8 +945,8 @@
                                 <div class="gca_field">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            {{ pos_form_tools.group_text('Load Amount', 'gca_load_amt', '', 4, 7, false) }}
-                                            {{ pos_form_tools.payment_group_text('Card Number', 'gca_card_number', '', 4, 7, 'Card Number', false) }}
+                                            {{ pos_form_tools.payment_group_number('Load Amount', 'gca_load_amt', '', 4, 7, false) }}
+                                            {{ pos_form_tools.payment_group_number('Card Number', 'gca_card_number', '', 4, 7, 'Card Number', false) }}
                                             {{ pos_form_tools.payment_group_text('Name on Card', 'gca_card_name', '', 4, 7, 'Name on Card', false) }}
                                         </div>
                                     </div>
@@ -1292,7 +1291,7 @@
                         <div class="card-detail">
                             <div class="row align-items-center">
                                 <div class="col-12 text-right">
-                                    <button class="btn btn-v1 btn-primary btn-small swipe_card">Swipe Card</button>
+                                    <button type="button" class="btn btn-v1 btn-primary btn-small swipe_card">Swipe Card</button>
                                 </div>
                             </div>
                         </div>

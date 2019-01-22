@@ -133,7 +133,7 @@ function ajaxGetProducts(cid)
         }
 
            $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
-            <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
+            <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name.replace(/'/g, "")+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
                 <div class=\"item-content\" data-title="+item.name+" data-price="+orig_srp+">\
                     <img src="+img+" alt="+item.name+">\
                     <div class=\"item-details\">\
@@ -760,6 +760,7 @@ function computeCartBulk(sale_price)
 function computeVATRaw(total)
 {
     var tax_rate = parseFloat($('#float_tax_rate').val())/100;
+    var tax_divisor = tax_rate + 1;
     var tax_coverage = $('#string_tax_coverage').val();
     var vat_amt = 0;
     var amt_net_of_vat = 0;
@@ -767,7 +768,7 @@ function computeVATRaw(total)
 
 
     if (tax_coverage == 'incl') {
-        vat_amt = total*tax_rate;
+        vat_amt = (total / tax_divisor) * tax_rate;
         amt_net_of_vat = total - vat_amt;
 
         $('#float_new_tax_vat_amt').val(round(vat_amt,2));
@@ -799,13 +800,14 @@ function computeVATRaw(total)
 function computeVATIndiv(total)
 {
     var tax_rate = parseFloat($('#float_tax_rate').val())/100;
+    var tax_divisor = tax_rate + 1;
     var tax_coverage = $('#string_tax_coverage').val();
     var vat_amt = 0;
     var amt_net_of_vat = 0;
     var incl_divisor = tax_rate + 1;
 
     if (tax_coverage == 'incl') {
-        vat_amt = total*tax_rate;
+        vat_amt = (total / tax_divisor) * tax_rate;
         amt_net_of_vat = total - vat_amt;
 
         $('#float_new_tax_vat_amt').val(round(vat_amt,2));

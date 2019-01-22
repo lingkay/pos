@@ -7,7 +7,7 @@
         "psr-0": { "": "src/" }
     },
     "require": {
-        "php": ">=5.3.3",
+        "php": "7.2.10",
         "symfony/symfony": "2.7.29",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
@@ -25,12 +25,13 @@
         "symfony/expression-language": "2.6.*@dev",
         "ensepar/html2pdf-bundle" : "~2.0",
         "symfony/event-dispatcher": "2.8.*@dev",
-        "smart-core/accelerator-cache-bundle": "dev-master"
+        "smart-core/accelerator-cache-bundle": "dev-master",
+        "ext-json": "*"
     },
     "scripts": {
         "post-install-cmd": [
-            "sudo chown -R www-data:www-data /home/gist_pos",
-            "sudo chmod -R 777 /home/gist_pos",
+            "sudo chown -R www-data:www-data /home/pos",
+            "sudo chmod -R 777 /home/pos",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",

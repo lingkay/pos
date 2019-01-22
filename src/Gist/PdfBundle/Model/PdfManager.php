@@ -45,7 +45,7 @@ class PdfManager
     
     public function printPdf($html){
         $this->pdf->writeHTML($html);
-        $content =  $this->pdf->Output('', true);
+        $content =  $this->pdf->Output('file.pdf');
         
         $response = new Response();
         $response->headers->set('Content-Type', 'application/pdf');
