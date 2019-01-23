@@ -315,7 +315,7 @@ function ajaxSearchCustomer()
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'">';
             field += '<td><a href="javascript:void(0)" class="btn btn-xs default green view_customer_btn" data-toggle="tooltip" data-placement="bottom" title="View Customer"><i class="fa fa-eye" aria-hidden="true"></i></a>';
-            field += '<a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn" data-toggle="tooltip" data-placement="bottom" title="Select Customer"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>';
+            field += '<a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn" data-toggle="tooltip" data-placement="bottom" title="Select Customer"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
             field += '</tr>';
 
             $('#customers_list').prepend(field);
