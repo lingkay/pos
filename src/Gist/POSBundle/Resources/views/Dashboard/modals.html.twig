@@ -94,7 +94,7 @@
                                         <tbody id="payments_list">
                                         {% if transaction_object.hasPayments|default(null) %}
                                             {% for p in transaction_object.getPayments %}
-                                                <tr class="d-none clone-row row_payment_{{ p.getID }}">
+                                                <tr class="d-clone-row row_payment_{{ p.getID }}">
                                                     <input type="hidden" name="control_number" class="control_number" value="{{p.getControlNumber|default('')}}">
                                                     <input type="hidden" name="account_number" class="account_number" value="{{p.getAccountNumber|default('')}}">
                                                     <input type="hidden" name="bank" class="bank" value="{{p.getBank|default('')}}">
@@ -790,7 +790,7 @@
                         <button class="btn btn-v1 btn-small btn-success customer_search_btn" type="button">Search</button>
                         <button class="btn btn-v1 btn-small btn-primary save_customer_button" type="button">Add New Customer</button>
                         <button class="btn btn-v1 btn-small btn-primary customer_search_again_btn" type="button">Search Again</button>
-                        <button class="btn btn-v1 btn-small btn-success customer_continue_btn" type="button">Select Customer</button>
+                        {#<button class="btn btn-v1 btn-small btn-success customer_continue_btn" type="button">Select Customer</button>#}
                         <button class="btn btn-v1 btn-small btn-secondary cancel_cust_search" type="button" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
@@ -1109,8 +1109,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-v1 btn-small btn-success deposit_continue_btn" type="button">Complete Transaction</button>
-                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">No</button>
+                        <button class="btn btn-v1 btn-small btn-success deposit_continue_btn" type="button">Proceed to Deposit Mode</button>
+                        <button class="btn btn-v1 btn-small btn-secondary" data-dismiss="modal" type="button">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -1219,16 +1219,20 @@
             </div>
         </div>
     </div>
-    <div id="deposit_prompt_modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+    <div aria-hidden="true" aria-labelledby="depositModalLabel" class="modal modal--v1 fade" id="deposit_prompt_modal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="">
                     <div class="modal-header">
-                        <a type="button" class="close" data-dismiss="modal" aria-hidden="true"></a>
-                        <h4 id="form_title" class="modal-title">Deposit Mode</h4>
+                        <h5 class="modal-title" id="form_title">Deposit Mode</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <h2>Mark items to be issued</h2>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Mark items to be issued</h3>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn default blue" data-toggle="modal">Okay</button>

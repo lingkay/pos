@@ -83,7 +83,6 @@
             border-radius: 0;
             color: white;
             background: #7b7b7b;
-            display: none;
         }
 
         .box--cart__buttons .btn--next {
@@ -219,6 +218,11 @@
             .box--cart__items {
                 min-height: 350px;
             }
+        }
+
+        /*OVERRIDES*/
+        .table-v1 input, .table-v1 textarea, .table-v1 select {
+            width: unset !important;
         }
     </style>
 {% endblock %}

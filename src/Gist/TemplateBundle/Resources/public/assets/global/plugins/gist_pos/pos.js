@@ -79,16 +79,16 @@ function ajaxGetProductCategories()
     $("#prod_cats").append("<div style=\"height: 10px;\">");
     var url = url_erp+"/inventory/pos/get/product_categories";
     $.getJSON(url, function(json){
-       $.each(json, function(i, item) {
+        $.each(json, function(i, item) {
             var img = "http://nahmdong.com/vitalhill/img/default.png";
             if (item.image_url != null) {
                 img = item.image_url;
             }
-           $("#prod_cats").append("<li class=\"nav-item\">\
+            $("#prod_cats").append("<li class=\"nav-item\">\
                 <a aria-controls=\"pills-"+item.id+"\" aria-selected=\"false\" class=\"nav-link\" data-toggle=\"pill\" href=\"#pills-"+item.id+"\" id=\"pills-"+item.id+"\" role=\"tab\" onclick=\"ajaxGetProducts("+item.id+")\">"+item.name+"</a>\
             </li>");
 
-           $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
+            $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
             <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"ajaxGetProducts("+item.id+")\">\
                 <div class=\"item-content\">\
                     <img src="+img+">\
@@ -115,24 +115,24 @@ function ajaxGetProducts(cid)
     var url = url_erp+"/inventory/pos/get/products/"+pos_loc_id+"/"+cid;
     $.getJSON(url, function(json){
         var count = 0;
-       $.each(json, function(i, item) {
-        count++;
-        var price = 0;
-        var orig_srp = 0;
-        if (item.srp != null) {
-            price = item.srp;
-        }
+        $.each(json, function(i, item) {
+            count++;
+            var price = 0;
+            var orig_srp = 0;
+            if (item.srp != null) {
+                price = item.srp;
+            }
 
-        if (item.orig_srp != null) {
-            orig_srp = item.orig_srp;
-        }
+            if (item.orig_srp != null) {
+                orig_srp = item.orig_srp;
+            }
 
-        var img = "http://nahmdong.com/vitalhill/img/default.png";
-        if (item.image_url != null) {
-            img = item.image_url;
-        }
+            var img = "http://nahmdong.com/vitalhill/img/default.png";
+            if (item.image_url != null) {
+                img = item.image_url;
+            }
 
-           $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
+            $("#prods").append("<div class=\"col-sm-6 col-12 item\">\
             <a href=\"javascript:void(0)\" style=\"text-decoration: none;\" onclick=\"addToCart('"+item.name.replace(/'/g, "")+"',"+price+","+item.min_price+","+item.id+",'"+item.barcode+"','"+item.item_code+"')\">\
                 <div class=\"item-content\" data-title="+item.name+" data-price="+orig_srp+">\
                     <img src="+img+" alt="+item.name+">\
@@ -146,10 +146,10 @@ function ajaxGetProducts(cid)
 
         });
 
-       if (count == 0) {
+        if (count == 0) {
             $( "#prods" ).empty();
             $("#prods").append("<div class=\"col-md-12\"><div class=\"alert alert-warning\"> <h2>&nbsp;&nbsp;No products in selected category</h2></div></div>");
-       }
+        }
     });
 }
 
@@ -172,29 +172,29 @@ function addToPayments(payment_type, amount, details, cc_number, cc_bank, cc_ter
 
     var row_id = Math.round(new Date().getTime() + (Math.random() * 100));
     var field = '<tr class=\"row_payment_'+row_id+'\">';
-        field += '<input type=\"hidden\" name=\"control_number\" class=\"control_number\" value=\"'+cc_number+'\">';
-        field += '<input type=\"hidden\" name=\"account_number\" class=\"account_number\" value=\"'+account_number+'\">';
-        field += '<input type=\"hidden\" name=\"bank\" class=\"bank\" value=\"'+cc_bank+'\">';
-        field += '<input type=\"hidden\" name=\"payment_issued_on\" class=\"payment_issued_on\" value=\"0\">';
-        field += '<input type=\"hidden\" name=\"cc_terminal_opt\" class=\"cc_terminal_opt\" value=\"'+cc_terminal_opt+'\">';
-        field += '<input type=\"hidden\" name=\"cc_interest\" class=\"cc_interest\" value=\"'+cc_interest+'\">';
-        field += '<input type=\"hidden\" name=\"cc_terms\" class=\"cc_terms\" value=\"'+cc_terms+'\">';
-        field += '<input type=\"hidden\" name=\"payee\" class=\"payee\" value=\"'+payee+'\">';
-        field += '<input type=\"hidden\" name=\"payor\" class=\"payor\" value=\"'+payor+'\">';
-        field += '<input type=\"hidden\" name=\"cc_expiry\" class=\"cc_expiry\" value=\"'+expiry+'\">';
-        field += '<input type=\"hidden\" name=\"cc_cvv\" class=\"cc_cvv\" value=\"'+cvv+'\">';
-        field += '<input type=\"hidden\" name=\"check_type\" class=\"check_type\" value=\"'+check_type+'\">';
-        field += '<input type=\"hidden\" name=\"check_date\" class=\"check_date\" value=\"'+check_date+'\">';
-        field += '<input type=\"hidden\" name=\"payment_details_array[]\" class=\"payment_details_array\" value=\"'+details+'\" >';
-        field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
-        field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
-        field += '<td><input type="text" style=\"font-size: 10px !important;\" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="'+addCommas(amount)+'"></td>';
-        field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
-        field += '</tr>';
+    field += '<input type=\"hidden\" name=\"control_number\" class=\"control_number\" value=\"'+cc_number+'\">';
+    field += '<input type=\"hidden\" name=\"account_number\" class=\"account_number\" value=\"'+account_number+'\">';
+    field += '<input type=\"hidden\" name=\"bank\" class=\"bank\" value=\"'+cc_bank+'\">';
+    field += '<input type=\"hidden\" name=\"payment_issued_on\" class=\"payment_issued_on\" value=\"0\">';
+    field += '<input type=\"hidden\" name=\"cc_terminal_opt\" class=\"cc_terminal_opt\" value=\"'+cc_terminal_opt+'\">';
+    field += '<input type=\"hidden\" name=\"cc_interest\" class=\"cc_interest\" value=\"'+cc_interest+'\">';
+    field += '<input type=\"hidden\" name=\"cc_terms\" class=\"cc_terms\" value=\"'+cc_terms+'\">';
+    field += '<input type=\"hidden\" name=\"payee\" class=\"payee\" value=\"'+payee+'\">';
+    field += '<input type=\"hidden\" name=\"payor\" class=\"payor\" value=\"'+payor+'\">';
+    field += '<input type=\"hidden\" name=\"cc_expiry\" class=\"cc_expiry\" value=\"'+expiry+'\">';
+    field += '<input type=\"hidden\" name=\"cc_cvv\" class=\"cc_cvv\" value=\"'+cvv+'\">';
+    field += '<input type=\"hidden\" name=\"check_type\" class=\"check_type\" value=\"'+check_type+'\">';
+    field += '<input type=\"hidden\" name=\"check_date\" class=\"check_date\" value=\"'+check_date+'\">';
+    field += '<input type=\"hidden\" name=\"payment_details_array[]\" class=\"payment_details_array\" value=\"'+details+'\" >';
+    field += '<input type=\"hidden\" name=\"payment_amt_float[]\" class=\"payment_amt_float\" value=\"'+amount+'\" >';
+    field += '<td><input type="text" style=\"font-size: 12px !important;\" name="payment_type[]" value="'+payment_type+'" readonly="true" class="form-control payment_type"></td>';
+    field += '<td><input type="text" style=\"font-size: 10px !important;\" name="payment_amt[]" class="form-control payment_amt" readonly="true" value="'+addCommas(amount)+'"></td>';
+    field += '<td ><a href="javascript:void(0)" class="btn btn-xs default red remove_payment_row"><i class="fa fa-times" aria-hidden="true"></i></a></td>';
+    field += '</tr>';
 
-        $('#payments_list').prepend(field);
-        toastr['success']('Payment added', 'Success');
-        computeBalance();
+    $('#payments_list').prepend(field);
+    toastr['success']('Payment added', 'Success');
+    computeBalance();
 }
 
 function ajaxSearchCustomer()
@@ -284,12 +284,12 @@ function ajaxSearchCustomer()
     url.replace('%2F','');
     $.getJSON(url, function(json){
         var count = 0;
-       $.each(json, function(i, cust) {
-        count++;
-        var name = cust.last_name + ', ' + cust.first_name;
+        $.each(json, function(i, cust) {
+            count++;
+            var name = cust.last_name + ', ' + cust.first_name;
 
-        $('.init_row_customer').remove();
-        var field = '<tr class=\"row_cust_'+cust.id+'\">';
+            $('.init_row_customer').remove();
+            var field = '<tr class=\"row_cust_'+cust.id+'\">';
             field += '<input type="hidden" class="first_name" value="'+cust.first_name+'">';
             field += '<input type="hidden" class="last_name" value="'+cust.last_name+'">';
             field += '<input type="hidden" class="email" value="'+cust.email+'">';
@@ -308,31 +308,31 @@ function ajaxSearchCustomer()
             field += '<input type="hidden" class="country" value="'+cust.country+'">';
             field += '<input type="hidden" class="zip" value="'+cust.zip+'">';
             field += '<input type="hidden" class="notes" value="'+cust.notes+'">';
-           //  field += '<input type="hidden" class="gc_number" value="'+cust.notes+'">';
-           // field += '<input type="hidden" class="gc_balance" value="'+cust.notes+'">';
-           // field += '<input type="hidden" class="gc_expiry" value="'+cust.notes+'">';
+            //  field += '<input type="hidden" class="gc_number" value="'+cust.notes+'">';
+            // field += '<input type="hidden" class="gc_balance" value="'+cust.notes+'">';
+            // field += '<input type="hidden" class="gc_expiry" value="'+cust.notes+'">';
             field += '<input type="hidden" class="display_id" value="'+cust.display_id+'">';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_name[]" value="'+name+'" readonly="true" class="form-control customer_name"></td>';
             field += '<td><input type="text" style=\"font-size: 12px !important;\" name="customer_email[]" class="form-control customer_email" readonly="true" value="'+cust.email+'">';
             field += '<td><a href="javascript:void(0)" class="btn btn-xs default green view_customer_btn" data-toggle="tooltip" data-placement="bottom" title="View Customer"><i class="fa fa-eye" aria-hidden="true"></i></a>';
-            field += '<a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn" data-toggle="tooltip" data-placement="bottom" title="Select Customer"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>';
+            field += '<a href="javascript:void(0)" class="btn btn-xs default blue use_customer_btn" data-toggle="tooltip" data-placement="bottom" title="Select Customer"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
             field += '</tr>';
 
             $('#customers_list').prepend(field);
 
         });
 
-       if (count == 0) {
+        if (count == 0) {
             var field = '<tr class=\"init_row_prods\">';
             field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;</p></td>';
             field += '</tr>';
 
             $('#customers_list').prepend(field);
             swal('No customer found!', '', 'error');
-       } else {
+        } else {
             var objDiv = document.getElementById("cust_formx");
             objDiv.scrollTop = objDiv.scrollHeight;
-       }
+        }
     });
 }
 
@@ -424,12 +424,12 @@ function ajaxAddCustomer()
 
     $.getJSON(url, function(json){
         var count = 0;
-       $.each(json, function(i, cust) {
+        $.each(json, function(i, cust) {
 
 
             var route2 = url_pos+"/settings/sync_customers";
             $.getJSON(route2, function(json2){
-               $.each(json2, function(i, x) {
+                $.each(json2, function(i, x) {
                     swal("Success!", 'Customer added!',"success");
                     $('#transaction_customer_id').val(cust.new_customer_id);
                     $('#customer_modal').modal('hide');
@@ -474,38 +474,38 @@ function addDashes(nStr)
 function addCommas(nStr)
 {
     //if (nStr != "" && parseFloat(nStr) > 0) {
-        nStr = nStr.toFixed(2);
-        nStr += '';
-        x = nStr.split('.');
-        x1 = x[0];
-        x2 = x.length > 1 ? '.' + x[1] : '';
-        var rgx = /(\d+)(\d{3})/;
-        while (rgx.test(x1)) {
-            x1 = x1.replace(rgx, '$1' + ',' + '$2');
-        }
+    nStr = nStr.toFixed(2);
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
 
-        var ret_val = x1+x2;
-        return ret_val;
+    var ret_val = x1+x2;
+    return ret_val;
     // } else {
     //     return "0.00";
     // }
 }
 
 function round(value, exp) {
-  if (typeof exp === 'undefined' || +exp === 0)
-    return Math.round(value);
+    if (typeof exp === 'undefined' || +exp === 0)
+        return Math.round(value);
 
-  value = +value;
-  exp = +exp;
+    value = +value;
+    exp = +exp;
 
-  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
-    return NaN;
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
+        return NaN;
 
-  value = value.toString().split('e');
-  value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
+    value = value.toString().split('e');
+    value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
 
-  value = value.toString().split('e');
-  return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
 }
 
 
@@ -1250,7 +1250,7 @@ function freezeTransaction(is_final)
                 }
 
                 if (transaction_mode == 'Deposit') {
-                        is_issued = 'false';
+                    is_issued = 'false';
                 }
 
                 if (transaction_mode == 'frozen') {
@@ -1349,21 +1349,21 @@ function freezeTransaction(is_final)
 
                 if (!is_final) {
                     swal({
-                          title: "Transaction Frozen!",
-                          text: "The page will now reload",
-                          type: "success",
-                          timer: 4000,
-                          showConfirmButton: false,
+                            title: "Transaction Frozen!",
+                            text: "The page will now reload",
+                            type: "success",
+                            timer: 4000,
+                            showConfirmButton: false,
                         },
                         function(){
-                                syncToERP();
+                            syncToERP();
                         });
                 } else {
                     swal({
-                          title: "Transaction Saved!",
-                          text: "Please wait for data sync",
-                          type: "success",
-                          timer: 4000,
+                            title: "Transaction Saved!",
+                            text: "Please wait for data sync",
+                            type: "success",
+                            timer: 4000,
                             showConfirmButton: false,
                         },
                         function(){
@@ -1379,19 +1379,19 @@ function freezeTransaction(is_final)
                     var amount = $(this).find('.payment_amt_float').val();
                     var payment_issued_on = $(this).find('.payment_issued_on').val();
 
-                    var control_number = "%20"; if($(this).find('.control_number').val() != ''){control_number = $(this).find('.control_number').val()};
-                    var account_number = "%20"; if($(this).find('.account_number').val() != ''){account_number = $(this).find('.account_number').val()};
-                    var bank = "%20"; if($(this).find('.bank').val() != ''){bank = $(this).find('.bank').val()};
-                    var terminal_operator = "%20"; if($(this).find('.cc_terminal_opt').val() != ''){terminal_operator = $(this).find('.cc_terminal_opt').val()};
-                    var cc_interest = "%20"; if($(this).find('.cc_interest').val() != ''){cc_interest = $(this).find('.cc_interest').val()};
-                    var cc_terms = "%20"; if($(this).find('.cc_terms').val() != ''){cc_terms = $(this).find('.cc_terms').val()};
-                    var payee = "%20"; if($(this).find('.payee').val() != ''){payee = $(this).find('.payee').val()};
-                    var payor = "%20"; if($(this).find('.payor').val() != ''){payor = $(this).find('.payor').val()};
-                    var cc_expiry = "%20"; if($(this).find('.cc_expiry').val() != ''){cc_expiry = $(this).find('.cc_expiry').val()};
-                    var cc_cvv = "%20"; if($(this).find('.cc_cvv').val() != ''){cc_cvv = $(this).find('.cc_cvv').val()};
+                    var control_number = "%20"; if($(this).find('.control_number').val().trim() != ''){control_number = $(this).find('.control_number').val()};
+                    var account_number = "%20"; if($(this).find('.account_number').val().trim() != ''){account_number = $(this).find('.account_number').val()};
+                    var bank = "%20"; if($(this).find('.bank').val().trim() != ''){bank = $(this).find('.bank').val()};
+                    var terminal_operator = "%20"; if($(this).find('.cc_terminal_opt').val().trim() != ''){terminal_operator = $(this).find('.cc_terminal_opt').val()};
+                    var cc_interest = "%20"; if($(this).find('.cc_interest').val().trim() != ''){cc_interest = $(this).find('.cc_interest').val()};
+                    var cc_terms = "%20"; if($(this).find('.cc_terms').val().trim() != ''){cc_terms = $(this).find('.cc_terms').val()};
+                    var payee = "%20"; if($(this).find('.payee').val().trim() != ''){payee = $(this).find('.payee').val()};
+                    var payor = "%20"; if($(this).find('.payor').val().trim() != ''){payor = $(this).find('.payor').val()};
+                    var cc_expiry = "%20"; if($(this).find('.cc_expiry').val().trim() != ''){cc_expiry = $(this).find('.cc_expiry').val()};
+                    var cc_cvv = "%20"; if($(this).find('.cc_cvv').val().trim() != ''){cc_cvv = $(this).find('.cc_cvv').val()};
 
-                    var check_type = "%20"; if($(this).find('.check_type').val() != ''){check_type = $(this).find('.check_type').val()};
-                    var check_date = "%20"; if($(this).find('.check_date').val() != ''){check_date = $(this).find('.check_date').val()};
+                    var check_type = "%20"; if($(this).find('.check_type').val().trim() != ''){check_type = $(this).find('.check_type').val()};
+                    var check_date = "%20"; if($(this).find('.check_date').val().trim() != ''){check_date = $(this).find('.check_date').val()};
 
                     var url3 = url_pos+"/pos/save_payment/"+trans.new_id+"/"+payment_type+"/"+amount+"/"+control_number+"/"+bank+"/"+terminal_operator+"/"+cc_interest+"/"+cc_terms+"/"+account_number+"/"+payee+"/"+payor+"/"+cc_expiry+"/"+cc_cvv+"/"+payment_issued_on+"/"+check_type+"/"+check_date;
 
@@ -1405,35 +1405,33 @@ function freezeTransaction(is_final)
                                     setTimeout(
                                         function()
                                         {
-                                           // timeout waiting for saving of items
+                                            // timeout waiting for saving of items
                                         }, 2000);
                                 }
 
                                 if (!is_final) {
                                     swal({
-                                          title: "Transaction Frozen!",
-                                          text: "The page will now reload",
-                                          type: "success",
-                                          timer: 6000,
-                                            showConfirmButton: false,
-                                        },
-                                        function(){
-                                                syncToERP();
-                                                //location.reload();
-
-                                        });
-                                } else {
-                                    swal({
-                                          title: "Transaction Saved!",
-                                          text: "Please wait for data sync",
-                                          type: "success",
-                                          timer: 6000,
+                                            title: "Transaction Frozen!",
+                                            text: "The page will now reload",
+                                            type: "success",
+                                            timer: 6000,
                                             showConfirmButton: false,
                                         },
                                         function(){
                                             syncToERP();
                                             //location.reload();
 
+                                        });
+                                } else {
+                                    swal({
+                                            title: "Transaction Saved!",
+                                            text: "Please wait for data sync",
+                                            type: "success",
+                                            timer: 6000,
+                                            showConfirmButton: false,
+                                        },
+                                        function(){
+                                            syncToERP();
                                         });
                                 }
                             } else {
@@ -1453,24 +1451,24 @@ function freezeTransaction(is_final)
 
                 if (!is_final) {
                     swal({
-                          title: "Transaction Frozen!",
-                          text: "The page will now reload",
-                          type: "success",
-                          timer: 2000,
+                            title: "Transaction Frozen!",
+                            text: "The page will now reload",
+                            type: "success",
+                            timer: 2000,
                             showConfirmButton: false,
                         },
                         function(){
-                                syncToERP();
-                                //location.reload();
+                            syncToERP();
+                            //location.reload();
 
                         });
                 } else {
                     swal({
-                          title: "Transaction Saved!",
-                          text: "Please wait for data sync",
-                          type: "success",
-                          timer: 2000,
-                        showConfirmButton: false,
+                            title: "Transaction Saved!",
+                            text: "Please wait for data sync",
+                            type: "success",
+                            timer: 2000,
+                            showConfirmButton: false,
                         },
                         function(){
                             syncToERP();
@@ -1485,22 +1483,22 @@ function freezeTransaction(is_final)
 
     // save default split
     setTimeout(
-    function()
-    {
-        var url_def_split = url_pos+"/pos/save_def_split/"+$('#transaction_system_id').val();
-        //
-        $.getJSON(url_def_split, function(json){
-            $.each(json, function(i, resp) {
-                if (resp.status == 'saved') {
+        function()
+        {
+            var url_def_split = url_pos+"/pos/save_def_split/"+$('#transaction_system_id').val();
+            //
+            $.getJSON(url_def_split, function(json){
+                $.each(json, function(i, resp) {
+                    if (resp.status == 'saved') {
 
-                } else {
+                    } else {
 
-                }
+                    }
+                });
+
             });
-
-        });
-        //
-    }, 4000);
+            //
+        }, 4000);
 }
 
 function resetCustomerModal()
@@ -1516,8 +1514,8 @@ function resetCustomerModal()
 
     $('#customers_list').empty();
     var field = '<tr class=\"init_row_prods\">';
-        field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;</p></td>';
-        field += '</tr>';
+    field += '<td colspan=\"3\"><p>No customer found &nbsp;&nbsp;&nbsp;</p></td>';
+    field += '</tr>';
 
     $('#customers_list').prepend(field);
 }
