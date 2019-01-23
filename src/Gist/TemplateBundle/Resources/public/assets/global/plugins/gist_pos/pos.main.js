@@ -232,7 +232,6 @@ function syncToERP()
                 },
                 function(){
                     location.replace('/pos');
-
                 });
         });
     });
@@ -291,7 +290,7 @@ function computeExtraAmount()
     }
 
 
-    
+
     var extra_amt = (cart_price - cart_min_price) + parseInt(additional_ea);
     var extra_amt_disp = addDashes(extra_amt.toString());
     $('#cart_min_pricex').text(addCommas(cart_min_price));
@@ -301,7 +300,7 @@ function computeExtraAmount()
 }
 
 function applyBulkAdjustmentOnLoad()
-{   
+{
     var bulk_adj_opt = $('#bulk_opt_sel').val();
     if (bulk_adj_opt != '') {
         if (bulk_adj_opt == 'bgift') {
@@ -521,9 +520,13 @@ $(document).ready(function(){
             $('.proceed_deposit').show();
             $('.next_step_btn').hide();
             $('.clear_discount').hide();
+        } else {
+            $('.checkout_btn').hide();
         }
 
 
+    } else {
+        $('.checkout_btn').hide();
     }
 
     computeExtraAmount();
@@ -674,21 +677,21 @@ $(document).ready(function(){
     if (typeof tax_rate !== "undefined") { ajaxGetProductCategories(); }
 
     toastr.options = {
-      "closeButton": false,
-      "debug": false,
-      "newestOnTop": false,
-      "progressBar": true,
-      "positionClass": "toast-top-right",
-      "preventDuplicates": true,
-      "onclick": null,
-      "showDuration": "300",
-      "hideDuration": "500",
-      "timeOut": "4000",
-      "extendedTimeOut": "500",
-      "showEasing": "swing",
-      "hideEasing": "linear",
-      "showMethod": "fadeIn",
-      "hideMethod": "fadeOut"
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "500",
+        "timeOut": "4000",
+        "extendedTimeOut": "500",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
     }
 
 
@@ -809,17 +812,17 @@ $(document).ready(function(){
         //prevent selecting all when there is still balance
         var balance = $('#float_trans_balance').val();
         if ((items_to_issue == rowCount) && balance != '0') {
-            $(this).prop('checked', false); 
+            $(this).prop('checked', false);
             $(this).removeAttr('checked');
             swal('Cannot issue all items!','','error');
             return false;
         }
 
-        
+
 
         if($(this).is(':checked')) {
             if (selected_min_total > deposit_amount) {
-                $(this).prop('checked', false); 
+                $(this).prop('checked', false);
                 $(this).removeAttr('checked');
                 swal('Cannot issue item!','','error');
             } else {
@@ -863,7 +866,7 @@ $(document).ready(function(){
         }
 
         var failure = function () {
-           
+
         }
         // Bind event listeners to the document
         $(document)
@@ -873,9 +876,9 @@ $(document).ready(function(){
             .on("failure.cardswipe", failure)
         ;
 
-        
+
         // Bind event listeners to the document
-        
+
 
         var row = $(this).closest('.cc_field');
         var cc_num = row.find('.cc_card_number');
@@ -917,7 +920,7 @@ $(document).ready(function(){
             cc_expiry.val(data.expMonth+'/'+data.expYear);
             $(document).off(".cardswipe-listener");
 
-            
+
         };
 
         $.cardswipe({
@@ -1086,7 +1089,7 @@ $(document).ready(function(){
         } else if ($('#string_trans_mode').val() == 'quotation') {
             $('#final_modal2').modal('show');
         }
-    }); 
+    });
 
     $(document).on("click",".cancel_cust_search", function(e){
         resetCustomerModal();
@@ -1249,7 +1252,7 @@ $(document).ready(function(){
         return this.optional(element) || Stripe.card.validateCardNumber(value);
     }, "Please specify a valid credit card number.");
 
-    jQuery.validator.addMethod("cc_card_expiry", function(value, element) {    
+    jQuery.validator.addMethod("cc_card_expiry", function(value, element) {
         /* Parsing month/year uses jQuery.payment library */
         value = $.payment.cardExpiryVal(value);
         return this.optional(element) || Stripe.card.validateExpiry(value.month, value.year);
@@ -1276,7 +1279,7 @@ $(document).ready(function(){
 
         if (balance < trans_amt) {
             if (trans_mode == 'Deposit' || $('#flag_refund').val() == 'true') {
-                e.preventDefault();            
+                e.preventDefault();
                 var tr = $(this).closest('tr');
                 tr.remove();
 
@@ -1285,11 +1288,11 @@ $(document).ready(function(){
 
                 if (rowCount == 0) {
                     if (trans_type == 'per') {
-                        var field = '<tr class=\"init_row_prods\">';     
+                        var field = '<tr class=\"init_row_prods\">';
                         field += '<td colspan=\"7\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
                         field += '</tr>';
                     } else {
-                        var field = '<tr class=\"init_row_prods\">';     
+                        var field = '<tr class=\"init_row_prods\">';
                         field += '<td colspan=\"4\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
                         field += '</tr>';
                     }
@@ -1305,8 +1308,8 @@ $(document).ready(function(){
 
                 } else if($('#string_trans_type').val() == 'per') {
 
-                        computeCartRaw();
-                        computeCartIndiv();
+                    computeCartRaw();
+                    computeCartIndiv();
 
 
                 } else if($('#string_trans_type').val() == 'bulk') {
@@ -1341,7 +1344,7 @@ $(document).ready(function(){
             if (trans_type == 'bulk' && $('#flag_refund').val() == 'false') {
                 sweetAlert("Can't remove item!", "Reset transaction type to remove item/s", "error");
             } else {
-                e.preventDefault();            
+                e.preventDefault();
                 var tr = $(this).closest('tr');
                 tr.remove();
 
@@ -1352,21 +1355,21 @@ $(document).ready(function(){
                 if (rowCount == 0) {
                     if (trans_mode == 'Deposit') {
                         if (trans_type == 'per') {
-                            var field = '<tr class=\"init_row_prods\">';     
+                            var field = '<tr class=\"init_row_prods\">';
                             field += '<td colspan=\"7\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
                             field += '</tr>';
                         } else {
-                            var field = '<tr class=\"init_row_prods\">';     
+                            var field = '<tr class=\"init_row_prods\">';
                             field += '<td colspan=\"4\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
                             field += '</tr>';
                         }
                     } else {
                         if (trans_type == 'per') {
-                            var field = '<tr class=\"init_row_prods\">';     
+                            var field = '<tr class=\"init_row_prods\">';
                             field += '<td colspan=\"6\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
                             field += '</tr>';
                         } else {
-                            var field = '<tr class=\"init_row_prods\">';     
+                            var field = '<tr class=\"init_row_prods\">';
                             field += '<td colspan=\"3\" class=\"xrow\" style=\"text-align: center;\"><p style=\"text-align: center;\"><b>No item/s added</b></p></td>';
                             field += '</tr>';
                         }
@@ -1391,7 +1394,7 @@ $(document).ready(function(){
                     computeCartRaw();
                 }
 
-                computeBalance();    
+                computeBalance();
             }
         }
 
@@ -1439,19 +1442,19 @@ $(document).ready(function(){
     });
 
     $('#cform-cust_search_id').on('input',function(e){
-            var foo = $(this).val().split(" ").join("");
-          if (foo.length > 0) {
+        var foo = $(this).val().split(" ").join("");
+        if (foo.length > 0) {
             foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
-          }
-          $(this).val(foo);
+        }
+        $(this).val(foo);
     });
 
     $('#cform-cust_search_id').keyup(function() {
-      var foo = $(this).val().split(" ").join("");
-      if (foo.length > 0) {
-        foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
-      }
-      $(this).val(foo);
+        var foo = $(this).val().split(" ").join("");
+        if (foo.length > 0) {
+            foo = foo.match(new RegExp('.{1,3}', 'g')).join(" ");
+        }
+        $(this).val(foo);
     });
 
     $(document).on("click",".customer_search_btn", function(e){
@@ -1503,7 +1506,7 @@ $(document).ready(function(){
         var complete_flag = true;
         $('.f_required').each(function() {
             if ($(this).val() == '') {
-                
+
                 complete_flag = false;
             }
         });
@@ -1511,7 +1514,7 @@ $(document).ready(function(){
         $('.f_required_select').each(function() {
 
             if ($(this).val() == '') {
-                
+
                 complete_flag = false;
             }
         });
@@ -1519,12 +1522,12 @@ $(document).ready(function(){
         if ($('.f_required_gender').length > 0) {
             if($('.f_required_gender:checked').length <= 0){
                 complete_flag = false;
-             }
+            }
         }
 
         $('.f_required_date').each(function() {
             if ($(this).val() == '') {
-                
+
                 complete_flag = false;
             }
         });
@@ -1532,8 +1535,8 @@ $(document).ready(function(){
         if (complete_flag) {
             ajaxAddCustomer();
         } else {
-            swal("Missing fields!", "Please complete form with (*)", "error"); 
-           // .parent().parent().addClass('has-error')
+            swal("Missing fields!", "Please complete form with (*)", "error");
+            // .parent().parent().addClass('has-error')
             $('.f_required').each(function() {
                 if ($(this).val() == '') {
                     $(this).parent().parent().addClass('has-error_pos');
@@ -1547,7 +1550,7 @@ $(document).ready(function(){
                     $(this).parent().parent().addClass('has-error_pos');
                 } else {
                     $(this).parent().parent().removeClass('has-error_pos');
-                }   
+                }
             });
 
             $('.f_required_date').each(function() {
@@ -1559,7 +1562,7 @@ $(document).ready(function(){
             });
 
         }
-        
+
     });
 
     $(document).on("click",".add_customer", function(e){
@@ -1581,7 +1584,7 @@ $(document).ready(function(){
             } else {
                 $('#rev_quotation_modal').modal('show');
             }
-        }   
+        }
     });
 
     $(document).on("click",".cp_deposit", function(e){
@@ -1594,7 +1597,7 @@ $(document).ready(function(){
             } else {
                 $('#rev_deposit_modal').modal('show');
             }
-        }   
+        }
     });
 
     $(document).on("click",".cp_freeze", function(e){
@@ -1680,8 +1683,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -1690,7 +1693,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
 
     });
 
@@ -1699,8 +1702,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -1709,7 +1712,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
 
     });
 
@@ -1725,55 +1728,55 @@ $(document).ready(function(){
             {
                 if (parseFloat(yy) < parseFloat(curr_yy)) {
                     swal({
-                      title: "Card expired!",
-                      text: "",
-                      type: "error",
-                      showCancelButton: true,
-                      showConfirmButton: true,
-                      confirmButtonText: "Edit card details",
-                      cancelButtonText: "Go back to payment options",
-                    },
-                    function(isConfirm){
-                        if (isConfirm) {
+                            title: "Card expired!",
+                            text: "",
+                            type: "error",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                            confirmButtonText: "Edit card details",
+                            cancelButtonText: "Go back to payment options",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
 
-                        } else {
-                            clearCreditCardModal();
-                            $('#cc_modal').modal('hide');
-                            $('#swipe_expired').modal('hide');
-                            $('#checkout_modal').modal('show');
-                            if ($('#flag_refund').val() == 'true') {
-                                computeBalanceDisplayCardMulti(0);
                             } else {
-                                computeBalanceDisplayCardMulti(0);
+                                clearCreditCardModal();
+                                $('#cc_modal').modal('hide');
+                                $('#swipe_expired').modal('hide');
+                                $('#checkout_modal').modal('show');
+                                if ($('#flag_refund').val() == 'true') {
+                                    computeBalanceDisplayCardMulti(0);
+                                } else {
+                                    computeBalanceDisplayCardMulti(0);
+                                }
                             }
-                        }   
-                    });
-                    
-                    
+                        });
+
+
                 } else if (parseFloat(mm) <= parseFloat(curr_mm) && parseFloat(yy) <= parseFloat(curr_yy)) {
                     swal({
-                      title: "Card expired!",
-                      text: "",
-                      type: "error",
-                      showCancelButton: true,
-                      showConfirmButton: true,
-                      confirmButtonText: "Edit card details",
-                      cancelButtonText: "Go back to payment options",
-                    },
-                    function(isConfirm){
-                        if (isConfirm) {
+                            title: "Card expired!",
+                            text: "",
+                            type: "error",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                            confirmButtonText: "Edit card details",
+                            cancelButtonText: "Go back to payment options",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
 
-                        } else {
-                            clearCreditCardModal();
-                            $('#cc_modal').modal('hide');
-                            $('#swipe_expired').modal('hide');
-                            $('#checkout_modal').modal('show');
-                            computeBalanceDisplayCardMulti(0);
-                        }   
-                    });
+                            } else {
+                                clearCreditCardModal();
+                                $('#cc_modal').modal('hide');
+                                $('#swipe_expired').modal('hide');
+                                $('#checkout_modal').modal('show');
+                                computeBalanceDisplayCardMulti(0);
+                            }
+                        });
                 }
-            } 
-            else 
+            }
+            else
             {
                 swal('Invalid expirty date','Please enter expiry date again', 'error');
                 $(this).val('');
@@ -1854,8 +1857,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -1864,7 +1867,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
 
     });
 
@@ -1877,8 +1880,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -1887,7 +1890,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
 
     });
 
@@ -1943,7 +1946,7 @@ $(document).ready(function(){
         } else if (pos_indiv_discount_opt == 'chg') {
             adjusted_price.val(input_amt);
         }
-        
+
         computeCartIndiv();
         computeCartMinimum();
         computeBalance();
@@ -1970,7 +1973,7 @@ $(document).ready(function(){
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
                 $('.check_issued:checkbox').each(function() {
-                    $(this).prop('checked', true); 
+                    $(this).prop('checked', true);
                     $(this).attr('checked');
                     var rowx = $(this).closest('.product_row');
                     var issued_on = rowx.find('.issued_on').val();
@@ -1985,50 +1988,50 @@ $(document).ready(function(){
             } else {
                 if ($('#transaction_reference_sys_id').val() != '0') {
                     swal({
-                      title: "Deposit transaction completed!",
-                      text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                      type: "success",
-                      showConfirmButton: true,
-                      confirmButtonText: "Proceed",
-                    },
-                    function(isConfirm){
-                        if (isConfirm) {
-                           if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                                $('#final_modal').modal('show');
-                            } else if ($('#string_trans_mode').val() == 'quotation') {
-                                $('#final_modal2').modal('show');
-                            } else if ($('#string_trans_mode').val() == 'Deposit') {
-                                $('#final_modal').modal('show');
-                            } else {
-                                $('#final_modal2').modal('show');
+                            title: "Deposit transaction completed!",
+                            text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                            type: "success",
+                            showConfirmButton: true,
+                            confirmButtonText: "Proceed",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+                                if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                    $('#final_modal').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'quotation') {
+                                    $('#final_modal2').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                    $('#final_modal').modal('show');
+                                } else {
+                                    $('#final_modal2').modal('show');
+                                }
                             }
-                        }
-                    });
+                        });
                 } else {
                     swal({
-                      title: "Customer already selected!",
-                      text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                      type: "success",
-                      showCancelButton: true,
-                      showConfirmButton: true,
-                      confirmButtonText: "Proceed",
-                    },
+                            title: "Customer already selected!",
+                            text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                            type: "success",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                            confirmButtonText: "Proceed",
+                        },
 
-                    function(isConfirm){
-                        if (isConfirm) {
-                           if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                                $('#final_modal').modal('show');
-                            } else if ($('#string_trans_mode').val() == 'quotation') {
-                                $('#final_modal2').modal('show');
-                            } else if ($('#string_trans_mode').val() == 'Deposit') {
-                                $('#final_modal').modal('show');
+                        function(isConfirm){
+                            if (isConfirm) {
+                                if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                    $('#final_modal').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'quotation') {
+                                    $('#final_modal2').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                    $('#final_modal').modal('show');
+                                } else {
+                                    $('#final_modal2').modal('show');
+                                }
                             } else {
-                                $('#final_modal2').modal('show');
+                                $('#customer_modal').modal('show');
                             }
-                        } else {
-                            $('#customer_modal').modal('show');
-                        }   
-                    });
+                        });
                 }
             }
             return 0;
@@ -2044,49 +2047,49 @@ $(document).ready(function(){
                 } else {
                     if ($('#transaction_reference_sys_id').val() != '0') {
                         swal({
-                          title: "Customer already selected!",
-                          text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                          type: "success",
-                          showConfirmButton: true,
-                          confirmButtonText: "Proceed",
-                        },
-                        function(isConfirm){
-                            if (isConfirm) {
-                               if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                                    $('#final_modal').modal('show');
-                                } else if ($('#string_trans_mode').val() == 'quotation') {
-                                    $('#final_modal2').modal('show');
-                                } else if ($('#string_trans_mode').val() == 'Deposit') {
-                                    $('#final_modal').modal('show');
-                                } else {
-                                    $('#final_modal2').modal('show');
+                                title: "Customer already selected!",
+                                text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                                type: "success",
+                                showConfirmButton: true,
+                                confirmButtonText: "Proceed",
+                            },
+                            function(isConfirm){
+                                if (isConfirm) {
+                                    if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                        $('#final_modal').modal('show');
+                                    } else if ($('#string_trans_mode').val() == 'quotation') {
+                                        $('#final_modal2').modal('show');
+                                    } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                        $('#final_modal').modal('show');
+                                    } else {
+                                        $('#final_modal2').modal('show');
+                                    }
                                 }
-                            }
-                        });
+                            });
                     } else {
                         swal({
-                          title: "Customer already selected!",
-                          text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                          type: "success",
-                          showCancelButton: true,
-                          showConfirmButton: true,
-                          confirmButtonText: "Proceed",
-                        },
-                        function(isConfirm){
-                            if (isConfirm) {
-                               if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                                    $('#final_modal').modal('show');
-                                } else if ($('#string_trans_mode').val() == 'quotation') {
-                                    $('#final_modal2').modal('show');
-                                } else if ($('#string_trans_mode').val() == 'Deposit') {
-                                    $('#final_modal').modal('show');
+                                title: "Customer already selected!",
+                                text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                                type: "success",
+                                showCancelButton: true,
+                                showConfirmButton: true,
+                                confirmButtonText: "Proceed",
+                            },
+                            function(isConfirm){
+                                if (isConfirm) {
+                                    if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                        $('#final_modal').modal('show');
+                                    } else if ($('#string_trans_mode').val() == 'quotation') {
+                                        $('#final_modal2').modal('show');
+                                    } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                        $('#final_modal').modal('show');
+                                    } else {
+                                        $('#final_modal2').modal('show');
+                                    }
                                 } else {
-                                    $('#final_modal2').modal('show');
+                                    $('#customer_modal').modal('show');
                                 }
-                            } else {
-                                $('#customer_modal').modal('show');
-                            }   
-                        });
+                            });
                     }
                 }
             }
@@ -2111,7 +2114,7 @@ $(document).ready(function(){
             if ($('#string_trans_mode').val() == 'Deposit') {
                 $('#string_trans_mode').val('normal');
                 $('.check_issued:checkbox').each(function() {
-                    $(this).prop('checked', true); 
+                    $(this).prop('checked', true);
                     $(this).attr('checked');
                     var rowx = $(this).closest('.product_row');
                     var issued_on = rowx.find('.issued_on').val();
@@ -2135,44 +2138,44 @@ $(document).ready(function(){
 
                 $('#string_trans_mode').val('refund');
             }
-            
+
             $('#checkout_modal').modal('hide');
             if ($('#transaction_customer_id').val() == 0) {
                 $('#customer_modal').modal('show');
             } else {
                 if ($('#transaction_reference_sys_id').val() != '0') {
                     swal({
-                      title: "Customer already selected!",
-                      text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                      type: "success",
-                      showConfirmButton: true,
-                      confirmButtonText: "Proceed",
-                    },
-                    function(isConfirm){
-                        if (isConfirm) {
-                           if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
-                                $('#final_modal').modal('show');
-                            } else if ($('#string_trans_mode').val() == 'quotation') {
-                                $('#final_modal2').modal('show');
-                            } else if ($('#string_trans_mode').val() == 'Deposit') {
-                                $('#final_modal').modal('show');
-                            } else {
-                                $('#final_modal2').modal('show');
-                            }
-                        }
-                    });
-                } else {
-                    swal({
-                          title: "Customer already selected!",
-                          text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
-                          type: "success",
-                          showCancelButton: true,
-                          showConfirmButton: true,
-                          confirmButtonText: "Proceed",
+                            title: "Customer already selected!",
+                            text: "Customer: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                            type: "success",
+                            showConfirmButton: true,
+                            confirmButtonText: "Proceed",
                         },
                         function(isConfirm){
                             if (isConfirm) {
-                               if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
+                                    $('#final_modal').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'quotation') {
+                                    $('#final_modal2').modal('show');
+                                } else if ($('#string_trans_mode').val() == 'Deposit') {
+                                    $('#final_modal').modal('show');
+                                } else {
+                                    $('#final_modal2').modal('show');
+                                }
+                            }
+                        });
+                } else {
+                    swal({
+                            title: "Customer already selected!",
+                            text: "Name: "+$('#transaction_customer_name').val()+" ID: "+$('#transaction_customer_display_id').val(),
+                            type: "success",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                            confirmButtonText: "Proceed",
+                        },
+                        function(isConfirm){
+                            if (isConfirm) {
+                                if ($('#string_trans_type').val() != 'none' && parseFloat($('#float_trans_balance').val()) <= 0 && $('#string_trans_mode').val() != 'quotation') {
                                     $('#final_modal').modal('show');
                                 } else if ($('#string_trans_mode').val() == 'quotation') {
                                     $('#final_modal2').modal('show');
@@ -2183,21 +2186,21 @@ $(document).ready(function(){
                                 }
                             } else {
                                 $('#customer_modal').modal('show');
-                            }   
-                    });
+                            }
+                        });
                 }
             }
-            
+
         } else {
             if ($('#string_trans_mode').val() == "quotation" || payment_total == 0) {
                 swal({
-                      title: "Payment incomplete!",
-                      text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
-                      type: "error",
-                      showConfirmButton: true,
-                      confirmButtonText: "Go back to payment options"
-                    });
-            } else if ($('#string_trans_mode').val() == "Deposit") { 
+                    title: "Payment incomplete!",
+                    text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
+                    type: "error",
+                    showConfirmButton: true,
+                    confirmButtonText: "Go back to payment options"
+                });
+            } else if ($('#string_trans_mode').val() == "Deposit") {
                 $('.deposit_amount_totals_row').show();
                 $('.balance_totals_row').show();
                 computeVATDeposit(payment_total);
@@ -2210,13 +2213,13 @@ $(document).ready(function(){
                 $('#deposit_prompt_modal').modal('show');
             } else {
                 swal({
-                      title: "Payment incomplete!",
-                      text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
-                      type: "error",
-                      showCancelButton: true,
-                      showConfirmButton: true,
-                      confirmButtonText: "Deposit Mode",
-                      cancelButtonText: "Go back to payment options",
+                        title: "Payment incomplete!",
+                        text: "Balance of "+addCommas(parseFloat(balance))+" not paid",
+                        type: "error",
+                        showCancelButton: true,
+                        showConfirmButton: true,
+                        confirmButtonText: "Deposit Mode",
+                        cancelButtonText: "Go back to payment options",
                     },
                     function(isConfirm){
                         if (isConfirm) {
@@ -2246,9 +2249,9 @@ $(document).ready(function(){
                             changeDepositTopNavIcon();
 
                         } else {
-                            
-                        }   
-                });
+
+                        }
+                    });
             }
         }
     });
@@ -2276,8 +2279,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -2286,7 +2289,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
     });
 
     $(document).on('keydown', '.cc_charge_amt', function (event) {
@@ -2294,8 +2297,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -2304,7 +2307,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
     });
 
     $(document).on('keydown', '.check_amount', function (event) {
@@ -2312,8 +2315,8 @@ $(document).ready(function(){
             event.preventDefault();
         }
 
-        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
-            (event.keyCode >= 96 && event.keyCode <= 105) || 
+        if ((event.keyCode >= 48 && event.keyCode <= 57) ||
+            (event.keyCode >= 96 && event.keyCode <= 105) ||
             event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
             event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 110) {
 
@@ -2322,7 +2325,7 @@ $(document).ready(function(){
         }
 
         if($(this).val().indexOf('.') !== -1 && (event.keyCode == 190 || event.keyCode == 110))
-            event.preventDefault(); 
+            event.preventDefault();
     });
 
     $(document).on('keyup', '.cc_charge_amt', function (event) {
@@ -2386,8 +2389,8 @@ $(document).ready(function(){
             var amt_to_pay = $('#float_trans_balance').val();
             var chg_amt = parseFloat($(this).val()) - parseFloat(amt_to_pay);
             if (chg_amt >= 0) {
-                var change = chg_amt;  
-                $('#cash_chg_amt').text(addCommas(change));  
+                var change = chg_amt;
+                $('#cash_chg_amt').text(addCommas(change));
             } else {
                 var change = '0.00';
                 $('#cash_chg_amt').text(change);
@@ -2418,8 +2421,8 @@ $(document).ready(function(){
             var amt_to_pay = $('#float_trans_balance').val();
             var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
             if (chg_amt >= 0) {
-                var change = chg_amt;  
-                $('#cash_chg_amt').text(addCommas(change));  
+                var change = chg_amt;
+                $('#cash_chg_amt').text(addCommas(change));
             } else {
                 var change = '0.00';
                 $('#cash_chg_amt').text(change);
@@ -2433,8 +2436,8 @@ $(document).ready(function(){
                 var amt_to_pay = $('#float_trans_balance').val();
                 var chg_amt = parseFloat($('#cform-cash_received_amt').val()) - amt_to_pay;
                 if (chg_amt >= 0) {
-                    var change = chg_amt;  
-                    $('#cash_chg_amt').text(addCommas(change));  
+                    var change = chg_amt;
+                    $('#cash_chg_amt').text(addCommas(change));
                 } else {
                     var change = '0.00';
                     $('#cash_chg_amt').text(change);
@@ -2451,8 +2454,8 @@ $(document).ready(function(){
 
     $(window).keydown(function(event){
         if(event.keyCode == 13) {
-          event.preventDefault();
-          return false;
+            event.preventDefault();
+            return false;
         }
     });
 
@@ -2467,7 +2470,7 @@ $(document).ready(function(){
         } else {
             toastr['error']('Invalid payment amount.', 'Error');
         }
-        
+
     });
 
 
@@ -2609,11 +2612,11 @@ $(document).ready(function(){
         $('#cc_form').find('.cc_field').each(function() {
             var cc_number = $(this).find('#cform-cc_card_number').val();
             var cc_name = $(this).find('#cform-cc_card_name').val();
-            var payment_amt = $(this).find('#cform-cc_charge_amt').val(); 
-            var cc_bank = $(this).find('#cform-cc_bank').val(); 
-            var cc_expiry = $(this).find('#cform-cc_card_expiry').val(); 
+            var payment_amt = $(this).find('#cform-cc_charge_amt').val();
+            var cc_bank = $(this).find('#cform-cc_bank').val();
+            var cc_expiry = $(this).find('#cform-cc_card_expiry').val();
             if (cc_number != '' && payment_amt != '' && cc_name != '' && cc_expiry != '') {
-               if (complete_flag) {
+                if (complete_flag) {
                     complete_flag = true;
                 }
             } else {
@@ -2625,13 +2628,13 @@ $(document).ready(function(){
             $('#cc_form').find('.cc_field').each(function() {
                 var cc_number = $(this).find('#cform-cc_card_number').val();
                 var cc_name = $(this).find('#cform-cc_card_name').val();
-                var payment_amt = $(this).find('#cform-cc_charge_amt').val(); 
-                var cc_bank = $(this).find('#form-cc_bank option:selected').text(); 
+                var payment_amt = $(this).find('#cform-cc_charge_amt').val();
+                var cc_bank = $(this).find('#form-cc_bank option:selected').text();
                 var cc_expiry = $(this).find('#cform-cc_card_expiry').val().replace(/\//g, '-');
-                var cc_name = $(this).find('#cform-cc_card_name').val(); 
+                var cc_name = $(this).find('#cform-cc_card_name').val();
 
                 var cc_type = $(this).find('#cform-form-cc_card_type option:selected').text();
-                var cc_cvv = $(this).find('#cform-cc_card_cvv').val(); 
+                var cc_cvv = $(this).find('#cform-cc_card_cvv').val();
 
                 var cc_terminal_opt = $(this).find('#cform-cc_terminal_operator option:selected').text();
                 var cc_interest = $(this).find('#form-interest_indiv option:selected').text();
@@ -2646,7 +2649,7 @@ $(document).ready(function(){
             $('#checkout_modal').modal('show');
         } else {
             swal('Incomplete fields!','Please enter card details to continue','error');
-        }   
+        }
     });
 
     $(document).on("click",".card_w_interest", function(e){
@@ -2657,14 +2660,14 @@ $(document).ready(function(){
         } else {
             $('#string_trans_cc_interest').val('false');
         }
-    }); 
+    });
 
     $(document).on("click",".check_proceed_btn", function(e){
         var complete_flag = true;
 
         $('#check_form').find('.check_field').each(function() {
             var check_number = $(this).find('#cform-check_number').val();
-            var payment_amt = $(this).find('#cform-check_amount').val(); 
+            var payment_amt = $(this).find('#cform-check_amount').val();
             if (check_number != '' && payment_amt != '') {
                 if (complete_flag) {
                     complete_flag = true;
@@ -2678,9 +2681,9 @@ $(document).ready(function(){
             $('#check_form').find('.check_field').each(function() {
                 var check_number = $(this).find('#cform-check_number').val();
                 var account_number = $(this).find('#cform-check_account_number').val();
-                var payment_amt = $(this).find('#cform-check_amount').val(); 
-                var bank = $(this).find('#form-check_bank option:selected').text(); 
-                var payee = $(this).find('#cform-check_payee_name').val(); 
+                var payment_amt = $(this).find('#cform-check_amount').val();
+                var bank = $(this).find('#form-check_bank option:selected').text();
+                var payee = $(this).find('#cform-check_payee_name').val();
                 var payor = $(this).find('#cform-check_payor_name').val();
                 var check_date = $(this).find('#xform-check_date').val();
                 var check_type = $(this).find('.check_is_pdc').val();
@@ -2697,7 +2700,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".remove_customer", function(e){
-        e.preventDefault();            
+        e.preventDefault();
         var tr = $(this).closest('tr');
         tr.remove();
         return false;
@@ -2705,7 +2708,7 @@ $(document).ready(function(){
     });
 
     $(document).on("click",".remove_payment_row", function(e){
-        e.preventDefault();            
+        e.preventDefault();
         var tr = $(this).closest('tr');
 
         var pt = tr.find('.payment_type');
@@ -2721,7 +2724,7 @@ $(document).ready(function(){
         var rowCount = $('#payments_table tr').length-1;
 
         if (rowCount == 0) {
-            var field = '<tr class=\"init_row_payment\">';     
+            var field = '<tr class=\"init_row_payment\">';
             field += '<td colspan=\"3\"><p>No payments added</p></td>';
             field += '</tr>';
 
@@ -2780,7 +2783,7 @@ $(document).ready(function(){
         } else {
             toastr['warning']('Add products to cart before proceeding to next step.', 'Warning');
         }
-        
+
     });
 
 
@@ -2788,15 +2791,12 @@ $(document).ready(function(){
     $('.clear_discount').hide();
 
 
-    $('.checkout_btn').hide();
-
-
     $('.proceed_deposit').hide();
     $('.orig_totals_row').hide();
     $('.orig_price_h3').hide();
     $('.bulk_discount_h4').hide();
     $('.savings_h4').hide();
-    
+
 
     $('#cform-new_price').val('');
     $('#cgroup-new_price').hide();

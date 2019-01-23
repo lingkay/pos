@@ -1,5 +1,231 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
+{% import "GistTemplateBundle::pos_form.html.twig" as pos_form_tools %}
+
+{% block css %}
+    <style>
+        .modal {
+            overflow-y:auto;
+        }
+        .page-pos .box-gradient {
+            font-size: 12px;
+        }
+
+        .category-list {
+            overflow-x: hidden;
+            max-height: 470px;
+        }
+
+        .pos-products .item {
+            padding: auto 15px;
+            cursor: pointer;
+        }
+
+        .item-content {
+            border: 1px solid #dadee7;
+            min-height: 35px;
+            margin: 3px 0;
+            display: flex;
+            padding: 25px 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .item-content img {
+            min-height: 60px;
+            max-height: 60px;
+            width: 85px;
+            /*border: 1px solid #000;*/
+            margin-right: 10px;
+        }
+
+
+        .item-details .item-title {
+            text-transform: uppercase;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 150px;
+            white-space: nowrap;
+        }
+
+        .item-details .item-price {
+            color: #0059b0;
+            font-weight: 600;
+        }
+
+        .box--cart__items {
+            min-height: 150px;
+            border-bottom: 1px solid #bfbfbf;
+        }
+
+        .box--cart__amounts {
+            color: #9e9e9e;
+        }
+
+        .box--cart__amounts .cart__grand-total {
+            color: #00468b;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .box--cart__buttons {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+
+        .box--cart__buttons .btn {
+            flex: 1;
+            margin: 5px;
+            border-radius: 0;
+            color: white;
+            background: #7b7b7b;
+        }
+
+        .box--cart__buttons .btn--next {
+            background: #f89718;
+        }
+
+        .box--cart__buttons .btn--reset {
+            background: #00b05b;
+        }
+
+        .box--cart__buttons .btn--checkout {
+            background: #f89718;
+        }
+
+        #transaction_type_modal .transaction-option {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #transaction_type_modal .transaction-option .img--icon {
+            min-height: 70px;
+            position: relative;
+            max-width: 150px;
+        }
+
+        #transaction_type_modal .transaction-option .img--icon img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+
+        .checkout-amount {
+            color: #00468b;
+        }
+
+        #checkout_modal .payment_types .payment_type img {
+            max-width: 100px;
+        }
+
+        .card-detail {
+            margin: 5px auto;
+        }
+
+        .card-detail label {
+            color: #202020;
+        }
+
+        .amount-input-set .text-input input {
+            background: #fff;
+            padding: 20px 10px;
+            color: #7c7c7c;
+            border: 1px solid #dadee7;
+            border-radius: 10px;
+        }
+
+        .keypad {
+            padding-top: 15px;
+        }
+
+        .keypad .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+
+        .keypad .keypad__number {
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+
+        .keypad .keypad__number span {
+            background: #eeeeee;
+            border: 1px solid #b2b2b2;
+            color: #5f5f5f;
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .keypad .keypad__clear span{
+            background: #dc3545;
+            color: white;
+            border: #dc3545;
+        }
+
+        .keypad .keypad__del span{
+            background: #004692;
+            color: white;
+            border: #004692;
+
+        }
+
+        .box--cart__amounts--updated {
+            display: none;
+        }
+
+        .input_no_style{
+            background-color:rgba(0,0,0,0) !important;
+            border:none !important;
+        }
+
+        @media (min-width: 576px) {
+            .item:nth-child(odd) {
+                padding-right: 5px;
+            }
+            .item:nth-child(even) {
+                padding-left: 5px;
+            }
+
+            .box--cart__buttons {
+                flex-direction: row;
+            }
+
+            .box--cart__buttons .btn--next {
+                flex-basis: 40%;
+            }
+            /*           .box--cart__buttons .btn:first-child{
+                  margin-left: 0;
+                }
+
+                .box--cart__buttons .btn:last-child{
+                  margin-right: 0;
+                }*/
+        }
+
+        @media (min-width: 768px) {
+            .box--cart__items {
+                min-height: 350px;
+            }
+        }
+
+        /*OVERRIDES*/
+        .table-v1 input, .table-v1 textarea, .table-v1 select {
+            width: unset !important;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <input type="hidden" id="pos_loc_id" value="{{pos_loc_id}}">
     <input type="hidden" id="url_pos" value="{{sys_pos_url}}">
@@ -74,236 +300,240 @@
     <input type="hidden" id="float_deposit_tax_amt_net_vat" value="0">
     <input type="hidden" id="float_balance_tax_amt_net_vat" value="0">
     <!-- END TAX VARS -->
-    <div class="page-content">
-        <br>
-        <div class="row" style="margin-right: 0px !important;">
-            <div class="col-md-2" style="padding-right: 1px !important; border: 0px !important;">
-                <div class="portlet box " style="background-color: #292929 !important;border: 0px !important;">
-                    <div class="portlet-title">
-                        <div class="caption">Product Categories</div>
+    <div class="row">
+        <div class="col-12 col-md-7 pr-md-0 pos-left">
+            <div class="box-shadow">
+                <div class="row">
+                    <div class="col-12 col-md-3 pr-md-0">
+                        <div class="box-gradient text-center">
+                            PRODUCT CATEGORIES
+                        </div>
+                        <ul class="nav nav-pills nav-pills-v2 mt-1 mb-3 category-list" id="prod_cats" role="tablist">
+                            <!-- PRODUCT CATEGORIES -->
+                        </ul>
                     </div>
-                    <div class="portlet-body form" id="prod_cats" style="height: 400px; overflow:scroll;overflow-x: hidden;">
+                    <div class="col-12 col-md-9 pos-products">
+                        <div class="box-gradient text-center">
+                            PRODUCT
+                        </div>
+                        <div class="tab-content mt-1" id="pills-tabContent">
+                            <!-- SUBMITTED COUTING FORMS -->
+                            <div aria-labelledby="pills-anti_aging-tab" class="tab-pane fade show active" id="pills-anti_aging" role="tabpanel">
 
-                    </div>
-                    <div style="background-color: #ffffff !important;">
-                        &nbsp;&nbsp;
+                                <div style="overflow-x: hidden; height: 500px;">
+                                    <div class="row mt-1" id="prods">
+                                        <!-- PRODUCTS -->
+                                    </div>
+                                </div>
+                            </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;">
-                    <div class="portlet-title">
-                        <div class="caption">Products</div>
-                    </div>
-                    <div class="portlet-body">
-                        <br>
-                        <div  style="height: 410px;overflow:scroll; overflow-x: hidden;">
-                            <div class="row" id="prods">
+        </div>
+        <div class="col-12 col-md-5">
+            <div class="box-shadow">
+                <div class="box-gradient text-center">
+                    EXISTING CART &nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="btn default btn-xs blue-madison select_all_return">Select All</a> <a href="javascript:void(0);" class="btn default btn-xs red unselect_all_return">Clear Selection</a>
+                </div>
+                <div class="box--cart">
+                    <div class="box--cart__items mt-2">
+                        <div class="table-responsive table-v1">
+                            <div style="overflow-x: hidden; height: 360px;">
+                                <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="existing_cart_table">
+                                    <thead>
+                                    {% if transaction_object.getTransactionType|default('null') == 'per' %}
+                                        <tr>
+                                            <th width="10%" style="width: 15px;">Return</th>
+                                            <th width="60%" style="width: 118px;">Item</th>
+                                            <th width="25%" style="width: 88px;">Price</th>
+                                            <th style="width: 98px;">Discount Type</th>
+                                            <th style="width: 88px;">Value</th>
+                                            <th style="width: 88px;">Adjusted Price</th>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <th>Return</th>
+                                            <th width="60%">Item</th>
+                                            <th width="25%">Price</th>
+                                        </tr>
+                                    {% endif %}
+                                    </thead>
+                                    <tbody id="existing_cart_items">
+                                    {% if transaction_object.hasItems|default(false) %}
+                                        {% for item in transaction_object.getItems|default(null) %}
+                                            <tr class="existing_product_row existing_product">
 
+                                                <input type="hidden" name="is_issued[]" class="existing_is_issued" value="{{item.getIssued|default(0)}}" >
+                                                <input type="hidden" name="issued_on[]" class="existing_issued_on" value="{{item.getItemIssuedOn.getID|default('0')}}" >
+                                                <input type="hidden" name="product_id[]" class="existing_product_id" value="{{item.getProductId}}" >
+                                                <input type="hidden" name="barcode[]" class="existing_barcode" value="{{item.getBarcode}}" >
+                                                <input type="hidden" name="item_code[]" class="existing_item_code" value="{{item.getItemCode}}" >
+                                                <input type="hidden" name="min_price[]" class="existing_min_price" value="{{item.getMinimumPrice}}" >
+                                                <input type="hidden" name="srp[]" class="existing_srp" value="{{item.getOrigPrice}}" >
+                                                <input type="hidden" name="product_amt[]" class="existing_product_amt" value="{{item.getOrigPrice}}" >
+
+                                                <td style="font-size: 10px !important;">{{ form.checkbox_issued_item('refund_issued', 0, '', '', '')}}</td>
+                                                <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control existing_item_name"></td>
+                                                <td><input type="text" style="font-size: 10px !important;" name="existing_display_price[]" class="form-control existing_display_price" readonly="true" value="{{item.getOrigPrice}}"></td>
+                                                {% if transaction_object.getTransactionType|default('null') == 'per' %}
+                                                    <td style="font-size: 10px !important;">{{ form.group_select_only3('Type', 'existing_indiv_disc_opt', indiv_options, item.getDiscountType|default(''), 12, 12, true) }}</td>
+                                                    <td style="font-size: 10px !important;"><input type="number" step="0.01" style="font-size: 10px !important;" class="form-control existing_per_item_discount_amt" readonly="true" value="{{ item.getDiscountValue|default('0') }}"></td>
+                                                    <td><input type="text" style="font-size: 10px !important;" class="form-control existing_adjusted_price" readonly="true" value="{{ item.getAdjustedPrice|default('0.00') }}"></td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr class="init_row_prods">
+                                            <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
+                                        </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box--cart__amounts initial_totals">
+                        <div class="row">
+                            <div class="col-md-12" >
+                                {% if transaction_object.getBulkDiscountType != 'none' %}
+                                    <h4 class="ref_bulk_discount_h4">Bulk Discount: <b><span id="ref_applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
+                                {% endif %}
+                                <h4 class="refund_amount_h4">Refund amount: <b>Php <span id="lbl_refund_amount" value="">0.00</span></b></h4>
+                                <input type="hidden" value="0" id="selected_items_total">
+                                <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
+                                <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-striped table-bordered" style="" id="existing_cart_totals_table">
+                                    <thead>
+                                    <tr>
+                                        <th width="40%" style="font-size: 12px;">Amount</th>
+                                        <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
+                                        <th width="30%" style="font-size: 12px;">VAT</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="existing_initial_totals">
+                                        <td><p style="font-size:12px;" class="existing_cart_price_h3">Total <b>Php <span class="existing_initial_cart_price" value="{{ transaction_object.getTransactionTotal|default('') }}">{{ transaction_object.getCartOrigTotal|default('')|number_format(2) }}</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="existing_new_amt_vat"><b>Php <span id="existing_initial_amt_net_vat" value="{{ transaction_object.getOrigAmtNetVat|default('') }}">{{ transaction_object.getOrigAmtNetVat|default('')|number_format(2) }}</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="existing_new_vat"><b>Php <span id="existing_initial_vat_amt" value="{{ transaction_object.getOrigVatAmt|default('') }}">{{ transaction_object.getOrigVatAmt|default('')|number_format(2) }}</span></b></p></td>
+                                    </tr>
+                                    {% if transaction_object.getTransactionType|default('null') == 'per' or transaction_object.getTransactionType|default('null') == 'bulk' %}
+                                        <tr class="existing_updated_totals_row">
+                                            <td><p style="font-size:12px;" class="existing_updated_price_h3">Updated <b>Php <span class="existing_updated_cart_price" value="0">{{ transaction_object.getTransactionTotal|default('')|number_format(2) }}</span></b></p></td>
+                                            <td><p style="font-size:12px;" class="existing_updated_amt_vat"><b>Php <span id="existing_updated_amt_net_vat" value="0">{{ transaction_object.getNewAmtNetVat|default('')|number_format(2) }}</span></b></p></td>
+                                            <td><p style="font-size:12px;" class="existing_updated_vat"><b>Php <span id="existing_updated_vat_amt" value="0">{{ transaction_object.getNewVatAmt|default('')|number_format(2) }}</span></b></p></td>
+                                        </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;">
-                    <div class="portlet-title">
-                        <div class="caption">Existing Items Cart &nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="btn default btn-xs blue-madison select_all_return">Select All</a> <a href="javascript:void(0);" class="btn default btn-xs red unselect_all_return">Clear Selection</a></div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div style="overflow:scroll; overflow-x: hidden; height: 240px;">
-                                    <table class="table table-striped table-bordered table-hover" style="margin-top: 10px;" id="existing_cart_table">
-                                        <thead>
-                                        {% if transaction_object.getTransactionType|default('null') == 'per' %}
-                                            <tr>
-                                                <th width="10%" style="width: 15px;">Return</th>
-                                                <th width="60%" style="width: 118px;">Item</th>
-                                                <th width="25%" style="width: 88px;">Price</th>
-                                                <th style="width: 98px;">Discount Type</th>
-                                                <th style="width: 88px;">Value</th>
-                                                <th style="width: 88px;">Adjusted Price</th>
-                                            </tr>
-                                        {% else %}
-                                            <tr>
-                                                <th>Return</th>
-                                                <th width="60%">Item</th>
-                                                <th width="25%">Price</th>
-                                            </tr>
-                                        {% endif %}
-                                        </thead>
-                                        <tbody id="existing_cart_items">
-                                        {% if transaction_object.hasItems|default(false) %}
-                                            {% for item in transaction_object.getItems|default(null) %}
-                                                <tr class="existing_product_row existing_product">
-
-                                                    <input type="hidden" name="is_issued[]" class="existing_is_issued" value="{{item.getIssued|default(0)}}" >
-                                                    <input type="hidden" name="issued_on[]" class="existing_issued_on" value="{{item.getItemIssuedOn.getID|default('0')}}" >
-                                                    <input type="hidden" name="product_id[]" class="existing_product_id" value="{{item.getProductId}}" >
-                                                    <input type="hidden" name="barcode[]" class="existing_barcode" value="{{item.getBarcode}}" >
-                                                    <input type="hidden" name="item_code[]" class="existing_item_code" value="{{item.getItemCode}}" >
-                                                    <input type="hidden" name="min_price[]" class="existing_min_price" value="{{item.getMinimumPrice}}" >
-                                                    <input type="hidden" name="srp[]" class="existing_srp" value="{{item.getOrigPrice}}" >
-                                                    <input type="hidden" name="product_amt[]" class="existing_product_amt" value="{{item.getOrigPrice}}" >
-
-                                                    <td style="font-size: 10px !important;">{{ form.checkbox_issued_item('refund_issued', 0, '', '', '')}}</td>
-                                                    <td><input type="text" style="font-size: 10px !important;" value="{{item.getName}}" readonly="true" class="form-control existing_item_name"></td>
-                                                    <td><input type="text" style="font-size: 10px !important;" name="existing_display_price[]" class="form-control existing_display_price" readonly="true" value="{{item.getOrigPrice}}"></td>
-                                                    {% if transaction_object.getTransactionType|default('null') == 'per' %}
-                                                        <td style="font-size: 10px !important;">{{ form.group_select_only3('Type', 'existing_indiv_disc_opt', indiv_options, item.getDiscountType|default(''), 12, 12, true) }}</td>
-                                                        <td style="font-size: 10px !important;"><input type="number" step="0.01" style="font-size: 10px !important;" class="form-control existing_per_item_discount_amt" readonly="true" value="{{ item.getDiscountValue|default('0') }}"></td>
-                                                        <td><input type="text" style="font-size: 10px !important;" class="form-control existing_adjusted_price" readonly="true" value="{{ item.getAdjustedPrice|default('0.00') }}"></td>
-                                                    {% endif %}
-                                                </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr class="init_row_prods">
-                                                <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
-                                            </tr>
-                                        {% endif %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-md-12" >
-                                        {% if transaction_object.getBulkDiscountType != 'none' %}
-                                            <h4 class="ref_bulk_discount_h4">Bulk Discount: <b><span id="ref_applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
-                                        {% endif %}
-                                        <h4 class="refund_amount_h4">Refund amount: <b>Php <span id="lbl_refund_amount" value="">0.00</span></b></h4>
-                                        <input type="hidden" value="0" id="selected_items_total">
-                                        <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
-                                        <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-striped table-bordered" style="" id="existing_cart_totals_table">
-                                            <thead>
-                                            <tr>
-                                                <th width="40%" style="font-size: 12px;">Amount</th>
-                                                <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
-                                                <th width="30%" style="font-size: 12px;">VAT</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr class="existing_initial_totals">
-                                                <td><p style="font-size:12px;" class="existing_cart_price_h3">Total <b>Php <span class="existing_initial_cart_price" value="{{ transaction_object.getTransactionTotal|default('') }}">{{ transaction_object.getCartOrigTotal|default('')|number_format(2) }}</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="existing_new_amt_vat"><b>Php <span id="existing_initial_amt_net_vat" value="{{ transaction_object.getOrigAmtNetVat|default('') }}">{{ transaction_object.getOrigAmtNetVat|default('')|number_format(2) }}</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="existing_new_vat"><b>Php <span id="existing_initial_vat_amt" value="{{ transaction_object.getOrigVatAmt|default('') }}">{{ transaction_object.getOrigVatAmt|default('')|number_format(2) }}</span></b></p></td>
-                                            </tr>
-                                            {% if transaction_object.getTransactionType|default('null') == 'per' or transaction_object.getTransactionType|default('null') == 'bulk' %}
-                                                <tr class="existing_updated_totals_row">
-                                                    <td><p style="font-size:12px;" class="existing_updated_price_h3">Updated <b>Php <span class="existing_updated_cart_price" value="0">{{ transaction_object.getTransactionTotal|default('')|number_format(2) }}</span></b></p></td>
-                                                    <td><p style="font-size:12px;" class="existing_updated_amt_vat"><b>Php <span id="existing_updated_amt_net_vat" value="0">{{ transaction_object.getNewAmtNetVat|default('')|number_format(2) }}</span></b></p></td>
-                                                    <td><p style="font-size:12px;" class="existing_updated_vat"><b>Php <span id="existing_updated_vat_amt" value="0">{{ transaction_object.getNewVatAmt|default('')|number_format(2) }}</span></b></p></td>
-                                                </tr>
-                                            {% endif %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+            <div class="box-shadow">
+                <div class="box-gradient text-center">
+                    NEW CART
+                </div>
+                <div class="box--cart">
+                    <div class="box--cart__items mt-2">
+                        <div class="table-responsive table-v1">
+                            <div style="overflow-x: hidden; height: 360px;">
+                                <table class="table table-striped table-bordered" style="margin-top: 10px;" id="cart_table">
+                                    <thead>
+                                    <tr>
+                                        <th width="60%" class="xcol">Item</th>
+                                        <th width="25%" class="xcol">Price</th>
+                                        <th width="10%" class="xcol"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="cart_items">
+                                    <tr class="init_row_prods">
+                                        <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="portlet box" style="background-color: #292929 !important;border: 0px !important;">
-                    <div class="portlet-title">
-                        <div class="caption">New Items Cart</div>
-                    </div>
-                    <div class="portlet-body">
+                    <div class="box--cart__amounts initial_totals">
                         <div class="row">
                             <div class="col-md-12">
-                                <div style="overflow:scroll; overflow-x: hidden; height: 240px;">
-                                    <table class="table table-striped table-bordered" style="margin-top: 10px;" id="cart_table">
-                                        <thead>
-                                            <tr>
-                                                <th width="60%" class="xcol">Item</th>
-                                                <th width="25%" class="xcol">Price</th>
-                                                <th width="10%" class="xcol"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="cart_items">
-                                            <tr class="init_row_prods">
-                                                <td colspan="3" class="xrow" style="text-align: center;"><p style="text-align: center;"><b>No item/s added</b></p></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <table class="table table-striped table-bordered table-hover" style="" id="cart_totals_table">
+                                    <thead>
+                                    <tr>
+                                        <th width="40%" style="font-size: 12px;">Amount</th>
+                                        <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
+                                        <th width="30%" style="font-size: 12px;">VAT</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="initial_totals">
+                                        <td><p style="font-size:12px;" class="cart_price_h3">Total <b>Php <span class="initial_cart_price" value="0">0.00</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0.00</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0.00</span></b></p></td>
+                                    </tr>
+                                    <tr class="updated_totals_row">
+                                        <td><p style="font-size:12px;" class="updated_price_h3">Updated <b>Php <span class="updated_cart_price" value="0">0</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_amt_net_vat" value="0">0</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_vat_amt" value="0">0</span></b></p></td>
+                                    </tr>
+                                    <tr class="deposit_amount_totals_row">
+                                        <td><p style="font-size:12px;" class="deposit_amount_h3">Deposit <b>Php <span class="totals_deposit_amt" value="0">0</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_amt_net_vat" value="0">0</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_vat_amt" value="0">0</span></b></p></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr class="refund_balance_totals_row">
+                                        <td><p style="font-size:12px;" class="balance_amount_h3">Balance <b>Php <span class="totals_balance" value="0">0.00</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="balance_amt_vat"><b>Php <span id="balance_amt_net_vat" value="0">0.00</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="balance_vat"><b>Php <span id="balance_vat_amt" value="0">0.00</span></b></p></td>
+                                    </tr>
+                                    <tr class="refund_totals_row">
+                                        <td><p style="font-size:12px;" class="refund_new_amount_h3">New Total <b>Php <span class="refund_new_total" value="0">0.00</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="refund_new_amt_vat"><b>Php <span id="refund_new_amt_net_vat" value="0">0.00</span></b></p></td>
+                                        <td><p style="font-size:12px;" class="refund_new_vat"><b>Php <span id="refund_new_vat_amt" value="0">0.00</span></b></p></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box--cart__buttons">
+                        <div class="row">
+                            <div class="col-md-12" >
+                                <a class="btn default green reason_refund_proceed_btn" style="margin=0" href="javascript:void(0)">Continue</a>
+                                <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
+                                <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout/Pay</a>
+                                <a href="javascript:void(0)" class="btn proceed_deposit" style="background-color: green; color: #ffffff;">Proceed Deposit</a>
+                                <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
+                                <a href="/pos" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
                                 <br>
-                                <div class="row">
-                                    <div class="col-md-12" >
-                                        <a class="btn default green reason_refund_proceed_btn" style="margin=0" href="javascript:void(0)">Continue</a>
-                                        <a href="javascript:void(0)" class="btn bulk_adj" style="background-color: #556E93; color: #ffffff;">Bulk Discount</a>
-                                        <a href="javascript:void(0)" class="btn checkout_btn" style="background-color: green; color: #ffffff;">Checkout/Pay</a>
-                                        <a href="javascript:void(0)" class="btn proceed_deposit" style="background-color: green; color: #ffffff;">Proceed Deposit</a>
-                                        <a href="javascript:void(0)" class="btn clear_discount" style="background-color: orange; color: #ffffff;">Reset Transaction Type</a>
-                                        <a href="/pos" class="btn" style="background-color: red; color: #ffffff;">Clear Cart</a>
-                                        <br>
-                                        <br>
-                                        <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
-                                        <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-striped table-bordered table-hover" style="" id="cart_totals_table">
-                                            <thead>
-                                            <tr>
-                                                <th width="40%" style="font-size: 12px;">Amount</th>
-                                                <th width="30%" style="font-size: 12px;">Amt Net of VAT</th>
-                                                <th width="30%" style="font-size: 12px;">VAT</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr class="initial_totals">
-                                                <td><p style="font-size:12px;" class="cart_price_h3">Total <b>Php <span class="initial_cart_price" value="0">0.00</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="new_amt_vat"><b>Php <span id="initial_amt_net_vat" value="0">0.00</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="new_vat"><b>Php <span id="initial_vat_amt" value="0">0.00</span></b></p></td>
-                                            </tr>
-                                            <tr class="updated_totals_row">
-                                                <td><p style="font-size:12px;" class="updated_price_h3">Updated <b>Php <span class="updated_cart_price" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="updated_amt_vat"><b>Php <span id="updated_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="updated_vat"><b>Php <span id="updated_vat_amt" value="0">0</span></b></p></td>
-                                            </tr>
-                                            <tr class="deposit_amount_totals_row">
-                                                <td><p style="font-size:12px;" class="deposit_amount_h3">Deposit <b>Php <span class="totals_deposit_amt" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="deposit_amt_vat"><b>Php <span id="deposit_amt_net_vat" value="0">0</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="deposit_vat"><b>Php <span id="deposit_vat_amt" value="0">0</span></b></p></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="3">&nbsp;</td>
-                                            </tr>
-                                            <tr class="refund_balance_totals_row">
-                                                <td><p style="font-size:12px;" class="balance_amount_h3">Balance <b>Php <span class="totals_balance" value="0">0.00</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="balance_amt_vat"><b>Php <span id="balance_amt_net_vat" value="0">0.00</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="balance_vat"><b>Php <span id="balance_vat_amt" value="0">0.00</span></b></p></td>
-                                            </tr>
-                                            <tr class="refund_totals_row">
-                                                <td><p style="font-size:12px;" class="refund_new_amount_h3">New Total <b>Php <span class="refund_new_total" value="0">0.00</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="refund_new_amt_vat"><b>Php <span id="refund_new_amt_net_vat" value="0">0.00</span></b></p></td>
-                                                <td><p style="font-size:12px;" class="refund_new_vat"><b>Php <span id="refund_new_vat_amt" value="0">0.00</span></b></p></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <br>
+                                <h4 class="bulk_discount_h4">Bulk Discount: <b><span id="applied_bulk_discount" value="">{{transaction_object.getBulkDiscountType|default('None')}}</span></b></h4>
+                                <h4 class="savings_h4">You saved: <b>Php <span id="customer_savings" value="">0.00</span></b></h4>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <input type="hidden" id="url_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
-        <input type="hidden" id="quote_png" value="{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}">
-        <input type="hidden" id="normal_png" value="{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}">
-        <input type="hidden" id="deposit_on_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}">
-        <input type="hidden" id="deposit_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}">
-        <input type="hidden" id="path_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
-        <input type="hidden" id="path_sync_data" value="{{ path('gist_main_sync_pos_data') }}">
     </div>
+    <input type="hidden" id="url_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
+    <input type="hidden" id="quote_png" value="{{ asset('bundles/gisttemplate/assets/global/img/quote.png') }}">
+    <input type="hidden" id="normal_png" value="{{ asset('bundles/gisttemplate/assets/global/img/normal.png') }}">
+    <input type="hidden" id="deposit_on_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit_on.png') }}">
+    <input type="hidden" id="deposit_png" value="{{ asset('bundles/gisttemplate/assets/global/img/deposit.png') }}">
+    <input type="hidden" id="path_print_receipt" value="{{ path("gist_pos_print_receipt", {'id': 'id'}) }}">
+    <input type="hidden" id="path_sync_data" value="{{ path('gist_main_sync_pos_data') }}">
+
     {% include 'GistPOSBundle:Dashboard:modals.html.twig' %}
 {% endblock %}
 {% block js %}
