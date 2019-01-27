@@ -22,7 +22,7 @@
 
 {% if mode == 'Deposit' %}
     <a href="{{ path('gist_pos_print_receipt', {'id': id}) }}" target="_blank" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Re-print Receipt"><i class="fa fa-print"></i></a>
-    <a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn btn-v1 btn-icon btn-danger" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-scissors"></i></a>
+    <a href="{{path('gist_pos_split_transaction_form', {'id':id})}}" class="btn btn-v1 btn-icon btn-danger" data-toggle="tooltip" data-placement="bottom" title="Split"><i class="fa fa-cut"></i></a>
 {% endif %}
 {% if mode == 'Deposit' and not hasChild %}
     <a href="{{ path('gist_pos_index_load', {'transaction_display_id':transaction_display_id})}}" class="btn btn-v1 btn-icon btn-primary" data-toggle="tooltip" data-placement="bottom" title="Complete transaction"><i class="fa fa-shopping-cart"></i></a>
