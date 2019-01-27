@@ -1,5 +1,14 @@
 {% extends "GistTemplateBundle::base.html.twig" %}
 {% import "GistTemplateBundle::form.html.twig" as form_tools %}
+
+{% block css %}
+<style>
+    .daterangepicker.show-calendar {
+        right: unset !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <!-- CONTENT -->
     <div class="row p-3">
